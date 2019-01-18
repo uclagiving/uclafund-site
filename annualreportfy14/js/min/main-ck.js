@@ -1,0 +1,1 @@
+function isInView(o){var n=$(window).scrollTop(),i=n+$(window).height(),e=$(o).offset().top,s=e+$(o).height();return i>=s&&e>=n}$(document).ready(function(){var o=$("body");$(window).scroll(function(){isInView($("#section-four"))?o.addClass("bg04"):o.removeClass("bg04")})});

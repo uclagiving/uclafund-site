@@ -1,0 +1,1354 @@
+/* Colors */
+@facebook_blue  : #3b5998;
+@twitter_blue   : #00acee;
+@ucla_fund_blue : #4399d7;
+
+body {
+    background: url(../../img/clouds_bg4.jpg);
+    color: #434950;
+    font-family:'ProximaNova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 300;
+    color: #204e91;
+    margin-top:1.5em;
+    font-family:'ProximaNova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+h1 {
+    font-size:32px;
+    margin-bottom:0.8em;
+}
+
+h2 {
+    font-size:24px;
+}
+
+h3 {
+    font-size:20px;
+}
+
+.content h1, .content h2 {
+    font-weight:300;
+}
+
+
+.center {
+    text-align: center;
+}
+
+.lead {
+    font-size:1.3;
+    color:#999;
+}
+
+hr {
+    margin:40px 0;
+}
+
+a {
+    color:#111;
+}
+
+a:hover {
+    text-decoration:none;
+    color:#777;
+}
+
+.navbar .btn-navbar {
+    color: #999999;
+    text-shadow: 0 0px 0 rgba(0,0,0,0.25);
+}
+
+/* FUNCTIONAL */
+
+.A-counter
+{
+    /* Needed to ensure the blocks do not change size when the animation starts */
+    line-height : 1em;
+}
+
+
+/* NAV */
+
+.navbar .nav > li > a {
+    padding: 10px 20px 10px;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+#intro {
+    color:#fff;
+    padding:30px 0 0;
+    min-height:52px;
+    max-height: 341px;
+    margin-top: -10px;
+}
+
+#intro a {
+    color:#fff !important;
+}
+
+#intro a.back {
+    float:right;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    line-height:1.5;
+}
+
+#intro .header {
+    text-align:center;
+    text-transform:uppercase;
+    display:none;
+    height:480px;
+    position:relative;
+    margin-top: -10px;
+}
+
+#intro .header h1 {
+    font-size:48px;
+    letter-spacing:0.2em;
+    color:#fff;
+    margin:0;
+    padding: 4em 2em 0em;
+    font-weight:700;
+    text-shadow: 2px 5px 0px rgba(0,0,0,0.4);
+    line-height: 52px;
+}
+
+#intro .header p {
+    letter-spacing:0.5em;
+    margin-top:10px;
+    font-size:20px;
+    font-weight: 700;
+    color:#fff;
+    text-shadow: 2px 3px 0px rgba(0,0,0,0.6);
+}
+
+#download, #letter-intro, #small-giving-intro, #giving-intro, #future-intro {
+    height:580px;
+}
+
+/* show header when home */
+body.home #intro .header {
+    display:block;
+    z-index:1;
+}
+
+.header h1, .header p {
+    margin-top: -20px;
+    opacity: 0;
+}
+
+
+/* CONTENT */
+
+.chancellorBar
+{
+    position        : absolute;
+    top             : 0;
+    display         : inline-block; 
+    height          : 150px;    
+    text-overflow   : clip;
+    color           : white;
+    font-size       : 4em;
+    letter-spacing  : 1px;
+    line-height     : 150px;
+    text-align      : center;
+}
+
+#small-giving-intro, #giving-intro, #letter-intro, #future-intro, #download {
+    border-top: 4px solid #fff200;   
+}
+
+.info-box {
+    background-color    : #d1e3f2;
+    opacity             : 0.9;
+    position            : relative;
+    max-width           : 400px;
+    padding             : 2em;
+    margin-top          : -180px;
+    z-index             : 1000;
+    
+    h2 {
+        font-size: 42px;
+        font-weight: 700;
+        font-style: italic;
+        color: #3384bf;
+        margin-top: 0px;
+        text-transform: uppercase;
+    }
+    
+    p {
+       font-size: 18px;
+        font-weight: 300;
+        line-height: 24px; 
+    }
+    
+    .dots {
+        padding: 1em 0em;
+    }
+        
+        
+}
+    
+.info-box2 {
+
+    max-width: 400px;
+        
+    h3 {
+        font-size: 32px;
+        font-weight: 700;
+        color: #00a5e4;
+        text-transform: uppercase;
+    }
+    
+    p {
+       font-size: 18px;
+        font-weight: 300;
+        line-height: 24px;
+        margin-top: 10px !important; 
+    }
+    
+    .dots {
+        margin-top: 0px;
+        padding-bottom: 0.5em;
+    }
+    
+}    
+
+.info-box3 {
+    background-color: #d1e3f2;
+    
+    .content {
+        padding: 2em;
+    }
+}
+    
+
+#intro {
+    background-image: url(../../img/ucla-1.1.jpg);
+    background-position: center top;
+    background-size: cover;
+}
+
+#intro-stats {
+
+    padding-bottom: 5em;
+    
+    .stat1, .stat2, .stat3 {
+    
+        .number {
+            font-size: 52px;
+            font-weight: bold;
+            padding-top: 1.5em;
+            padding-bottom: .3em;
+        }
+    
+        .number-label {
+            font-size: 30px;
+            font-weight: 300;
+            padding-top: 1.5em;
+            padding-bottom: 3em;
+        } 
+    }
+
+
+    .stat1 {
+    
+        .number {
+            display: block;
+            color: #73cddc;
+        }
+        
+    }
+
+    .stat2 {
+    
+        .number {
+            display: block;
+            color: #FFB300;
+        }
+        
+    }
+    .stat3 {
+        
+        .number {
+            display: block;
+            color: #72c378;
+        }
+    }
+}
+
+#letter {
+
+    padding-top: 20px;
+    
+    .quote {
+        font-style: italic;
+    }
+    
+    
+    
+    .letter-content {
+        margin-top: 20px;
+    
+        .letter-text p {
+            line-height: 2em;
+            font-weight: 300;
+            font-size: 16px;
+        }
+    
+    }
+    
+    .sidebar {
+        margin-top: 4em;
+        padding-left: 4em;
+    }
+    
+    
+}
+
+#chan-soc {
+    margin-bottom: 30px;
+}
+
+
+#chancellors-graphic {
+    margin-bottom: 2em;
+}
+
+ul.chancellors-list {
+    list-style-type: none;
+    font-size: 1.4em;
+    font-weight: 500;
+    margin-top: 1em;
+    
+    span {
+        color: #333333;
+        margin-bottom: 15px;
+    }
+    
+    
+    li {
+        margin-bottom: 10px;
+    }
+    
+    span.households, span.money {
+        display: block;
+        margin-left: 30px;
+        font-size: 0.8em;
+        font-weight: 100;
+        margin-bottom: 0px;
+        
+    }
+    
+    span.households {
+        margin-top: 8px;
+    }
+    
+}
+
+
+/*
+iframe.video {
+    max-width: 100%;
+    margin-top: 1em;
+}
+*/
+
+#small-giving-intro {
+    background-image: url(../../img/ucla-3.jpg);
+    background-position: center top;
+    background-size: cover;
+}
+
+#small-giving {
+    
+    background-color    : white;
+    
+    .small-giving-content {
+    
+        h2 {
+            line-height: 42px;
+            margin-top: 0.2em;
+            color: #444444;
+            font-weight: 700;
+        }
+        
+        .first-h2, .third-h2 {
+            font-size: 40px;
+        }
+        .second-h2 {
+            font-size: 80px;
+            font-style: italic;
+            color: #00a5e4;
+            line-height: 68px;
+        }
+        
+        p {
+            font-weight: 300;
+            font-size: 1.5em;
+            line-height: 1.4em;
+            letter-spacing: 2px;
+        }
+        
+    }
+}
+
+
+#giving-intro {
+    background-image: url(../../img/ucla-4.jpg);
+    background-position: center top;
+    background-size: cover;
+}
+
+.map-image {
+    opacity: 0;
+    width: 300px;
+    height: 300px;
+}
+
+h1.map-number {
+    font-size: 3em;
+    font-style: italic;
+    font-weight: 700;
+    color: #00a3e3;
+    margin-top: 0px;
+    margin-bottom: 8px;
+}
+
+p.map-label {
+    font-size: 1.5em;
+    font-weight: 300;
+}
+
+ul.donation-list {
+    list-style-type: none;
+    font-size: 2em;
+    font-weight: 300;
+    margin-top: 1.5em;
+    
+    span {
+        color: #333333;
+    }
+    
+    
+    li {
+        margin-bottom: 20px;
+    }
+    
+    :nth-child(1) {
+        .icon-stop, span.number {
+            color: #72ccdc; 
+        }
+        
+    }
+    :nth-child(2) {
+        .icon-stop, span.number {
+            color: #6c5aa7;
+        }
+        
+    }
+    :nth-child(3) {
+        .icon-stop, span.number {
+            color: #f1ec43; 
+        }
+    }
+    :nth-child(4) {
+        .icon-stop, span.number {
+            color: #72c378; 
+        }
+    }
+    :nth-child(5) {
+        .icon-stop, span.number {
+            color: #5397ce; 
+        }
+    }
+    :nth-child(6) {
+        .icon-stop, span.number {
+            color: #eb2f95; 
+        }
+    }
+}
+
+
+ul.state-funding-list {
+    list-style-type: none;
+    font-size: 2.5em;
+    font-weight: 300;
+    margin-top: 1.5em;
+    
+    span {
+        color: #333333;
+    }
+    
+    
+    li {
+        margin-bottom: 30px;
+    }
+}
+
+.small {
+    font-size: .5em;
+}
+
+
+/* New Donors */
+#new_donors {
+    
+}
+
+.fadeIn {
+    opacity: 0;
+}
+
+span.big_number {
+    display: block;
+    font-size: 12em;
+    font-weight: 700;
+    line-height: 1em;
+}
+
+span.big_number_label {
+    display: block;
+    font-size: 3em;
+    font-weight: 300;
+    line-height: 1em;
+}
+
+/* Young Alumni */
+
+#young_alumni {
+    margin-top: 4em;
+}
+
+.social_stuff {
+    margin-bottom: 0em;
+    margin-top: 6em;
+    
+    
+    h3 {
+        font-size: 1.6em;
+        font-weight: 500;
+        color: #333333;
+    }
+    
+}
+
+/* Student Giving */
+
+#student_giving {
+
+    .bruin-contest-winner {
+    
+        h3 {
+            color: #434950;
+        }
+        a {
+            color: #3399cc;
+        }
+    }
+    
+/*
+    .bruin_video {
+        width: 1170px;
+        height: 600px;
+    }
+*/
+}
+
+/* Projection for the Future */
+
+#future {
+
+    margin-top: 180px;
+    
+    .info-box {
+        margin-top: -294px;
+    }
+    
+    .info-box.projection-heading {
+        margin-top: 0px;
+        width: 100%;
+        background-color: transparent;
+    }
+
+    .info-box2 h3 {
+        margin-top: 0px;
+    }
+}
+
+.gifts-at-work {
+    color: #3399cc;
+    font-weight: 700;
+}
+
+.gifts-at-work:hover {
+    color: lighten(#3399cc, 10%);
+}
+
+
+.projection-heading {
+
+    margin-top: 2em;
+
+    h1 {
+        font-weight: 700;
+        font-size: 3em;
+        font-style: italic;
+        color: #00a5e4;
+        margin-top: 0em;
+    }
+    
+    h3 {
+        line-height: 1.5em;
+        margin-top: 0.2em;
+        color: #444444;
+        font-weight: 700;
+    }
+    
+}
+
+.final-message {
+
+    padding-bottom: 3em;
+
+    h1 {
+        color: #444444;
+    
+        span {
+            color: #00a5e4;
+            font-style: italic;
+            font-weight: 700;
+        }
+    
+    }
+    
+    .btn-large {
+        margin-top: 2em;
+    }
+}
+
+#future-intro {
+    background-image: url(../../img/ucla-7.jpg);
+    background-position: center top;
+    background-size: cover;
+}
+
+#download {
+    background-image: url(../../img/ucla-6.jpg);
+    background-position: center top;
+    background-size: cover;
+}
+
+#download-btn .btn {
+    margin-top: 2em;
+    font-size: 20px;
+    background:#00a5e4;
+}
+
+#download-btn .btn:hover {
+    background:#1db2ed;
+}
+
+
+
+.letter-content {
+    padding: 20px;
+    margin-top: -60px;
+    margin-bottom: 20px;
+    z-index: 999;
+    position: relative;
+}
+
+.box {
+    box-shadow: 0 1px 1px #4e8db6;
+    background-color: #f9f9f9; 
+}
+
+
+/* thank you */
+#thank_you {
+    background-image: url(../../img/ucla-1.1.jpg);
+    background-position: center top;
+    background-size: cover;
+    margin-top: 2em;
+    height: 340px;
+    
+}
+
+.thank, .you {
+    font-size:68px;
+    letter-spacing:0.2em;
+    color:#fff;
+    margin:0;
+    font-weight:700;
+    text-shadow: 2px 5px 0px rgba(0,0,0,0.4);
+    text-transform: uppercase;
+}
+
+.thank {
+    opacity: 0;
+    margin-left: -1000px;
+    padding-right: 12px;
+}
+
+.you{
+    margin-left: 2000px;
+}
+
+.thank_you_text {
+    margin-top: 7em;
+    padding-left: 2em;
+    
+    h1 {
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+}
+
+
+/* FOOTER */
+
+#footer {
+    /* background:#f7f7f7; */
+    padding:30px 0;
+    color: #333333;
+    /* border-top:1px solid #eee; */
+    font-size:0.9em;
+    
+    .address {
+        padding-top: 20px;
+    }
+    
+}
+
+
+/* BUTTONS */
+
+.btn {
+    border:0;
+    border-radius:2px;
+    padding: 1.4em 1.8em 1.3em;
+    box-shadow:none;
+    background:#72ccdc;
+    color:#fff;
+    text-transform:uppercase;
+    margin-right:10px;
+    text-shadow:none;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: bold;
+    -webkit-transition:0.1s ease-in background-color;
+    -webkit-font-smoothing:antialiased;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+.btn:hover {
+    border:0;
+    box-shadow:none;
+    color:#fff;
+    background:#77dced;
+    -webkit-transition:0.1s ease-in background-color;
+} 
+
+.facebook.btn {
+    border:0;
+    border-radius:2px;
+    padding: 1.4em 1.8em 1.3em;
+    box-shadow:none;
+    background:@facebook_blue;
+    color:#fff;
+    text-transform:uppercase;
+    margin-right:10px;
+    text-shadow:none;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: bold;
+    -webkit-transition:0.1s ease-in background-color;
+    -webkit-font-smoothing:antialiased;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+.facebook.btn:hover {
+    border:0;
+    box-shadow:none;
+    color:#fff;
+    background: lighten(@facebook_blue, 10%);
+    -webkit-transition:0.1s ease-in background-color;
+}
+
+.twitter.btn {
+    border:0;
+    border-radius:2px;
+    padding: 1.4em 1.8em 1.3em;
+    box-shadow:none;
+    background: @twitter_blue;
+    color:#fff;
+    text-transform:uppercase;
+    margin-right:10px;
+    text-shadow:none;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: bold;
+    -webkit-transition:0.1s ease-in background-color;
+    -webkit-font-smoothing:antialiased;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+.twitter.btn:hover {
+    border:0;
+    box-shadow:none;
+    color:#fff;
+    background: give(@twitter_blue, 10%);
+    -webkit-transition:0.1s ease-in background-color;
+}
+
+.uclafund.btn {
+    border:0;
+    border-radius:2px;
+    padding: 1.4em 1.8em 1.3em;
+    box-shadow:none;
+    background: @ucla_fund_blue;
+    color:#fff;
+    text-transform:uppercase;
+    margin-right:10px;
+    text-shadow:none;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: bold;
+    -webkit-transition:0.1s ease-in background-color;
+    -webkit-font-smoothing:antialiased;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+.uclafund.btn:hover {
+    border:0;
+    box-shadow:none;
+    color:#fff;
+    background: lighten(@ucla_fund_blue, 10%);
+    -webkit-transition:0.1s ease-in background-color;
+}
+
+.btn-mini {
+    padding: 3px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+
+
+.btn.btn-primary {
+    background:#db3c14;
+}
+
+.btn.btn-primary:hover {
+    background:#ec4f11;
+    color:#fff;
+}
+
+  
+.btn.btn-secondary {
+    background:#ccc;
+    color:#fff;
+} 
+
+.btn.btn-secondary:hover {
+    background:#aaa;
+    color:#fff;
+}
+
+/* RESPONSIVE */ 
+
+@media (max-width: 1199px) {
+    
+    .projection {
+        margin-top: 0px;
+    }
+    
+    ul.donation-list {
+        list-style-type: none;
+        font-size: 1.8em;
+    }
+    
+    #intro-stats .stat1 .number, #intro-stats .stat2 .number, #intro-stats .stat3 .number {
+       font-size: 52px;
+    }
+    
+    span.big_number {
+        font-size: 7em;
+    }
+    
+    span.big_number_label {
+        font-size: 2em;
+    }
+    
+}
+
+
+@media (max-width: 980px) {
+    
+    #chancellorsociety {
+        font-size: 2.8em;
+    }
+    
+    
+    #download, #letter-intro, #small-giving-intro, #giving-intro, #future-intro {
+        height:320px;
+    }
+    
+    .info-box {
+        h2 {
+            font-size: 2.5em;
+        }
+    }
+    
+    .info-box2 {
+        h3 {
+            font-size: 2em;
+        }
+    }
+    
+    ul.donation-list {
+        list-style-type: none;
+        font-size: 1.4em;
+        font-weight: 300;
+        margin-top: 1em;
+        
+        span {
+            color: #333333;
+        }
+        
+        
+        li {
+            margin-bottom: 20px;
+        }
+        
+    }
+    
+    #intro {
+        color:#fff;
+        padding:30px 0 0;
+        min-height:52px;
+        max-height: 240px;
+        background-size: cover;
+        margin-top: -20px;
+        
+        .header {
+        
+            margin-top: 20px;
+            
+            h1 {
+                font-size: 1.8em;
+                line-height: 1em;
+                text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            }
+            
+            p {
+                font-size: 1.2em;
+                margin-top: 0px;
+                text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+            }
+            
+        } 
+        
+    }
+    
+    #intro-stats .stat1 .number, #intro-stats .stat2 .number, #intro-stats .stat3 .number {
+       font-size: 40px;
+       padding-bottom: .4em;
+    }
+    
+    
+    ul.state-funding-list {
+    list-style-type: none;
+    font-size: 1.8em;
+    font-weight: 300;
+    margin-top: 1.5em;
+    
+    
+        li {
+            margin-bottom: 20px;
+        }
+    }
+    
+    #footer {
+        .social-icons {
+            float: left;
+            list-style-type: none;
+            margin-top: 28px;
+            margin-left: 16px !important;
+        
+            li {
+                display: inline;
+                padding-left: 2em;
+                
+                img {
+                    max-width: 40px;
+                    max-height: 50px;
+                    margin-bottom: 20px;
+                }
+                
+            }
+        }
+    }
+    
+    .navbar .nav > li > a {
+        padding: 10px 12px 10px;
+
+    }
+    
+    /* thank you */
+    #thank_you {
+        background-image: url(../../img/ucla-1.1.jpg);
+        background-position: center top;
+        background-size: cover;
+        margin-top: 2em;
+        height: 240px;
+        
+    }
+    
+    .thank, .you {
+        font-size:48px;
+        letter-spacing:0.2em;
+        color:#fff;
+        margin:0;
+        font-weight:700;
+        text-shadow: 2px 5px 0px rgba(0,0,0,0.4);
+        text-transform: uppercase;
+    }
+    
+    .thank {
+        opacity: 0;
+        margin-left: -1000px;
+        padding-right: 12px;
+    }
+    
+    .you{
+        margin-left: 2000px;
+    }
+    
+    .thank_you_text {
+        margin-top: 4em;
+    }
+    
+/*
+    #student_giving iframe.bruin_video {
+        height: 400 !important;
+    }
+*/
+
+    
+    
+
+    
+    
+     
+}
+
+@media (max-width: 767px) {
+    body {
+        padding:0;
+    }
+    
+    .container, .nav {
+        padding-left:20px;
+        padding-right:20px;
+    }
+    
+    .side li {
+        text-align:left;
+    }
+    
+    .navbar .brand {
+        padding-left: 30px;
+    }
+    
+    .navbar .btn-navbar {
+        margin-right: 24px;
+    }
+    
+    #intro-stats .stat1 .number, #intro-stats .stat2 .number, #intro-stats .stat3 .number {
+       font-size: 40px;
+       line-height: 0px;
+       padding-bottom: .5em;
+       padding-top: 1em;
+    }
+    
+    #intro .header {
+        padding:0px;
+        margin-top: 40px;
+        
+        h1 {
+            font-size: 1.8em;
+            line-height: 1em;
+        }
+        
+        p {
+            font-size: 1.2em;
+            margin-top: 0px;
+        }
+    }
+    
+    span.big_number {
+        font-size: 7em;
+        margin-top: 0px;
+        float: none;
+    }
+    
+    .info-box2 {
+        float: left;
+    }
+    
+    
+    ul.state-funding-list {
+        list-style-type: none;
+        font-size: 1em;
+        font-weight: 300;
+        margin-top: 1.5em;
+
+        li {
+            margin-bottom: 20px;
+        }
+    }
+    
+    #intro {
+        background-position: -338px;
+    }
+    
+    
+    /* thank you */
+    #thank_you {
+        background-image: url(../../img/ucla-1.1.jpg);
+        background-position: center top;
+        background-size: cover;
+        margin-top: 2em;
+        height: 240px;
+        
+    }
+    
+    .thank, .you {
+        font-size:48px;
+        letter-spacing:0.2em;
+        color:#fff;
+        margin:0;
+        font-weight:700;
+        text-shadow: 2px 5px 0px rgba(0,0,0,0.4);
+        text-transform: uppercase;
+    }
+    
+    .thank {
+        opacity: 0;
+        margin-left: -1000px;
+        padding-right: 12px;
+    }
+    
+    .you{
+        margin-left: 2000px;
+    }
+    
+    .thank_you_text {
+        padding-top: 4em;
+    }
+
+
+    
+    
+}
+
+@media (max-width: 460px) {
+    #intro .header {
+        padding:0px;
+        margin-top: 60px;
+        
+        h1 {
+            font-size: 1.4em;
+            line-height: 1em;
+        }
+        
+        p {
+            font-size: 1.1em;
+            margin-top: 0px;
+        }
+        
+        
+        
+    }
+    
+    .side, .content {
+        padding:30px 0;
+    }
+    
+    hr {
+        margin:20px 0;
+    }
+
+    .info-box {
+        h2 {
+            font-size: 2.2em;
+        }
+        .dots {
+            padding: 0em 0em 1em;
+        }
+        p {
+            line-height: 20px;
+        }
+    }
+    
+    #letter .letter-content .letter-text p {
+        line-height: 1.3em;
+    }
+    #letter .letter-content .letter-text h2 {
+        line-height: 24px;
+    }
+    
+    .info-box2 h3 {
+        font-size: 1.5em;
+    }
+    
+    
+    #small-giving .small-giving-content {
+    
+        margin-top: 160px;
+    
+        .first-h2, .third-h2 {
+            line-height: 40px;
+        }
+        .second-h2 {
+            line-height: 80px;
+        }
+    }
+    
+    #small-giving .small-giving-content p {
+        letter-spacing: 0px;
+    }
+    
+    #footer {
+        .social-icons {
+            float: left;
+            list-style-type: none;
+            margin-top: 28px;
+            margin-left: -24px !important;
+        
+            li {
+                display: inline;
+                padding-left: 4em;
+                
+                img {
+                    max-width: 40px;
+                    max-height: 50px;
+                    margin-bottom: 20px;
+                }
+                
+            }
+        }
+    }
+    
+    #intro {
+        background-position: -538px;
+    }
+    
+    
+    ul.state-funding-list {
+        list-style-type: none;
+        font-size: 1em;
+        font-weight: 300;
+        margin-top: .5em;
+
+        li {
+            margin-bottom: 2px;
+        }
+    }
+    
+        /* thank you */
+    #thank_you {
+        background-image: url(../../img/ucla-1.1.jpg);
+        background-position: center top;
+        background-size: cover;
+        margin-top: 2em;
+        height: 140px;
+        
+    }
+    
+    .thank, .you {
+        font-size:28px;
+        letter-spacing:0.2em;
+        color:#fff;
+        margin:0;
+        font-weight:700;
+        text-shadow: 2px 5px 0px rgba(0,0,0,0.4);
+        text-transform: uppercase;
+    }
+    
+    .thank {
+        opacity: 0;
+        margin-left: -1000px;
+        padding-right: 12px;
+    }
+    
+    .you{
+        margin-left: 2000px;
+    }
+    
+    .thank_you_text {
+        padding-top: 1em;
+        padding-left: 1em;
+    }
+    
+    
+
+}
+
+
+
+@media (min-width: 1200px) {
+    
+    .big_number {
+        
+    }
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

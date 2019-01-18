@@ -1,0 +1,61 @@
+@font-face {
+	font-family: 'karbon'; 
+    src: url('karbon-thin-webfont.eot'); /* IE9 Compat Modes */
+    src:    url('karbon-thin-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('karbon-thin-webfont.woff') format('woff'), /* Pretty Modern Browsers */
+            url('karbon-thin-webfont.ttf') format('truetype'), /* Safari, Android, iOS */
+            url('karbon-thin-webfont.svg') format('svg'); /* Legacy iOS */
+	font-weight: 200;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'karbon'; 
+    src: url('karbon-light-webfont.eot'); /* IE9 Compat Modes */
+    src:    url('karbon-light-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('karbon-light-webfont.woff') format('woff'), /* Pretty Modern Browsers */
+            url('karbon-light-webfont.ttf') format('truetype'), /* Safari, Android, iOS */
+            url('karbon-light-webfont.svg') format('svg'); /* Legacy iOS */
+	font-weight: 300;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'karbon'; 
+    src: url('karbon-regular-webfont.eot'); /* IE9 Compat Modes */
+    src:    url('karbon-regular-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('karbon-regular-webfont.woff') format('woff'), /* Pretty Modern Browsers */
+            url('karbon-regular-webfont.ttf') format('truetype'), /* Safari, Android, iOS */
+            url('karbon-regular-webfont.svg') format('svg'); /* Legacy iOS */
+	font-weight: 400;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'karbon'; 
+    src: url('karbon-medium-webfont.eot'); /* IE9 Compat Modes */
+    src:    url('karbon-medium-webfont?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('karbon-medium-webfont.woff') format('woff'), /* Pretty Modern Browsers */
+            url('karbon-medium-webfont.ttf') format('truetype'), /* Safari, Android, iOS */
+            url('karbon-medium-webfont.svg') format('svg'); /* Legacy iOS */
+	font-weight: 500;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'karbon'; 
+    src: url('karbon-semibold-webfont.eot'); /* IE9 Compat Modes */
+    src:    url('karbon-semibold-webfont?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('karbon-semibold-webfont.woff') format('woff'), /* Pretty Modern Browsers */
+            url('karbon-semibold-webfont.ttf') format('truetype'), /* Safari, Android, iOS */
+            url('karbon-semibold-webfont.svg') format('svg'); /* Legacy iOS */
+	font-weight: 600;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'karbon'; 
+    src: url('karbon-bold-webfont.eot'); /* IE9 Compat Modes */
+    src:    url('karbon-bold-webfont?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('karbon-bold-webfont.woff') format('woff'), /* Pretty Modern Browsers */
+            url('karbon-bold-webfont.ttf') format('truetype'), /* Safari, Android, iOS */
+            url('karbon-bold-webfont.svg') format('svg'); /* Legacy iOS */
+	font-weight: 700;
+	font-style: normal;
+}
+

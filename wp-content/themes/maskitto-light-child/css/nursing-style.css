@@ -1,0 +1,59 @@
+/*
+Theme Name: Maskitto Light Child
+Description: A light weight clean and simple wordpress theme for everyday use. Bunch of useful features like, responsive design, united color schemes, slider with lots of options, fast to learn administration panel layout, plus, clean and easy visual design and it's all free. Documentation available at http://shufflehound.com/maskitto-light/ and demo at http://demo.shufflehound.com/maskitto-light/
+Version: 1.0.4
+Author: Shufflehound
+Author URI: http://shufflehound.com
+Template: maskitto-light
+Text Domain: maskitto-light-child
+*/
+
+
+/* BEGIN Luskin Template CSS =++=================================================================== */
+
+.background-1 {
+    background-image:url('https://uclafund.assets.support2.ucla.edu/2019/01/nursing-trichtype-1.jpg');
+}
+.background-2 {
+    background-image:url('https://uclafund.assets.support2.ucla.edu/2019/01/nursing-trichtype-2.jpg');
+}
+.background-3 {
+    background-image:url('https://uclafund.assets.support2.ucla.edu/2019/01/nursing-trichtype-3.jpg');
+}
+
+.plx1 {
+    background-position: center center !important;
+}
+.plx2 {
+    background-position: center center !important;
+}
+.plx3 {
+    background-position: center top !important;
+}
+
+.school_logo {
+    background-color: #3384c1;
+    border-color: #3384c1;
+}
+.school_logo img {
+    padding: 4px;
+    background-color: #fff;
+}
+
+
+/* END Luskin Template CSS ======================================================================== */
+/* END Luskin Template CSS ======================================================================== */
+/* END Luskin Template CSS ======================================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+

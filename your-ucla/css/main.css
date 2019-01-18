@@ -1,0 +1,489 @@
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+/*brand colors*/
+#arts {
+  color: #00c0a2;
+}
+#business {
+  color: #005154;
+}
+#community {
+  color: #faaf5f;
+}
+#env {
+  color: #009c89;
+}
+#lit {
+  color: #d25242;
+}
+#global-impact {
+  color: #771C52;
+}
+#health {
+  color: #1e83b1;
+}
+#design {
+  color: #47005c;
+}
+#law {
+  color: #00766e;
+}
+#research {
+  color: #0f5f89;
+}
+#music {
+  color: #2ea7d9;
+}
+#tech {
+  color: #003d63;
+}
+h1 {
+  font-family: 'ProximaNova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #347BAD;
+  font-size: 22px;
+  font-style: italic;
+  font-weight: bold;
+  line-height: 24px;
+  margin-bottom: 14px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+h2 {
+  font-family: 'ProximaNova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #347BAD;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 19px;
+  margin-bottom: 1.65em;
+  text-decoration: none;
+}
+h3 {
+  font-family: 'ProximaNova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #347BAD;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 19px;
+  margin-bottom: 1.65em;
+  text-decoration: none;
+}
+h4 {
+  font-family: 'ProximaNova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #347BAD;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 16px;
+  margin-bottom: 1.65em;
+  text-decoration: none;
+}
+h5 {
+  font-family: 'ProximaNova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #666666;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 19px;
+  margin-bottom: 1.65em;
+  text-decoration: none;
+}
+h6 {
+  font-family: 'ProximaNova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #666666;
+  font-size: 14px;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 19px;
+  margin-bottom: 1.65em;
+  text-decoration: none;
+}
+h2.subtitle {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 24px;
+  padding-top: 0px;
+  margin-top: 20px;
+}
+h1.subtitle {
+  font-size: 21px;
+}
+a {
+  color: #3284bf;
+  text-decoration: none;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  font-family: 'ProximaNova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 19px;
+  color: #666666;
+  font-weight: 300;
+  letter-spacing: .5px;
+  padding-top: 50px;
+  /* Margin bottom by footer height */
+  margin-bottom: 0px;
+}
+body p {
+  margin-bottom: 1.65em;
+}
+.button {
+  padding: 8px 20px 8px;
+  color: #3384c1;
+  background-color: white;
+  border: solid #347BAD;
+  border-width: 2px;
+  font-weight: bold;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.button:hover {
+  color: white;
+  background-color: #3384c1;
+  text-decoration: none;
+}
+#results h3 {
+  margin-bottom: 20px;
+}
+.cat-wrapper {
+  font-size: 16px;
+}
+.cat-wrapper i.fa {
+  font-size: 24px;
+  margin-top: .5em;
+}
+p.label {
+  font-size: 13px;
+  font-weight: 400;
+  color: inherit;
+}
+.sub-label {
+  font-style: italic;
+  font-size: .8em;
+  margin-top: 1em;
+}
+#header img {
+  max-width: 100%;
+  display: block;
+}
+#header-h1 {
+  font-size: 26px;
+  color: white;
+  text-shadow: 2px 1px 1px #0054a6;
+  position: absolute;
+  margin-top: 5%;
+  width: 100%;
+  text-align: center;
+}
+#main {
+  margin: 0px 0px;
+}
+.navbar {
+  margin-bottom: 0px;
+}
+.navbar-header {
+  background-image: url('../img/facet-left.png');
+  background-repeat: no-repeat;
+  background-position: -60px top;
+}
+.navbar-brand {
+  margin-left: 20px;
+}
+.navbar-brand img {
+  width: 82px;
+  height: 16px;
+  margin-top: 2px;
+}
+.cat-wrapper {
+  border-radius: 20px;
+  cursor: pointer;
+  cursor: hand;
+  text-align: center;
+}
+.clearSelectionsBtn {
+  position: absolute;
+  right: 10px;
+  margin-top: 6px;
+  display: none;
+}
+.clearSelectionsBtn,
+.noUi-handle {
+  cursor: pointer;
+  cursor: hand;
+}
+#categories-row {
+  background-color: #fff;
+}
+#categories-row h4 {
+  font-weight: 300;
+}
+#range {
+  margin-top: 53px;
+}
+.big-label {
+  font-size: 18px;
+  color: #666666;
+}
+.contribute {
+  margin-top: 30px;
+}
+#slider {
+  margin-top: 19px;
+}
+#cat01-wrapper,
+#cat02-wrapper {
+  text-align: center;
+}
+#cat01-wrapper i.fa,
+#cat02-wrapper i.fa {
+  font-size: 22px;
+}
+#cat01-wrapper p.label,
+#cat02-wrapper p.label {
+  display: none;
+}
+.cat-wrapper.selected {
+  background-color: rgba(255, 255, 0, 0.6);
+}
+.cat-wrapper.selected p.label {
+  font-weight: bold;
+}
+.cat-box {
+  margin-top: 15px;
+  text-align: center;
+}
+.row {
+  margin-bottom: 1em;
+}
+#results {
+  display: none;
+}
+#fund01-label,
+#fund02-label {
+  color: #0054a6;
+  font-weight: bold;
+}
+#giveNowBtn {
+  margin-top: 30px;
+}
+#inpOtherAmount {
+  display: inline;
+  width: 40px;
+}
+#share-img-wrapper {
+  margin-bottom: 20px;
+}
+#spinner {
+  position: relative;
+  margin-top: 5px;
+  font-size: 30px;
+}
+.noUi-marker-normal {
+  display: none;
+}
+.noUi-background {
+  /* background: #FAFAFA; */
+  /* box-shadow: inset 0 1px 1px #f0f0f0; */
+}
+.noUi-target {
+  /* border-radius: 4px; */
+  border-top: 1px solid blue;
+  border-bottom: 1px solid blue;
+  /* box-shadow: inset 0 1px 1px #F0F0F0,0 3px 6px -5px #BBB; */
+}
+.noUi-pips {
+  margin-top: -4px;
+}
+.noUi-background {
+  background: #FAFAFA;
+  box-shadow: inset 0 1px 1px #f0f0f0;
+}
+.noUi-connect {
+  background: #3FB8AF;
+  box-shadow: inset 0 0 3px rgba(51, 51, 51, 0.45);
+  -webkit-transition: background 450ms;
+  transition: background 450ms;
+}
+.noUi-origin {
+  border-radius: 0px;
+}
+.noUi-target {
+  border-radius: 0px;
+  border: 1px solid #D3D3D3;
+  box-shadow: inset 0 1px 1px #f0f0f0, 0 3px 6px -5px #bbbbbb;
+}
+.noUi-target.noUi-connect {
+  box-shadow: inset 0 0 3px rgba(51, 51, 51, 0.45), 0 3px 6px -5px #bbbbbb;
+}
+.noUi-marker-large,
+.noUi-marker-sub {
+  background: #3284bf;
+}
+.form-label-amounts span {
+  color: #3284bf;
+}
+.sub-sub {
+  margin-top: -10px;
+}
+.fa-ul {
+  margin-bottom: 30px;
+}
+#footer {
+  background-color: #3284bf;
+  padding: 2.5em 0em;
+  margin-top: 5em;
+  margin-bottom: 0px;
+  height: 100px;
+  bottom: 0;
+  width: 100%;
+}
+#footer p {
+  font-size:14px;
+  text-align: center;
+  color: white;
+  margin-bottom: 0px;
+}
+#footer a,
+#footer a:hover {
+  color: white;
+  text-decoration: none;
+  cursor: hand;
+}
+#inpOtherAmount {
+  margin-top: -3px;
+}
+.incentive {
+  display: none;
+  width: 100%;
+  text-align: center;
+  background-image: url('../img/incentive.jpg');
+  background-position: center center;
+  background-repeat: none;
+  background-size: cover;
+  height: 200px;
+  margin-top: 40px;
+}
+.incentive span {
+  display: inline-block;
+  margin-top: 0px;
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #3284bf;
+  width: 100%;
+  padding: 1em;
+  font-weight: bold;
+}
+
+.incentive1 {
+  margin-bottom:2em;
+}
+
+.incentive2 {
+  margin-bottom:-5em;
+}
+
+
+/*==================================================
+=            Bootstrap 3 Media Queries             =
+==================================================*/
+/*==========  Mobile First Method  ==========*/
+/* Custom, iPhone Retina */
+@media only screen and (min-width: 320px) {
+  #radio-1-wrapper,
+  #radio-2-wrapper {
+    width: 30%;
+  }
+  #radio-other-wrapper {
+    width: 40%;
+  }
+  .fb-share-btn {
+    margin-top: 15px;
+  }
+}
+/* Extra Small Devices, Phones */
+@media only screen and (min-width: 480px) {
+  #header-h1 {
+    font-size: 28px;
+  }
+}
+/* Small Devices, Tablets */
+@media only screen and (min-width: 768px) {
+  .cat-wrapper i.fa {
+    font-size: 42px;
+    line-height: 20px;
+    margin-top: 1.2em;
+  }
+  p.label {
+    font-size: 20px;
+    line-height: 10px;
+    font-weight: 400;
+    color: inherit;
+    margin-top: 10px;
+    display: inline-block;
+  }
+  #header-h1 {
+    font-size: 48px;
+  }
+}
+/* Medium Devices, Desktops */
+@media only screen and (min-width: 992px) {
+  #giveNowBtn {
+    margin-top: 49px;
+  }
+  #giving {
+    margin-top: 60px;
+  }
+  h1.subtitle {
+    font-size: 26px;
+  }
+  h2.subtitle {
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 24px;
+    padding-top: 20px;
+    margin-top: 0px;
+  }
+  #header-h1 {
+    font-size: 17px;
+    color: white;
+    text-shadow: 3px 2px 1px #0054a6;
+    position: absolute;
+    margin-top: 10%;
+    width: 100%;
+    text-align: center;
+  }
+  .navbar-brand {
+    margin-left: 70px;
+  }
+  p.label {
+    font-size: 13px;
+    font-weight: 400;
+    color: inherit;
+  }
+  .cat-wrapper i.fa {
+    font-size: 24px;
+    margin-top: 1.2em;
+  }
+  #header-h1 {
+    font-size: 56px;
+  }
+  .fb-share-btn {
+    margin-top: 0px;
+  }
+  .contribute {
+    margin-top: 10px;
+  }
+  #slider {
+    margin-top: 19px;
+  }
+}
+/* Large Devices, Wide Screens */
+@media only screen and (min-width: 1200px) {
+  #header-h1 {
+    font-size: 60px;
+  }
+  #giveNowBtn {
+    margin-top: 92px;
+  }
+}

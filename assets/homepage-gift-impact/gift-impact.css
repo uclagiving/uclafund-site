@@ -1,0 +1,154 @@
+/*  */
+/* ==========================================================================
+   Custom styles for Gift Impact section on UCLAfund website
+   ========================================================================== */  
+
+.impact-section p {
+    font-family: oxygen, arial, sans-serif;
+    font-size: 24px;
+}
+    
+    
+    .grid-container {
+        background-color: #ccc;
+        display: grid;
+        grid-gap: 20px;
+        grid-template-columns: 1fr 1fr 1fr;
+        text-align: center;
+    }
+    .grid-container > div:nth-child(1) {background-color: #ccffcc;}
+    .grid-container > div:nth-child(2) {background-color: #aaffdd;}
+    .grid-container > div:nth-child(3) {background-color: #88ffff;}
+
+
+    .budget-graphic {
+      background-color: #fff;
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin: auto;
+    }
+    .outer-circle {
+      position: relative;
+      width: 96%;
+      height: 96%;
+      top: 2%;
+      left: 2%;
+      background-color: rgba(50, 132, 191, .2);
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .inner-circle {
+      position: absolute;
+      width: 90%;
+      height: 90%;
+      top: 5%;
+      left: 5%;
+      background-color: #fff;
+      border-radius: 50%;
+      z-index: 2000;
+    }
+    .inner-text-box {
+      color: #0055a6;
+        padding-top: 10px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-weight: 800 !important;
+      font-family: karbon, times-new-roman, sans-serif !important;
+      font-size: 16px !important;
+    }
+
+    .inner-text-box p {
+      font-size: 1.8em;
+      line-height: 1em;
+      margin: 0; padding: 0;
+    }
+    .inner-text-box h1 {
+          font-weight: 800 !important;
+      font-family: karbon, times-new-roman, sans-serif !important;
+      font-size: 6em;
+      line-height: 0;
+      margin: 0; padding: .6em 0 .4em;
+    }
+
+    .sector-top {
+        position: absolute;
+        width: 100%;
+        height: 50%;
+        overflow: hidden;
+    }
+    .sector-bottom {
+        position: absolute;
+        width: 100%;
+        height: 50%;
+        bottom: 0;
+        left: 0;
+        overflow: hidden;
+    }
+    /* CSS Animation */
+    @keyframes shrinkTop {
+        from {transform: rotate(0deg) ;}
+        to {transform: rotate(167.4deg) ;}
+    }
+
+    .sector-top::before {
+        content: "";
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        border-radius: 0 0 0 0;
+        background-color: #0055a6;
+
+        -webkit-transform-origin: 50% 100%;
+        -moz-transform-origin: 50% 100%;
+        -ms-transform-origin: 50% 100%;
+        transform-origin: 50% 100%;
+
+        -webkit-transform: rotate(140deg);
+        -moz-transform: rotate(140deg);
+        -ms-transform: rotate(140deg);
+        transform: rotate(0deg);
+
+        animation-name: shrinkTop;
+        animation-duration: 2s;
+        animation-delay: 1s;
+        animation-iteration-count: 1;
+        animation-timing-function: cubic-bezier(.3,.55,.5,1);
+        animation-fill-mode: forwards;
+    }
+
+    @keyframes shrinkBottom {
+        from {transform: rotate(0deg) ;}
+        to {transform: rotate(-167.4deg) ;}
+    }
+
+    .sector-bottom::before {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      content: "";
+      border-radius: 0 0 50% 50%;
+      background-color: #0055a6;
+
+      -webkit-transform-origin: 50% 100%;
+      -moz-transform-origin: 50% 100%;
+      -ms-transform-origin: 50% 100%;
+      transform-origin: 50% 0;
+
+      -webkit-transform: rotate(140deg);
+      -moz-transform: rotate(140deg);
+      -ms-transform: rotate(140deg);
+      transform: rotate(0deg);
+
+      animation-name: shrinkBottom;
+      animation-duration: 2s;
+      animation-delay: 1s;
+      animation-iteration-count: 1;
+      animation-timing-function: cubic-bezier(.3,.55,.5,1);
+      animation-fill-mode: forwards;
+    }

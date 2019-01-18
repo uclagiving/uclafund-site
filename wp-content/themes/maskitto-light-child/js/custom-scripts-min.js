@@ -1,0 +1,1 @@
+jQuery(document).ready(function($){$("#school_logo_box").addClass("animated fadeInDown")});

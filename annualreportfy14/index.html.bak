@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>UCLA Fund Annual Report 2014</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+            body {
+
+            }
+        </style>
+        
+    
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+
+        <script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    </head>
+    <body class="bg01">
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    
+
+    <!-- Main masthead for a primary marketing message or call to action -->
+        <div class="masthead">
+            <img class="hidden-md hidden-lg" src="img/header_md.jpg"/>
+            
+            <div class="hex-grid hidden-sm hidden-xs">
+            
+                <div class="hex-row">
+                    <img src="img/hex-y.png" >
+                    <img src="img/hex-pink.png" >
+                    <img id="img2" src="img/hex-gray.png"  data-source="img/face002.png">
+                    <img src="img/hex-g.png" >
+                    <img id="img7" src="img/hex-b1.png" data-source="img/face007.png" >
+                    <img src="img/hex-gold.png" >
+                </div>
+              
+                <div class="hex-row offset">
+                    <img src="img/hex-gray.png"  >
+                    <img id="img6" src="img/hex-db.png" data-source="img/face006.png" >
+                    <img src="img/hex-a.png"  >
+                    <img id="img4" src="img/hex-db.png" data-source="img/face004.png"  >
+                    <img src="img/hex-y.png"  >
+                </div>
+              
+                <div class="hex-row">
+                    <img src="img/hex-p.png" >
+                    <img id="img3" src="img/hex-g.png"  data-source="img/face003.png">
+                    <img id="img5" src="img/hex-gold.png" data-source="img/face005.png"  >
+                </div>
+              
+                <div class="hex-row offset">
+                    <img src="img/hex-gray.png"  >
+                    <img id="img1" src="img/hex-db.png" data-source="img/face001.png" >
+                    <img src="img/hex-y.png"  >
+                    <img id="img8" src="img/hex-p.png" data-source="img/face008.png">
+                </div>
+              
+                <div class="hex-row">
+                    <img src="img/hex-a.png"  >
+                    <img src="img/hex-g.png"  >
+                    <img src="img/hex-db.png"  >
+                </div>
+            
+            </div>
+            
+            <img class="hidden-sm hidden-xs" id="banner-message-img" src="img/banner-message-color-3.png" alt="banner-message-color" >
+        
+        
+        
+        </div> <!-- end masthead -->
+
+        <div class="container">
+
+            <div class="row">
+
+                <div class="col-md-3">
+
+                    <div class="sidebar-nav hidden-sm hidden-xs" data-spy="affix" data-offset-top="390">
+                
+                    <!-- <img src="img/let-there-be.png" alt="let-there-be"> -->
+                
+                        <ul class="nav">
+                            <li id="nav-item-thanks" class="sidebar-list-item active" data-bgColor="bg01">
+                                <a href="#section-one" ><span class="bullet">&#9679;</span> Thanks</a>
+                            </li>
+                            <li id="nav-item-success" class="sidebar-list-item" data-bgColor="bg02">
+                                <a href="#section-two" ><span class="bullet">&#9679;</span> Success</a>
+                            </li>
+                            <li id="nav-item-leadership" class="sidebar-list-item" data-bgColor="bg03">
+                                <a href="#section-three"><span class="bullet">&#9679;</span> Pioneering Leaders</a>
+                            </li>
+                            <li id="nav-item-loyalty" class="sidebar-list-item" data-bgColor="bg04">
+                                <a  href="#section-four"><span class="bullet">&#9679;</span>Loyalty</a>
+                            </li>
+                            <li id="nav-item-light" class="sidebar-list-item" data-bgColor="bg05">
+                                <a class="dark" href="#section-five"><span class="bullet">&#9679;</span> Powerful Roots</a>
+                            </li>
+                            <li id="nav-item-strength" class="sidebar-list-item" data-bgColor="bg07">
+                                <a href="#section-six"><span class="bullet">&#9679;</span>Strength In Numbers</a>
+                            </li>
+                            <li id="nav-item-stronger"  class="sidebar-list-item" data-bgColor="bg06">
+                                <a href="#section-seven"><span class="bullet">&#9679;</span> A Stronger Tomorrow</a>
+                            </li>
+                            <li id="nav-item-up" class="sidebar-list-item" data-bgColor="bg01">
+                                <a href="#section-eight"><span class="bullet">&#9679;</span> Unimagined Possibilities</a>
+                            </li>
+                        </ul>
+
+                    </div>
+
+                </div> <!-- end col-md-3 -->
+
+                <div id="main" class="col-md-9">
+            
+                    <div id="t1"></div>
+                    
+                    <div id="section-one" class="section" data-bgColor="bg01">
+                    
+                        <div id="section-one-title" class="row section-header-row">
+                            <div class="col-md-12">
+                                <img src="img/heading-thanks.png" alt="heading-thanks">
+                            </div>
+                        </div>
+                        
+                        
+                        <p><strong>A job well done.</strong> Thank you to all Bruins — students, alumni, parents and friends — who gave back to UCLA through the UCLA Fund this past fiscal year (July 1, 2013 - June 30, 2014).</p>
+                        
+                        <div class="row">
+                            <div class="col-md-4 col-sm-4" style="text-align: center;">
+                                <div>
+                                    <h4 class="item-desc">Total Gifts</h4>
+                                    <span class="item-desc-sub">(10,134 New Donors)</span>
+                                     
+                            
+                                    <span id="giftNum" class="number num-md">&nbsp;</span><br>
+                                </div>
+                                
+                                
+                                <img id="giftImg" class="graphic" src="img/gift.png" alt="gift" >
+                                
+                            </div>
+                            <div class="col-md-4 col-sm-4" style="text-align: center;">
+                                <div>
+                                <h4 class="item-desc">Gifts Under $100</h4>
+                                <span class="item-desc-sub">&nbsp;</span>
+                              
+                                <span id="donorNum" class="number num-md">&nbsp;</span><br>
+                                </div>
+                                
+                                <img id="donorsImg" class="graphic" src="img/donors.png" alt="donors" >
+                                
+                            </div>
+                            <div class="col-md-4 col-sm-4" style="text-align: center;">
+                                <div>
+                                <h4 class="item-desc">Total Raised</h4>
+                                <span class="item-desc-sub">&nbsp;</span>
+                             
+                                <span id="dollarsNumSymbol" class="number num-md">$</span><span id="dollarsNum" class="number num-md">&nbsp;</span><br>
+                                </div>
+                                
+                                <img id="dollarsImg" class="graphic" src="img/dollars.png" alt="dollars" >
+                                
+                                
+                            </div>
+                        </div>
+                        
+                       
+                    </div> <!-- end section one -->
+                    <div id="t2"></div>
+                    <div id="section-two" class="section" data-bgColor="bg02">
+                    
+                        <div id="section-two-title" class="row section-header-row">
+                            <div class="col-md-12">
+                                <img src="img/heading-success.png" alt="heading-success" >
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                        
+                            <div class="col-md-12">
+                                <p><strong>For many Bruins, giving back is in their DNA.</strong> We all want UCLA to stay amazing and surpass our wildest dreams over the next 100 years.</p>
+                            <p >Engaging with the UCLA Fund and supporting UCLA is a serious matter, but we always do it with a smile.</p>
+                            </div>
+                            
+                        
+                        </div>
+      
+                        
+                        <div class="row">
+                        
+                            
+                            
+                            <div class="col-md-12">
+                                <h3 id="triggerBG" class="section-header">Blue & Gold Challenge</h3>
+                                <hr>
+                                <p>Our second annual Blue & Gold Challenge (Nov. 17 - Nov. 30) was a rousing success! Not only did UCLA beat USC, but Pat Petersilia ’71 and parents Erin and Andy Holden committed $100,000 to UCLA because Bruins united to give at least 3,000 gifts…a number we clearly surpassed.</p>
+
+                            </div>
+                                                        
+                            <div class="col-md-6">
+                            
+                                <div>
+                                    <h4 class="item-desc">Total Raised</h4>
+                                    <span class="item-desc-sub">(not including match)</span>
+                                    <span class="scoreboard highlight">$</span><span id="numTotalCash" class="scoreboard highlight">&nbsp;</span>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="item-desc">Total Gifts</h4>
+                                    <span id="numTotalGifts" class="scoreboard">&nbsp;</span>
+                                </div>
+                                
+                                <div>
+                                    <h4 class="item-desc">New Donors to the UCLA Fund</h4>
+                                    <span id="numNewDonors" class="scoreboard">&nbsp;</span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                            
+                                <img id="goalpost-img" class="hidden-xs" src="img/goalpost3.png" alt="goalpost3" width="396" height="398">
+                            </div>
+                        
+                        </div>
+
+                        <div id="fb-section" class="row">
+                        
+                            
+                            
+                            <div class="col-md-12">
+                                <h3 id="triggerFB" class="section-header">Like Us Challenge</h3>
+                                <hr>
+                                <p>Julie Ohara Stewart ’95 committed $10 to UCLA for every new “fan” on <a href="http://facebook.com/uclafund" target="_blank">our Facebook page</a> on Feb. 13 and 14.</p>
+                            </div>
+                            
+                        
+                            <div class="col-md-6">
+                                <h4 class="item-desc">Number of New Fans</h4>
+                                <span id="numTwoDayTotal" class="number num-md">&nbsp;</span>
+                                <h4 class="item-desc">Total Raised</h4>
+                                <span class="number num-md">$</span><span id="numTotalRaised" class="number num-md">&nbsp;</span>
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="item-desc">Increase in Fanbase</h4>
+                                <span class="number num-md">+</span><span id="numIncreaseFanbase" class="number num-md">&nbsp;</span><span class="number num-md">%</span>
+                                <div>
+                                    <img id="fb-like" class="hidden-sm hidden-xs" src="img/fb-like_sm.png" alt="fb-like">
+                                </div>
+                                
+                            </div>
+                        </div>
+                        
+                        <div id="thank-section" class="row">
+                        
+                            
+                        
+                            <div class="col-md-12">
+                                <h3 id="triggerTHUD" class="section-header">Thank UCLA Day</h3>
+                                <hr>
+                                <p>Thank UCLA Day on May 15, UCLA’s largest student philanthropy event on campus, was also part of The Centennial Campaign kick-off. It’s amazing what we can do—in just three hours—when we join together and give back. </p>
+                            </div>
+                            
+                            
+                            <div class="col-md-4">
+                                <h4 class="item-desc">Number of Hours</h4>
+                                <span id="numHours" class="number num-md">&nbsp;</span>
+                                
+                                <h4 class="item-desc">Number of Donors</h4>
+                                <span id="numStudentDonors" class="number num-md">&nbsp;</span>
+                                
+                            </div>
+                            
+                            <div class="col-md-8">
+                        
+                                <h4 class="item-desc">Thank UCLA Day Slideshow</h4>
+                                
+                                <div id="thud-carousel" class="carousel slide" data-ride="carousel">
+                                    <!-- Indicators -->
+                                    <ol class="carousel-indicators">
+                                        <li data-target="#thud-carousel" data-slide-to="0" class="active"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="1"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="2"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="3"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="4"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="5"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="6"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="7"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="8"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="9"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="10"></li>
+                                        <li data-target="#thud-carousel" data-slide-to="11"></li>
+                                    </ol>
+                                
+                                    <!-- Wrapper for slides -->
+                                    <div class="carousel-inner">
+                                        <div class="item active">
+                                            <img src="img/thud/ucladay-1.jpg" alt="ucladay-1" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-17.jpg" alt="ucladay-17" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-3.jpg" alt="ucladay-3" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-5.jpg" alt="ucladay-5" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-6.jpg" alt="ucladay-6" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-7.jpg" alt="ucladay-7" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-8.jpg" alt="ucladay-8" >
+                                        </div>
+
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-10.jpg" alt="ucladay-10" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-11.jpg" alt="ucladay-11" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-12.jpg" alt="ucladay-12" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-14.jpg" alt="ucladay-14" >
+                                        </div>
+                                        <div class="item">
+                                            <img src="img/thud/ucladay-18.jpg" alt="ucladay-18" >
+                                        </div>
+                                    </div>
+                                
+                                    <!-- Controls -->
+                                    <a class="left carousel-control" href="#thud-carousel" role="button" data-slide="prev">
+                                        <span class="glyphicon glyphicon-chevron-left"></span>
+                                    </a>
+                                    <a class="right carousel-control" href="#thud-carousel" role="button" data-slide="next">
+                                        <span class="glyphicon glyphicon-chevron-right"></span>
+                                    </a>
+                                </div>
+                                
+                                <div class="clearfix"></div>
+                        
+                            </div>
+
+                        </div>
+
+                    </div> <!-- end section 2 -->
+                    <div id="t3"></div>
+                    <div id="section-three" class="section" data-bgColor="bg05">
+                    
+                        <div id="section-three-title" class="row section-header-row">
+                            <div class="col-md-12">
+                                <img src="img/heading-leadership.png" alt="heading-leadership" >
+                            </div>
+                        </div>
+                        
+                        <p><strong>Thank you to our leadership donors.</strong> The Chancellor's Society, UCLA's leadership giving program, is comprised of 5,857 donors who raised $12.15 million in fiscal year 2014.</p>
+    
+                        <div class="row">
+                        
+                            <div class="col-md-12">
+                            
+                                <img src="img/leadership2.png" alt="leadership">
+                                                                
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                
+                                <ul class="leadership-legend">
+                                	<li>
+                                		Chancellor's Cabinet ( $10,000+ )
+                                	</li>
+                                	<li>
+                                		Chancellor's Associates ( $2,500 - $9,999 )
+                                	</li>
+                                	<li>
+                                		Chancellor's Circle ( $1,000 - $2,499 )
+                                	</li>
+                                	<li>
+                                		Chancellor's Young Alumni ( $250+, $500+ ) <br><span class="sub-li">( tailored to your graduation year )</span>
+                                	</li>
+                                	<li>
+                                		Chancellor's Student Circle ( $100+ )
+                                	</li>
+                                </ul>
+                                
+                            </div>
+                        </div>
+                        
+                    </div> <!-- end section 3 -->
+                    <div id="t4"></div>
+                    <div id="section-four" class="section" data-bgColor="bg03">
+                    
+                        <div id="section-four-title" class="row section-header-row">
+                            <div class="col-md-12">
+                                <img src="img/heading-loyalty.png" alt="heading-loyalty" >
+                            </div>
+                        </div>
+    
+                        <p class="section-headline">We see giving back as a lifelong commitment because you are a part of UCLA and UCLA is a part of you.</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="item-desc">Dollars Raised</h4>
+                                <span class="item-desc-sub">(From loyal donors!)</span>
+                                
+                                <span class="number num-md">$</span><span id="loyalMoney" class="number num-md">&nbsp;</span><br><br>
+                                <img id="plusSign" src="img/plus.png" alt="plus" width="107" height="114">
+                                <img id="moneyGraphic" src="img/money.png" alt="donor" width="137" height="150">
+    
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h4 class="item-desc">Loyal Donors</h4>
+                                <span class="item-desc-sub">(3+ years of consecutive giving to the UCLA Fund)</span>
+                                <span id="loyalDonors" class="number num-md">&nbsp;</span><br><br>
+                                <img id="heartSign" src="img/heart.png" alt="heart" width="107" height="94">
+                                <img id="donorsGraphic" src="img/donors3.png" alt="donors2" width="211" height="150">
+                            </div>
+                        </div>
+
+                    </div> <!-- end section 4 -->
+                    <div id="t5"></div>
+                    <div id="section-five" class="section" data-bgColor="bg06">
+                
+                        <div id="section-five-title" class="row section-header-row">
+                            <div class="col-md-12">
+                                <img src="img/heading-roots.png" alt="heading-light" >
+                            </div>
+                        </div>
+                
+                        <p class="section-headline">The Chancellor’s Greatest Needs (CGN) fund is our university’s only campus-wide unrestricted fund. Every area on campus relies on UCLA—as a whole—to remain strong. The Chancellor's Greatest Needs fund helps us preserve and enhance that strength.</p> 
+                    
+                        <div class="row">
+                            <!--
+<div class="col-md-4 col-md-offset-4">
+                                <h4 class="item-desc">Total Donated to CGN</h4>
+                                <span class="number num-md">$</span><span id="cgnCash" class="number num-md">&nbsp;</span><br><br>
+                            </div>
+-->
+                            
+                            <div class="col-md-12" style="text-align: center;">
+                                <img id="cgn-graphic" src="img/cgn-graphic-3.png" alt="cgn-graphic">
+                            </div>
+                            
+                        </div>
+                        
+                        
+                        <div class=" row imagine">
+                            <div class="media">
+                                <a class="pull-left">
+                                    <img class="media-object" src="img/bulb.png" alt="bulb" width="55" height="70">
+                                </a>
+                                <div class="media-body">
+                                  <p>Imagine the possibilities if we designate a part of our gift or increase our current gift, even 10 percent, to CGN. The sky’s the limit.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div> <!-- end section 5 -->
+                    
+                    <div id="t6"></div>
+                    <div id="section-six" class="section" data-bgColor="bg04">
+                    
+                        <div id="section-seven-title" class="row section-header-row">
+                            <div class="col-md-12">
+                                <img src="img/heading-strength.png" alt="heading-strength" >
+                            </div>
+                        </div>
+                        
+                        <p><strong>65% of all donors gave a gift of $100 or less totaling $7.41M.</strong> That shows that when we unite, big things happen.</p>
+                        <div id="number-bruin" class="row">
+                            <img src="img/number-bruin.png" alt="number-bruin3" >
+                        </div>
+                        
+                        
+       
+                        <div class=" row imagine">
+                    
+                            <div class="media">
+                                <a class="pull-left">
+                                    <img class="media-object" src="img/bulb.png" alt="bulb" width="55" height="70">
+                                </a>
+                               <div class="media-body">
+                                  <p><strong>Imagine if all of our alumni—425,729—made an annual gift of just $25 every year, that would be $10.6M a year.</strong> The possibilities are endless. And it’s our courage, optimism and Bruin pride that will get us there. Annual giving to anywhere on campus—anywhere that sparks something in you—is critical. That’s how we pay it forward and show gratitude for what UCLA has given to us.</p>
+                               </div>
+                            </div>
+
+                        </div>
+                    
+                        <div id="what-if-01" class="">
+                        
+                            <div class="row">
+                                <div class="col-md-3" style="text-align: center;">
+                                    <span class="what-if-message what-if-1">What if...</span>
+                                </div>
+                                <div id="what-if-btns-wrapper" class="col-md-3" style="text-align: center;">
+                                    <button id="whatIfBtn01" class="btn btn-lg whatIfBtn active" data-num="$5.0M">200,000</button>
+                                    <button id="whatIfBtn02" class="btn btn-lg whatIfBtn" data-num="$7.5M">300,000</button>
+                                    <button id="whatIfBtn03" class="btn btn-lg whatIfBtn" data-num="$10.0M">400,000</button>
+                                </div>
+                                <div class="col-md-6" style="text-align: center;">
+                                    <span class="what-if-message what-if-2">donors gave $25?</span>
+                                </div>
+                            </div>
+                            
+                            
+                            <div class="row">
+                                <div class="col-md-12" style="text-align: center;">
+                                    <span id="whatIfNum" class="number num-lg">$5.0M</span>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    
+                    </div> <!-- end section 7 -->
+                    
+                    <div id="t7"></div>
+                    <div id="section-seven" class="section" data-bgColor="bg07">
+                    
+                        <div id="section-six-title" class="row section-header-row">
+                            <div class="col-md-12">
+                                <img src="img/heading-stronger.png" alt="heading-stronger" >
+                            </div>
+                                                        
+                        </div>
+                        
+                        
+                    
+                        <p>The Centennial Campaign for UCLA launched in May 2014 and we are off to an amazing start. By UCLA’s centennial in 2019, it is our goal to have 60,000 Bruins giving back to our university on a consistent, annual basis. By UCLA’s 100th anniversary, we will be positioned for an astounding next century.</p>
+                        
+                        <p class=""><strong>You are an important part of UCLA.</strong> Your philanthropy, combined with so many other Bruins, will keep UCLA unrivaled.</p>
+                        
+                        
+                        <div id="centennial-video" class="row">
+                            <div class="col-md-12">
+                                <h4 class="item-desc">Centennial Campaign Video</h4>
+                                <div class="video-wrapper">
+                                    <iframe width="853" height="480" src="//www.youtube.com/embed/AHhYwGIJPv4?rel=0" frameborder="0" allowfullscreen></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div> <!-- end section 6 -->
+                    
+                    <div id="t8"></div>
+                    <div id="section-eight" class="section" data-bgColor="bg08">
+                
+                        <div id="section-eight-title" class="row section-header-row">
+                            <div class="col-md-12">
+                                <img src="img/heading-up.png" alt="heading-up" >
+                            </div>
+                        </div>
+                    
+
+                        <p>Look at how far we have come in our first century. It’s because of your support—gifts large and small—that UCLA is strong today.</p>
+                        
+                        <p><strong>Imagine the possibilities</strong> if even more Bruins unite to support UCLA. This is our chance to be bold. We don’t break barriers, we shatter them! Every year. Together.</p>
+                        
+
+                        <p class="final-message"><strong>Thank you for your support of UCLA.</strong></p>
+                        
+                    </div> <!-- end section 8 -->
+                    
+                </div> <!-- end col-md-9 -->
+                
+            </div> <!-- end row -->
+            
+        </div> <!-- end container -->
+    
+        <div id="footer">
+        
+            <div class="container">
+                <div class="row">
+                    <div class="ucla-fund-info col-md-3 col-sm-3 col">
+                        <div class="logo">
+                            <img src="img/ucla_fund.png" alt="ucla_fund" width="106" height="19">
+                        </div>
+                        <div class="address">
+                            10920 Wilshire Blvd., Suite 1400<br>
+                            Los Angeles, CA 90024<br>
+                            310.794.2363<br>
+                            <a href="mailto:ucla@support.ucla.edu">ucla@support.ucla.edu</a>  |  <a href="http://uclafund.ucla.edu">uclafund.ucla.edu</a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 ">
+                        <ul class="social-icons">
+                        	<li>
+                        	     <a href="https://www.facebook.com/UCLAFund" target="_blank"><img src="img/facebook.png" alt="facebook" width="29" height="55"></a>
+                        	</li>
+                        	<li>
+                        	     <a href="https://twitter.com/UCLAFUND" target="_blank"><img src="img/twitter.png" alt="twitter" width="68" height="56"></a>
+                        	</li>
+                        	<li>
+                        	     <a href="https://www.youtube.com/user/theuclafund/" target="_blank"><img src="img/youtube.png" alt="twitter" width="55" height="55"</a>
+                        	</li>
+                        	<li>
+                        	     <a href="http://instagram.com/uclafund" target="_blank"><img src="img/instagram.png" alt="twitter" width="55" height="55"></a>
+                        	</li>
+                        </ul>
+                    </div>
+                    <div id="pdf-wrapper" class="col-md-3">
+                        <p>Download a PDF version of this report</p>
+                        <a id="dlPDF" href="assets/ucla-fund-annual-report-fy14.pdf" class="btn btn-primary btn-lg">Download PDF</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
+
+        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/color-animate.js"></script>
+        <script src="js/vendor/waypoints.js"></script>
+        <script src="js/vendor/jquery.fitvids.js"></script>
+        
+        
+        
+        <script src="js/vendor/jquery.animateNumber.min.js"></script>
+        
+
+        <script src="js/min/main.min.js"></script>        
+        
+
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <script>
+            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+            e.src='//www.google-analytics.com/analytics.js';
+            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+            ga('create','UA-XXXXX-X');ga('send','pageview');
+        </script>
+    </body>
+</html>

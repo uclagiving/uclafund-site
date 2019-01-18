@@ -1,0 +1,120 @@
+/*
+Theme Name: Maskitto Light Child
+Description: A light weight clean and simple wordpress theme for everyday use. Bunch of useful features like, responsive design, united color schemes, slider with lots of options, fast to learn administration panel layout, plus, clean and easy visual design and it's all free. Documentation available at http://shufflehound.com/maskitto-light/ and demo at http://demo.shufflehound.com/maskitto-light/
+Version: 1.0.4
+Author: Shufflehound
+Author URI: http://shufflehound.com
+Template: maskitto-light
+Text Domain: maskitto-light-child
+*/
+
+
+/* BEGIN Luskin Template PARALLELOGRAM CSS =++================================================================ */
+
+.background-1 {
+    background-image:url('https://uclafund.assets.support2.ucla.edu/2019/01/luskin-trichtype-1-2.jpg');
+}
+.background-2 {
+    background-image:url('https://uclafund.assets.support2.ucla.edu/2019/01/luskin-trichtype-2.jpg');
+}
+.background-3 {
+    background-image:url('https://uclafund.assets.support2.ucla.edu/2019/01/luskin-trichtype-3.jpg');
+}
+
+.plx1 {
+    background-position: center top !important;
+    background-repeat: no-repeat;
+    background-size: cover !important;
+}
+.plx2 {
+    background-position: center center !important;
+    background-repeat: no-repeat;
+    background-size: cover !important;
+}
+.plx3 {
+    background-position: center top !important;
+    background-repeat: no-repeat;
+    background-size: cover !important;
+}
+
+
+.gaw-slide-title {
+    padding: .5em 0 1.8em;
+    margin: 0 3em;
+    z-index: 1;
+    position: relative;
+    text-align: center;
+}
+
+.gaw-slide-title::before { 
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+    top: 0; left: 0 ;
+    -webkit-transform: skew(-20deg);
+    -moz-transform: skew(-20deg);
+    -o-transform: skew(-20deg);
+    transform: skew(-20deg);
+    opacity: .5;
+    background: #ffffff; /* For browsers that do not support gradients */
+    /*
+    background: -webkit-linear-gradient(left, #023882, #3384c1);
+    background: -moz-linear-gradient(left, #023882, #3384c1);
+    background: -o-linear-gradient(left, #023882, #3384c1);
+    background: linear-gradient(to right, #023882, #57b1df); /* For Safari 5.1 to 6.0 */ /* For Opera 11.1 to 12.0 */ /* For Firefox 3.6 to 15 */ /* Standard syntax */
+    
+}
+.gaw-slide-title h2 { 
+    font-family: oxygen, sans-serif;
+    color: #3384c1;
+    font-size: 65px;
+    font-weight: 500;
+    line-height: 78px;
+    text-transform: uppercase;
+    font-style: italic;
+}
+.solid {background-color: #ffffff;}
+.grad {
+    background: #ffffff; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(left, red, #3384c1);
+    background: -moz-linear-gradient(left, red, #3384c1);
+    background: -o-linear-gradient(left, red, #3384c1);
+    background: linear-gradient(to right, red, #3384c1); /* For Safari 5.1 to 6.0 */ /* For Opera 11.1 to 12.0 */ /* For Firefox 3.6 to 15 */ /* Standard syntax */
+}
+
+#school_logo_box {
+    background: #ffffff;
+    background-size: contain;
+    border: 2px solid #ffffff;
+    box-sizing: border-box;
+    border-radius: 4px;
+    position: relative;
+    z-index: 999;
+    margin: 0 auto;
+}
+#school_logo_box img {
+    max-height: 100%; max-width: 100%;
+}
+
+.impact_header {
+    font-style: italic;
+}
+
+/* END Luskin Template CSS ======================================================================== */
+/* END Luskin Template CSS ======================================================================== */
+/* END Luskin Template CSS ======================================================================== */
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,515 @@
+/* START Load the Fonts ======================================================================================================================================================== */
+@font-face {
+	font-family: 'karbon'; 
+    src: url('http://uclafund.ucla.edu/assets/karbon/karbon-regular-webfont.eot'); /* IE9 Compat Modes */
+    src:    url('http://uclafund.ucla.edu/assets/karbon/karbon-regular-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('http://uclafund.ucla.edu/assets/karbon/karbon-regular-webfont.woff') format('woff'), /* Pretty Modern Browsers */
+            url('http://uclafund.ucla.edu/assets/karbon/karbon-regular-webfont.ttf') format('truetype'), /* Safari, Android, iOS */
+            url('http://uclafund.ucla.edu/assets/karbon/karbon-regular-webfont.svg') format('svg'); /* Legacy iOS */
+	font-weight: 400;
+	font-style: normal;
+}
+body {
+    font-family: open-sans, arial, sans-serif;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* START Page Animation CSS ======================================================================================================================================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(150px)
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}
+
+.fadeInUp {
+  animation-name: fadeInUp;
+  animation-duration: 1s;
+  animation-timing-function: cubic-bezier(.3, .84, .38, 1);
+}
+
+/* START Housekeeping Reset CSS ======================================================================================================================================================== */
+.enable-javascript {
+  min-height: 50px;
+  text-align: center;
+  background-color: #FFE800;
+  vertical-align: middle;
+  line-height: 50px;
+}
+h1, h2, h3, h4, h5, h5, p {
+    margin: 0;
+    padding: 0;
+}
+
+/* START Grid Template Layout CSS (mobile first) ======================================================================================================================================================== */
+
+.g-container {
+    display: grid;
+    grid-template-areas: 
+        "header"
+        "hero"
+        "content-footer"
+        "footer";
+}
+    .header {     grid-area: header;}
+.hero {
+    grid-area: hero;
+
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-rows: 25% 30% 15%;
+    grid-template-areas: 
+        "hero-text"
+        "give-module"
+        "image-spacer"
+}
+    .hero-text {        grid-area: hero-text;}
+    .give-module {      grid-area: give-module;}
+    .image-spacer {     grid-area: image-spacer;}
+
+    .content-footer {   grid-area: content-footer;}
+    .footer {           grid-area: footer;}
+
+/* START Header ======================================================================================================================================================== */
+
+.header {
+    background-color: white ;
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+}
+    .header img {
+        padding-left: 1em;
+        height: 26px;
+        vertical-align: middle;
+    }
+    .logo-container {
+        margin: 0 auto;
+        max-width: 981px;
+    }
+
+/* START Hero ======================================================================================================================================================== */
+
+.hero-text {
+    max-width: 400px;
+	margin:auto;
+    font-family: 'Open Sans', sans-serif;
+}
+    .hero-text h1 {
+        color: #ffe800;
+        font-family: karbon, helvetica, arial, sans-serif;
+        font-weight: 400;
+        font-size: 32px;
+        margin: 0 0 12px;
+    }
+    .hero-text p {
+        color: #fff;
+        font-size: 15px;
+        line-height: 21px;
+        margin: 0 0 25px;
+    }
+
+/* START Give Module ======================================================================================================================================================== */
+
+/* START Grid Layout */
+.give-module {
+    display: grid;
+    grid-column-gap: 8px;
+    grid-row-gap: 18px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 4fr 3fr 4fr 4fr;
+    grid-template-areas: 
+    "module_heading module_heading"
+    "tab-left tab-right"
+    "w-tab-content w-tab-content"
+    "w-tab-content w-tab-content";
+}
+.module_heading {   
+    grid-area: module_heading;
+    justify-self: stretch;
+    align-self: stretch;
+    vertical-align: center;
+}
+.tab-left {         grid-area: tab-left;}
+.tab-right {        grid-area: tab-right;}
+.w-tab-content {    grid-area: w-tab-content;}
+
+/* END Grid Layout ========================================= */
+
+.give-module {
+    background-color: rgba(221,240,255,.8);
+    position: relative;
+    box-sizing: border-box;
+	border-radius: 4px;
+    padding: 18px;
+    max-width: 400px;
+    width: 90%;
+    height: 100%;
+	margin: auto;
+}
+.module_heading {
+    max-height: 60px;
+    width: 100%;
+    background-color: #eee;
+	border-radius: 4px;
+    text-align: center;
+
+    display: grid;
+    align-items: center; 
+}
+    .module_heading span {
+        font-family: 'Open Sans', sans-serif;
+        color: #565656;
+        font-weight: 600;
+    }
+.tabs {
+    background-color: #fff;
+    color: #3284bf;
+    cursor: pointer;
+    border: 0px solid #ccc;
+	border-radius: 4px;
+    display: grid;
+    align-items: center;
+}
+    .tabs span {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+.tab-left.w--current,
+.tab-right.w--current {
+    background-color: #3284bf !important;
+    color: #fff;
+}
+.tab-left:hover,
+.tab-right:hover {
+    background-color: rgba(255, 255, 255, .6);
+}
+
+.w-tab-content {
+    height:100%;
+    width: 100%;
+}
+.w-tab-pane {
+    display: none;
+    height: 100%;
+    grid-row-gap: 18px;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: 
+        "input-container"
+        "submit-button";
+}
+    .w-tab-pane.w--tab-active {
+        display: grid;
+    }
+
+.input-container {
+    grid-area: input-container;
+    background-color: #fff;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 1px solid #3284bf;
+	border-radius: 4px;
+    display: grid;
+    grid-template-areas: 
+    "input_text_left input_field input_text_right";
+}
+.input_text_left { 
+    grid-area: input_text_left;
+    min-width: 20px;
+    font-size: 18px;
+}
+.input_text_right { 
+    grid-area: input_text_right; 
+    min-width: 100px;
+    font-size: 14px;
+}
+.input_text_left, .input_text_right {
+    color: #565656;
+    display: grid;
+    align-items: center;
+    font-weight: 600;
+}
+.input_field {
+    grid-area: input_field;
+    border-style: none;
+    color: #00a5e5;
+    font-size: 24px;
+    max-width: 180px;
+}
+.submit-button {
+    grid-area: submit-button;
+    background-color: #3284bf;
+    justify-self: stretch;
+    align-self: stretch;
+	padding: 14px 20px;
+	border: 0px solid #ccc;
+	border-radius: 4px;
+
+    display: grid;
+    align-items: center;
+}
+    .submit-button span {
+        color: #fff;
+        font-size: 15px;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+
+
+input[type=number]:focus {
+    outline: none;
+}
+button[type=submit]:focus {
+    outline: none;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0;
+    /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+
+
+
+/* START Content Footer ======================================================================================================================================================== */
+
+/* THE GRID structure */
+.content-footer {
+    background: #fff;
+    max-width: 981px;
+    margin: 0 auto;
+    font-family: 'Open Sans', sans-serif;
+    padding: 1em;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr 1fr 1fr;
+    grid-gap: 2em 0;
+    grid-template-areas: 
+        "spark"
+        "phone"
+        "recurring";
+}
+    .spark_giving {         grid-area: spark; }
+    .phone_giving {         grid-area: phone; }
+    .recurring_giving {     grid-area: recurring; }
+/* END THE GRID structure */
+
+
+.spark_giving, .phone_giving, .recurring_giving  {
+    padding: .5em;
+    text-align: center;
+    display: grid;
+    align-content: center;
+}
+.spark_giving {
+    background-color: #fff;
+}
+.phone_giving {
+    background-color: #fff;
+}
+.recurring_giving {
+    background-color: #fff;
+}
+    .spark_icon {
+        height: 40px;
+        display: block;
+        margin: .5em auto;
+        padding: 0;
+    }
+    .phone_icon {
+        height: 60px;
+        display: block;
+        margin: .5em auto;
+        padding: 0;
+    }
+    .recurring_icon {
+        height: 60px;
+        display: block;
+        margin: .5em auto;
+        padding: 0;
+    }
+
+    .content-footer h6 {
+        color: #565656;
+        font-size: 13px;
+        font-weight: 600;
+        margin: .5em auto;
+        padding: 0;
+    }
+    .content-footer p {
+        color: #565656;
+        font-size: 13px;
+        line-height: 18px;
+        margin: .5em 0;
+    }
+    .content-footer a {
+        color: #3284bf;
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        margin: .5em auto;
+        padding: 0;
+    }
+
+/* START Footer Footer ======================================================================================================================================================== */
+
+.footer {
+    background: #fff;
+    text-align: center;
+    padding: 1em;
+}
+.footer a {
+    text-decoration: none;
+    cursor: pointer;
+}
+    .fb_icon {
+        height: 20px;
+        margin: 1em;
+    }
+    .twitter_icon {
+        height: 18px;
+        margin: 1em;
+    }
+    .ig_icon {
+        height: 18px;
+        margin: 1em;
+    }
+address p {
+    color: #888;
+    font-size: 12px;
+    line-height: 20px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    text-align: center;
+}
+
+
+/* mobile styles */
+/* START Mobile Styles ======================================================================================================================================================== */
+
+@media screen and (min-width: 479px) {
+    /*
+    .hero {
+        grid-template-rows: 10% 10% auto;
+        
+    }
+    */
+}
+
+/* IPad =========== */
+@media screen and (min-width: 768px) {
+    
+    .hero {
+        grid-template-rows: 20% 20% auto;
+    }
+
+}
+
+/* IPad Pro and Laptop  */
+@media screen and (min-width: 1024px) {
+
+	.header {
+		text-align:left;
+	}
+	
+	.hero {
+		display:block;
+        background-image: url('../images/donate-hero-desktop.jpg');		
+	    background-size: auto 100%;
+	    background-position: center top;
+	    background-repeat: no-repeat;
+	    text-align: center;
+
+	        /* Height and width fallback for older browsers. */
+	        height: 100%;
+	        width: 100%;
+      
+	        /* Set the height to match that of the viewport. */
+	        height: 100vh;
+      
+	        /* Set the width to match that of the viewport. */
+	        width: 100vw;
+	}
+	
+	.hero-nested-1 {
+		width: 1000px;
+		margin: 50px auto auto auto;
+		display: table;
+	}
+	
+	.hero-nested-2 {
+		display: table-row;
+	}
+	
+	.hero-nested-3 {
+		width: 50%;
+		display: table-cell;
+	}
+	
+	.hero-nested-4 {
+		display: none;
+	}
+	
+	.hero-nested-5 {
+		display: table-cell;
+	}
+	
+	.hero-nested-6 {
+		display: none;
+	}
+	
+    .content-footer {
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: 100%;
+        grid-gap: 0 20px;
+        grid-template-areas: 
+            "spark phone recurring";
+    }
+
+}
+
+@media screen and (max-width: 1024px) {
+	
+	.header {
+		text-align:center;
+	}
+	
+	.hero {
+		display:block;
+	    background-color: #5297DD;
+	    text-align: center;
+		padding-top:50px;
+	}
+	
+	.hero-nested-4 {
+		display: block;
+	}
+	
+	.hero-nested-5 {
+		display: none;
+	}
+	
+	.hero-nested-6 {
+		display: block;
+	}
+	
+}
+

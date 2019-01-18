@@ -1,0 +1,173 @@
+jQuery(document).ready(function(){
+	
+	var default_url = "https://giving.ucla.edu/campaign/Donate.aspx?SiteNum=790&al=y&lg=y";
+		
+	var redirectUrl = default_url;
+	
+	var public_id = "";
+	var lname = "";
+	var fname = "";
+	var code = "";
+	var finder = "";
+	var scode = "";
+	var fund = "";
+	var f2 = "";
+	var f3 = "";
+	var f4 = "";
+	var f5 = "";
+	var f6 = "";
+	var amount = "";
+	var a2 = "";
+	var a3 = "";
+	var a4 = "";
+	var a5 = "";
+	var a6 = "";
+	var donor_id = "";
+		
+	var qsObj = jQuery.deparam.querystring();
+	
+	public_id = qsObj.mg || qsObj.MG || qsObj.Mg;
+	fname = qsObj.FName || qsObj.Fname || qsObj.fname || qsObj.fName || qsObj.FNAME;
+	lname = qsObj.LName || qsObj.Lname || qsObj.lname || qsObj.lName || qsObj.LNAME;
+	code = qsObj.Code || qsObj.code || qsObj.CODE;
+	scode = qsObj.SCode || qsObj.Scode || qsObj.sCode || qsObj.scode || qsObj.SCODE;
+	finder = qsObj.Finder || qsObj.finder || qsObj.FINDER;
+	fund = qsObj.Fund || qsObj.fund || qsObj.FUND;
+	
+	f2 = qsObj.f2 || qsObj.F2;
+	f3 = qsObj.f3 || qsObj.F3;
+	f4 = qsObj.f4 || qsObj.F4;
+	f5 = qsObj.f5 || qsObj.F5;
+	f6 = qsObj.f6 || qsObj.F6;
+	
+	amount = qsObj.amount || qsObj.Amount || qsObj.AMOUNT;
+	
+	a2 = qsObj.a2 || qsObj.A2;
+	a3 = qsObj.a3 || qsObj.A3;
+	a4 = qsObj.a4 || qsObj.A4;
+	a5 = qsObj.a5 || qsObj.A5;
+	a6 = qsObj.a6 || qsObj.A6;
+	
+	donor_id = qsObj.donorid || qsObj.donorId || qsObj.Donorid || qsObj.DONORID || qsObj.DonorId || qsObj.DonorID;
+	
+
+	if ((public_id != null) && (public_id.replace(/\s/g,"") != "")) {
+		
+	    redirectUrl = jQuery.param.querystring( redirectUrl, { 
+		    LName:lname,
+			FName:fname, 
+		    mg:public_id, 
+		    Code:code, 
+		    Finder:finder, 
+		    SCode:scode, 
+		    Fund:fund,
+		    f2:f2,
+			f3:f3,
+			f4:f4,
+			f5:f5,
+			f6:f6,
+			amount:amount,
+			a2:a2,
+			a3:a3,
+			a4:a4,
+			a5:a5,
+			a6:a6,
+			DonorID:donor_id
+		    
+		});
+	
+		//give now buttons
+		//$(".btn").attr("href", "https://" + default_url);
+	
+		jQuery(".autopopulate").attr("href", redirectUrl);
+	
+	}
+		   
+});
+
+jQuery(document).ready(function(){
+	
+	var default_url = "https://myaccount.support.ucla.edu/login/info.aspx?action=ub&al=y";
+		
+	var redirectUrl = default_url;
+	
+	var public_id = "";
+	var lname = "";
+	var fname = "";
+	var code = "";
+	var finder = "";
+	var scode = "";
+	var fund = "";
+	var f2 = "";
+	var f3 = "";
+	var f4 = "";
+	var f5 = "";
+	var f6 = "";
+	var amount = "";
+	var a2 = "";
+	var a3 = "";
+	var a4 = "";
+	var a5 = "";
+	var a6 = "";
+	var donor_id = "";
+		
+	var qsObj = jQuery.deparam.querystring();
+	
+	public_id = qsObj.mg || qsObj.MG || qsObj.Mg;
+	fname = qsObj.FName || qsObj.Fname || qsObj.fname || qsObj.fName || qsObj.FNAME;
+	lname = qsObj.LName || qsObj.Lname || qsObj.lname || qsObj.lName || qsObj.LNAME;
+	code = qsObj.Code || qsObj.code || qsObj.CODE;
+	scode = qsObj.SCode || qsObj.Scode || qsObj.sCode || qsObj.scode || qsObj.SCODE;
+	finder = qsObj.Finder || qsObj.finder || qsObj.FINDER;
+	fund = qsObj.Fund || qsObj.fund || qsObj.FUND;
+	
+	f2 = qsObj.f2 || qsObj.F2;
+	f3 = qsObj.f3 || qsObj.F3;
+	f4 = qsObj.f4 || qsObj.F4;
+	f5 = qsObj.f5 || qsObj.F5;
+	f6 = qsObj.f6 || qsObj.F6;
+	
+	amount = qsObj.amount || qsObj.Amount || qsObj.AMOUNT;
+	
+	a2 = qsObj.a2 || qsObj.A2;
+	a3 = qsObj.a3 || qsObj.A3;
+	a4 = qsObj.a4 || qsObj.A4;
+	a5 = qsObj.a5 || qsObj.A5;
+	a6 = qsObj.a6 || qsObj.A6;
+	
+	donor_id = qsObj.donorid || qsObj.donorId || qsObj.Donorid || qsObj.DONORID || qsObj.DonorId || qsObj.DonorID;
+	
+
+	if ((public_id != null) && (public_id.replace(/\s/g,"") != "")) {
+		
+	    redirectUrl = jQuery.param.querystring( redirectUrl, { 
+		    LName:lname,
+			FName:fname, 
+		    mg:public_id, 
+		    Code:code, 
+		    Finder:finder, 
+		    SCode:scode, 
+		    Fund:fund,
+		    f2:f2,
+			f3:f3,
+			f4:f4,
+			f5:f5,
+			f6:f6,
+			amount:amount,
+			a2:a2,
+			a3:a3,
+			a4:a4,
+			a5:a5,
+			a6:a6,
+			DonorID:donor_id
+		    
+		});
+	
+		//give now buttons
+		//$(".btn").attr("href", "https://" + default_url);
+	
+		jQuery(".autopopulateinfo").attr("href", redirectUrl);
+	
+	}
+		   
+});

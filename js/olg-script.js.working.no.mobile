@@ -1,0 +1,397 @@
+jQuery(document).ready(function () {
+    
+    // -- Initialization and functions -- //
+    
+    var debug = -1; // -1 to turn off debug log
+    
+    var maxfunds = 10;
+    
+    var totalGiftAmount = 0;
+    
+    var amount = 0;
+    
+    var fundName;
+    
+    var schoolName;
+    
+    var lastAdded;
+    
+    // Fund object constuctor. Note default values for fund name and school name - these will be used
+    // unless a non-undefined value is set.
+    function Fund(id, amount, fundName = "Special Designation", schoolName = "Fund name will appear on the checkout page") {
+        this.id = id;
+        this.fundName = fundName;
+        this.schoolName = schoolName;
+        this.amount = parseInt(amount);
+        this.markup = function() { 
+            return '<div id="'+ this.id +'" class="row"><hr><div class="col-md-6 col-sm-6 col-xs-6"><h4>'+ this.fundName +'</h4><h5>'+ this.schoolName +'</h5></div> <div class="col-md-5 col-sm-5 col-xs-5"><h3>$<input id="" class="designationAmount input-lg" value="'+ this.amount +'"/></h3></div><div class="col-md-1 col-sm-1 col-xs-1"></div><span id="'+this.id+'" class="removeArea close-thick"></span></div>'; 
+        };
+        this.update_amount = function(amount) {
+            jQuery('#'+id).find('.designationAmount').val(amount);
+            this.amount = amount;
+        };
+        this.refresh_amount = function(amount) {
+            this.amount = parseInt(jQuery('#'+id).find('.designationAmount').val());
+        };
+    }
+    
+    function sumGifts() {
+        var total=0;
+        
+        funds.forEach(function (item) {
+            total += item.amount;  
+        });
+        
+        return total;
+    }
+    
+
+    function updateUpgradeButtons() {
+	var buttonsVisible = 0;
+     
+	// If total gift amount is 1000 or more, just hide all buttons except the four leadership buttons
+	if (totalGiftAmount >= 1000) {
+	    jQuery('.upBtn').not('.leadBtn').hide();
+	    jQuery('.leadBtn').show();
+	    return true;
+	}
+
+	jQuery('.upBtn').each(function(i, obj) {
+		
+
+		var content = jQuery(obj).html();
+		var buttonVal = parseInt(content.replace(/[^0-9]/g,''));
+		
+		~debug && console.log(content + ": " + buttonVal + " vs " + totalGiftAmount);
+		
+		if (buttonVal <= totalGiftAmount) {
+		    // hide any buttons below total gift amount
+		    jQuery(obj).hide();
+		} else {
+		    
+		    // Special cases:
+		    // - If 4th button is < 1000, then show 1000 as 4th button
+		    
+		    if (buttonsVisible < 4) {
+			
+			// if we're about to show the 4th button but it's less than 1000, then skip this one
+			// after making sure it's hidden
+			if ((buttonsVisible + 1) == 4 && buttonVal < 1000) {
+			    jQuery(obj).hide();
+			    return true;
+			}
+			
+			jQuery(obj).show();
+			buttonsVisible++;
+			
+		    } else {
+			jQuery(obj).hide();
+		    }
+		}
+	    });
+    	
+   }	
+
+    // Full update - grab latest values for each fund and update total
+    function updateTotal() {
+        var total = 0;
+        
+        funds.forEach(function (item) {
+            item.refresh_amount(); // grab latest value from DOM
+            total += item.amount;  
+        });
+        
+        jQuery("#giftTotal").val(total);
+        totalGiftAmount = total;
+
+	updateUpgradeButtons();
+    };
+        
+    // -- APP CODE -- //
+    
+    var funds = new Array();
+    
+    // load funds DB, and process first 0-2 funds from querystring
+    // TODO handle no/bad DB error
+	var jqxhr = jQuery.getJSON( "http://uclafund.ucla.edu/assets/data.json", function(data) {
+	    //~debug && console.log( "success" );
+	    //~debug && console.log( data );
+        
+        var qsObj = jQuery.deparam.querystring();
+	var maxGifts = 10;
+	var i=1;
+	
+	// query string vars for funds are Fund/amount, F2/a2, F3/a3, F4/a4, ...
+
+	// first one has unique key names
+        if (typeof(qsObj.Fund) != "undefined") {
+            var fund1 = new Fund(qsObj.Fund, qsObj.amount);
+            funds.push(fund1);
+        }
+
+	// gifts 2-n follow same pattern, so loop
+	while (++i < maxGifts) {
+	    var fundKey = "F" + i;
+	    var amountKey = "a" + i;
+	    
+	    ~debug && console.log( fundKey + " -  " + amountKey );
+	    
+	    if (typeof(qsObj[fundKey]) != "undefined") {
+		var fund = new Fund(qsObj[fundKey], qsObj[amountKey]);
+		funds.push(fund);
+		
+		~debug && console.log( "pushing " + fundKey );
+	    } else {
+
+		// if we don't see the next fund in order, bail out of the loop.
+		~debug && console.log( "bailng after not finding " + fundKey );
+		break;
+	    }
+	}
+        
+	// iterate through funds db and assign correct name & school for matching selected funds.
+	// funds that don't have a matching ID in the db will not get a name/school set here.
+	jQuery.each(data, function(idx, obj) {
+		funds.forEach( function (item) {
+			if(obj.DESIGNATION === item.id){
+			    item.fundName = obj["DESIGNATION PUBLIC NAME"];
+			    item.schoolName = obj["SCHOOL NAME"];
+			    
+			    ~debug && console.log("adding " + item.fundName );
+			}
+		    });
+	    });
+        
+        // build html
+        funds.forEach( function (item) {
+            jQuery('#fundsContainer').append(item.markup()); 
+        });
+        
+        updateTotal();
+        
+        // ~debug && console.log("after initial load, " + funds.length + " funds");
+        
+	})
+	  .fail(function() {
+	    console.log( "error loading funds database" );
+	  });
+
+    
+    // Search / add fund feature
+	var options = {
+		
+		url: "http://uclafund.ucla.edu/assets/data.json",
+	
+		getValue: "DESIGNATION PUBLIC NAME",
+	
+		list: {
+	
+			onChooseEvent: function() {
+				var desig = jQuery("#fundSearch").getSelectedItemData().DESIGNATION;
+				var selectedFundName = jQuery("#fundSearch").getSelectedItemData()["DESIGNATION PUBLIC NAME"];
+				var selectedFundSchoolName = jQuery("#fundSearch").getSelectedItemData()["SCHOOL NAME"];
+                
+                if (funds.length < maxfunds) {
+                    
+                    // TODO - prevent duplicate funds
+                    
+                    var fund = new Fund(desig, 0, selectedFundName, selectedFundSchoolName);
+                    
+                    ~debug && console.log("adding fund - current funds = " + funds.length);
+                    
+                    // If this is the first fund, set its amount equal to the total gift amount
+                    if (funds.length == 0) fund.amount = totalGiftAmount;
+                    
+                    funds.push(fund); // add this fund to our list
+
+
+                    jQuery('#fundsContainer').append(fund.markup());
+				    //~debug && console.log("adding " + selectedFundName);
+				    
+				    // set focus to the input of the newly added fund
+				    jQuery("input:nth-last-child(1)").focus();
+				    
+				    // set variable latest_added = current time ();
+				    lastAdded = Date.now();
+				    
+                } else {
+                    alert("limit of " + maxfunds + " funds (improve this alert)");
+                }
+			},
+			onHideListEvent: function() {
+				
+				var timeDiff = lastAdded - Date.now();
+				 
+				// if last_added < 2 seconds ago -- don't do anything
+				// otherwise show the no results message
+				if (timeDiff < 2000) {
+				    jQuery("#fundSearch").val("").css("font-weight", "regular").css("color", "black");
+				}
+				else {
+				    jQuery("#fundSearch").val("No Results").css("font-weight", "bold").css("color", "red");
+
+				    setTimeout(function(){
+				        jQuery("#fundSearch").val("").css("font-weight", "normal").css("color", "black");
+		            }, 1500);
+				}
+
+			},
+			maxNumberOfElements: 50,
+			match: {
+				enabled: true
+			}
+		},
+		
+		theme: "round"
+    };
+
+
+  jQuery("#fundSearch").easyAutocomplete(options);
+
+
+  //redirect user to login page with pre-populated fields, which auto logs in, when give now button is pressed
+	
+	jQuery("#submitBtn").click(function(e){
+		//e.preventDefault();
+	
+		var default_url = "https://giving.ucla.edu/Campaign/Donate.aspx?SiteNum=4";
+		
+		var id = '';
+		var lname = '';
+		var redirectUrl = default_url;
+		var segmentCode = "";
+		var finder = "";
+		var code = "";
+		var fund = "";
+		var amount = "";
+		var f2 = "";
+		var a2 = "";
+		var f3 = "";
+		var a3 = "";
+		var f4 = "";
+		var a4 = "";
+		var f5 = "";
+		var a5 = "";
+		var f6 = "";
+		var a6 = "";
+		
+	
+		var qsObj = jQuery.deparam.querystring();
+		
+		id = qsObj.DonorID || qsObj.DonorId || qsObj.Donorid || qsObj.donorID || qsObj.donorId || qsObj.donorid || qsObj.id || qsObj.ID;
+		lname = qsObj.LName || qsObj.Lname || qsObj.lname || qsObj.lName || qsObj.LNAME;
+		
+		
+		segmentCode = qsObj.SCode;
+		
+		code = qsObj.Code;
+		
+		finder = qsObj.Finder;
+
+		fund = qsObj.Fund;
+		amount = qsObj.amount;
+		f2 = qsObj.F2;
+		a2 = qsObj.a2;
+        f3 = qsObj.F3;
+		a3 = qsObj.a3;
+		
+		var fundsURL = { LName:lname, DonorID:id };
+		
+		// for each fund in funds
+		for(var i = 0; i < funds.length; i++) {
+			var thisfund;
+			
+			if (i==0) {
+				fundsURL['Fund'] = funds[i].id;
+				fundsURL['Amount'] = funds[i].amount;
+				
+			} else {
+				var fstr = "F" + (i+1);
+				var astr = "A" + (i+1);
+				fundsURL[fstr] = funds[i].id;
+				fundsURL[astr] = funds[i].amount
+			}
+		}	
+			
+		fundsURL['SCode'] = segmentCode; 
+		fundsURL['Finder'] = finder; 
+		fundsURL['Code'] = code;
+	    
+/*
+		switch(funds.length) {
+		    case :
+		        code block
+		        break;
+		    case n:
+		        code block
+		        break;
+		    default:
+		        default code block
+		}
+*/
+		
+
+		
+	    redirectUrl = jQuery.param.querystring( redirectUrl, fundsURL);		
+	    window.open(redirectUrl, '_blank');
+	    });
+    
+
+
+    // -- Action handlers -- //
+    
+    // When gift total is changed, update individual fund amounts proportionally
+    jQuery("#giftTotal").change(function(){
+        var newGiftTotal = parseInt(jQuery(this).val());
+        var ratio = newGiftTotal / totalGiftAmount; 
+        
+        ~debug && console.log("updating total from " + totalGiftAmount + " to " + newGiftTotal + "(" + ratio + "x)");
+        
+        funds.forEach( function(item) {
+            item.update_amount(Math.round(item.amount * ratio));
+        });
+        
+        totalGiftAmount = newGiftTotal;
+
+	updateUpgradeButtons();
+
+    });
+    
+    // When a fund total changes, update object + totals
+    jQuery(document).on('change', '.designationAmount', function(){
+    	updateTotal();
+	});
+        
+    // When a fund is deleted, remove its object from Funds and recalc totals
+    jQuery(document).on('click', '.removeArea', function(){
+        //~debug && console.log("removing " + this.id );
+        
+        // Remove from funds array
+        for(var i = funds.length - 1; i >= 0; i--) {
+            if(funds[i].id === this.id) {
+                funds.splice(i, 1);
+                break;
+            }
+        }
+        
+        // Remove div
+        jQuery( "div" ).remove( "#"+this.id );
+        
+        // Recalc
+        updateTotal();
+    });  
+            
+    // When an Upgrade button is clicked, set value to the amount specified
+    jQuery(".upBtn").click( function(){
+	    ~debug && console.log(jQuery(this).html() + " button clicked");
+	    
+	    // set gift total to button val (remove anything that's not a number first)
+	    jQuery("#giftTotal").val( jQuery(this).html().replace(/[^0-9]/g, '') );
+
+	    // trigger the change event
+	    jQuery("#giftTotal").trigger('change');
+
+	});
+
+        
+}); //close docready

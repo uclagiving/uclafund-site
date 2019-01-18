@@ -1,0 +1,423 @@
+3.4.0
+* Fixed TGM plugin issues
+* Fixed fatal error issue
+* Improved theme responsivness
+* Updated theme options cover image
+* Other minor changes and bug fixes
+
+3.3.4
+* Updated TGM plugin activation to the latest 2.6.1 version 
+
+3.3.3
+* Fixed PHP notice
+
+3.3.2
+* Font Awesome updated to the latest 4.6.3 version
+
+3.3.1
+* Font Awesome updated to the latest 4.6.2 version
+
+3.3.0
+* Removed some Redux plugin notices
+* Fixed TGMPA notice float
+* Fixed blog media dublicate video and audio issue
+* Fixed closed slider widget loop
+* Changed theme options cover image
+
+3.2.6
+* Animate.css updated to the latest 3.5.1 version
+
+3.2.5
+* Font Awesome updated to the latest 4.6.1 version to include all new icons
+
+3.2.4
+* Fixed duplicate image issue in blog gallery
+
+3.2.3
+* Updated screenshot image and reduced theme size
+
+3.2.2
+* Fixed third level navigation overflow issue
+* Fixed blog gallery not showing up
+
+3.2.1
+* Fixed partners widget responsive issue
+
+3.2.0
+* Fixed Redux Framework notice issue
+* Updated translations
+* Little cleanup
+
+3.1.7
+* Added information about theme styles location
+
+3.1.6
+* Font Awesome updated to the latest 4.5.0 version to include all new icons
+
+3.1.5
+* Fixed blank page title issue
+
+3.1.4
+* Added testimonial arrows
+* Fixed portfolio item image issue
+
+3.1.3
+* Fixed partner widget arrow issue
+
+3.1.2
+* Updated language file
+* Minor tweaks
+
+3.1.1
+* Fixed full page layout issue in blue demo version
+* Fixed link for support forum
+* Minor tweaks
+
+3.1.0
+* Added a link for easier access to our wordpress.org support forum and documentation
+* Added background image from pexels to theme options header
+* Little cleanup
+
+3.0.3
+* Fixed tag page issue
+* Fixed slider not showing images issue
+* Fixed slider dot issue
+* Removed Redux framework notices
+* Disabled Redux framrwork tracking
+
+3.0.2
+* Removed some Redux Framework ads
+* Updated slick library
+
+3.0.1
+* Jetpack plugin compatibility fixes
+* Improved compatiblity with Jetpack Photon
+* Code cleanup
+
+3.0.0
+* Added option to load blue demo page styling
+* Added new recommended plugin for extra functionality
+* Added option to show 3 or 4 items in row for service widget
+* Fixed page builder compatiblity issues with styling options
+* Improved blog widget
+* Improved slider widget loading speed
+* Removed unnecessary files
+
+2.1.8
+* Added support for 3th header navigation level
+
+2.1.7
+* Added support for current post parrent highlight in header navigation
+* Fixed compatiblity issues with bbpress plugin
+
+2.1.6
+* Fixed testimonial widget issue
+
+2.1.5
+* Fixed search page issue with blog widget option
+
+2.1.4
+* Updated Font Awesome icons to the 4.4.0 version
+
+2.1.3
+* Fixed comments date not showing up issue
+* Fixed comments edit button issue
+* Changed "Maskitto Light Option > Footer text" editor to textarea, due to some user issues
+
+2.1.2
+* Fixed some other Jetpack compatibility issues
+
+2.1.1
+* Added some new translations
+* Fixed few language string issues
+* Fixed some Jetpack compatibility issues
+* Improved no-JS message 
+
+2.1.0
+* Added Behance social icon option in the theme options
+* Added Tumblr social icon option in the theme options
+* Fixed services widget title and subtitle issues
+* Fixed translation related issues
+
+2.0.9
+* Added link brakes to portfolio caption
+* Added option to limit preview text
+* Fixed issue blog widget title is blank, but have separator line
+* Fixed testimonials widget group issue
+* Fixed portfolio widget group issue
+* Improved navigation compatibility with HTML tags
+* Improved navigation dropdown compatibility
+
+2.0.8
+* Added option to show loading animations
+* Improved partners widget responsivness
+* Fixed NextGen Gallery plugin lightbox issue
+* Fixed fatal error for some users in template-tags.php
+
+2.0.7
+* Added swipe support for light box picture in portfolio widget
+* Updated Jquery tosrus plugin
+* Updated comments section
+* Fixed issue - comments not showing up in some pages
+
+2.0.6
+* Added option to disable blog page widgets under theme options
+* Added option to remove portfolio widget item details
+* Fixed some service widget issues
+* Fixed some portfolio widget category issues
+* Fixed some blog pages category issues
+
+2.0.4, 2.0.5
+* Security update
+* Other small improvements
+
+2.0.3
+* Added option to change blog widget item limit
+* Fixed blog widget "Read more" button link not working
+* Improved testimonials widget
+* Other improvements
+
+2.0.2
+* Fixed navigation dropdown color issue
+* Fixed some testimonials widget issues
+* Improved partners widget actions
+
+2.0.1
+* Added few visual tweaks
+* Fixed Include page widget title issue
+* Fixed Include page widget double Read More buttons isseue
+* Fixed Include page widget dobule content issue
+* Fixed some testimonials widget issues
+* Improved responsive design
+* Other improvements
+
+2.0.0
+* Added testimonials widget
+* Added slogan widget
+* Added button style option under theme options
+* Added title style option under theme options
+* Added slideshow widget style option under theme options
+* Added parallax effect support under page settings
+* Added second caption for slideshow widget
+* Added site name for header logo IMG attributes
+* Added option to set link hover color under theme options
+* Added option to set slideshow height under slideshow widget options
+* Added option to add categories switch option for portfolio widget under its options
+* Added option to add blank spaces between images under portfolio widget options
+* Improved Contact Form 7 compatibility
+* Improved Page Builder by SiteOrigin compatibility
+* Updated theme author copyright text in the footer
+* Updated readme.txt
+* Fixed multiple category issue under portfolio widget
+* Fixed some header item placement issues
+* Fixed boxed layout issue
+* Removed blank spaces form footer copyrights
+* Other improvements
+** Notice: "Types" plugin XML file update needed
+
+1.3.4
+* Added option to add accent background color to social header under theme options
+* Added "Read More" link under service items when custom link is added
+* Added option to use html code inside footer copyrights
+* Fixed social icons is now hidden in mobile devices when disabled
+* Fixed plugin Contact Form 7 responsive issue
+* Fixed boxed layout background color issue
+
+1.3.3
+* Fixed search widget design issue
+* Other small improvements
+
+1.3.2
+* Minor changes
+
+1.3.1
+* Added manage content buttons under Maskitto widgets for ease of use
+* Added option to group services widgets
+* Added option to group portfolio widgets
+* Added contact form 7 support for sidebar
+* Improved 404 page, background color now changes according to accent color
+* Fixed blank front page issue
+* Fixed shortcodes not working in sidebar
+* Other improvements
+
+1.3.0
+* Added "Group" taxonomies under slider, services, partners and portfolio
+* Added option to group services widgets (other widgets are coming in next them versions)
+* Added option to change header background color under theme options - header layout
+* Added option to enable header search form under theme options - header
+* Added option "Standard Large" under theme options - header layout
+* Fixed search page pagination issue
+* Fixed blog categories page pagination issue
+* Fixed portfolio page issue when widget isn't working
+* Fixed issue when some custom CSS code form theme options doesnt work
+* Fixed post format aside issue
+* Fixed theme options not showing up
+* Updated shortcode compatibility in pages
+* Improved blog slide responsivness
+* Improved mobile device logo size, now relates to head layout size
+* Other improvements
+** Notice: "Types" plugin XML file update needed
+
+1.2.13.2
+* Fixed major code error
+
+1.2.13.1
+* Added some sanitize/escape functions
+* Updated readme.txt
+
+1.2.13
+* Added option to disable logo in footer under theme options
+* Fixed title issue when there is dashes in title and subtitle
+
+1.2.12
+* Added some sanitize/escape functions
+* Added support for google fonts under theme options / Body Font
+* Updated sidebar with message/link for to widget page for 0 wdigets
+* Updated readme.txt
+
+1.2.11
+* Added some sanitize/escape functions
+* Updated readme.txt
+* Other small improvements
+
+1.2.10
+* Added some sanitize/escape functions
+* Updated scripts and styles handles
+
+1.2.9
+* Fixed error msg
+
+1.2.8
+* Updated page builder columns compatibility
+* Updated theme options for better understanding
+* Fixed some "Include page" widget issues
+* Fixed blank logo issues
+* Fixed minor security issues
+* Other small improvements
+
+1.2.7
+* Added option to change blog slide height under theme options
+* Updated theme options names and icons for better understanding
+* Other small improvements
+
+1.2.6
+* Added post format support for video and audio
+* Added option to enable or disable sticky header under theme options
+* Added option to enable or disable blog categories under theme options
+* Updated font awesome files to latest version
+* Updated bootstrap files to latest version
+* Updated animate.css files to latest version
+* Updated page and include page widget code with some bug fixes
+* Fixed some CSS style and responsive style issues
+* Fixed some portfolio section issues
+* Fixed some centered logo issues under header layout
+* Other improvements
+
+1.2.5
+* Added new layout for post page (in new blog layout)
+* Added post formats support (at this moment only aside, but more will come)
+* Fixed duplicate title issue
+* Fixed some theme option issues
+* Fixed customizer showing arrays
+* Fixed some CSS style and responsive style issues
+* Fixed some JS issues
+
+1.2.4
+* Added Pinterest social icon
+* Added header layout - inverted
+* Fixed some portfolio widget issues (part 2)
+
+1.2.3
+* Added partial support for Contact Form 7 plugin
+* Added built in calendar widget support
+* Fixed some portfolio widget issues ( part 1)
+
+1.2.2
+* Added option to open navigation dropdown on hover
+* Fixed some responsive layout issues
+* Fixed slider button url not working
+* Other small improvements
+
+1.2.1
+* Added option to open social links in new tab
+* Fixed issue when contact form not showing up in contacts page
+* Fixed issue when mini gallery appears on every post page
+* Fixed issue when portfolio page isn't working property
+* Other improvements
+** Notice: "Types" plugin XML file update needed
+
+1.2.0
+* Added blog layouts option under theme options and added new layout
+* Added to services widget - support for more than 3 items (see in widget settings)
+* Added to services widget - support to disable the dotted line (see in widget settings)
+* Added to header layouts - new options for centered, but smaller logo
+* Fixed blog item - blank date
+* Other improvements
+
+1.1.8
+* Minor security fix
+
+1.1.7
+* Added header layouts under theme options for larger logo support
+* Added to slider widget - one more button with custom design
+* Added to partners widget - custom url option
+* Added to portfolio widget - custom url option
+* Fixed counter widget - global style color not working
+* Updated edit button
+* Other improvements
+** Notice: "Types" plugin XML file update needed
+
+1.1.6
+* Added custom CSS editor in theme options
+* Added full layout mode
+* Added Linkedin social icon
+* Fixed inability to change navigation
+* Fixed service widget - animation problem
+* Fixed partner widget - removed duplicate symbols
+* Fixed comment date - not showing correctly
+* Other small improvements
+
+1.1.5
+* Fix for header blank image
+* Updated readme file
+
+1.1.4
+* Updated home template name to front page
+* Other small improvements
+
+1.1.3
+* Fix for header image not changing when recommended plugins are disabled
+* Fix for footer year dynamic
+* Fix for google fonts in https sites
+* Fix for warning message in mini gallery
+
+1.1.2
+* Added widget icons for Page Builder by SiteOrigin
+* Added widget groups for Page Builder by SiteOrigin
+* Added twitter, wordpress and vk social icons
+* Added counter widget
+* Updated contacts page
+* Other small improvements
+
+1.1.1
+* Updated theme thumbnail for better quality
+* Added blog title bar
+* Disabled "No menu is assigned!"
+
+1.1.0
+* Added boxed layout option
+* Added footer logo fixed height
+* Some other bug fixes
+* Updated style.css tags
+
+1.0.12
+* Recommended plugins won't install fix
+* Some other bug fixes
+
+1.0.11
+* Added changelog.txt for updates
+* Added documentation URL in description
+* jQuery not working fix
+
+1.0.10
+* First public release
