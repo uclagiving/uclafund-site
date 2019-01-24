@@ -4,7 +4,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "install step "
+      - echo "install step"
   pre_build:
     commands:
       - echo "pre_build step"
@@ -15,4 +15,4 @@ phases:
     commands:
       - echo "post_build step"
       - zip -q -r uclafund-master.zip .
-      - aws s3 cp uclafund-master.zip s3://uclafund-git2s3-source-bucket
+      - aws s3 cp uclafund-master.zip s3://uclafund-source-bucket
