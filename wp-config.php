@@ -31,8 +31,17 @@ define('DB_PASSWORD', $_SERVER["RDS_PASSWORD"]);
 /** MySQL hostname */
 define('DB_HOST', $_SERVER["RDS_HOSTNAME"]);
 
-define('WP_SITEURL', $_SERVER["EB_HOSTNAME"]);
-define('WP_HOME', $_SERVER["EB_HOSTNAME"]);
+if (strpos($_SERVER['HTTP_HOST'],'uclafund.stage.support2.ucla.edu') !== false)
+{
+	define('WP_SITEURL', 'http://uclafund.stage.support2.ucla.edu');
+	define('WP_HOME', 'http://uclafund.stage.support2.ucla.edu');
+}
+else
+{
+	define('WP_SITEURL', $_SERVER["EB_HOSTNAME"]);
+	define('WP_HOME', $_SERVER["EB_HOSTNAME"]);
+}
+
 
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8');
