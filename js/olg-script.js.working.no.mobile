@@ -113,7 +113,7 @@ jQuery(document).ready(function () {
     
     // load funds DB, and process first 0-2 funds from querystring
     // TODO handle no/bad DB error
-	var jqxhr = jQuery.getJSON( "http://uclafund.ucla.edu/assets/data.json", function(data) {
+	var jqxhr = jQuery.getJSON( "https://uclafund.ucla.edu/assets/data.json", function(data) {
 	    //~debug && console.log( "success" );
 	    //~debug && console.log( data );
         
@@ -180,7 +180,7 @@ jQuery(document).ready(function () {
     // Search / add fund feature
 	var options = {
 		
-		url: "http://uclafund.ucla.edu/assets/data.json",
+		url: "https://uclafund.ucla.edu/assets/data.json",
 	
 		getValue: "DESIGNATION PUBLIC NAME",
 	
