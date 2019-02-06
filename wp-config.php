@@ -33,8 +33,8 @@ define('DB_HOST', $_SERVER["RDS_HOSTNAME"]);
 
 if (strpos($_SERVER['HTTP_HOST'],'uclafund.stage.support2.ucla.edu') !== false)
 {
-	define('WP_SITEURL', 'http://uclafund.stage.support2.ucla.edu');
-	define('WP_HOME', 'http://uclafund.stage.support2.ucla.edu');
+	define('WP_SITEURL', 'https://uclafund.stage.support2.ucla.edu');
+	define('WP_HOME', 'https://uclafund.stage.support2.ucla.edu');
 }
 else
 {
