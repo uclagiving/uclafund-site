@@ -42,10 +42,6 @@ else
 	define('WP_HOME', $_SERVER["EB_HOSTNAME"]);
 }
 
-if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && 'https' == $_SERVER['HTTP_X_FORWARDED_PROTO'] ) {
-	$_SERVER['HTTPS'] = 'on';
-}
-
 
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8');
