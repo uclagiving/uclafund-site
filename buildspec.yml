@@ -15,4 +15,4 @@ phases:
     commands:
       - echo "post_build step"
       - zip -q -r uclafund-master.zip .
-      - aws s3 cp uclafund-master.zip s3://uclafund-source-bucket-sandbox
+      - aws s3 cp uclafund-master.zip s3://uclafund-source-bucket
