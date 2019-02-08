@@ -269,10 +269,10 @@ RewriteRule .* http://127.0.0.1 [L]
 
 RewriteEngine On 
 RewriteCond %{HTTP_HOST} ^uclafund\.ucla\.edu [NC]
-RewriteCond %{HTTP:X-Forwarded-Proto} =http
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule .* https://%{HTTP:Host}%{REQUEST_URI} [L,R=permanent]
 RewriteCond %{HTTP_HOST} ^uclafund\.stage\.support2\.ucla\.edu [NC]
-RewriteCond %{HTTP:X-Forwarded-Proto} =http
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule .* https://%{HTTP:Host}%{REQUEST_URI} [L,R=permanent]
 
 # BEGIN WordPress
