@@ -138,7 +138,7 @@ more than <strong>8,500</strong> volunteers improved the quality of life in Los 
 		<div class="page-node section-content" style="">
 			<div class="post-inner">
 				<h4>
-					<p>In the year ahead, the UCLA School of Theater, Film and Television plans to launch two dynamic programs to develop storytellers who not only delight and entertain, but also enlighten, engage and inspire change for a better world. The UCLA TFT/UCA Storytelling Institute in Cannes, France and The Hearst Theater Lab Initiative were conceived to provide students with extraordinary opportunities to work alongside internationally acclaimed artists.</p>
+					<p>In the year ahead, the UCLA School of Theater, Film and Television seeks to establish two dynamic programs to develop storytellers who not only delight and entertain, but also enlighten, engage and inspire change for a better world. The UCLA TFT/UCA Storytelling Institute in Cannes, France and The Hearst Theater Lab Initiative were conceived to provide students with extraordinary opportunities to work alongside internationally acclaimed artists.</p>
                     <p>Private philanthropy will help support these innovative programs and solidify UCLA TFT as a leader in entertainment and performing arts education.</p>
                 </h4>
 				<p style="text-align: center;"><a class="btn btn-danger give" title="donate now button" href="https://giving.ucla.edu/Campaign/Donate.aspx?SiteNum=4&fund=60142O">Donate Now</a></p>
