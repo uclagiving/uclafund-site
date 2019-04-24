@@ -142,7 +142,16 @@ var sowbForms = window.sowbForms || {};
 
 									// Call the function on the wrapper we've selected
 									$$f[thisHandler[i][0]].apply($$f, typeof thisHandler[i][2] !== 'undefined' ? thisHandler[i][2] : []);
-
+									
+									if ( $$f.is( '.siteorigin-widget-field:visible' ) ) {
+										if ( $$f.is( '.siteorigin-widget-field-type-section' ) ) {
+											var $fields = $$f.find( '> .siteorigin-widget-section > .siteorigin-widget-field' );
+											$fields.trigger( 'sowsetupformfield' );
+										} else {
+											$$f.trigger( 'sowsetupformfield' );
+										}
+									}
+									
 								}
 
 								// Store that we've run a handler
@@ -175,26 +184,31 @@ var sowbForms = window.sowbForms || {};
 					var data = JSON.parse( sessionStorage.getItem( _sow_form_id ) );
 					if ( data ) {
 						if ( data['_sow_form_timestamp'] > _sow_form_timestamp ) {
-							var $newerNotification = $( '<div class="siteorigin-widget-form-notification">' +
-								'<span>' + soWidgets.backup.newerVersion + '</span>' +
-								'<a class="button button-small so-backup-restore">' + soWidgets.backup.restore + '</a>' +
-								'<a class="button button-small so-backup-dismiss">' + soWidgets.backup.dismiss + '</a>' +
-								'<div><small>' + soWidgets.backup.replaceWarning + '</small></div>' +
-								'</div>' );
-							$el.prepend( $newerNotification );
-	
-							$newerNotification.find( '.so-backup-restore' ).click( function () {
-								sowbForms.setWidgetFormValues( $mainForm, data );
-								$newerNotification.slideUp( 'fast', function () {
-									$newerNotification.remove();
-								} );
-							} );
-							$newerNotification.find( '.so-backup-dismiss' ).click( function () {
-								$newerNotification.slideUp( 'fast', function () {
-									sessionStorage.removeItem( _sow_form_id );
-									$newerNotification.remove();
-								} );
-							} );
+							sowbForms.displayNotice(
+								$el,
+								soWidgets.backup.newerVersion,
+								soWidgets.backup.replaceWarning,
+								[
+									{
+										label: soWidgets.backup.restore,
+										callback: function ( $notice ) {
+											sowbForms.setWidgetFormValues( $mainForm, data );
+											$notice.slideUp( 'fast', function () {
+												$notice.remove();
+											} );
+										},
+									},
+									{
+										label: soWidgets.backup.dismiss,
+										callback: function ( $notice ) {
+											$notice.slideUp( 'fast', function () {
+												sessionStorage.removeItem( _sow_form_id );
+												$notice.remove();
+											} );
+										},
+									},
+								]
+							);
 						} else {
 							sessionStorage.removeItem( _sow_form_id );
 						}
@@ -286,8 +300,6 @@ var sowbForms = window.sowbForms || {};
 					slide: function (event, ui) {
 						$input.val( parseFloat( ui.value ) );
 						$input.trigger( 'change' );
-					},
-					change: function( event, ui ) {
 						$$.find('.siteorigin-widget-slider-value').html(ui.value);
 					},
 				});
@@ -417,7 +429,12 @@ var sowbForms = window.sowbForms || {};
 						if ( widgetFieldId !== false && ! emitter.hasOwnProperty( 'widgetFieldId' ) ) {
 							emitter.widgetFieldId = widgetFieldId;
 							emitter.args = emitter.args.map(function (arg) {
-								return arg + '_' + widgetFieldId;
+								if ( emitter.callback === 'conditional' ) {
+									arg = arg.replace( /(.*)(\[.*)/, '$1_' + widgetFieldId + '$2' );
+								} else {
+									arg = arg + '_' + widgetFieldId;
+								}
+								return arg;
 							});
 						}
 
@@ -741,9 +758,15 @@ var sowbForms = window.sowbForms || {};
 						$(window).resize();
 						if ($(this).is(':visible')) {
 							$(this).trigger('slideToggleOpenComplete');
-
-							var $fields = $( this ).find( '> .siteorigin-widget-field' );
-							$fields.trigger( 'sowsetupformfield' );
+							
+							$( this ).find( '.siteorigin-widget-field-type-section > .siteorigin-widget-section > .siteorigin-widget-field,> .siteorigin-widget-field' )
+							.each( function (index, element) {
+								var $field = $( element );
+								if ( $field.is( ':visible' ) ) {
+									$field.trigger( 'sowsetupformfield' );
+								}
+								
+							} );
 						}
 						else {
 							$(this).trigger('slideToggleCloseComplete');
@@ -959,6 +982,10 @@ var sowbForms = window.sowbForms || {};
 		else {
 			callback(window.sowVars[widget][key]);
 		}
+	};
+	
+	sowbForms.getWidgetIdBase = function ( formContainer ) {
+		return formContainer.data( 'id-base' );
 	};
 
 	sowbForms.getWidgetFormValues = function ( formContainer ) {
@@ -1220,6 +1247,57 @@ var sowbForms = window.sowbForms || {};
 				$$.trigger( 'change' );
 			}
 		});
+	};
+	
+	
+	/**
+	 * Displays an informational notice either at the top of the supplied container, or above the optionally supplied
+	 * element.
+	 *
+	 * @param $container	The jQuery container in which the notice will be prepended.
+	 * @param title			The string title for the notice.
+	 * @param message		The string detail message for the notice.
+	 * @param buttons		An array of buttons which will be display along with the notice.
+	 * @param $element		The optional jQuery element before which the notice will be inserted. If this is supplied it
+	 * 						will take precedence over the $container argument.
+	 *
+	 */
+	sowbForms.displayNotice = function ( $container, title, message, buttons, $element ) {
+		
+		var $notice = $( '<div class="siteorigin-widget-form-notification"></div>' );
+		if ( title ) {
+			$notice.append( '<span>' + title + '</span>' );
+		}
+		
+		if ( buttons && buttons.length ) {
+			buttons.forEach( function ( button ) {
+				var buttonClasses = '';
+				if ( button.classes && button.classes.length ) {
+					buttonClasses = ' ' + button.classes.join( ' ' );
+				}
+				var $button = $( '<a class="button button-small' + buttonClasses + '">' + button.label + '</a>' );
+				
+				if ( button.url ) {
+					$button.attr( 'href', button.url );
+				}
+				if ( button.callback ) {
+					$button.on( 'click', function () {
+						button.callback( $notice );
+					});
+				}
+				
+				$notice.append( $button );
+			} );
+		}
+		if ( message ) {
+			$notice.append( '<div><small>' + message + '</small></div>' );
+		}
+		
+		if ( $element ) {
+			$element.before( $notice );
+		} else {
+			$container.prepend( $notice );
+		}
 	};
 
 	// When we click on a widget top
