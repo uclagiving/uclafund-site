@@ -83,53 +83,50 @@
                     <h1><span>MAKE A GIFT IN HONOR OF THE</span><br/>CLASS OF 2014</h1>
                     <p>You may have not fully realized when you graduated five years ago how your time at UCLA would impact your life. Now join your fellow alumni in making a class gift to celebrate your Bruin story of achievement and inspire future generations to write theirs.</p>
                 </div>
+
                 <div class="give-module">
-                    <div class="module_heading"><span>Amount I&#8217;d like to give</span></div>
-        
                     <a id="tab-1" class="tabs tab-left w--current">
                         <span>GIVE ONCE</span>
                     </a>
                     <a id="tab-2" class="tabs tab-right">
                         <span>MONTHLY</span>
                     </a>
-        
+                    
                     <div class="w-tab-content">
-                        <!--
-                        <div id="tab-1-content" class="w-tab-pane">
-                        -->    
-                            <form id="frm1" method="get" action="" class="w-tab-pane w--tab-active">
-                                <div class="input-container">
-                                    <div class="input_text_left">$</div>
-                                    <input type="number" min="5" class="input_field" name="amount" form="frm1" required>
-                                    <div class="input_text_right">USD</div>
-                                </div>
-                                <button onclick="gtag('event', 'click', {
-                                    'event_category': 'give',
-                                    'event_label': 'give_/_classgift_/_donate button'
-                                    });"  
-                                    type="submit" form="frm1" value="ONCE" class="submit-button w-button"><span>DONATE</span>
-                                </button>
-                            </form>
-                
+                        <div class="module_heading"><span>Enter an amount to give</span></div>
+                           
+                        <form id="frm1" method="get" action="" class="w-tab-pane w--tab-active">
+                            <div class="input-container">
+                                <div class="input_text_left">$</div>
+                                <input type="number" min="5" class="input_field" name="amount" form="frm1" required>
+                                <div class="input_text_right">USD</div>
+                            </div>
+                            <button onclick="gtag('event', 'click', {
+                                'event_category': 'give',
+                                'event_label': 'give_/_classgift_/_donate button'
+                                });"  
+                                type="submit" form="frm1" value="ONCE" class="submit-button w-button"><span>DONATE</span>
+                            </button>
+                        </form>
             
-                            <form id="frm2" method="get" action="" class="w-tab-pane">
-                                <div class="input-container">
-                                    <div class="input_text_left">$</div>
-                                    <input type="number" min="5" class="input_field" name="amount" form="frm2" required>
-                                    <div class="input_text_right">USD/MONTH</div>
-                                </div>
-                                <button onclick="gtag('event', 'click', {
-                                    'event_category': 'give',
-                                    'event_label': 'give_/_classgift_/_donate monthly button'
-                                    });"  
-                                    type="submit" form="frm2" value="MONTHLY" class="submit-button w-button"><span>DONATE MONTHLY</span>
-                                </button>
-                            </form>
-                        <!--</div>-->
+                        <form id="frm2" method="get" action="" class="w-tab-pane">
+                            <div class="input-container">
+                                <div class="input_text_left">$</div>
+                                <input type="number" min="5" class="input_field" name="amount" form="frm2" required>
+                                <div class="input_text_right">USD/MONTH</div>
+                            </div>
+                            <button onclick="gtag('event', 'click', {
+                                'event_category': 'give',
+                                'event_label': 'give_/_classgift_/_donate monthly button'
+                                });"  
+                                type="submit" form="frm2" value="MONTHLY" class="submit-button w-button"><span>DONATE MONTHLY</span>
+                            </button>
+                        </form>
+                        
                     </div>
                 </div>
+
                 <div class="image-spacer">
-                
                 </div>
             </div>
         </div>
