@@ -291,20 +291,18 @@ h1, h2, h3, h4, h5, h5, p {
 }
 .input_text_left { 
     grid-area: input_text_left;
-    justify-items: right; 
-    margin-right: 8px;
-    min-width: 20px;
-    font-size: 18px;
+    justify-items: center; 
+    margin: 0 0;
 }
 .input_text_right { 
     grid-area: input_text_right; 
-    font-size: 18px;
 }
 .input_text_left, .input_text_right {
     color: #000;
     display: grid;
     align-items: center;
     font-weight: normal;
+    font-size: 16px;
 }
 .input_field {
     grid-area: input_field;
