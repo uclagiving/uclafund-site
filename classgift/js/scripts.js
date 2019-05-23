@@ -18,8 +18,8 @@ $( document ).ready(function() {
           doStuff($(this));
     });
 
-    // Add animate property to tabs
 
+    // Add animate property to tabs
     function doStuff($param) {
         // CHeck param. Is this tab-1 or tab-2?
         // Is it current? Does it matter? Only the not current can be clicked
@@ -79,5 +79,6 @@ $( document ).ready(function() {
     );
     
 
+    
 // END JQuery page functions  
 });

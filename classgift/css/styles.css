@@ -286,16 +286,19 @@ h1, h2, h3, h4, h5, h5, p {
     border: 1px solid #00a5e5;
 	border-radius: 4px;
     display: grid;
+    grid-template-columns: min-content max-content auto;
     grid-template-areas: 
     "input_text_left input_field input_text_right";
 }
 .input_text_left { 
     grid-area: input_text_left;
     justify-items: center; 
-    margin: 0 0;
+    margin: 0 8px;
 }
 .input_text_right { 
     grid-area: input_text_right; 
+    justify-items: right;
+    margin-right: 8px;
 }
 .input_text_left, .input_text_right {
     color: #000;
@@ -309,7 +312,7 @@ h1, h2, h3, h4, h5, h5, p {
     border-style: none;
     color: #00a5e5;
     font-size: 24px;
-    max-width: 110px;
+    max-width: 100px;
 }
 .submit-button {
     grid-area: submit-button;
