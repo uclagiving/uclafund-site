@@ -33,14 +33,13 @@
     </div>
   
     <div id="slideshow-preload" style="display: none;">
-        <img class="slideshow-preload-image" src="https://uclafund.assets.support2.ucla.edu/2018/12/anderson-trichtype-1.jpg" height="1" alt="Loaded" />
+        <img class="slideshow-preload-image" src="https://uclafund.assets.support2.ucla.edu/2019/01/anderson-trichtype-1.jpg" height="1" alt="Loaded" />
     </div>
 </div>
 
 
-
 <div class="logo_container">
-    <div id="nursing_logo_box" class="school_logo">
+    <div id="anderson_logo_box" class="school_logo">
         <img src="https://uclafund.assets.support2.ucla.edu/2019/01/ucla-anderson-logo-120.gif" srcset="https://uclafund.assets.support2.ucla.edu/2019/01/ucla-anderson-logo-120.gif 120w, https://uclafund.assets.support2.ucla.edu/2019/01/ucla-anderson-logo-180.gif 180w, https://uclafund.assets.support2.ucla.edu/2019/01/ucla-anderson-logo-300.gif 300w, https://uclafund.assets.support2.ucla.edu/2019/01/ucla-anderson-logo-500.gif 500w" alt="UCLA Anderson School of Management" />
     </div>  
 </div>
@@ -136,7 +135,7 @@
 		<div class="page-node section-content" style="">
 			<div class="post-inner">
 				<h4>
-					<p>In the year ahead, the UCLA Anderson School of Management seeks to continue into the next with the launch of a new hybrid-learning program, a new master’s degree program and the groundbreaking of the new Marion Anderson Hall. These advancements in management education will better prepare students for careers within a changing landscape of business, and will establish UCLA Anderson as a frontrunner in 21st-century education through technology, state-of-the-art facilities and hybrid learning.</p>
+					<p>In the year ahead, the UCLA Anderson School of Management seeks to help students find their voice to effectively engage others in positive impact, build an inclusive and connected community of scholars, and foster an environment of cognitive diversity. These advancements in management education will better prepare students for careers within the changing landscape of business, and keep UCLA Anderson at the forefront of 21st century education.</p>
                     <p>Private philanthropy will help us achieve this goal.</p>
                 </h4>
 				<p style="text-align: center;"><a class="btn btn-danger give" title="donate now button" href="https://giving.ucla.edu/Campaign/Donate.aspx?SiteNum=4&fund=50122O">Donate Now</a></p>
@@ -195,25 +194,27 @@
                     
                     <ul>
                         <li>
-                            <h2><a href="http://blogs.anderson.ucla.edu/anderson/2018/05/ucla-anderson-eagerly-awaits-marion-anderson-hall.html" target="_blank">UCLA Anderson Eagerly Awaits Marion Anderson Hall</a></h2>
+                            <h2><a href="https://www.anderson.ucla.edu/faculty-and-research/anderson-review" target="_blank">UCLA Anderson Review</a></h2>
+                            <!--No Date for this article
                             <p>18 May 2018</p>
+                            -->
                             <!-- H3 for testing only not display -->
-                            <p>UCLA Anderson is on a growth trajectory - in excellence, reputation and numbers. Yet Anderson is one of only three leading U.S. business schools without a recent expansion to keep pace with enhanced programs, top faculty and students.<br />
-                            [<a href="http://blogs.anderson.ucla.edu/anderson/2018/05/ucla-anderson-eagerly-awaits-marion-anderson-hall.html" target="_blank">Read More &#8230;</a>]</p>
+                            <p>Across disciplines, UCLA Anderson’s faculty enhance the school’s relevance through cutting-edge research that is highly applicable to the economy, business and the wider world. The <a href="https://www.anderson.ucla.edu/faculty-and-research/anderson-review" target="_blank">UCLA Anderson Review</a> chronicles for a broader audience the research our faculty publish in leading academic journals.<br />
+                            [<a href="https://www.anderson.ucla.edu/faculty-and-research/anderson-review" target="_blank">Read More &#8230;</a>]</p>
                         </li>
                         <li>
-                            <h2><a href="http://blogs.anderson.ucla.edu/anderson/2018/02/ready-set-re-launch.html" target="_blank">Ready, Set, Re-LAUNCH</a></h2>
-                            <p>22 February 2018</p>
+                            <h2><a href="https://blogs.anderson.ucla.edu/anderson/2018/10/a-latina-in-business-school-on-being-the-bridge.html" target="_blank">A Latina in Business School: On Being the Bridge</a></h2>
+                            <p>2 October 2018</p>
                             <!-- H3 for testing only not display -->
-                            <p>It started as an observation by two alumnae, Cynthy Moffatt ('88) and Anderson Board of Advisors member Beth Friedman ('87), at a lunch with Dean Judy Olian about two years ago. Both Moffatt and Friedman had, for various reasons, spent time away from the workforce after graduating from UCLA Anderson.<br />
-                            [<a href="http://blogs.anderson.ucla.edu/anderson/2018/02/ready-set-re-launch.html" target="_blank">Read More &#8230;</a>]</p>
+                            <p>National Hispanic Heritage Month always prompts me to reflect on the community that I unwittingly joined when I moved to the U.S. 25 years ago. This fall, as I begin business school at UCLA Anderson, it’s made me recommit to how this community has enriched my experience as an American.<br />
+                            [<a href="https://blogs.anderson.ucla.edu/anderson/2018/10/a-latina-in-business-school-on-being-the-bridge.html" target="_blank">Read More &#8230;</a>]</p>
                         </li>
                         <li>
-                            <h2><a href="http://blogs.anderson.ucla.edu/anderson/2018/01/ucla-anderson-launches-new-online-journal-spotlighting-current-research.html" target="_blank">UCLA Anderson Launches New Online Journal Spotlighting Current Research</a></h2>
-                            <p>5 January 2018</p>
+                            <h2><a href="https://blogs.anderson.ucla.edu/anderson/2018/08/ucla-andersons-pay-it-forward-culture-steers-students-to-meaningful-internships.html" target="_blank">UCLA Anderson’s “Pay It Forward” Culture Steers Students to Meaningful Internships</a></h2>
+                            <p>27 August 2018</p>
                             <!-- H3 for testing only not display -->
-                            <p>Across disciplines, UCLA Anderson's faculty enhances the school's relevance through cutting-edge research that is highly applicable to the economy, business and the wider world.<br />
-                            [<a href="http://blogs.anderson.ucla.edu/anderson/2018/01/ucla-anderson-launches-new-online-journal-spotlighting-current-research.html" target="_blank">Read More &#8230;</a>]</p>
+                            <p>There are many reasons why I chose to come to Anderson; but while I was working on my application, I don’t think that I fully grasped the importance of the <em>pay it forward</em> attitude here.<br />
+                            [<a href="https://blogs.anderson.ucla.edu/anderson/2018/08/ucla-andersons-pay-it-forward-culture-steers-students-to-meaningful-internships.html" target="_blank">Read More &#8230;</a>]</p>
                         </li>
                     </ul>
 
