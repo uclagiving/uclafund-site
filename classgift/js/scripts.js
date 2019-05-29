@@ -53,6 +53,7 @@ $( document ).ready(function() {
             // static variables
             var fund = "00412G";
             var site = "4";
+            var effort = "15282";
             var locked = "&Lock_Amount=Y";
             var baseURL = "https://giving.ucla.edu/campaign/donate.aspx";
             
@@ -63,7 +64,7 @@ $( document ).ready(function() {
             var submit = $submit.val();
 
             // the output URL 
-            var olgURL = baseURL + "?Sitenum=" + site + "&Fund=" + fund + locked ;
+            var olgURL = baseURL + "?Sitenum=" + site + "&Fund=" + fund + "&code=" + effort + locked ;
             if ( amount ) {
                 olgURL += "&Amount=" + amount;
             }
