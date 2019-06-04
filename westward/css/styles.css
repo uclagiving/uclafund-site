@@ -1,0 +1,221 @@
+/* START Load the Fonts ======================================================================================================================================================== */
+@font-face {
+	font-family: 'karbon'; 
+    src:    url('../../assets/karbon/karbon-regular-webfont.eot'); 
+    src:    url('../../assets/karbon/karbon-regular-webfont.eot?#iefix') format('embedded-opentype'), 
+            url('../../assets/karbon/karbon-regular-webfont.woff') format('woff'), 
+            url('../../assets/karbon/karbon-regular-webfont.ttf') format('truetype'), 
+            url('../../assets/karbon/karbon-regular-webfont.svg') format('svg'); 
+	font-weight: 400;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'karbon'; 
+    src:    url('../../assets/karbon/karbon-semibold-webfont.eot'); 
+    src:    url('../../assets/karbon/karbon-semibold-webfont?#iefix') format('embedded-opentype'),
+            url('../../assets/karbon/karbon-semibold-webfont.woff') format('woff'), 
+            url('../../assets/karbon/karbon-semibold-webfont.ttf') format('truetype'),
+            url('../../assets/karbon/karbon-semibold-webfont.svg') format('svg'); 
+	font-weight: 600;
+	font-style: normal;
+}
+body {
+    font-family: open-sans, arial, sans-serif;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+}
+
+
+
+/* START Housekeeping Reset CSS ======================================================================================================================================================== */
+
+h1, h2, h3, h4, h5, h5, p {
+    margin: 0;
+    padding: 0;
+}
+
+/* START Global CSS  ======================================================================================================================================================== */
+body {
+    background-color: #ccc;
+}
+.wrapper {
+    text-align: center;
+}
+.enable-javascript {
+    min-height: 50px;
+    text-align: center;
+    background-color: #FFE800;
+    vertical-align: middle;
+    line-height: 20px;
+    padding: 1em; 
+  }
+
+/* START Grid Template Layout CSS (mobile first) ======================================================================================================================================================== */
+/*
+.wrapper {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    align-items: center;
+}
+*/
+/* END GRID ======================== */
+
+.wrapper {
+    background-color: #fff;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+
+
+
+/* START Header Row Styles ======================================================================================================================================================== */
+.header-row {padding-top: 1em;}
+.header-row h1 img {
+    display: block;
+    width: 450px;
+    height: auto;
+    margin: 0 auto ;
+}
+.header-row h2 {
+    color: #00a5e5;
+    font-family: open-sans, arial, sans-serif;
+    margin: 1em 0;
+}
+
+/* START Video Row Styles ======================================================================================================================================================== */
+
+.youtube-responsive-container {
+    position: relative;
+    padding-bottom:56.25%;
+    max-width: 100%; 
+    height: 0;
+    overflow:hidden;
+}
+    
+.youtube-responsive-container iframe, .youtube-responsive-container object, .youtube-responsive-container embed {
+    position: absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+}
+
+
+
+/* START Body Row Styles ======================================================================================================================================================== */
+.body-row {
+    background: #fff;
+    background-image: url('../images/fy19-westward-girl-telescope-img.jpg');
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: 600px auto;
+    padding-bottom: 500px;
+}
+.body-row-textarea {
+    margin: 0 40px;
+}
+.body-row button {
+    padding: 0;
+    border-radius: 6px;
+    color: #fff;
+    background-color: #00a5e5;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 50px;
+    width: 100%;
+    cursor: pointer;
+    border-style: none;
+}
+    .button-top     {margin: 2em 0;}
+    .button-bottom  {margin: 1em 0 0}
+
+.body-row .spacer-arrow {
+    width: 70px;
+    height: auto;
+    display: block;
+    margin: .8em auto 0;
+}
+.body-row h3 {
+    font-family: karbon, arial, sans-serif;
+    font-size: 32px;
+    font-weight: normal;
+    color: #2774ae;
+    margin: 1em;
+}
+.body-row-textarea p {
+    font-family: karbon, arial, sans-serif;
+    font-size: 24px;
+    padding: 0 1em;
+    margin: 1em 0;
+}
+    p.guarantee {
+        font-size: 16px;
+        margin: 1em 0 0;
+        color: #666; 
+    }
+.footer-image {
+    width: 100%;
+    max-width: 600px;
+    float: left;
+}
+
+/* START Hero ======================================================================================================================================================== */
+
+
+
+
+
+
+
+
+/* mobile styles */
+/* START Mobile Styles ======================================================================================================================================================== */
+
+@media screen and (min-width: 479px) {
+
+}
+
+/* IPad, iPad horiz, iPad pro, 768-1024 =========== */
+@media screen and (min-width: 768px) {
+   
+}
+
+
+/* Display for desktops =========================== */
+@media screen and (min-width: 1025px) {
+
+
+}
+
+
+/* Remove this if nothing needed, seems to conflict with prior style rules and is holdover from 100 years page.
+@media screen and (max-width: 1024px) {
+	
+	.header {
+		text-align:center;
+	}
+	
+	.hero {
+		display:block;
+	    background-color: #428ad4;
+	    text-align: center;
+		padding-top:50px;
+	}
+	
+	.hero-nested-4 {
+		display: block;
+	}
+	
+	.hero-nested-5 {
+		display: none;
+	}
+	
+	.hero-nested-6 {
+		display: block;
+	}
+	
+}
+*/
