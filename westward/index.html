@@ -41,21 +41,17 @@
     <!--Tells a crawler not to follow any links on a page or pass along any link equity-->
     <meta name="robots" content="nofollow">
 
-    <!-- Favicon
-        <link rel="icon" type="image/png" href="https://cdn.yourwebsite.com/favicon-16x16.png" sizes="16x16">  
-        <link rel="icon" type="image/png" href="https://cdn.yourwebsite.com/favicon-32x32.png" sizes="32x32">  
-        <link rel="icon" type="image/png" href="https://cdn.yourwebsite.com/favicon-96x96.png" sizes="96x96">
-    -->
 
     <!-- The Stylesheets
     Convert back to min versions once site design complete -->
     <link rel="stylesheet" href="css/normalize.css"> 
     <link rel="stylesheet" href="css/styles.css">
 
-    <!-- The web fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <!-- The web fonts 
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700,700i&display=swap" rel="stylesheet">
 
-    <title>UCLA Giving 2014 Classgift</title>
+    <title>Westward by UCLA | Preview</title>
 </head>
 
 <body>
@@ -71,7 +67,7 @@
 
         <div class="header-row">
             <h1><img alt="Westward x UCLA" src="images/fy19-westward-x-ucla-logo.jpg" /></h1>
-            <h2>PREVIEW EPISODE 3: MEMORY &amp; AGING</h2>
+            <h2>Preview Episode 3:<br />Memory &amp; Aging</h2>
         </div>
 
         <div class="video-row">
@@ -91,43 +87,44 @@
                     var player;
                     function onYouTubePlayerAPIReady() {
                         player = new YT.Player('ytplayer', {
-                            height: '360',
-                            width: '640',
-                            controls: '0',
-                            /*
-                            videoId: '03R0qHzI_LY',
-                            */
-                            
-                            listType: 'playlist',
-                            list: 'PL0MazZGQlxNbYSe_5ASDzYie-Nd3-kpDW',
-                            
-                            modestbranding: '1'
+
+                            playerVars: {
+                                listType: 'playlist',
+                                list: 'PL0MazZGQlxNbYSe_5ASDzYie-Nd3-kpDW',
+                                controls: '1',
+                                rel: '0',
+                                modestbranding: '1'
+                            }
                         });
                     }
 
-
-
                     /*
+                    
+                    var tag = document.createElement('script');
+                    tag.src = "https://www.youtube.com/player_api";
+                    var firstScriptTag = document.getElementsByTagName('script')[0];
+                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+                    var player;
+
                     function onYouTubePlayerAPIReady() {
-                    player = new YT.Player('ytplayer', {
-                        
-                        playerVars: {
-                            listType: 'playlist',
-                            list: 'PL8eOKDcC_m87YgYmZ0wb5HOPbNiVKqxP6',
-                            rel: 0,
-                            showinfo: 0,
-                            cc_load_policy: 1,
-                            loop: 1,
-                            index: 6
-                        }
-                    });
+                        player = new YT.Player('ytplayer', {
+                            
+                            playerVars: {
+                                listType: 'playlist',
+                                list: 'PL8eOKDcC_m87YgYmZ0wb5HOPbNiVKqxP6',
+                                rel: 0,
+                                showinfo: 0,
+                                cc_load_policy: 1,
+                                loop: 1,
+                                index: 6
+                            }
+                        });
+                    }
                     */
                 </script>
                 
-
-                
-                
-                <!--
+                <!-- VideoID for testing
                 <iframe src="https://www.youtube.com/embed/03R0qHzI_LY" frameborder="0" allowfullscreen></iframe>
                 -->
             </div>
@@ -136,7 +133,7 @@
 
         <div class="body-row">
             <div class="body-row-textarea">
-                <button onclick="location.href='https://giveto.ucla.edu/westward/#westward-move-your-mind'" type="button" class="button-top">JOIN WESTWARD</button>
+                <a class="button-top" href='https://giveto.ucla.edu/westward/#westward-move-your-mind' target="_blank">JOIN WESTWARD</a>
 
                 <div class="spacer"><img alt="" class="spacer-arrow" src="images/fy19-westward-arrow-spacer.svg" /></div>
 
@@ -148,7 +145,7 @@
                 <p>Don&#8217;t miss out on this opportunity.</p>
                 <p><strong>Begin your journey Westward today</strong>.</p>
 
-                <button onclick="location.href='https://giveto.ucla.edu/westward/#westward-move-your-mind'" type="button" class="button-bottom">JOIN WESTWARD</button>
+                <a class="button-bottom" href='https://giveto.ucla.edu/westward/#westward-move-your-mind' target="_blank">JOIN WESTWARD</a>
                 <p class="guarantee">100% satisfaction guaranteed. Cancel anytime.</p>
             </div>
             

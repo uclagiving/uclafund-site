@@ -1,33 +1,9 @@
-/* START Load the Fonts ======================================================================================================================================================== */
-@font-face {
-	font-family: 'karbon'; 
-    src:    url('../../assets/karbon/karbon-regular-webfont.eot'); 
-    src:    url('../../assets/karbon/karbon-regular-webfont.eot?#iefix') format('embedded-opentype'), 
-            url('../../assets/karbon/karbon-regular-webfont.woff') format('woff'), 
-            url('../../assets/karbon/karbon-regular-webfont.ttf') format('truetype'), 
-            url('../../assets/karbon/karbon-regular-webfont.svg') format('svg'); 
-	font-weight: 400;
-	font-style: normal;
-}
-@font-face {
-	font-family: 'karbon'; 
-    src:    url('../../assets/karbon/karbon-semibold-webfont.eot'); 
-    src:    url('../../assets/karbon/karbon-semibold-webfont?#iefix') format('embedded-opentype'),
-            url('../../assets/karbon/karbon-semibold-webfont.woff') format('woff'), 
-            url('../../assets/karbon/karbon-semibold-webfont.ttf') format('truetype'),
-            url('../../assets/karbon/karbon-semibold-webfont.svg') format('svg'); 
-	font-weight: 600;
-	font-style: normal;
-}
+/* START Housekeeping Reset CSS ======================================================================================================================================================== */
 body {
-    font-family: open-sans, arial, sans-serif;
+    font-family: 'Open Sans', arial, sans-serif;
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
 }
-
-
-
-/* START Housekeeping Reset CSS ======================================================================================================================================================== */
 
 h1, h2, h3, h4, h5, h5, p {
     margin: 0;
@@ -75,14 +51,17 @@ body {
 .header-row {padding-top: 1em;}
 .header-row h1 img {
     display: block;
-    width: 450px;
+    width: 80%;
     height: auto;
     margin: 0 auto ;
 }
 .header-row h2 {
-    color: #00a5e5;
-    font-family: open-sans, arial, sans-serif;
-    margin: 1em 0;
+    color: #2774ae;
+    font-family: 'Open Sans', arial, sans-serif;
+    font-weight: bold;
+    font-size: 1.87rem;
+    line-height: 1.2em;
+    margin: 1em;
 }
 
 /* START Video Row Styles ======================================================================================================================================================== */
@@ -112,25 +91,27 @@ body {
     background-repeat: no-repeat;
     background-position: center bottom;
     background-size: 600px auto;
-    padding-bottom: 500px;
+    padding-bottom: 486px;
 }
 .body-row-textarea {
-    margin: 0 40px;
+    margin: 0 30px;
 }
-.body-row button {
+.body-row a {
+    display: block;
     padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    letter-spacing: 2px;
     border-radius: 6px;
     color: #fff;
     background-color: #00a5e5;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: bold;
     line-height: 50px;
     width: 100%;
-    cursor: pointer;
-    border-style: none;
 }
     .button-top     {margin: 2em 0;}
-    .button-bottom  {margin: 1em 0 0}
+    .button-bottom  {margin: 2em 0 0}
 
 .body-row .spacer-arrow {
     width: 70px;
@@ -139,34 +120,25 @@ body {
     margin: .8em auto 0;
 }
 .body-row h3 {
-    font-family: karbon, arial, sans-serif;
-    font-size: 32px;
-    font-weight: normal;
+    font-family: 'Open Sans', 'Times New Roman', sans-serif;
+    font-size: 1.87rem;
+    font-weight: bold;
+    line-height: 1.5em;
     color: #2774ae;
     margin: 1em;
 }
 .body-row-textarea p {
-    font-family: karbon, arial, sans-serif;
-    font-size: 24px;
-    padding: 0 1em;
+    font-family: 'Open Sans', 'Times New Roman', sans-serif;
+    font-size: 16px;
+    line-height: 30px;
+    padding: 0 ;
     margin: 1em 0;
 }
     p.guarantee {
-        font-size: 16px;
+        font-size: 14px;
         margin: 1em 0 0;
         color: #666; 
     }
-.footer-image {
-    width: 100%;
-    max-width: 600px;
-    float: left;
-}
-
-/* START Hero ======================================================================================================================================================== */
-
-
-
-
 
 
 
@@ -191,31 +163,4 @@ body {
 }
 
 
-/* Remove this if nothing needed, seems to conflict with prior style rules and is holdover from 100 years page.
-@media screen and (max-width: 1024px) {
-	
-	.header {
-		text-align:center;
-	}
-	
-	.hero {
-		display:block;
-	    background-color: #428ad4;
-	    text-align: center;
-		padding-top:50px;
-	}
-	
-	.hero-nested-4 {
-		display: block;
-	}
-	
-	.hero-nested-5 {
-		display: none;
-	}
-	
-	.hero-nested-6 {
-		display: block;
-	}
-	
-}
-*/
+
