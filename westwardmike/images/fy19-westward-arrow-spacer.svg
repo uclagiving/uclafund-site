@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64.58 18.72">
+  <defs>
+    <style>
+      .a {
+        fill: none;
+        stroke: #2774ae;
+        stroke-linecap: round;
+        stroke-miterlimit: 10;
+        stroke-width: 2px;
+      }
+    </style>
+  </defs>
+  <title>arrow</title>
+  <polyline class="a" points="1 1 32.42 17.58 63.58 1"/>
+</svg>
