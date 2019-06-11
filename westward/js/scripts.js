@@ -22,6 +22,7 @@ $( document ).ready(function() {
         };
     }
 
+    
 
     /* Display Countdown timer 
     =============================== */
