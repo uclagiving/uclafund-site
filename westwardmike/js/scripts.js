@@ -20,6 +20,7 @@ $( document ).ready(function() {
             'minutes': minutes,
             'seconds': seconds
         };
+        
     }
 
 
@@ -55,6 +56,7 @@ $( document ).ready(function() {
     
         updateClock(); // run function once at first to avoid delay
         var timeinterval = setInterval(updateClock,1000);
+        var js = '0';
     }
     
     initializeClock('clockdiv', deadline);
