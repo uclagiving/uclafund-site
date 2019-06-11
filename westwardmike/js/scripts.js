@@ -1,83 +1,63 @@
 // JQuery page functions
 $( document ).ready(function() {
 
-    // Page setup
+    /* Countdown timer function 
+    https://wplearninglab.com/countdown-timer/
+    =============================== */
+    var deadline = 'June 10 2019 12:00:00 GMT-0700';
+ 
+    function getTimeRemaining(endtime){
+        var t = Date.parse(endtime) - Date.parse(new Date());
+        //console.log(t);
+        var seconds = Math.floor( (t/1000) % 60 );
+        var minutes = Math.floor( (t/1000/60) % 60 );
+        var hours = Math.floor( (t/(1000*60*60)) % 24 );
+        var days = Math.floor( t/(1000*60*60*24) );
+        return {
+            'total': t,
+            'days': days,
+            'hours': hours,
+            'minutes': minutes,
+            'seconds': seconds
+        };
+    }
 
 
-    // Add animation class to the give module
-    $(".give-module").addClass("fadeInUp");
-
-    // Animated tabbing
-    // Add event listeners to the tab links
-    $('#tab-1').click( 
-        function() {
-          doStuff($(this));
-    });
-    $('#tab-2').click( 
-        function() {
-          doStuff($(this));
-    });
-
-
-    // Add animate property to tabs
-    function doStuff($param) {
-        // CHeck param. Is this tab-1 or tab-2?
-        // Is it current? Does it matter? Only the not current can be clicked
-        if ( $param.hasClass("w--current") === false ) {
-            //alert ("it worked! + " + $param); 
-            // Remove current from other tab and apply to this tab
-            if ( $param.attr("id") === "tab-1" ) {
-                //alert("tab-1");
-                $param.addClass("w--current");
-                $("#tab-2").removeClass("w--current");
-              
-                $("#frm1").addClass("w--tab-active");
-                $("#frm2").removeClass("w--tab-active");
-            }
-            else if ( $param.attr("id") === "tab-2" ) {
-                //alert("tab-2");
-                $param.addClass("w--current");
-                $("#tab-1").removeClass("w--current");
+    /* Display Countdown timer 
+    =============================== */
+    function initializeClock(id, endtime){
+        var clock = document.getElementById('timer');
+        function updateClock(){
+            var t = getTimeRemaining(endtime);
+            var daysSpan = clock.querySelector('.days');
+            var hoursSpan = clock.querySelector('.hours');
+            var minutesSpan = clock.querySelector('.minutes');
+            var secondsSpan = clock.querySelector('.seconds');
             
-                $("#frm2").addClass("w--tab-active");
-                $("#frm1").removeClass("w--tab-active");
+
+            /* This sets the display. Checks if each is <= 0, and sets to 0 or t.days 
+            daysSpan = t.days <= 0 ? daysSpan.innerHTML='0' : daysSpan.innerHTML=t.days;
+            */
+            if(t.total<=0){
+                // Set Totals to 0 or stop timer calls
+                daysSpan.innerHTML = '0';
+                hoursSpan.innerHTML = '0';
+                minutesSpan.innerHTML = '0';
+                secondsSpan.innerHTML = '0';
+            }
+            else {
+                daysSpan.innerHTML = t.days ;
+                hoursSpan.innerHTML = t.hours;
+                minutesSpan.innerHTML = t.minutes;
+                secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
             }
         }
-    }  
-
-    // new form handling
-    $('form').submit(
-        function(evt) {
-            evt.preventDefault();
-            
-            // static variables
-            var fund = "00412G";
-            var site = "4";
-            var locked = "&Lock_Amount=Y";
-            var baseURL = "https://giving.ucla.edu/campaign/donate.aspx";
-            
-            // input variables
-            var $amount = $(this).find('[name=amount]'); 
-            var $submit = $(this).find('[type=submit]'); 
-            var amount = $amount.val();
-            var submit = $submit.val();
-
-            // the output URL 
-            var olgURL = baseURL + "?Sitenum=" + site + "&Fund=" + fund + locked ;
-            if ( amount ) {
-                olgURL += "&Amount=" + amount;
-            }
-            if ( submit === "MONTHLY" ) {
-                olgURL += "&og=Y&ogi=1" ;
-            }
-            
-            // redirect to the olg URL
-            window.location.replace( olgURL );
-
-            //alert("The olg URL is " + olgURL );
-        }
-    );
     
+        updateClock(); // run function once at first to avoid delay
+        var timeinterval = setInterval(updateClock,1000);
+    }
+    
+    initializeClock('clockdiv', deadline);
 
     
 // END JQuery page functions  

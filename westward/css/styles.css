@@ -46,6 +46,41 @@ body {
 
 
 
+/* START Timer Row Styles ======================================================================================================================================================== */
+.timer-row {
+    background: rgb(35,65,144);
+    background: linear-gradient(90deg, rgba(35,65,144,1) 0%, rgba(49,131,190,1) 100%);
+    padding: 1em;
+    width: 100%;
+    min-height: 120px;
+    box-sizing: border-box;
+}
+.timer-row h3 {
+    color: #fff;
+    margin: 0; padding: 0;
+    font-family: 'Open Sans', arial, sans-serif;
+    font-weight: normal;
+    font-size: 15px;
+    text-align: center;
+}
+#timer {
+    margin: .5em auto 1em;
+    color: #fff;
+    max-width: 340px;
+
+    display: grid;
+    grid-template-columns: 3fr 1fr 3fr 1fr 3fr 1fr 3fr;
+    grid-template-rows: 50px;
+}
+.timedisplay, .spacer {
+    font-size: 40px;
+}
+.timer-label {
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+
 
 /* START Header Row Styles ======================================================================================================================================================== */
 .header-row {padding-top: 1em;}
