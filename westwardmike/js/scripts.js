@@ -4,7 +4,7 @@ $( document ).ready(function() {
     /* Countdown timer function 
     https://wplearninglab.com/countdown-timer/
     =============================== */
-    var deadline = 'July 1 2019 24:00:00 GMT-0700';
+    var deadline = new Date(2019, 6, 1, 24, 0, 0);
  
     function getTimeRemaining(endtime){
         var t = Date.parse(endtime) - Date.parse(new Date());
@@ -56,7 +56,7 @@ $( document ).ready(function() {
     
         updateClock(); // run function once at first to avoid delay
         var timeinterval = setInterval(updateClock,1000);
-        var js = '0';
+        
     }
     
     initializeClock('clockdiv', deadline);
