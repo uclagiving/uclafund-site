@@ -13,17 +13,36 @@ use WillWashburn\Stream\Stream;
  * (https://github.com/sdsykes/fastimage)
  *
  * MIT Licensed
- *
- * @version 0.01
  */
 class FasterImage
 {
     /**
-     * The default timeout
+     * The default timeout.
      *
      * @var int
      */
     protected $timeout = 10;
+
+    /**
+     * The default buffer size.
+     *
+     * @var int
+     */
+    protected $bufferSize = 256;
+
+    /**
+     * The default for whether to verify SSL peer.
+     *
+     * @var bool
+     */
+    protected $sslVerifyPeer = false;
+
+    /**
+     * The default for whether to verify SSL host.
+     *
+     * @var bool
+     */
+    protected $sslVerifyHost = false;
 
     /**
      * If the content length should be included in the result set.
@@ -33,15 +52,50 @@ class FasterImage
     protected $includeContentLength = false;
 
     /**
+     * The default user agent to set for requests.
+     *
+     * @var string
+     */
+    protected $userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.110 Safari/537.36';
+
+    /**
      * Get the size of each of the urls in a list
      *
-     * @param array $urls
+     * @param string[] $urls URLs to fetch.
      *
-     * @return array
-     * @throws \Exception
+     * @return array Results.
+     * @throws \Exception When the cURL write callback fails to amend the $results.
      */
     public function batch(array $urls)
     {
+        // @codeCoverageIgnoreStart
+        /**
+         * It turns out that even when cURL is installed, the `curl_multi_init()
+         * function may be disabled on some hosts who are seeking to guard against
+         * DDoS attacks.
+         *
+         * @see https://github.com/ampproject/amp-wp/pull/2183#issuecomment-491506514
+         *
+         * If it is disabled, we will batch these synchronously (with a significant
+         * performance hit).
+         */
+        $has_curl_multi = (
+            function_exists( 'curl_multi_init' )
+            &&
+            function_exists( 'curl_multi_exec' )
+            &&
+            function_exists( 'curl_multi_add_handle' )
+            &&
+            function_exists( 'curl_multi_select' )
+            &&
+            defined( 'CURLM_OK' )
+            &&
+            defined( 'CURLM_CALL_MULTI_PERFORM' )
+        );
+        if ( ! $has_curl_multi ) {
+            return $this->batchSynchronously($urls);
+        }
+        // @codeCoverageIgnoreEnd
 
         $multi   = curl_multi_init();
         $results = array();
@@ -87,19 +141,79 @@ class FasterImage
     }
 
     /**
-     * @param $seconds
+     * Get the size of each of the urls in a list, using synchronous method
+     *
+     * @param string[] $urls URLs to fetch.
+     *
+     * @return array Results.
+     * @throws \Exception When the cURL write callback fails to amend the $results.
+     * @codeCoverageIgnore
      */
-    public function setTimeout($seconds)
-    {
-        $this->timeout = $seconds;
+    protected function batchSynchronously(array $urls) {
+        $results = [];
+        foreach ( array_values($urls) as $count => $uri ) {
+            $results[$uri] = [];
+
+            $ch = $this->handle($uri, $results[$uri]);
+
+            curl_exec($ch);
+
+            // We can't check return value because the buffer size is too small and curl_error() will always be "Failed writing body".
+            if ( empty($results[$uri]) ) {
+                throw new \Exception("Curl handle for $uri could not be executed");
+            }
+
+            curl_close($ch);
+        }
+        return $results;
     }
 
     /**
-     * @param $bool
+     * @param int $seconds
+     */
+    public function setTimeout($seconds)
+    {
+        $this->timeout = (int) $seconds;
+    }
+
+    /**
+     * @param int $bufferSize
+     */
+    public function setBufferSize($bufferSize)
+    {
+        $this->bufferSize = (int) $bufferSize;
+    }
+
+    /**
+     * @param bool $sslVerifyPeer
+     */
+    public function setSslVerifyPeer($sslVerifyPeer)
+    {
+        $this->sslVerifyPeer = (bool) $sslVerifyPeer;
+    }
+
+    /**
+     * @param bool $sslVerifyHost
+     */
+    public function setSslVerifyHost($sslVerifyHost)
+    {
+        $this->sslVerifyHost = (bool) $sslVerifyHost;
+    }
+
+    /**
+     * @param bool $bool
      */
     public function setIncludeContentLength($bool)
     {
         $this->includeContentLength = (bool) $bool;
+    }
+
+    /**
+     * @param string $userAgent
+     */
+    public function setUserAgent($userAgent)
+    {
+        $this->userAgent = $userAgent;
     }
 
     /**
@@ -122,15 +236,15 @@ class FasterImage
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_BUFFERSIZE, 256);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_BUFFERSIZE, $this->bufferSize);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->sslVerifyPeer ? 1 : 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $this->sslVerifyHost ? 2 : 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
 
         #  Some web servers require the useragent to be not a bot. So we are liars.
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.110 Safari/537.36');
+        curl_setopt($ch, CURLOPT_USERAGENT, $this->userAgent);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Accept: image/webp,image/*,*/*;q=0.8",
             "Cache-Control: max-age=0",
@@ -213,7 +327,7 @@ class FasterImage
              */
             //
             // hey curl! this is an error. But really we just are stopping cause
-            // we already have what we wwant
+            // we already have what we want
             return -1;
         });
 

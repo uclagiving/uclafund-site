@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
 /**
  * Represents an AWS result object that is returned from executing an operation.

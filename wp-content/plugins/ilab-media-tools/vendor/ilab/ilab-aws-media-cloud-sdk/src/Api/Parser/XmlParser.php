@@ -1,11 +1,11 @@
 <?php
-namespace ILAB_Aws\Api\Parser;
+namespace ILABAmazon\Api\Parser;
 
-use ILAB_Aws\Api\DateTimeResult;
-use ILAB_Aws\Api\ListShape;
-use ILAB_Aws\Api\MapShape;
-use ILAB_Aws\Api\Shape;
-use ILAB_Aws\Api\StructureShape;
+use ILABAmazon\Api\DateTimeResult;
+use ILABAmazon\Api\ListShape;
+use ILABAmazon\Api\MapShape;
+use ILABAmazon\Api\Shape;
+use ILABAmazon\Api\StructureShape;
 
 /**
  * @internal Implements standard XML parsing for REST-XML and Query protocols.
@@ -124,11 +124,15 @@ class XmlParser
 
     private function parse_boolean(Shape $shape, $value)
     {
-        return $value == 'true' ? true : false;
+        return $value == 'true';
     }
 
     private function parse_timestamp(Shape $shape, $value)
     {
+        if (!empty($shape['timestampFormat'])
+            && $shape['timestampFormat'] === 'unixTimestamp') {
+            return DateTimeResult::fromEpoch((string) $value);
+        }
         return new DateTimeResult($value);
     }
 }

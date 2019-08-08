@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\Glacier;
+namespace ILABAmazon\Glacier;
 
-use ILAB_Aws\HashInterface;
+use ILABAmazon\HashInterface;
 
 /**
  * Encapsulates the creation of a tree hash from streamed data

@@ -1,9 +1,9 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\ResultInterface;
-use ILAB_Aws\S3\Exception\PermanentRedirectException;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\ResultInterface;
+use ILABAmazon\S3\Exception\PermanentRedirectException;
 use Psr\Http\Message\RequestInterface;
 
 /**

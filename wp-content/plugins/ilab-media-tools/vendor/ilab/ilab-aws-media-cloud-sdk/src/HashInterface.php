@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
 /**
  * Interface that allows implementing various incremental hashes.

@@ -4,21 +4,44 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e
+class ComposerStaticInit75d4368a11a45d3bf48a4753d43863cf
 {
     public static $files = array (
+        '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
+        '72579e7bd17821bb1321b87411366eae' => __DIR__ . '/..' . '/illuminate/support/helpers.php',
         'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
+        '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '712245652ebfaecd4922e7c5b5fcc010' => __DIR__ . '/..' . '/ilab/ilab-aws-media-cloud-sdk/src/functions.php',
+        '16eed290c5592c18dc3f16802ad3d0e4' => __DIR__ . '/..' . '/ivopetkov/html5-dom-document-php/autoload.php',
+        '290dd4ba42f11019134caca05dbefe3f' => __DIR__ . '/..' . '/teamtnt/tntsearch/helper/helpers.php',
         'a36a78a03571c7ba045ccfbb413ae093' => __DIR__ . '/../..' . '/classes/Utilities/Helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
+        'd' => 
+        array (
+            'duncan3dc\\Laravel\\' => 18,
+            'duncan3dc\\LaravelTests\\' => 23,
+        ),
         'W' => 
         array (
             'WillWashburn\\' => 13,
+        ),
+        'T' => 
+        array (
+            'TeamTNT\\TNTSearch\\' => 18,
+        ),
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Component\\Translation\\' => 30,
+            'Symfony\\Component\\Finder\\' => 25,
+            'Symfony\\Component\\Debug\\' => 24,
+            'Superbalist\\Flysystem\\GoogleStorage\\' => 36,
         ),
         'P' => 
         array (
@@ -30,6 +53,12 @@ class ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e
         'M' => 
         array (
             'Monolog\\' => 8,
+            'Michelf\\' => 8,
+        ),
+        'L' => 
+        array (
+            'League\\Glide\\' => 13,
+            'League\\Flysystem\\' => 17,
         ),
         'J' => 
         array (
@@ -37,32 +66,78 @@ class ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e
         ),
         'I' => 
         array (
-            'ILAB_Aws\\' => 9,
+            'Intervention\\Image\\' => 19,
+            'Illuminate\\View\\' => 16,
+            'Illuminate\\Support\\' => 19,
+            'Illuminate\\Filesystem\\' => 22,
+            'Illuminate\\Events\\' => 18,
+            'Illuminate\\Contracts\\' => 21,
+            'Illuminate\\Container\\' => 21,
+            'ILAB_League\\Flysystem\\AwsS3v3\\' => 30,
             'ILAB\\MediaCloud\\' => 16,
+            'ILAB\\B2\\' => 8,
+            'ILABAmazon\\' => 11,
         ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
+            'Grpc\\Gcp\\' => 9,
+            'Grpc\\' => 5,
+            'Google\\Protobuf\\' => 16,
+            'Google\\Cloud\\Vision\\' => 20,
             'Google\\Cloud\\Storage\\' => 21,
             'Google\\Cloud\\Core\\' => 18,
             'Google\\Auth\\' => 12,
+            'Google\\ApiCore\\' => 15,
+            'Google\\' => 7,
+            'GPBMetadata\\Google\\Protobuf\\' => 28,
+            'GPBMetadata\\Google\\Cloud\\Vision\\' => 32,
+            'GPBMetadata\\Google\\' => 19,
         ),
         'F' => 
         array (
             'Firebase\\JWT\\' => 13,
         ),
-        'C' => 
-        array (
-            'ChrisWhite\\B2\\' => 14,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'duncan3dc\\Laravel\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/duncan3dc/blade/src',
+        ),
+        'duncan3dc\\LaravelTests\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/duncan3dc/blade/tests',
+        ),
         'WillWashburn\\' => 
         array (
             0 => __DIR__ . '/..' . '/willwashburn/stream/src',
+        ),
+        'TeamTNT\\TNTSearch\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/teamtnt/tntsearch/src',
+        ),
+        'Symfony\\Polyfill\\Mbstring\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Component\\Translation\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/translation',
+        ),
+        'Symfony\\Component\\Finder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/finder',
+        ),
+        'Symfony\\Component\\Debug\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/debug',
+        ),
+        'Superbalist\\Flysystem\\GoogleStorage\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/superbalist/flysystem-google-storage/src',
         ),
         'Psr\\Log\\' => 
         array (
@@ -84,17 +159,65 @@ class ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
+        'Michelf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/michelf/php-markdown/Michelf',
+        ),
+        'League\\Glide\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/glide/src',
+        ),
+        'League\\Flysystem\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/flysystem/src',
+        ),
         'JmesPath\\' => 
         array (
             0 => __DIR__ . '/..' . '/mtdowling/jmespath.php/src',
         ),
-        'ILAB_Aws\\' => 
+        'Intervention\\Image\\' => 
         array (
-            0 => __DIR__ . '/..' . '/ilab/ilab-aws-media-cloud-sdk/src',
+            0 => __DIR__ . '/..' . '/intervention/image/src/Intervention/Image',
+        ),
+        'Illuminate\\View\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/view',
+        ),
+        'Illuminate\\Support\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/support',
+        ),
+        'Illuminate\\Filesystem\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/filesystem',
+        ),
+        'Illuminate\\Events\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/events',
+        ),
+        'Illuminate\\Contracts\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/contracts',
+        ),
+        'Illuminate\\Container\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/illuminate/container',
+        ),
+        'ILAB_League\\Flysystem\\AwsS3v3\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ilab/ilab-flysystem-aws-s3-v3/src',
         ),
         'ILAB\\MediaCloud\\' => 
         array (
             0 => __DIR__ . '/../..' . '/classes',
+        ),
+        'ILAB\\B2\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ilab/b2-sdk-php/src',
+        ),
+        'ILABAmazon\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ilab/ilab-aws-media-cloud-sdk/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -108,6 +231,22 @@ class ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
+        'Grpc\\Gcp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/grpc-gcp/src',
+        ),
+        'Grpc\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/grpc/grpc/src/lib',
+        ),
+        'Google\\Protobuf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/protobuf/src/Google/Protobuf',
+        ),
+        'Google\\Cloud\\Vision\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/cloud-vision/src',
+        ),
         'Google\\Cloud\\Storage\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/cloud-storage/src',
@@ -120,17 +259,53 @@ class ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e
         array (
             0 => __DIR__ . '/..' . '/google/auth/src',
         ),
+        'Google\\ApiCore\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/gax/src',
+        ),
+        'Google\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/src',
+        ),
+        'GPBMetadata\\Google\\Protobuf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/protobuf/src/GPBMetadata/Google/Protobuf',
+        ),
+        'GPBMetadata\\Google\\Cloud\\Vision\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/cloud-vision/metadata',
+        ),
+        'GPBMetadata\\Google\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/google/common-protos/metadata',
+            1 => __DIR__ . '/..' . '/google/gax/metadata',
+        ),
         'Firebase\\JWT\\' => 
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
-        'ChrisWhite\\B2\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/cwhite92/b2-sdk-php/src',
-        ),
+    );
+
+    public static $fallbackDirsPsr4 = array (
+        0 => __DIR__ . '/..' . '/google/grpc-gcp/src/generated',
+        1 => __DIR__ . '/..' . '/nesbot/carbon/src',
     );
 
     public static $prefixesPsr0 = array (
+        'o' => 
+        array (
+            'org\\bovigo\\vfs\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/mikey179/vfsstream/src/main/php',
+            ),
+        ),
+        'U' => 
+        array (
+            'UpdateHelper\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/kylekatarnls/update-helper/src',
+            ),
+        ),
         'S' => 
         array (
             'Smalot\\PdfParser\\' => 
@@ -150,6 +325,13 @@ class ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e
             'Imgix\\' => 
             array (
                 0 => __DIR__ . '/..' . '/imgix/imgix-php/src',
+            ),
+        ),
+        'D' => 
+        array (
+            'Doctrine\\Common\\Inflector\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/doctrine/inflector/lib',
             ),
         ),
     );
@@ -178,10 +360,11 @@ class ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitaa33545ed34bc32f3d47430c41516d8e::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit75d4368a11a45d3bf48a4753d43863cf::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit75d4368a11a45d3bf48a4753d43863cf::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInit75d4368a11a45d3bf48a4753d43863cf::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit75d4368a11a45d3bf48a4753d43863cf::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit75d4368a11a45d3bf48a4753d43863cf::$classMap;
 
         }, null, ClassLoader::class);
     }

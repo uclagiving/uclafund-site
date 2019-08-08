@@ -1,16 +1,23 @@
 <?php
-namespace ILAB_Aws\Exception;
+namespace ILABAmazon\Exception;
 
+use ILABAmazon\HasMonitoringEventsTrait;
+use ILABAmazon\MonitoringEventsInterface;
+use ILABAmazon\ResponseContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\RequestInterface;
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\ResultInterface;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\ResultInterface;
 
 /**
  * Represents an AWS exception that is thrown when a command fails.
  */
-class AwsException extends \RuntimeException
+class AwsException extends \RuntimeException implements
+    MonitoringEventsInterface,
+    ResponseContainerInterface
 {
+    use HasMonitoringEventsTrait;
+
     /** @var ResponseInterface */
     private $response;
     private $request;
@@ -22,6 +29,8 @@ class AwsException extends \RuntimeException
     private $connectionError;
     private $transferInfo;
     private $errorMessage;
+    private $maxRetriesExceeded;
+
 
     /**
      * @param string           $message Exception message
@@ -51,6 +60,8 @@ class AwsException extends \RuntimeException
         $this->errorMessage = isset($context['message'])
             ? $context['message']
             : null;
+        $this->monitoringEvents = [];
+        $this->maxRetriesExceeded = false;
         parent::__construct($message, 0, $previous);
     }
 
@@ -204,5 +215,23 @@ class AwsException extends \RuntimeException
     public function setTransferInfo(array $info)
     {
         $this->transferInfo = $info;
+    }
+
+    /**
+     * Returns whether the max number of retries is exceeded.
+     *
+     * @return bool
+     */
+    public function isMaxRetriesExceeded()
+    {
+        return $this->maxRetriesExceeded;
+    }
+
+    /**
+     * Sets the flag for max number of retries exceeded.
+     */
+    public function setMaxRetriesExceeded()
+    {
+        $this->maxRetriesExceeded = true;
     }
 }

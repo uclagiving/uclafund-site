@@ -47,7 +47,7 @@ class StorageClient
     use ArrayTrait;
     use ClientTrait;
 
-    const VERSION = '1.9.2';
+    const VERSION = '1.12.3';
 
     const FULL_CONTROL_SCOPE = 'https://www.googleapis.com/auth/devstorage.full_control';
     const READ_ONLY_SCOPE = 'https://www.googleapis.com/auth/devstorage.read_only';
@@ -238,6 +238,7 @@ class StorageClient
      * @see https://cloud.google.com/storage/docs/json_api/v1/buckets/insert Buckets insert API documentation.
      *
      * @param string $name Name of the bucket to be created.
+     * @codingStandardsIgnoreStart
      * @param array $options [optional] {
      *     Configuration options.
      *
@@ -304,7 +305,17 @@ class StorageClient
      *           period for objects in seconds. During the retention period an
      *           object cannot be overwritten or deleted. Retention period must
      *           be greater than zero and less than 100 years.
+     *     @type array $iamConfiguration The bucket's IAM configuration.
+     *     @type bool $iamConfiguration.bucketPolicyOnly.enabled If set and
+     *           true, access checks only use bucket-level IAM policies or
+     *           above. When enabled, requests attempting to view or manipulate
+     *           ACLs will fail with error code 400. **NOTE**: Before using
+     *           Bucket Policy Only, please review the
+     *           [feature documentation](https://cloud.google.com/storage/docs/bucket-policy-only),
+     *           as well as
+     *           [Should You Use Bucket Policy Only](https://cloud.google.com/storage/docs/bucket-policy-only#should-you-use)
      * }
+     * @codingStandardsIgnoreEnd
      * @return Bucket
      * @throws GoogleException When a project ID has not been detected.
      */
@@ -384,7 +395,7 @@ class StorageClient
      * $timestamp = $storage->timestamp(new \DateTime('2003-02-05 11:15:02.421827Z'));
      * ```
      *
-     * @param \DateTimeInterface $value The timestamp value.
+     * @param \DateTimeInterface $timestamp The timestamp value.
      * @param int $nanoSeconds [optional] The number of nanoseconds in the timestamp.
      * @return Timestamp
      */
@@ -394,7 +405,7 @@ class StorageClient
     }
 
     /**
-     * Get a service account email for the KMS integration.
+     * Get the service account email associated with this client.
      *
      * Example:
      * ```

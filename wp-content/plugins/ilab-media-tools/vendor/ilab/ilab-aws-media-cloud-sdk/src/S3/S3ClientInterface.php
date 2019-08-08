@@ -1,9 +1,9 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\AwsClientInterface;
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\ResultInterface;
+use ILABAmazon\AwsClientInterface;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\ResultInterface;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\RequestInterface;
 
@@ -29,7 +29,7 @@ interface S3ClientInterface extends AwsClientInterface
      *
      * The URL returned by this method is not signed nor does it ensure the the
      * bucket and key given to the method exist. If you need a signed URL, then
-     * use the {@see \ILAB_Aws\S3\S3Client::createPresignedRequest} method and get
+     * use the {@see \ILABAmazon\S3\S3Client::createPresignedRequest} method and get
      * the URI of the signed request.
      *
      * @param string $bucket  The name of the bucket where the object is located
@@ -73,9 +73,9 @@ interface S3ClientInterface extends AwsClientInterface
      * @param string $bucket  Bucket that contains the object keys
      * @param string $prefix  Optionally delete only objects under this key prefix
      * @param string $regex   Delete only objects that match this regex
-     * @param array  $options Aws\S3\BatchDelete options array.
+     * @param array  $options ILABAmazon\S3\BatchDelete options array.
      *
-     * @see Aws\S3\S3Client::listObjects
+     * @see ILABAmazon\S3\S3Client::listObjects
      * @throws \RuntimeException if no prefix and no regex is given
      */
     public function deleteMatchingObjects(
@@ -93,9 +93,9 @@ interface S3ClientInterface extends AwsClientInterface
      * @param string $bucket  Bucket that contains the object keys
      * @param string $prefix  Optionally delete only objects under this key prefix
      * @param string $regex   Delete only objects that match this regex
-     * @param array  $options Aws\S3\BatchDelete options array.
+     * @param array  $options ILABAmazon\S3\BatchDelete options array.
      *
-     * @see Aws\S3\S3Client::listObjects
+     * @see ILABAmazon\S3\S3Client::listObjects
      *
      * @return PromiseInterface     A promise that is settled when matching
      *                              objects are deleted.
@@ -136,7 +136,7 @@ interface S3ClientInterface extends AwsClientInterface
      * @param string $acl     ACL to apply to the object (default: private).
      * @param array  $options Options used to configure the upload process.
      *
-     * @see Aws\S3\MultipartUploader for more info about multipart uploads.
+     * @see ILABAmazon\S3\MultipartUploader for more info about multipart uploads.
      * @return ResultInterface Returns the result of the upload.
      */
     public function upload(
@@ -196,7 +196,7 @@ interface S3ClientInterface extends AwsClientInterface
      * @param string $acl           ACL to apply to the copy (default: private).
      * @param array  $options       Options used to configure the upload process.
      *
-     * @see Aws\S3\MultipartCopy for more info about multipart uploads.
+     * @see ILABAmazon\S3\MultipartCopy for more info about multipart uploads.
      * @return ResultInterface Returns the result of the copy.
      */
     public function copy(
@@ -237,9 +237,9 @@ interface S3ClientInterface extends AwsClientInterface
      * @param string $directory Full path to a directory to upload
      * @param string $bucket    Name of the bucket
      * @param string $keyPrefix Virtual directory key prefix to add to each upload
-     * @param array  $options   Options available in Aws\S3\Transfer::__construct
+     * @param array  $options   Options available in ILABAmazon\S3\Transfer::__construct
      *
-     * @see Aws\S3\Transfer for more options and customization
+     * @see ILABAmazon\S3\Transfer for more options and customization
      */
     public function uploadDirectory(
         $directory,
@@ -254,9 +254,9 @@ interface S3ClientInterface extends AwsClientInterface
      * @param string $directory Full path to a directory to upload
      * @param string $bucket    Name of the bucket
      * @param string $keyPrefix Virtual directory key prefix to add to each upload
-     * @param array  $options   Options available in Aws\S3\Transfer::__construct
+     * @param array  $options   Options available in ILABAmazon\S3\Transfer::__construct
      *
-     * @see Aws\S3\Transfer for more options and customization
+     * @see ILABAmazon\S3\Transfer for more options and customization
      *
      * @return PromiseInterface A promise that is settled when the upload is
      *                          complete.
@@ -274,7 +274,7 @@ interface S3ClientInterface extends AwsClientInterface
      * @param string $directory Directory to download to
      * @param string $bucket    Bucket to download from
      * @param string $keyPrefix Only download objects that use this key prefix
-     * @param array  $options   Options available in Aws\S3\Transfer::__construct
+     * @param array  $options   Options available in ILABAmazon\S3\Transfer::__construct
      */
     public function downloadBucket(
         $directory,
@@ -289,7 +289,7 @@ interface S3ClientInterface extends AwsClientInterface
      * @param string $directory Directory to download to
      * @param string $bucket    Bucket to download from
      * @param string $keyPrefix Only download objects that use this key prefix
-     * @param array  $options   Options available in Aws\S3\Transfer::__construct
+     * @param array  $options   Options available in ILABAmazon\S3\Transfer::__construct
      *
      * @return PromiseInterface A promise that is settled when the download is
      *                          complete.

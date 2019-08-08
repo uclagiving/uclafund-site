@@ -16,19 +16,18 @@
 
 namespace ILAB\MediaCloud\Tools;
 
-use ILAB\MediaCloud\Cloud\Storage\StorageSettings;
+use ILAB\MediaCloud\Storage\StorageSettings;
 use ILAB\MediaCloud\Tasks\BatchManager;
-use function ILAB\MediaCloud\Utilities\arrayPath;
-use ILAB\MediaCloud\Utilities\EnvironmentOptions;
-use function ILAB\MediaCloud\Utilities\json_response;
-use ILAB\MediaCloud\Utilities\NoticeManager;
+use ILAB\MediaCloud\Utilities\Environment;
+use ILAB\MediaCloud\Utilities\Logging\Logger;
 use ILAB\MediaCloud\Utilities\View;
+use function ILAB\MediaCloud\Utilities\json_response;
 
 
 if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
 
-abstract class BatchTool {
-    /** @var null|ToolBase */
+abstract class BatchTool implements BatchToolInterface {
+    /** @var null|Tool */
     protected $owner = null;
 
     /** @var bool  */
@@ -38,12 +37,12 @@ abstract class BatchTool {
 
     /**
      * BatchTool constructor.
-     * @param $ownerTool ToolBase The tool that owns this batch tool
+     * @param $ownerTool Tool The tool that owns this batch tool
      */
     public function __construct($ownerTool) {
         $this->owner = $ownerTool;
 
-        $this->mediaListIntegration = EnvironmentOptions::Option('ilab-cloud-storage-display-media-list', null, true);
+        $this->mediaListIntegration = Environment::Option('mcloud-storage-display-media-list', null, true);
 
         if(is_admin()) {
 
@@ -60,7 +59,7 @@ abstract class BatchTool {
      */
     public function setup () {
         if ($this->enabled()) {
-            BatchManager::instance()->displayAnyErrors($this->batchIdentifier());
+            BatchManager::instance()->displayAnyErrors(static::BatchIdentifier());
 
             if ($this->mediaListIntegration) {
                 add_action('admin_init', function() {
@@ -90,9 +89,11 @@ abstract class BatchTool {
 
     /**
      * Name/ID of the batch
-     * @return string
+     * @return string|null
      */
-    abstract public function batchIdentifier();
+    static public function BatchIdentifier() {
+    	return null;
+    }
 
     /**
      * Title of the batch
@@ -108,9 +109,11 @@ abstract class BatchTool {
 
     /**
      * Fully qualified class name for the BatchProcess class
-     * @return string
+     * @return string|null
      */
-    abstract public function batchProcessClassName();
+    static public function BatchProcessClassName() {
+    	return null;
+    }
 
     /**
      * The view to render for instructions
@@ -218,9 +221,11 @@ abstract class BatchTool {
      * Gets the post data to process for this batch.  Data is paged to minimize memory usage.
      * @param $page
      * @param bool $forceImages
-     * @return array
-     */
-    protected function getImportBatch($page, $forceImages = false) {
+	 * @param bool $allInfo
+	 *
+	 * @return array
+	 */
+    protected function getImportBatch($page, $forceImages = false, $allInfo = false) {
         $total = 0;
         $pages = 1;
         $shouldRun = false;
@@ -269,28 +274,39 @@ abstract class BatchTool {
 
 
         $posts = [];
+        $first = true;
         foreach($postIds as $post) {
-            $thumb = wp_get_attachment_image_src($post, 'thumbnail', true);
+        	if ($first || $allInfo) {
+		        $thumb = wp_get_attachment_image_src($post, 'thumbnail', true);
 
-            $thumbUrl = null;
-            $icon = false;
-            if (!empty($thumb)) {
-                $thumbUrl = $thumb[0];
-                $icon = (($thumb[1] != 150) && ($thumb[2] != 150));
-            }
+		        $thumbUrl = null;
+		        $icon = false;
+		        if (!empty($thumb)) {
+			        $thumbUrl = $thumb[0];
+			        $icon = (($thumb[1] != 150) && ($thumb[2] != 150));
+		        }
 
-            $posts[] = [
-                'id' => $post,
-                'title' => pathinfo(get_attached_file($post), PATHINFO_BASENAME),
-                'thumb' => $thumbUrl,
-                'icon' => $icon
-            ];
+		        $posts[] = [
+			        'id' => $post,
+			        'title' => pathinfo(get_attached_file($post), PATHINFO_BASENAME),
+			        'thumb' => $thumbUrl,
+			        'icon' => $icon
+		        ];
+
+        		$first = false;
+	        } else {
+		        $posts[] = [
+			        'id' => $post,
+//			        'title' => pathinfo(get_attached_file($post), PATHINFO_BASENAME),
+		        ];
+	        }
         }
 
         return [
             'posts' =>$posts,
             'total' => $total,
             'pages' => $pages,
+	        'options' => [],
             'shouldRun' => $shouldRun,
             'fromSelection' => $fromSelection
         ];
@@ -309,15 +325,14 @@ abstract class BatchTool {
      * Renders the batch tool
      */
     public function renderBatchTool() {
-        wp_enqueue_style('ilab-media-importer-css', ILAB_PUB_CSS_URL.'/ilab-media-importer.min.css');
+        $data = BatchManager::instance()->stats(static::BatchIdentifier());
 
-        $data = BatchManager::instance()->stats($this->batchIdentifier());
-
-        $postData = $this->getImportBatch(1);
+        $postData = $this->getImportBatch(1, false, true);
         $data['posts'] = $postData['posts'];
         $data['pages'] = $postData['pages'];
 
-        $background = EnvironmentOptions::Option('ilab-media-s3-batch-background-processing', null, true);
+	    $background = Environment::Option('mcloud-storage-batch-background-processing', null, true);
+	    $commandLine = Environment::Option('mcloud-storage-batch-command-line-processing', null, false);
 
         if (!$background) {
             $data['total'] = $postData['total'];
@@ -347,7 +362,7 @@ abstract class BatchTool {
         $data['manualAction'] = $this->manualActionName();
         $data['progressAction'] = $this->progressActionName();
         $data['nextBatchAction'] = $this->nextBatchActionName();
-        $data['background'] = $background;
+        $data['background'] = $background || $commandLine;
 
         $data = $this->filterRenderData($data);
         echo View::render_view('importer/importer.php', $data);
@@ -366,7 +381,10 @@ abstract class BatchTool {
      * The action that starts a batch in motion
      */
     public function startAction() {
+    	Logger::info('Starting batch.');
+    	Logger::info('Getting posts for batch.');
         $posts = $this->getImportBatch(-1);
+	    Logger::info('Found '.$posts['total'].' posts for batch.');
 
         if($posts['total'] > 0) {
             try {
@@ -375,29 +393,32 @@ abstract class BatchTool {
                     $postIDs[] = $post['id'];
                 }
 
-                BatchManager::instance()->addToBatchAndRun($this->batchIdentifier(), $postIDs);
+                Logger::info('Adding posts to batch to run.');
+                BatchManager::instance()->addToBatchAndRun(static::BatchIdentifier(), $postIDs, $posts['options']);
+	            Logger::info('Finished adding posts to batch to run.');
             } catch (\Exception $ex) {
                 json_response(["status"=>"error", "error" => $ex->getMessage()]);
             }
         } else {
-            BatchManager::instance()->reset($this->batchIdentifier());
+            BatchManager::instance()->reset(static::BatchIdentifier());
             json_response(['status' => 'finished']);
         }
 
+	    Logger::info('Sending JSON response.');
         $data = [
             'status' => 'running',
             'total' => $posts['total'],
             'first' => $posts['posts'][0]
         ];
 
-        json_response($data);
+        wp_send_json($data, 200);
     }
 
     /**
      * Reports progress on a batch
      */
     public function progressAction() {
-        $data = BatchManager::instance()->stats($this->batchIdentifier());
+        $data = BatchManager::instance()->stats(static::BatchIdentifier());
 
         $data['status'] =  ($data['running']) ? 'running' : 'idle';
         $data['enabled'] = $this->enabled();
@@ -411,7 +432,7 @@ abstract class BatchTool {
     public function nextBatchAction() {
         $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
 
-        $postData = $this->getImportBatch($page);
+        $postData = $this->getImportBatch($page, false, true);
 
         json_response($postData);
     }
@@ -425,12 +446,23 @@ abstract class BatchTool {
      * Cancels the batch
      */
     public function cancelAction() {
-        BatchManager::instance()->setShouldCancel($this->batchIdentifier(), true);
+	    $background = Environment::Option('mcloud-storage-batch-background-processing', null, true);
+	    if (!$background) {
+		    BatchManager::instance()->reset(static::BatchIdentifier());
+	    }
 
-        call_user_func([$this->batchProcessClassName(), 'cancelAll']);
+        BatchManager::instance()->setShouldCancel(static::BatchIdentifier(), true);
+
+        call_user_func([static::BatchProcessClassName(), 'cancelAll']);
 
         json_response(['status' => 'ok']);
     }
 
+    //endregion
+
+    //region BatchToolInterface
+    public function toolInfo() {
+        return [];
+    }
     //endregion
 }

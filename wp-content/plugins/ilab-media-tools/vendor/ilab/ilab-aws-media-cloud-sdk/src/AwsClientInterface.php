@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
 use Psr\Http\Message\UriInterface;
 use GuzzleHttp\Promise\PromiseInterface;
@@ -63,7 +63,7 @@ interface AwsClientInterface
 
     /**
      * Returns a promise that is fulfilled with an
-     * {@see \ILAB_Aws\Credentials\CredentialsInterface} object.
+     * {@see \ILABAmazon\Credentials\CredentialsInterface} object.
      *
      * If you need the credentials synchronously, then call the wait() method
      * on the returned promise.
@@ -89,7 +89,7 @@ interface AwsClientInterface
     /**
      * Get the service description associated with the client.
      *
-     * @return \ILAB_Aws\Api\Service
+     * @return \ILABAmazon\Api\Service
      */
     public function getApi();
 
@@ -129,7 +129,7 @@ interface AwsClientInterface
      * @param string $name   Name of the operation used for iterator
      * @param array  $args   Command args to be used with each command
      *
-     * @return \ILAB_Aws\ResultPaginator
+     * @return \ILABAmazon\ResultPaginator
      * @throws \UnexpectedValueException if the iterator config is invalid.
      */
     public function getPaginator($name, array $args = []);
@@ -162,7 +162,7 @@ interface AwsClientInterface
      *                              by the waiter. Waiter configuration options
      *                              can be provided in an associative array in
      *                              the @waiter key.
-     * @return \ILAB_Aws\Waiter
+     * @return \ILABAmazon\Waiter
      * @throws \UnexpectedValueException if the waiter is invalid.
      */
     public function getWaiter($name, array $args = []);

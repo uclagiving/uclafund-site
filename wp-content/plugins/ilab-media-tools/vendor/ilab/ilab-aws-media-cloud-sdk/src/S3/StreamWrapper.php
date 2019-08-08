@@ -1,10 +1,10 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\CacheInterface;
-use ILAB_Aws\LruArrayCache;
-use ILAB_Aws\Result;
-use ILAB_Aws\S3\Exception\S3Exception;
+use ILABAmazon\CacheInterface;
+use ILABAmazon\LruArrayCache;
+use ILABAmazon\Result;
+use ILABAmazon\S3\Exception\S3Exception;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Stream;
 use GuzzleHttp\Psr7\CachingStream;
@@ -94,6 +94,9 @@ class StreamWrapper
     /** @var string The opened protocol (e.g., "s3") */
     private $protocol = 's3';
 
+    /** @var bool Keeps track of whether stream has been flushed since opening */
+    private $isFlushed = false;
+
     /**
      * Register the 's3://' stream wrapper
      *
@@ -127,12 +130,16 @@ class StreamWrapper
 
     public function stream_close()
     {
+        if ($this->body->getSize() === 0 && !($this->isFlushed)) {
+            $this->stream_flush();
+        }
         $this->body = $this->cache = null;
     }
 
     public function stream_open($path, $mode, $options, &$opened_path)
     {
         $this->initProtocol($path);
+        $this->isFlushed = false;
         $this->params = $this->getBucketKey($path);
         $this->mode = rtrim($mode, 'bt');
 
@@ -156,6 +163,7 @@ class StreamWrapper
 
     public function stream_flush()
     {
+        $this->isFlushed = true;
         if ($this->mode == 'r') {
             return false;
         }
@@ -281,10 +289,10 @@ class StreamWrapper
                     // Return as if it is a bucket to account for console
                     // bucket objects (e.g., zero-byte object "foo/")
                     return $this->formatUrlStat($path);
-                } else {
-                    // Attempt to stat and cache regular object
-                    return $this->formatUrlStat($result->toArray());
                 }
+
+                // Attempt to stat and cache regular object
+                return $this->formatUrlStat($result->toArray());
             } catch (S3Exception $e) {
                 // Maybe this isn't an actual key, but a prefix. Do a prefix
                 // listing of objects to determine.
@@ -408,7 +416,7 @@ class StreamWrapper
 
         // Filter our "/" keys added by the console as directories, and ensure
         // that if a filter function is provided that it passes the filter.
-        $this->objectIterator = \ILAB_Aws\flatmap(
+        $this->objectIterator = \ILABAmazon\flatmap(
             $this->getClient()->getPaginator('ListObjects', $op),
             function (Result $result) use ($filterFn) {
                 $contentsAndPrefixes = $result->search('[Contents[], CommonPrefixes[]][]');
@@ -446,7 +454,7 @@ class StreamWrapper
      */
     public function dir_rewinddir()
     {
-        $this->boolCall(function() {
+        return $this->boolCall(function() {
             $this->objectIterator = null;
             $this->dir_opendir($this->openedPath, null);
             return true;

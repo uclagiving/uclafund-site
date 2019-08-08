@@ -1,12 +1,12 @@
 <?php
-namespace ILAB_Aws\Api\Serializer;
+namespace ILABAmazon\Api\Serializer;
 
-use ILAB_Aws\Api\MapShape;
-use ILAB_Aws\Api\Service;
-use ILAB_Aws\Api\Shape;
-use ILAB_Aws\Api\StructureShape;
-use ILAB_Aws\Api\ListShape;
-use ILAB_Aws\Api\TimestampShape;
+use ILABAmazon\Api\MapShape;
+use ILABAmazon\Api\Service;
+use ILABAmazon\Api\Shape;
+use ILABAmazon\Api\StructureShape;
+use ILABAmazon\Api\ListShape;
+use ILABAmazon\Api\TimestampShape;
 use XMLWriter;
 
 /**
@@ -14,7 +14,7 @@ use XMLWriter;
  */
 class XmlBody
 {
-    /** @var \ILAB_Aws\Api\Service */
+    /** @var \ILABAmazon\Api\Service */
     private $api;
 
     /**
@@ -80,7 +80,7 @@ class XmlBody
     private function defaultShape(Shape $shape, $name, $value, XMLWriter $xml)
     {
         $this->startElement($shape, $name, $xml);
-        $xml->writeRaw($value);
+        $xml->text($value);
         $xml->endElement();
     }
 
@@ -187,7 +187,10 @@ class XmlBody
         XMLWriter $xml
     ) {
         $this->startElement($shape, $name, $xml);
-        $xml->writeRaw(TimestampShape::format($value, 'iso8601'));
+        $timestampFormat = !empty($shape['timestampFormat'])
+            ? $shape['timestampFormat']
+            : 'iso8601';
+        $xml->writeRaw(TimestampShape::format($value, $timestampFormat));
         $xml->endElement();
     }
 

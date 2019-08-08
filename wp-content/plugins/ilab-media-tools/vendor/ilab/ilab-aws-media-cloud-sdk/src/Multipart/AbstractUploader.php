@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\Multipart;
+namespace ILABAmazon\Multipart;
 
-use ILAB_Aws\AwsClientInterface as Client;
+use ILABAmazon\AwsClientInterface as Client;
 use GuzzleHttp\Psr7;
 use InvalidArgumentException as IAE;
 use Psr\Http\Message\StreamInterface as Stream;

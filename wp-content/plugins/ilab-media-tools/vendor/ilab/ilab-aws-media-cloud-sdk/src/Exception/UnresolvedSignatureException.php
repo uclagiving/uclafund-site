@@ -1,4 +1,11 @@
 <?php
-namespace ILAB_Aws\Exception;
+namespace ILABAmazon\Exception;
 
-class UnresolvedSignatureException extends \RuntimeException {}
+use ILABAmazon\HasMonitoringEventsTrait;
+use ILABAmazon\MonitoringEventsInterface;
+
+class UnresolvedSignatureException extends \RuntimeException implements
+    MonitoringEventsInterface
+{
+    use HasMonitoringEventsTrait;
+}

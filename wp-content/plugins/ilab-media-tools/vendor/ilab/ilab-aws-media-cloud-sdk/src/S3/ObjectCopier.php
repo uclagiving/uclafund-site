@@ -1,9 +1,9 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\Exception\MultipartUploadException;
-use ILAB_Aws\Result;
-use ILAB_Aws\S3\Exception\S3Exception;
+use ILABAmazon\Exception\MultipartUploadException;
+use ILABAmazon\Result;
+use ILABAmazon\S3\Exception\S3Exception;
 use GuzzleHttp\Promise\PromisorInterface;
 use InvalidArgumentException;
 
@@ -133,7 +133,7 @@ class ObjectCopier implements PromisorInterface
     {
         if (empty($location['Bucket']) || empty($location['Key'])) {
             throw new \InvalidArgumentException('Locations provided to an'
-                . ' Aws\S3\ObjectCopier must have a non-empty Bucket and Key');
+                . ' ILABAmazon\S3\ObjectCopier must have a non-empty Bucket and Key');
         }
     }
 

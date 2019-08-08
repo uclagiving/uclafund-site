@@ -1,85 +1,85 @@
 <?php
-namespace ILAB_Aws\Glacier;
+namespace ILABAmazon\Glacier;
 
-use ILAB_Aws\Api\ApiProvider;
-use ILAB_Aws\Api\DocModel;
-use ILAB_Aws\Api\Service;
-use ILAB_Aws\AwsClient;
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\Exception\CouldNotCreateChecksumException;
-use ILAB_Aws\HashingStream;
-use ILAB_Aws\Middleware;
-use ILAB_Aws\PhpHash;
+use ILABAmazon\Api\ApiProvider;
+use ILABAmazon\Api\DocModel;
+use ILABAmazon\Api\Service;
+use ILABAmazon\AwsClient;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\Exception\CouldNotCreateChecksumException;
+use ILABAmazon\HashingStream;
+use ILABAmazon\Middleware;
+use ILABAmazon\PhpHash;
 use Psr\Http\Message\RequestInterface;
 
 /**
  * This client is used to interact with the **Amazon Glacier** service.
  *
- * @method \ILAB_Aws\Result abortMultipartUpload(array $args = [])
+ * @method \ILABAmazon\Result abortMultipartUpload(array $args = [])
  * @method \GuzzleHttp\Promise\Promise abortMultipartUploadAsync(array $args = [])
- * @method \ILAB_Aws\Result abortVaultLock(array $args = [])
+ * @method \ILABAmazon\Result abortVaultLock(array $args = [])
  * @method \GuzzleHttp\Promise\Promise abortVaultLockAsync(array $args = [])
- * @method \ILAB_Aws\Result addTagsToVault(array $args = [])
+ * @method \ILABAmazon\Result addTagsToVault(array $args = [])
  * @method \GuzzleHttp\Promise\Promise addTagsToVaultAsync(array $args = [])
- * @method \ILAB_Aws\Result completeMultipartUpload(array $args = [])
+ * @method \ILABAmazon\Result completeMultipartUpload(array $args = [])
  * @method \GuzzleHttp\Promise\Promise completeMultipartUploadAsync(array $args = [])
- * @method \ILAB_Aws\Result completeVaultLock(array $args = [])
+ * @method \ILABAmazon\Result completeVaultLock(array $args = [])
  * @method \GuzzleHttp\Promise\Promise completeVaultLockAsync(array $args = [])
- * @method \ILAB_Aws\Result createVault(array $args = [])
+ * @method \ILABAmazon\Result createVault(array $args = [])
  * @method \GuzzleHttp\Promise\Promise createVaultAsync(array $args = [])
- * @method \ILAB_Aws\Result deleteArchive(array $args = [])
+ * @method \ILABAmazon\Result deleteArchive(array $args = [])
  * @method \GuzzleHttp\Promise\Promise deleteArchiveAsync(array $args = [])
- * @method \ILAB_Aws\Result deleteVault(array $args = [])
+ * @method \ILABAmazon\Result deleteVault(array $args = [])
  * @method \GuzzleHttp\Promise\Promise deleteVaultAsync(array $args = [])
- * @method \ILAB_Aws\Result deleteVaultAccessPolicy(array $args = [])
+ * @method \ILABAmazon\Result deleteVaultAccessPolicy(array $args = [])
  * @method \GuzzleHttp\Promise\Promise deleteVaultAccessPolicyAsync(array $args = [])
- * @method \ILAB_Aws\Result deleteVaultNotifications(array $args = [])
+ * @method \ILABAmazon\Result deleteVaultNotifications(array $args = [])
  * @method \GuzzleHttp\Promise\Promise deleteVaultNotificationsAsync(array $args = [])
- * @method \ILAB_Aws\Result describeJob(array $args = [])
+ * @method \ILABAmazon\Result describeJob(array $args = [])
  * @method \GuzzleHttp\Promise\Promise describeJobAsync(array $args = [])
- * @method \ILAB_Aws\Result describeVault(array $args = [])
+ * @method \ILABAmazon\Result describeVault(array $args = [])
  * @method \GuzzleHttp\Promise\Promise describeVaultAsync(array $args = [])
- * @method \ILAB_Aws\Result getDataRetrievalPolicy(array $args = [])
+ * @method \ILABAmazon\Result getDataRetrievalPolicy(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getDataRetrievalPolicyAsync(array $args = [])
- * @method \ILAB_Aws\Result getJobOutput(array $args = [])
+ * @method \ILABAmazon\Result getJobOutput(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getJobOutputAsync(array $args = [])
- * @method \ILAB_Aws\Result getVaultAccessPolicy(array $args = [])
+ * @method \ILABAmazon\Result getVaultAccessPolicy(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getVaultAccessPolicyAsync(array $args = [])
- * @method \ILAB_Aws\Result getVaultLock(array $args = [])
+ * @method \ILABAmazon\Result getVaultLock(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getVaultLockAsync(array $args = [])
- * @method \ILAB_Aws\Result getVaultNotifications(array $args = [])
+ * @method \ILABAmazon\Result getVaultNotifications(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getVaultNotificationsAsync(array $args = [])
- * @method \ILAB_Aws\Result initiateJob(array $args = [])
+ * @method \ILABAmazon\Result initiateJob(array $args = [])
  * @method \GuzzleHttp\Promise\Promise initiateJobAsync(array $args = [])
- * @method \ILAB_Aws\Result initiateMultipartUpload(array $args = [])
+ * @method \ILABAmazon\Result initiateMultipartUpload(array $args = [])
  * @method \GuzzleHttp\Promise\Promise initiateMultipartUploadAsync(array $args = [])
- * @method \ILAB_Aws\Result initiateVaultLock(array $args = [])
+ * @method \ILABAmazon\Result initiateVaultLock(array $args = [])
  * @method \GuzzleHttp\Promise\Promise initiateVaultLockAsync(array $args = [])
- * @method \ILAB_Aws\Result listJobs(array $args = [])
+ * @method \ILABAmazon\Result listJobs(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listJobsAsync(array $args = [])
- * @method \ILAB_Aws\Result listMultipartUploads(array $args = [])
+ * @method \ILABAmazon\Result listMultipartUploads(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listMultipartUploadsAsync(array $args = [])
- * @method \ILAB_Aws\Result listParts(array $args = [])
+ * @method \ILABAmazon\Result listParts(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listPartsAsync(array $args = [])
- * @method \ILAB_Aws\Result listProvisionedCapacity(array $args = [])
+ * @method \ILABAmazon\Result listProvisionedCapacity(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listProvisionedCapacityAsync(array $args = [])
- * @method \ILAB_Aws\Result listTagsForVault(array $args = [])
+ * @method \ILABAmazon\Result listTagsForVault(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listTagsForVaultAsync(array $args = [])
- * @method \ILAB_Aws\Result listVaults(array $args = [])
+ * @method \ILABAmazon\Result listVaults(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listVaultsAsync(array $args = [])
- * @method \ILAB_Aws\Result purchaseProvisionedCapacity(array $args = [])
+ * @method \ILABAmazon\Result purchaseProvisionedCapacity(array $args = [])
  * @method \GuzzleHttp\Promise\Promise purchaseProvisionedCapacityAsync(array $args = [])
- * @method \ILAB_Aws\Result removeTagsFromVault(array $args = [])
+ * @method \ILABAmazon\Result removeTagsFromVault(array $args = [])
  * @method \GuzzleHttp\Promise\Promise removeTagsFromVaultAsync(array $args = [])
- * @method \ILAB_Aws\Result setDataRetrievalPolicy(array $args = [])
+ * @method \ILABAmazon\Result setDataRetrievalPolicy(array $args = [])
  * @method \GuzzleHttp\Promise\Promise setDataRetrievalPolicyAsync(array $args = [])
- * @method \ILAB_Aws\Result setVaultAccessPolicy(array $args = [])
+ * @method \ILABAmazon\Result setVaultAccessPolicy(array $args = [])
  * @method \GuzzleHttp\Promise\Promise setVaultAccessPolicyAsync(array $args = [])
- * @method \ILAB_Aws\Result setVaultNotifications(array $args = [])
+ * @method \ILABAmazon\Result setVaultNotifications(array $args = [])
  * @method \GuzzleHttp\Promise\Promise setVaultNotificationsAsync(array $args = [])
- * @method \ILAB_Aws\Result uploadArchive(array $args = [])
+ * @method \ILABAmazon\Result uploadArchive(array $args = [])
  * @method \GuzzleHttp\Promise\Promise uploadArchiveAsync(array $args = [])
- * @method \ILAB_Aws\Result uploadMultipartPart(array $args = [])
+ * @method \ILABAmazon\Result uploadMultipartPart(array $args = [])
  * @method \GuzzleHttp\Promise\Promise uploadMultipartPartAsync(array $args = [])
  */
 class GlacierClient extends AwsClient

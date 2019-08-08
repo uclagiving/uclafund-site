@@ -1,9 +1,9 @@
 <?php
-namespace ILAB_Aws\Api;
+namespace ILABAmazon\Api;
 
-use ILAB_Aws\Api\Serializer\QuerySerializer;
-use ILAB_Aws\Api\Serializer\Ec2ParamBuilder;
-use ILAB_Aws\Api\Parser\QueryParser;
+use ILABAmazon\Api\Serializer\QuerySerializer;
+use ILABAmazon\Api\Serializer\Ec2ParamBuilder;
+use ILABAmazon\Api\Parser\QueryParser;
 
 /**
  * Represents a web service API model.
@@ -43,6 +43,7 @@ class Service extends AbstractModel
         ], $defaultMeta = [
             'apiVersion'       => null,
             'serviceFullName'  => null,
+            'serviceId'        => null,
             'endpointPrefix'   => null,
             'signingName'      => null,
             'signatureVersion' => null,
@@ -77,17 +78,19 @@ class Service extends AbstractModel
     public static function createSerializer(Service $api, $endpoint)
     {
         static $mapping = [
-            'json'      => 'ILAB_Aws\Api\Serializer\JsonRpcSerializer',
-            'query'     => 'ILAB_Aws\Api\Serializer\QuerySerializer',
-            'rest-json' => 'ILAB_Aws\Api\Serializer\RestJsonSerializer',
-            'rest-xml'  => 'ILAB_Aws\Api\Serializer\RestXmlSerializer'
+            'json'      => 'ILABAmazon\Api\Serializer\JsonRpcSerializer',
+            'query'     => 'ILABAmazon\Api\Serializer\QuerySerializer',
+            'rest-json' => 'ILABAmazon\Api\Serializer\RestJsonSerializer',
+            'rest-xml'  => 'ILABAmazon\Api\Serializer\RestXmlSerializer'
         ];
 
         $proto = $api->getProtocol();
 
         if (isset($mapping[$proto])) {
             return new $mapping[$proto]($api, $endpoint);
-        } elseif ($proto == 'ec2') {
+        }
+
+        if ($proto == 'ec2') {
             return new QuerySerializer($api, $endpoint, new Ec2ParamBuilder());
         }
 
@@ -107,11 +110,11 @@ class Service extends AbstractModel
     public static function createErrorParser($protocol)
     {
         static $mapping = [
-            'json'      => 'ILAB_Aws\Api\ErrorParser\JsonRpcErrorParser',
-            'query'     => 'ILAB_Aws\Api\ErrorParser\XmlErrorParser',
-            'rest-json' => 'ILAB_Aws\Api\ErrorParser\RestJsonErrorParser',
-            'rest-xml'  => 'ILAB_Aws\Api\ErrorParser\XmlErrorParser',
-            'ec2'       => 'ILAB_Aws\Api\ErrorParser\XmlErrorParser'
+            'json'      => 'ILABAmazon\Api\ErrorParser\JsonRpcErrorParser',
+            'query'     => 'ILABAmazon\Api\ErrorParser\XmlErrorParser',
+            'rest-json' => 'ILABAmazon\Api\ErrorParser\RestJsonErrorParser',
+            'rest-xml'  => 'ILABAmazon\Api\ErrorParser\XmlErrorParser',
+            'ec2'       => 'ILABAmazon\Api\ErrorParser\XmlErrorParser'
         ];
 
         if (isset($mapping[$protocol])) {
@@ -131,16 +134,18 @@ class Service extends AbstractModel
     public static function createParser(Service $api)
     {
         static $mapping = [
-            'json'      => 'ILAB_Aws\Api\Parser\JsonRpcParser',
-            'query'     => 'ILAB_Aws\Api\Parser\QueryParser',
-            'rest-json' => 'ILAB_Aws\Api\Parser\RestJsonParser',
-            'rest-xml'  => 'ILAB_Aws\Api\Parser\RestXmlParser'
+            'json'      => 'ILABAmazon\Api\Parser\JsonRpcParser',
+            'query'     => 'ILABAmazon\Api\Parser\QueryParser',
+            'rest-json' => 'ILABAmazon\Api\Parser\RestJsonParser',
+            'rest-xml'  => 'ILABAmazon\Api\Parser\RestXmlParser'
         ];
 
         $proto = $api->getProtocol();
         if (isset($mapping[$proto])) {
             return new $mapping[$proto]($api);
-        } elseif ($proto == 'ec2') {
+        }
+
+        if ($proto == 'ec2') {
             return new QueryParser($api, null, false);
         }
 
@@ -157,6 +162,16 @@ class Service extends AbstractModel
     public function getServiceFullName()
     {
         return $this->definition['metadata']['serviceFullName'];
+    }
+
+    /**
+     * Get the service id
+     *
+     * @return string
+     */
+    public function getServiceId()
+    {
+        return $this->definition['metadata']['serviceId'];
     }
 
     /**
@@ -293,7 +308,9 @@ class Service extends AbstractModel
     {
         if (!$key) {
             return $this['metadata'];
-        } elseif (isset($this->definition['metadata'][$key])) {
+        }
+
+        if (isset($this->definition['metadata'][$key])) {
             return $this->definition['metadata'][$key];
         }
 

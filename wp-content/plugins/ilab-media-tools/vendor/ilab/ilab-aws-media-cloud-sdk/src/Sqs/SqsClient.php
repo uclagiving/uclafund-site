@@ -1,9 +1,9 @@
 <?php
-namespace ILAB_Aws\Sqs;
+namespace ILABAmazon\Sqs;
 
-use ILAB_Aws\AwsClient;
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\Sqs\Exception\SqsException;
+use ILABAmazon\AwsClient;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\Sqs\Exception\SqsException;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\UriResolver;
 use Psr\Http\Message\RequestInterface;
@@ -11,40 +11,46 @@ use Psr\Http\Message\RequestInterface;
 /**
  * Client used to interact Amazon Simple Queue Service (Amazon SQS)
  *
- * @method \ILAB_Aws\Result addPermission(array $args = [])
+ * @method \ILABAmazon\Result addPermission(array $args = [])
  * @method \GuzzleHttp\Promise\Promise addPermissionAsync(array $args = [])
- * @method \ILAB_Aws\Result changeMessageVisibility(array $args = [])
+ * @method \ILABAmazon\Result changeMessageVisibility(array $args = [])
  * @method \GuzzleHttp\Promise\Promise changeMessageVisibilityAsync(array $args = [])
- * @method \ILAB_Aws\Result changeMessageVisibilityBatch(array $args = [])
+ * @method \ILABAmazon\Result changeMessageVisibilityBatch(array $args = [])
  * @method \GuzzleHttp\Promise\Promise changeMessageVisibilityBatchAsync(array $args = [])
- * @method \ILAB_Aws\Result createQueue(array $args = [])
+ * @method \ILABAmazon\Result createQueue(array $args = [])
  * @method \GuzzleHttp\Promise\Promise createQueueAsync(array $args = [])
- * @method \ILAB_Aws\Result deleteMessage(array $args = [])
+ * @method \ILABAmazon\Result deleteMessage(array $args = [])
  * @method \GuzzleHttp\Promise\Promise deleteMessageAsync(array $args = [])
- * @method \ILAB_Aws\Result deleteMessageBatch(array $args = [])
+ * @method \ILABAmazon\Result deleteMessageBatch(array $args = [])
  * @method \GuzzleHttp\Promise\Promise deleteMessageBatchAsync(array $args = [])
- * @method \ILAB_Aws\Result deleteQueue(array $args = [])
+ * @method \ILABAmazon\Result deleteQueue(array $args = [])
  * @method \GuzzleHttp\Promise\Promise deleteQueueAsync(array $args = [])
- * @method \ILAB_Aws\Result getQueueAttributes(array $args = [])
+ * @method \ILABAmazon\Result getQueueAttributes(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getQueueAttributesAsync(array $args = [])
- * @method \ILAB_Aws\Result getQueueUrl(array $args = [])
+ * @method \ILABAmazon\Result getQueueUrl(array $args = [])
  * @method \GuzzleHttp\Promise\Promise getQueueUrlAsync(array $args = [])
- * @method \ILAB_Aws\Result listDeadLetterSourceQueues(array $args = [])
+ * @method \ILABAmazon\Result listDeadLetterSourceQueues(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listDeadLetterSourceQueuesAsync(array $args = [])
- * @method \ILAB_Aws\Result listQueues(array $args = [])
+ * @method \ILABAmazon\Result listQueueTags(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise listQueueTagsAsync(array $args = [])
+ * @method \ILABAmazon\Result listQueues(array $args = [])
  * @method \GuzzleHttp\Promise\Promise listQueuesAsync(array $args = [])
- * @method \ILAB_Aws\Result purgeQueue(array $args = [])
+ * @method \ILABAmazon\Result purgeQueue(array $args = [])
  * @method \GuzzleHttp\Promise\Promise purgeQueueAsync(array $args = [])
- * @method \ILAB_Aws\Result receiveMessage(array $args = [])
+ * @method \ILABAmazon\Result receiveMessage(array $args = [])
  * @method \GuzzleHttp\Promise\Promise receiveMessageAsync(array $args = [])
- * @method \ILAB_Aws\Result removePermission(array $args = [])
+ * @method \ILABAmazon\Result removePermission(array $args = [])
  * @method \GuzzleHttp\Promise\Promise removePermissionAsync(array $args = [])
- * @method \ILAB_Aws\Result sendMessage(array $args = [])
+ * @method \ILABAmazon\Result sendMessage(array $args = [])
  * @method \GuzzleHttp\Promise\Promise sendMessageAsync(array $args = [])
- * @method \ILAB_Aws\Result sendMessageBatch(array $args = [])
+ * @method \ILABAmazon\Result sendMessageBatch(array $args = [])
  * @method \GuzzleHttp\Promise\Promise sendMessageBatchAsync(array $args = [])
- * @method \ILAB_Aws\Result setQueueAttributes(array $args = [])
+ * @method \ILABAmazon\Result setQueueAttributes(array $args = [])
  * @method \GuzzleHttp\Promise\Promise setQueueAttributesAsync(array $args = [])
+ * @method \ILABAmazon\Result tagQueue(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise tagQueueAsync(array $args = [])
+ * @method \ILABAmazon\Result untagQueue(array $args = [])
+ * @method \GuzzleHttp\Promise\Promise untagQueueAsync(array $args = [])
  */
 class SqsClient extends AwsClient
 {
@@ -66,13 +72,13 @@ class SqsClient extends AwsClient
      */
     public function getQueueArn($queueUrl)
     {
-        $queueArn = strtr($queueUrl, array(
+        $queueArn = strtr($queueUrl, [
             'http://'        => 'arn:aws:',
             'https://'       => 'arn:aws:',
             '.amazonaws.com' => '',
             '/'              => ':',
             '.'              => ':',
-        ));
+        ]);
 
         // Cope with SQS' .fifo / :fifo arn inconsistency
         if (substr($queueArn, -5) === ':fifo') {

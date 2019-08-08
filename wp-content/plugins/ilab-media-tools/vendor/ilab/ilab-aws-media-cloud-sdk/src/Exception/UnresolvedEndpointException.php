@@ -1,4 +1,11 @@
 <?php
-namespace ILAB_Aws\Exception;
+namespace ILABAmazon\Exception;
 
-class UnresolvedEndpointException extends \RuntimeException {}
+use ILABAmazon\HasMonitoringEventsTrait;
+use ILABAmazon\MonitoringEventsInterface;
+
+class UnresolvedEndpointException extends \RuntimeException implements
+    MonitoringEventsInterface
+{
+    use HasMonitoringEventsTrait;
+}

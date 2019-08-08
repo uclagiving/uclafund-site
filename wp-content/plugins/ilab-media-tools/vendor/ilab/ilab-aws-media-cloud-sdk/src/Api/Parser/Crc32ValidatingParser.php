@@ -1,9 +1,11 @@
 <?php
-namespace ILAB_Aws\Api\Parser;
+namespace ILABAmazon\Api\Parser;
 
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\Exception\AwsException;
+use ILABAmazon\Api\StructureShape;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\Exception\AwsException;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use GuzzleHttp\Psr7;
 
 /**
@@ -11,9 +13,6 @@ use GuzzleHttp\Psr7;
  */
 class Crc32ValidatingParser extends AbstractParser
 {
-    /** @var callable */
-    private $parser;
-
     /**
      * @param callable $parser Parser to wrap.
      */
@@ -43,5 +42,13 @@ class Crc32ValidatingParser extends AbstractParser
 
         $fn = $this->parser;
         return $fn($command, $response);
+    }
+
+    public function parseMemberFromStream(
+        StreamInterface $stream,
+        StructureShape $member,
+        $response
+    ) {
+        return $this->parser->parseMemberFromStream($stream, $member, $response);
     }
 }

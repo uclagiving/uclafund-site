@@ -1,13 +1,12 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
-use ILAB_Aws\Api\Service;
-use GuzzleHttp\Promise\Promise;
+use ILABAmazon\Api\Service;
 
 /**
  * A trait providing generic functionality for interacting with Amazon Web
  * Services. This is meant to be used in classes implementing
- * \ILAB_Aws\AwsClientInterface
+ * \ILABAmazon\AwsClientInterface
  */
 trait AwsClientTrait
 {
@@ -67,11 +66,20 @@ trait AwsClientTrait
 
     public function __call($name, array $args)
     {
+        if (substr($name, -5) === 'Async') {
+            $name = substr($name, 0, -5);
+            $isAsync = true;
+        }
+
+        if (!empty($this->aliases[ucfirst($name)])) {
+            $name = $this->aliases[ucfirst($name)];
+        }
+
         $params = isset($args[0]) ? $args[0] : [];
 
-        if (substr($name, -5) === 'Async') {
+        if (!empty($isAsync)) {
             return $this->executeAsync(
-                $this->getCommand(substr($name, 0, -5), $params)
+                $this->getCommand($name, $params)
             );
         }
 

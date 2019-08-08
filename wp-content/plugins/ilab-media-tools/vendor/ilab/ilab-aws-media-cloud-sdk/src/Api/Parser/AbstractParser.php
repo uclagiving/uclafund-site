@@ -1,18 +1,23 @@
 <?php
-namespace ILAB_Aws\Api\Parser;
+namespace ILABAmazon\Api\Parser;
 
-use ILAB_Aws\Api\Service;
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\ResultInterface;
+use ILABAmazon\Api\Service;
+use ILABAmazon\Api\StructureShape;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\ResultInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * @internal
  */
 abstract class AbstractParser
 {
-    /** @var \ILAB_Aws\Api\Service Representation of the service API*/
+    /** @var \ILABAmazon\Api\Service Representation of the service API*/
     protected $api;
+
+    /** @var callable */
+    protected $parser;
 
     /**
      * @param Service $api Service description.
@@ -31,5 +36,11 @@ abstract class AbstractParser
     abstract public function __invoke(
         CommandInterface $command,
         ResponseInterface $response
+    );
+
+    abstract public function parseMemberFromStream(
+        StreamInterface $stream,
+        StructureShape $member,
+        $response
     );
 }

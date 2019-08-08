@@ -1,9 +1,9 @@
 <?php
-namespace ILAB_Aws\Api\Serializer;
+namespace ILABAmazon\Api\Serializer;
 
-use ILAB_Aws\Api\Service;
-use ILAB_Aws\Api\Shape;
-use ILAB_Aws\Api\TimestampShape;
+use ILABAmazon\Api\Service;
+use ILABAmazon\Api\Shape;
+use ILABAmazon\Api\TimestampShape;
 
 /**
  * Formats the JSON body of a JSON-REST or JSON-RPC operation.
@@ -58,6 +58,9 @@ class JsonBody
                             = $this->format($valueShape, $v);
                     }
                 }
+                if (empty($data)) {
+                    return new \stdClass;
+                }
                 return $data;
 
             case 'list':
@@ -81,7 +84,10 @@ class JsonBody
                 return base64_encode($value);
 
             case 'timestamp':
-                return TimestampShape::format($value, 'unixTimestamp');
+                $timestampFormat = !empty($shape['timestampFormat'])
+                    ? $shape['timestampFormat']
+                    : 'unixTimestamp';
+                return TimestampShape::format($value, $timestampFormat);
 
             default:
                 return $value;

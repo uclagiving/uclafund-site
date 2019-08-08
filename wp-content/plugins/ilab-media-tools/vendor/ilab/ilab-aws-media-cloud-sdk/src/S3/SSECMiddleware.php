@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\CommandInterface;
+use ILABAmazon\CommandInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**

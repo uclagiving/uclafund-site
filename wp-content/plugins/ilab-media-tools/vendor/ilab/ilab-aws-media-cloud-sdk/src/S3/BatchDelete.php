@@ -1,8 +1,8 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\AwsClientInterface;
-use ILAB_Aws\S3\Exception\DeleteMultipleObjectsException;
+use ILABAmazon\AwsClientInterface;
+use ILABAmazon\S3\Exception\DeleteMultipleObjectsException;
 use GuzzleHttp\Promise;
 use GuzzleHttp\Promise\PromisorInterface;
 use GuzzleHttp\Promise\PromiseInterface;
@@ -12,13 +12,13 @@ use GuzzleHttp\Promise\PromiseInterface;
  * iterator that yields keys. Deletes are made using the DeleteObjects API
  * operation.
  *
- *     $s3 = new Aws\S3\Client([
+ *     $s3 = new ILABAmazon\S3\Client([
  *         'region' => 'us-west-2',
  *         'version' => 'latest'
  *     ]);
  *
  *     $listObjectsParams = ['Bucket' => 'foo', 'Prefix' => 'starts/with/'];
- *     $delete = Aws\S3\BatchDelete::fromListObjects($s3, $listObjectsParams);
+ *     $delete = ILABAmazon\S3\BatchDelete::fromListObjects($s3, $listObjectsParams);
  *     // Asynchronously delete
  *     $promise = $delete->promise();
  *     // Force synchronous completion
@@ -100,7 +100,7 @@ class BatchDelete implements PromisorInterface
         array $options = []
     ) {
         $fn = function (BatchDelete $that) use ($iter) {
-            return \GuzzleHttp\Promise\coroutine(function () use ($that, $iter) {
+            return Promise\coroutine(function () use ($that, $iter) {
                 foreach ($iter as $obj) {
                     if ($promise = $that->enqueue($obj)) {
                         yield $promise;

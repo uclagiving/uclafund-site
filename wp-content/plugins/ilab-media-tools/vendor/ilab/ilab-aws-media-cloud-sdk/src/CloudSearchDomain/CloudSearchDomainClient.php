@@ -1,8 +1,8 @@
 <?php
-namespace ILAB_Aws\CloudSearchDomain;
+namespace ILABAmazon\CloudSearchDomain;
 
-use ILAB_Aws\AwsClient;
-use ILAB_Aws\CommandInterface;
+use ILABAmazon\AwsClient;
+use ILABAmazon\CommandInterface;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 use GuzzleHttp\Psr7;
@@ -10,11 +10,11 @@ use GuzzleHttp\Psr7;
 /**
  * This client is used to search and upload documents to an **Amazon CloudSearch** Domain.
  *
- * @method \ILAB_Aws\Result search(array $args = [])
+ * @method \ILABAmazon\Result search(array $args = [])
  * @method \GuzzleHttp\Promise\Promise searchAsync(array $args = [])
- * @method \ILAB_Aws\Result suggest(array $args = [])
+ * @method \ILABAmazon\Result suggest(array $args = [])
  * @method \GuzzleHttp\Promise\Promise suggestAsync(array $args = [])
- * @method \ILAB_Aws\Result uploadDocuments(array $args = [])
+ * @method \ILABAmazon\Result uploadDocuments(array $args = [])
  * @method \GuzzleHttp\Promise\Promise uploadDocumentsAsync(array $args = [])
  */
 class CloudSearchDomainClient extends AwsClient

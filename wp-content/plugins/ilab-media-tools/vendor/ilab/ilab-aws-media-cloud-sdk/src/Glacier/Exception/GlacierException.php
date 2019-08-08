@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\Glacier\Exception;
+namespace ILABAmazon\Glacier\Exception;
 
-use ILAB_Aws\Exception\AwsException;
+use ILABAmazon\Exception\AwsException;
 
 /**
  * Represents an error interacting with the Amazon Glacier service.

@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\CloudSearch\Exception;
+namespace ILABAmazon\CloudSearch\Exception;
 
-use ILAB_Aws\Exception\AwsException;
+use ILABAmazon\Exception\AwsException;
 
 /**
  * Represents an error interacting with the Amazon CloudSearch service.

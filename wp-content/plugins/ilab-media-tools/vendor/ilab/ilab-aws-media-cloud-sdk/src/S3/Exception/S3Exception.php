@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\S3\Exception;
+namespace ILABAmazon\S3\Exception;
 
-use ILAB_Aws\Exception\AwsException;
+use ILABAmazon\Exception\AwsException;
 
 /**
  * Represents an error interacting with the Amazon Simple Storage Service.

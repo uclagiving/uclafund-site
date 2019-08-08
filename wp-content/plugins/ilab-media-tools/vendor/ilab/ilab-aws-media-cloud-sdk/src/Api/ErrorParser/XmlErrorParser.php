@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\Api\ErrorParser;
+namespace ILABAmazon\Api\ErrorParser;
 
-use ILAB_Aws\Api\Parser\PayloadParserTrait;
+use ILABAmazon\Api\Parser\PayloadParserTrait;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -25,7 +25,7 @@ class XmlErrorParser
 
         $body = $response->getBody();
         if ($body->getSize() > 0) {
-            $this->parseBody($this->parseXml($body), $data);
+            $this->parseBody($this->parseXml($body, $response), $data);
         } else {
             $this->parseHeaders($response, $data);
         }

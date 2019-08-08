@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
 /**
  * A command object encapsulates the input parameters used to control the

@@ -1,11 +1,11 @@
 <?php
-namespace ILAB_Aws\S3\Exception;
+namespace ILABAmazon\S3\Exception;
 
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\Exception\AwsException;
-use ILAB_Aws\Multipart\UploadState;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\Exception\AwsException;
+use ILABAmazon\Multipart\UploadState;
 
-class S3MultipartUploadException extends \ILAB_Aws\Exception\MultipartUploadException
+class S3MultipartUploadException extends \ILABAmazon\Exception\MultipartUploadException
 {
     /** @var string Bucket of the transfer object */
     private $bucket;
@@ -23,7 +23,7 @@ class S3MultipartUploadException extends \ILAB_Aws\Exception\MultipartUploadExce
      *                                the MultipartUpload process.
      */
     public function __construct(UploadState $state, $prev = null) {
-        if (is_array($prev) && $error = each($prev)[1]) {
+        if (is_array($prev) && $error = $prev[key($prev)]) {
             $this->collectPathInfo($error->getCommand());
         } elseif ($prev instanceof AwsException) {
             $this->collectPathInfo($prev->getCommand());

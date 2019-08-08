@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
-use ILAB_Aws\Api\Service;
+use ILABAmazon\Api\Service;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -30,7 +30,7 @@ class IdempotencyTokenMiddleware
      * You may also supply a custom bytes generator as an optional second
      * parameter.
      *
-     * @param \ILAB_Aws\Api\Service $service
+     * @param \ILABAmazon\Api\Service $service
      * @param callable|null $bytesGenerator
      *
      * @return callable
@@ -105,9 +105,13 @@ class IdempotencyTokenMiddleware
     {
         if (function_exists('random_bytes')) {
             return 'random_bytes';
-        } elseif (function_exists('openssl_random_pseudo_bytes')) {
+        }
+
+        if (function_exists('openssl_random_pseudo_bytes')) {
             return 'openssl_random_pseudo_bytes';
-        } elseif (function_exists('mcrypt_create_iv')) {
+        }
+
+        if (function_exists('mcrypt_create_iv')) {
             return 'mcrypt_create_iv';
         }
     }

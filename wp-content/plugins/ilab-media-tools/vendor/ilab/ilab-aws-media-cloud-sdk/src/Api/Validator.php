@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws\Api;
+namespace ILABAmazon\Api;
 
 use Aws;
 
@@ -120,7 +120,7 @@ class Validator
     {
         if (!is_array($value)) {
             $this->addError('must be an array. Found '
-                . Aws\describe_type($value));
+                . ILABAmazon\describe_type($value));
             return;
         }
 
@@ -163,7 +163,7 @@ class Validator
                 $this->addError('must be an fopen resource, a '
                     . 'GuzzleHttp\Stream\StreamInterface object, or something '
                     . 'that can be cast to a string. Found '
-                    . Aws\describe_type($value));
+                    . ILABAmazon\describe_type($value));
             }
         }
     }
@@ -172,7 +172,7 @@ class Validator
     {
         if (!is_numeric($value)) {
             $this->addError('must be numeric. Found '
-                . Aws\describe_type($value));
+                . ILABAmazon\describe_type($value));
             return;
         }
 
@@ -183,7 +183,7 @@ class Validator
     {
         if (!is_bool($value)) {
             $this->addError('must be a boolean. Found '
-                . Aws\describe_type($value));
+                . ILABAmazon\describe_type($value));
         }
     }
 
@@ -192,14 +192,14 @@ class Validator
         if ($shape['jsonvalue']) {
             if (!self::canJsonEncode($value)) {
                 $this->addError('must be a value encodable with \'json_encode\'.'
-                    . ' Found ' . Aws\describe_type($value));
+                    . ' Found ' . ILABAmazon\describe_type($value));
             }
             return;
         }
 
         if (!$this->checkCanString($value)) {
             $this->addError('must be a string or an object that implements '
-                . '__toString(). Found ' . Aws\describe_type($value));
+                . '__toString(). Found ' . ILABAmazon\describe_type($value));
             return;
         }
 
@@ -249,9 +249,22 @@ class Validator
 
     private function checkAssociativeArray($value)
     {
-        if (!is_array($value) || isset($value[0])) {
+        $isAssociative = false;
+
+        if (is_array($value)) {
+            $expectedIndex = 0;
+            $key = key($value);
+
+            do {
+                $isAssociative = $key !== $expectedIndex++;
+                next($value);
+                $key = key($value);
+            } while (!$isAssociative && null !== $key);
+        }
+
+        if (!$isAssociative) {
             $this->addError('must be an associative array. Found '
-                . Aws\describe_type($value));
+                . ILABAmazon\describe_type($value));
             return false;
         }
 

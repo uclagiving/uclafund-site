@@ -1,15 +1,14 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
-use ILAB_Aws\Api\Service;
-use ILAB_Aws\Api\Validator;
-use ILAB_Aws\Credentials\CredentialsInterface;
-use ILAB_Aws\Exception\AwsException;
+use ILABAmazon\Api\Service;
+use ILABAmazon\Api\Validator;
+use ILABAmazon\Credentials\CredentialsInterface;
+use ILABAmazon\Exception\AwsException;
 use GuzzleHttp\Promise;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\LazyOpenStream;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 final class Middleware
 {
@@ -318,8 +317,8 @@ final class Middleware
     /**
      * Creates a middleware that applies a map function to results.
      *
-     * @param callable $f Map function that accepts an Aws\ResultInterface and
-     *                    returns an Aws\ResultInterface.
+     * @param callable $f Map function that accepts an ILABAmazon\ResultInterface and
+     *                    returns an ILABAmazon\ResultInterface.
      *
      * @return callable
      */

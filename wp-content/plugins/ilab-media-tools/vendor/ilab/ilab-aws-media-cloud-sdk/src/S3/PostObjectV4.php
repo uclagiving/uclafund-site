@@ -1,11 +1,11 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\Credentials\CredentialsInterface;
+use ILABAmazon\Credentials\CredentialsInterface;
 use GuzzleHttp\Psr7\Uri;
-use ILAB_Aws\Signature\SignatureTrait;
-use ILAB_Aws\Signature\SignatureV4 as SignatureV4;
-use ILAB_Aws\Api\TimestampShape as TimestampShape;
+use ILABAmazon\Signature\SignatureTrait;
+use ILABAmazon\Signature\SignatureV4 as SignatureV4;
+use ILABAmazon\Api\TimestampShape as TimestampShape;
 
 /**
  * Encapsulates the logic for getting the data for an S3 object POST upload form
@@ -143,7 +143,10 @@ class PostObjectV4
     {
         $uri = new Uri($this->client->getEndpoint());
 
-        if (($uri->getScheme() === 'https' && strpos($this->bucket, '.') !== false) || $this->client->getConfig('use_path_style_endpoint'))  {
+        if ($this->client->getConfig('use_path_style_endpoint') === true
+            || ($uri->getScheme() === 'https'
+            && strpos($this->bucket, '.') !== false)
+        ) {
             // Use path-style URLs
             $uri = $uri->withPath("/{$this->bucket}");
         } else {

@@ -1,8 +1,8 @@
 <?php
-namespace ILAB_Aws\Api\Serializer;
+namespace ILABAmazon\Api\Serializer;
 
-use ILAB_Aws\Api\Service;
-use ILAB_Aws\Api\StructureShape;
+use ILABAmazon\Api\Service;
+use ILABAmazon\Api\StructureShape;
 
 /**
  * Serializes requests for the REST-JSON protocol.
@@ -27,7 +27,7 @@ class RestJsonSerializer extends RestSerializer
         JsonBody $jsonFormatter = null
     ) {
         parent::__construct($api, $endpoint);
-        $this->contentType = JsonBody::getContentType($api);
+        $this->contentType = 'application/json';
         $this->jsonFormatter = $jsonFormatter ?: new JsonBody($api);
     }
 

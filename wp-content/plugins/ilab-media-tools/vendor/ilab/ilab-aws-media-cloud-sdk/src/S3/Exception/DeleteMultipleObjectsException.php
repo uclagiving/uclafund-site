@@ -1,12 +1,18 @@
 <?php
-namespace ILAB_Aws\S3\Exception;
+namespace ILABAmazon\S3\Exception;
+
+use ILABAmazon\HasMonitoringEventsTrait;
+use ILABAmazon\MonitoringEventsInterface;
 
 /**
  * Exception thrown when errors occur while deleting objects using a
  * {@see S3\BatchDelete} object.
  */
-class DeleteMultipleObjectsException extends \Exception
+class DeleteMultipleObjectsException extends \Exception implements
+    MonitoringEventsInterface
 {
+    use HasMonitoringEventsTrait;
+
     private $deleted = [];
     private $errors = [];
 
