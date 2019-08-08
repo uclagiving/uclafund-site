@@ -1947,8 +1947,8 @@ module.exports = panels.view.dialog.extend( {
 
 		// Add the sidebar tabs
 		var tabs = this.$( '.so-sidebar-tabs' );
-		_.each( panelsOptions.widget_dialog_tabs, function ( tab ) {
-			$( this.dialogTabTemplate( {'title': tab.title} ) ).data( {
+		_.each( panelsOptions.widget_dialog_tabs, function ( tab, key ) {
+			$( this.dialogTabTemplate( {'title': tab.title, 'tab': key} ) ).data( {
 				'message': tab.message,
 				'filter': tab.filter
 			} ).appendTo( tabs );
@@ -2595,6 +2595,10 @@ jQuery( function ( $ ) {
 			model: builderModel,
 			config: builderConfig
 		} );
+
+		// Trigger an event before the panels setup to allow adding listeners for various builder events which are
+		// triggered during initial setup.
+		$(document).trigger('before_panels_setup', builderView);
 
 		// Set up the builder view
 		builderView
@@ -5161,7 +5165,7 @@ module.exports = Backbone.View.extend( {
 
 		this.refreshSortable();
 		this.row.resize();
-		this.row.builder.trigger( 'widget_added' );
+		this.row.builder.trigger( 'widget_added', view );
 	},
 
 	/**
