@@ -134,7 +134,7 @@
 			<div class="post-inner">
 				<h4>
 					<p>As the world’s premier public research institution, UCLA seeks to deepen its commitment to advancing knowledge, creating opportunity through education, and serving communities in Los Angeles and beyond.</p>
-                    <p>To catalyze this effort, UCLA will emphasize open access to scholarships and fellowships in order to draw the brightest people from every background into our campus community. In doing so, our university can work toward generating the Knowledge required to address society’s toughest problems.</p>
+                    <p>To catalyze this effort, UCLA will emphasize open access to scholarships and fellowships in order to draw the brightest people from every background into our campus community. In doing so, our university can work toward generating the knowledge required to address society’s toughest problems.</p>
                     <p>Support from donors like you help advance this goal.</p>
                 </h4>
 				<p style="text-align: center;"><a class="btn btn-danger give" title="donate now button" href="https://giving.ucla.edu/Campaign/Donate.aspx?SiteNum=4&fund=00412G">Donate Now</a></p>
