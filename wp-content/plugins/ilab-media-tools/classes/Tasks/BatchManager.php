@@ -13,11 +13,15 @@
 
 namespace ILAB\MediaCloud\Tasks;
 
-use ILAB\MediaCloud\Utilities\EnvironmentOptions;
-use function ILAB\MediaCloud\Utilities\json_response;
+use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\TransferStats;
+use ILAB\MediaCloud\Utilities\Environment;
 use ILAB\MediaCloud\Utilities\Logging\ErrorCollector;
 use ILAB\MediaCloud\Utilities\Logging\Logger;
 use ILAB\MediaCloud\Utilities\NoticeManager;
+use function ILAB\MediaCloud\Utilities\json_response;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Manages the batch import tools.
@@ -123,14 +127,23 @@ final class BatchManager {
         return get_option("ilab_media_tools_{$batch}_current", 0);
     }
 
-    /**
-     * Sets the current index being processed
-     * @param $batch
-     * @param int $index
-     */
-    public function setCurrent($batch, $index) {
-        update_option("ilab_media_tools_{$batch}_current", $index);
-    }
+	/**
+	 * Sets the current index being processed
+	 * @param $batch
+	 * @param int $index
+	 */
+	public function setCurrent($batch, $index) {
+		update_option("ilab_media_tools_{$batch}_current", $index);
+	}
+
+	/**
+	 * Sets the current thumbnail of the file being processed
+	 * @param $batch
+	 * @param array $thumbUrl
+	 */
+	public function setCommandLineThumb($batch, $thumbUrl) {
+		update_option("ilab_media_tools_{$batch}_command_line_thumb", $thumbUrl);
+	}
 
     /**
      * Returns the ID of the item currently being processed
@@ -159,17 +172,26 @@ final class BatchManager {
         return get_option("ilab_media_tools_{$batch}_file");
     }
 
-    /**
-     * Sets the current file being processed
-     * @param $batch
-     * @param string|null $file
-     */
-    public function setCurrentFile($batch, $file) {
-        update_option("ilab_media_tools_{$batch}_last_update", microtime(true));
-        update_option("ilab_media_tools_{$batch}_file", $file);
-    }
+	/**
+	 * Sets the current file being processed
+	 * @param $batch
+	 * @param string|null $file
+	 */
+	public function setCurrentFile($batch, $file) {
+		$this->setLastUpdateToNow($batch);
+		update_option("ilab_media_tools_{$batch}_file", $file);
+	}
 
-    /**
+
+	/**
+	 * Sets the time the last task update occurred
+	 * @param $batch
+	 */
+	public function setLastUpdateToNow($batch) {
+		update_option("ilab_media_tools_{$batch}_last_update", microtime(true));
+	}
+
+	/**
      * Returns the count of items in this batch being processed
      * @param $batch
      * @return int
@@ -288,19 +310,28 @@ final class BatchManager {
         return get_option("ilab_media_tools_{$batch}_error_id", null);
     }
 
-    /**
-     * Returns the amount of time that has elapsed since the last item was processed.
-     * @param $batch
-     * @return float
-     */
-    public function lastUpdate($batch) {
-        $lu = get_option("ilab_media_tools_{$batch}_last_update", 0);
-        if ($lu > 0) {
-            $lu = microtime(true) - $lu;
-        }
+	/**
+	 * Returns the amount of time that has elapsed since the last item was processed.
+	 * @param $batch
+	 * @return float
+	 */
+	public function lastUpdate($batch) {
+		$lu = get_option("ilab_media_tools_{$batch}_last_update", 0);
+		if ($lu > 0) {
+			$lu = microtime(true) - $lu;
+		}
 
-        return $lu;
-    }
+		return $lu;
+	}
+
+	/**
+	 * Returns the amount of time that has elapsed since the last item was processed.
+	 * @param $batch
+	 * @return float
+	 */
+	public function lastCommandLineThumb($batch) {
+		return get_option("ilab_media_tools_{$batch}_command_line_thumb", false);
+	}
 
     //endregion
 
@@ -336,11 +367,26 @@ final class BatchManager {
         $icon = false;
 
         if (!empty($this->currentID($batch))) {
-            $thumb = wp_get_attachment_image_src($this->currentID($batch), 'thumbnail', true);
-            if (!empty($thumb)) {
-                $thumbUrl = $thumb[0];
-                $icon = (($thumb[1] != 150) && ($thumb[2] != 150));
-            }
+	        $commandLine = Environment::Option("mcloud-{$batch}-batch-command-line-processing", null, false);
+
+	        $found = false;
+	        if ($commandLine) {
+	        	$thumbData = $this->lastCommandLineThumb($batch);
+	        	if (!empty($thumbData)) {
+	        		$thumbUrl = $thumbData['thumbUrl'];
+	        		$icon = $thumbData['icon'];
+
+	        		$found = true;
+		        }
+	        }
+
+	        if (!$found) {
+		        $thumb = wp_get_attachment_image_src($this->currentID($batch), 'thumbnail', true);
+		        if (!empty($thumb)) {
+			        $thumbUrl = $thumb[0];
+			        $icon = (($thumb[1] != 150) && ($thumb[2] != 150));
+		        }
+	        }
         }
 
         return [
@@ -379,6 +425,8 @@ final class BatchManager {
      * @param $batch
      */
     public function reset($batch) {
+	    Environment::DeleteOption('mcloud-storage-batch-command-line-processing');
+
         delete_option("ilab_media_tools_{$batch}_status");
         delete_option("ilab_media_tools_{$batch}_current");
         delete_option("ilab_media_tools_{$batch}_file");
@@ -386,16 +434,27 @@ final class BatchManager {
         delete_option("ilab_media_tools_{$batch}_last_run");
         delete_option("ilab_media_tools_{$batch}_total_time");
         delete_option("ilab_media_tools_{$batch}_last_time");
-        delete_option("ilab_media_tools_{$batch}_last_update");
+	    delete_option("ilab_media_tools_{$batch}_last_update");
+	    delete_option("ilab_media_tools_{$batch}_command_line_thumb");
     }
+
+	/**
+	 * Adds posts to a batch.  If another one of this batch type is running, it will be cancelled.
+	 * @param $batch
+	 * @param $postIDs
+	 */
+	public function addToBatch($batch, $postIDs) {
+
+	}
 
     /**
      * Adds posts to a batch and runs it.  If another one of this batch type is running, it will be cancelled.
-     * @param $batch
-     * @param $postIDs
+     * @param string $batch
+     * @param array $postIDs
+     * @param array|null $options
      * @throws \Exception
      */
-    public function addToBatchAndRun($batch, $postIDs) {
+    public function addToBatchAndRun($batch, $postIDs, $options = null) {
         if (!isset(static::$batchClasses[$batch])) {
             throw new \Exception("Batch '$batch' is not registered.");
         }
@@ -406,18 +465,25 @@ final class BatchManager {
             return;
         }
 
-        $testResult = $this->testConnectivity();
+        Logger::info("Testing connectivity.");
+        $testResult = $this->testConnectivity(null, 3);
+	    Logger::info("Finished Testing connectivity.");
         if ($testResult !== true) {
             $error = 'Unknown';
 
-            if (is_wp_error($testResult)) {
-                $error = $testResult->get_error_message();
-            } else if (is_array($testResult)) {
-                $error = 'HTTP response code was '.$testResult['response']['code'];
+            if ($testResult instanceof \Exception) {
+                $error = $testResult->getMessage();
+            } else {
+                $error = 'HTTP response code was '.$testResult->getStatusCode();
             }
 
-            $storageSettingsURL = admin_url('admin.php?page=media-tools-s3#ilab-media-s3-batch-settings');
-            $message = "There was an error attempting to run your batch.  Try changing the <strong>Connection Timeout</strong> in <a href='$storageSettingsURL'>Storage Settings</a> to a higher number like 0.1 or 1 to see if that helps.  The actual error was: $error";
+            $storageSettingsURL = admin_url('admin.php?page=media-cloud-settings&tab=batch-processing');
+            if (strpos($error, 'SSL') !== false) {
+	            $hint = "Try changing the <strong>Verify SSL</strong> in <a href='$storageSettingsURL'>Batch Processing Settings</a> to <strong>No</strong> to see if that helps.";
+            } else {
+	            $hint = "Try changing the <strong>Connection Timeout</strong> in <a href='$storageSettingsURL'>Batch Processing Settings</a> to a higher number like 0.1 or 1 to see if that helps.";
+            }
+            $message = "There was an error attempting to run your batch.  $hint  The actual error was: $error";
             $this->setErrorMessage($batch, $message);
 
             throw new \Exception($message);
@@ -437,7 +503,8 @@ final class BatchManager {
 
         $index = 0;
         foreach($postIDs as $postID) {
-            $batchProcess->push_to_queue(['index' => $index, 'post' => $postID]);
+        	$details = ['index' => $index, 'post' => $postID, 'options' => (empty($options)) ? [] : $options];
+            $batchProcess->push_to_queue($details);
             $index++;
         }
 
@@ -466,48 +533,153 @@ final class BatchManager {
         }
     }
 
+	/**
+	 * Posts a background processing request
+	 *
+	 * @param $url
+	 * @param $args
+	 *
+	 * @return bool|\Exception|ResponseInterface
+	 */
+    public static function postRequest($url, $args, $timeoutOverride = false) {
+	    $verifySSL = Environment::Option('mcloud-storage-batch-verify-ssl', null, 'default');
+	    $connectTimeout = Environment::Option('mcloud-storage-batch-connect-timeout', null, 0);
+	    $timeout = Environment::Option('mcloud-storage-batch-timeout', null, 0.1);
+	    $skipDNS = Environment::Option('mcloud-storage-batch-skip-dns', null, false);
+
+	    if ($skipDNS) {
+		    $ip = getHostByName(getHostName());
+		    if (empty($ip)) {
+			    $ip = $_SERVER['SERVER_ADDR'];
+		    }
+
+		    if (empty($ip)) {
+			    $ip = '127.0.0.1';
+		    }
+
+		    $host = parse_url($url, PHP_URL_HOST);
+		    $url = str_replace($host, $ip, $url);
+
+		    $headers = [
+			    'Host' => $host
+		    ];
+
+		    if (isset($args['headers'])) {
+			    $args['headers'] = array_merge($args['headers'], $headers);
+		    } else {
+			    $args['headers'] = $headers;
+		    }
+
+		    $cookies = CookieJar::fromArray($args['cookies'], $ip);
+	    } else {
+		    $cookies = CookieJar::fromArray($args['cookies'], $_SERVER['HTTP_HOST']);
+	    }
+
+	    if ($verifySSL == 'default') {
+		    $verifySSL = apply_filters( 'https_local_ssl_verify', true);
+	    } else {
+		    $verifySSL = ($verifySSL == 'yes');
+	    }
+
+	    $rawUrl = esc_url_raw( $url );
+
+	    $options = [
+		    'synchronous' => !empty($args['blocking']),
+		    'cookies' => $cookies,
+		    'verify' => $verifySSL
+	    ];
+
+	    if (isset($args['body'])) {
+		    if (is_array($args['body'])) {
+			    $options['form_params'] = $args['body'];
+		    } else {
+			    $options['body'] = $args['body'];
+		    }
+	    }
+
+	    if (!empty($headers)) {
+		    $options['headers'] = $headers;
+	    }
+
+	    if (!empty($connectTimeout)) {
+		    $options['connect_timeout'] = $connectTimeout;
+	    }
+
+
+	    if ($timeoutOverride !== false) {
+		    $options['timeout'] = $timeoutOverride;
+	    } else {
+		    $options['timeout'] = max(0.01, $timeout);
+	    }
+
+	    $client = new Client();
+	    try {
+		    if (empty($options['synchronous'])) {
+			    Logger::info("Async call to $rawUrl");
+			    $options['synchronous'] = true;
+			    $client->postSync($rawUrl, $options);
+			    Logger::info("Async call to $rawUrl complete.");
+			    return true;
+		    } else {
+			    Logger::info("Synchronous call to $rawUrl");
+			    $result = $client->post($rawUrl, $options);
+			    Logger::info("Synchronous call to $rawUrl complete.");
+			    return $result;
+		    }
+	    } catch (\Exception $ex) {
+		    if (!empty($args['blocking'])) {
+			    return $ex;
+		    } else {
+			    Logger::info("Async exception: ".$ex->getMessage());
+		    }
+	    }
+
+	    return true;
+    }
+
     /**
      * Tests connectivity to for the bulk importer
      * @param ErrorCollector|null $errorCollector
-     * @return array|bool|\WP_Error
-     */
-    public function testConnectivity($errorCollector = null) {
+	 * @return bool|ResponseInterface|\Exception|\WP_Error
+	 */
+    public function testConnectivity($errorCollector = null, $timeoutOverride = false) {
         $url = add_query_arg(['action' => 'ilab_batch_test', 'nonce' => wp_create_nonce('ilab_batch_test')], admin_url('admin-ajax.php'));
-        $timeout = EnvironmentOptions::Option('ilab-media-s3-batch-timeout', null, 0.1);
         $args = [
-            'timeout'   => $timeout,
             'blocking'  => true,
             'body'      => 'allo mate',
             'cookies'   => $_COOKIE,
-            'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
         ];
 
-        $rawUrl = esc_url_raw($url);
-        $result = wp_remote_post($rawUrl, $args);
+        /** @var bool|ResponseInterface $result */
+        $result = static::postRequest($url, $args, $timeoutOverride);
 
-        if (is_wp_error($result)) {
+        if ($result === true) {
+        	return true;
+        }
+
+        if ($result instanceof \Exception) {
+        	if ($errorCollector) {
+        		$errorCollector->addError("Could not connect to the server for bulk background processing.  The error was: ".$result->getMessage());
+	        }
+
+	        Logger::error("Testing connectivity to the site for background processing failed.  Error was: ".$result->getMessage());
+	        return $result;
+        } else if ($result->getStatusCode() != 200) {
             if ($errorCollector) {
-                $errorCollector->addError("Could not connect to the server for bulk background processing.  The error was: ".$result->get_error_message());
+                $errorCollector->addError("Could not connect to the server for bulk background processing.  The server returned a {$result->getStatusCode()} response code.");
             }
 
-            Logger::error("Testing connectivity to the site for background processing failed.  Error was: ".$result->get_error_message());
-            return $result;
-        } else if ($result['response']['code'] != 200) {
-            if ($errorCollector) {
-                $errorCollector->addError("Could not connect to the server for bulk background processing.  The server returned a {$result['response']['code']} response code.");
-            }
-
-            Logger::error("Testing connectivity to the site for background processing failed.  Site returned a {$result['response']['code']} status.", ['body' => $result['body']]);
+            Logger::error("Testing connectivity to the site for background processing failed.  Site returned a {$result->getStatusCode()} status.", ['body' => $result->getBody()]);
             return $result;
         }
 
-        $json = json_decode($result['body'], true);
+        $json = json_decode((string)$result->getBody(), true);
         if (empty($json) || !isset($json['test']) || (isset($json['test']) && ($json['test'] != 'worked'))) {
             if ($errorCollector) {
-                $errorCollector->addError("Was able to connect to the server for bulk background processing but the JSON response was incorrect: ".$result['body']);
+                $errorCollector->addError("Was able to connect to the server for bulk background processing but the JSON response was incorrect: ".$result->getBody());
             }
 
-            Logger::error("Testing connectivity to the site for background processing failed.  Was able to connect to the site but the JSON response was not expected.", ['body' => $result['body']]);
+            Logger::error("Testing connectivity to the site for background processing failed.  Was able to connect to the site but the JSON response was not expected.", ['body' => $result->getBody()]);
             return new \WP_Error(500, "The server response from the connectivity test was not in the expected format.");
         }
 

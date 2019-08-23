@@ -1,8 +1,7 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\S3\Exception\S3Exception;
+use ILABAmazon\CommandInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**
@@ -131,17 +130,23 @@ class S3EndpointMiddleware
             return $this->canAccelerate($command)
                 ? self::ACCELERATE_DUALSTACK
                 : self::DUALSTACK;
-        } elseif ($accelerate && $this->canAccelerate($command)) {
+        }
+
+        if ($accelerate && $this->canAccelerate($command)) {
             return self::ACCELERATE;
-        } elseif ($dualStack) {
+        }
+
+        if ($dualStack) {
             return self::DUALSTACK;
-        } elseif (!$pathStyle
+        }
+
+        if (!$pathStyle
             && self::isRequestHostStyleCompatible($command, $request)
         ) {
             return self::HOST_STYLE;
-        } else {
-            return self::PATH_STYLE;
         }
+
+        return self::PATH_STYLE;
     }
 
     private function canAccelerate(CommandInterface $command)

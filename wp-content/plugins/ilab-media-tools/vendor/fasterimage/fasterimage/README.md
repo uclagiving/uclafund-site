@@ -1,8 +1,8 @@
-# FasterImage [![Build Status](https://img.shields.io/travis/willwashburn/fasterimage/master.svg?style=flat-square)](https://travis-ci.org/willwashburn/fasterimage) [![Coveralls](https://img.shields.io/coveralls/willwashburn/fasterimage.svg?maxAge=259200&style=flat-square)](https://coveralls.io/github/willwashburn/fasterimage) [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg?style=flat-square)](https://php.net/) [![Packagist Version](https://img.shields.io/packagist/v/fasterimage/fasterimage.svg?style=flat-square)](https://packagist.org/packages/fasterimage/fasterimage) [![Packagist Downloads](https://img.shields.io/packagist/dt/fasterimage/fasterimage.svg?style=flat-square)](https://packagist.org/packages/fasterimage/fasterimage/stats) [![License](https://img.shields.io/packagist/l/fasterimage/fasterimage.svg?style=flat-square)](https://github.com/willwashburn/fasterimage/LICENSE)
+# FasterImage [![CircleCI](https://img.shields.io/circleci/project/github/willwashburn/fasterimage.svg?style=flat-square)](https://circleci.com/gh/willwashburn/fasterimage) [![Coveralls](https://img.shields.io/coveralls/willwashburn/fasterimage.svg?maxAge=259200&style=flat-square)](https://coveralls.io/github/willwashburn/fasterimage) [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg?style=flat-square)](https://php.net/) [![Packagist Version](https://img.shields.io/packagist/v/fasterimage/fasterimage.svg?style=flat-square)](https://packagist.org/packages/fasterimage/fasterimage) [![Packagist Downloads](https://img.shields.io/packagist/dt/fasterimage/fasterimage.svg?style=flat-square)](https://packagist.org/packages/fasterimage/fasterimage/stats) [![License](https://img.shields.io/packagist/l/fasterimage/fasterimage.svg?style=flat-square)](https://github.com/willwashburn/fasterimage/LICENSE)
 
 FasterImage finds the dimensions or filetype of a remote image file given its uri by fetching as little as needed, based on the excellent [Ruby implementation by Stephen Sykes](https://github.com/sdsykes/fastimage) and [PHP implementation by Tom Moor](https://github.com/tommoor/fastimage).
 
-FasterImage uses the curl_muli* suite to run requests in parallel. Currently supports JPG, GIF, PNG, WEPB, BMP, PSD, TIFF, and ICO files.
+FasterImage uses the curl_muli* suite to run requests in parallel. Currently supports JPG, GIF, PNG, WEBP, BMP, PSD, TIFF, SVG, and ICO files.
 
 ## Usage
 ```php
@@ -18,7 +18,8 @@ FasterImage uses the curl_muli* suite to run requests in parallel. Currently sup
             'http://wwww.example.com/image6.psd',
             'http://wwww.example.com/image7.webp',
             'http://wwww.example.com/image8.ico',
-            'http://wwww.example.com/image9.cur'
+            'http://wwww.example.com/image9.cur',
+            'http://wwww.example.com/image10.svg'
         ]);
         
         foreach ($images as $image) {
@@ -30,10 +31,14 @@ FasterImage uses the curl_muli* suite to run requests in parallel. Currently sup
 
 ```composer require fasterimage/fasterimage```
 
-Alternatively, add ```"fasterimage/fasterimage": "~1.2"``` to your composer.json
+Alternatively, add ```"fasterimage/fasterimage": "~1.5"``` to your composer.json
 
 ## Changelog
 
+* v1.5.0 - Fallback support when curl_multi_init() is not available
+* v1.4.0 - Add support for parsing dimensions from SVG images
+* v1.3.0 - Add ability for user agent, buffer size, and SSL host/peer verification to be overridden
+* v1.2.1 - Limit isRotated to only check for valid orientation values
 * v1.2.0 - Add option to include content-length in result set
 * v1.1.2 - Update Accept header to accept images
 * v1.1.1 - Properly handle jpeg's with corrupted Exif tags 

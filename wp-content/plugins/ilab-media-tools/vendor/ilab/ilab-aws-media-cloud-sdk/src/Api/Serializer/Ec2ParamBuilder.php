@@ -1,8 +1,8 @@
 <?php
-namespace ILAB_Aws\Api\Serializer;
+namespace ILABAmazon\Api\Serializer;
 
-use ILAB_Aws\Api\Shape;
-use ILAB_Aws\Api\ListShape;
+use ILABAmazon\Api\Shape;
+use ILABAmazon\Api\ListShape;
 
 /**
  * @internal

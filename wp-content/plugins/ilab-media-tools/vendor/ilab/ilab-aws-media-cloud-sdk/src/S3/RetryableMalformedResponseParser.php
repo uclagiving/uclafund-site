@@ -1,11 +1,13 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\Api\Parser\AbstractParser;
-use ILAB_Aws\Api\Parser\Exception\ParserException;
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\Exception\AwsException;
+use ILABAmazon\Api\Parser\AbstractParser;
+use ILABAmazon\Api\StructureShape;
+use ILABAmazon\Api\Parser\Exception\ParserException;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\Exception\AwsException;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Converts malformed responses to a retryable error type.
@@ -14,8 +16,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class RetryableMalformedResponseParser extends AbstractParser
 {
-    /** @var callable */
-    private $parser;
     /** @var string */
     private $exceptionClass;
 
@@ -44,5 +44,13 @@ class RetryableMalformedResponseParser extends AbstractParser
                 $e
             );
         }
+    }
+
+    public function parseMemberFromStream(
+        StreamInterface $stream,
+        StructureShape $member,
+        $response
+    ) {
+        return $this->parser->parseMemberFromStream($stream, $member, $response);
     }
 }

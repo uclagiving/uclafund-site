@@ -67,21 +67,21 @@
                     <div class="impact_header">
                        <h4>EDUCATION</h4>   
                     </div>
-                    <p class="impact_text">Over <strong>14,000</strong> students who began their UCLA journey and over <strong>13,500</strong> graduates now trained as leaders in their discipline.</p>
+                    <p class="impact_text">Over <strong>14,300</strong> students who began their UCLA journey and over <strong>13,700</strong> graduates now trained as leaders in their discipline.</p>
                 </div>
                 
                 <div class="col-md-4 text-center service-item">
                     <div class="impact_header">
                         <h4>RESEARCH</h4> 
                     </div>
-                    <p class="impact_text">Faculty who submitted more than <strong>5,600</strong> research proposals to build UCLA’s intellectual capital and expand the world’s knowledge in their field.</p>
+                    <p class="impact_text">Faculty who submitted more than <strong>5,300</strong> research proposals to build UCLA’s intellectual capital and expand the world’s knowledge in their field.</p>
                 </div>
                 
                 <div class="col-md-4 text-center service-item">
                     <div class="impact_header">
                         <h4>SERVICE</h4>
                     </div>
-                    <p class="impact_text"><strong>1,500</strong> community programs through which more than <strong>8,500</strong> UCLA volunteers improved the quality of life in Los Angeles County.</p>
+                    <p class="impact_text">More than <strong>200</strong> community partnerships in Los Angeles—everything from mobile health clinics to nanoscience pop-ups—where Bruins improve the quality of life in the county and beyond.</p>
                 </div>
             </div>
         </div>    
@@ -132,8 +132,9 @@
 		<div class="page-node section-content" style="">
 			<div class="post-inner">
 				<h4>
-					<p>In the year ahead, UCLA seeks to leverage its position as the world’s premier public research institution to address society’s greatest challenges, which are global in scope. To catalyze this effort, UCLA will emphasize open access to scholarships in order to draw the brightest people from every background and every part of the world. UCLA will also prioritize intellectual exchange, as technology and partnerships with institutions around the world afford us new opportunities to collaborate and share knowledge.</p> 
-                    <p>Private philanthropy will help us advance this goal.</p>
+					<p>As the world’s premier public research institution, UCLA seeks to deepen its commitment to advancing knowledge, creating opportunity through education, and serving communities in Los Angeles and beyond.</p>
+                    <p>To catalyze this effort, UCLA will emphasize open access to scholarships and fellowships in order to draw the brightest people from every background into our campus community. In doing so, our university can work toward generating the knowledge required to address society’s toughest problems.</p>
+                    <p>Support from donors like you help advance this goal.</p>
                 </h4>
 				<p style="text-align: center;"><a class="btn btn-danger give" title="donate now button" href="https://giving.ucla.edu/Campaign/Donate.aspx?SiteNum=4&fund=00412G">Donate Now</a></p>
 			</div>
@@ -193,25 +194,25 @@
 
                     <ul>
                         <li>
-                            <h2><a href="http://newsroom.ucla.edu/releases/ucla-offers-freshman-admission-to-16-000-increases-offers-to-transfer-students" target="_blank">UCLA offers freshman admission to 16,000, increases offers to transfer students</a></h2>
-                            <p>11 July 2018</p>
+                            <h2><a href="http://newsroom.ucla.edu/releases/ucla-admission-offers-fall-2019" target="_blank">UCLA offers admission to nearly 19,000 freshman and transfer applicants</a></h2>
+                            <p>22 July 2019</p>
                             <!-- H3 for testing only not display -->
-                            <p>UCLA has offered admission to just more than 16,000 exceptional high school seniors and nearly 5,600 transfer students for the fall 2018 term. The admitted students, who were selected from among a record-breaking nearly 114,000 freshman and 23,000 transfer applicants, make up the most talented and high-achieving admitted class in UCLA history.<br />
-                            [<a href="http://newsroom.ucla.edu/releases/ucla-offers-freshman-admission-to-16-000-increases-offers-to-transfer-students" target="_blank">Read more &#8230;</a>]</p>
+                            <p>UCLA has offered admission to more than 13,700 outstanding high school seniors and 5,200 transfer students for the fall 2019 term. The students were selected from among more than 135,000 freshman and transfer applicants.<br />
+                            [<a href="http://newsroom.ucla.edu/releases/ucla-admission-offers-fall-2019" target="_blank">Read more &#8230;</a>]</p>
                         </li>
                         <li>
-                            <h2><a href="http://newsroom.ucla.edu/releases/ucla-commencement-2018" target="_blank">Remain open to new ideas to help end divisiveness, UCLA graduates told</a></h2>
-                            <p>15 June 2018</p>
+                            <h2><a href="http://newsroom.ucla.edu/releases/centennial-graduates-celebrate-at-pauley-pavilion-commencement" target="_blank">Centennial UCLA graduates celebrate at Pauley Pavilion commencement</a></h2>
+                            <p>14 June 2019</p>
                             <!-- H3 for testing only not display -->
-                            <p>Thousands of graduating UCLA students bursting with four years’ worth of hard-earned knowledge were reminded by speakers to remain open to challenging ideas, and to prevent ideology from calcifying their opinions.<br />
-                            [<a href="http://newsroom.ucla.edu/releases/ucla-commencement-2018" target="_blank">Read more &#8230;</a>]</p>
+                            <p>Amid cheers and tears of happiness, the centennial class of UCLA celebrated both its graduation and the 100 years of UCLA’s existence at today’s commencement ceremonies, embracing the message that extraordinary changes don’t happen inevitably, but because people like this year’s graduates fight for it.<br />
+                            [<a href="http://newsroom.ucla.edu/releases/centennial-graduates-celebrate-at-pauley-pavilion-commencement" target="_blank">Read more &#8230;</a>]</p>
                         </li>
                         <li>
-                            <h2><a href="http://newsroom.ucla.edu/releases/wall-street-journaltimes-higher-education-rank-ucla-no-1-public-university" target="_blank">Wall Street Journal/Times Higher Education rank UCLA No. 1 public university</a></h2>
-                            <p>27 September 2017</p>
+                            <h2><a href="http://newsroom.ucla.edu/releases/ucla-number-1-public-university-us-news-and-world-report" target="_blank">UCLA ranked No. 1 public university by U.S. News &amp; World Report</a></h2>
+                            <p>9 September 2018</p>
                             <!-- H3 for testing only not display -->
-                            <p>In the second annual Wall Street Journal/Times Higher Education Top Colleges ranking UCLA has been selected as the No. 1 public institution in the country. In addition, of the more than 1,000 public and private institutions that were assessed, UCLA tied for No. 8 overall in the area of campus diversity and inclusion and ranked No. 25 overall.<br />
-                            [<a href="http://newsroom.ucla.edu/releases/wall-street-journaltimes-higher-education-rank-ucla-no-1-public-university" target="_blank">Read more &#8230;</a>]</p>
+                            <p>“It is wonderful to see UCLA recognized for our many academic achievements and the impact of our research,” UCLA Chancellor Gene Block said. “As a world-class university dedicated to the public good, we can also take great pride in being acknowledged for the access, opportunity and economic mobility UCLA provides to students from all backgrounds throughout California and the world.”<br />
+                            [<a href="http://newsroom.ucla.edu/releases/ucla-number-1-public-university-us-news-and-world-report" target="_blank">Read more &#8230;</a>]</p>
                         </li>
                     </ul>
 

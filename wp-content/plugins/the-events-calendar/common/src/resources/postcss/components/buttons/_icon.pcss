@@ -1,4 +1,4 @@
-.tribe-events {
+.tribe-common {
 	/* -----------------------------------------------------------------------------
 	 *
 	 * Button: Icon
@@ -31,14 +31,7 @@
 	 * ----------------------------------------------------------------------------- */
 
 	.tribe-common-c-btn-icon--border {
-		@mixin button-border;
-
-		align-items: center;
-		display: inline-flex;
-		height: 56px;
-		justify-content: center;
-		transition: none;
-		width: 56px;
+		@mixin button-icon-border;
 	}
 
 	/* -----------------------------------------------------------------------------
@@ -48,7 +41,7 @@
 	.tribe-common-c-btn-icon--caret-left {
 
 		&:before {
-			background-image: svg-inline(caret-left);
+			background-image: svg-inline(caret-left-secondary);
 			height: 20px;
 			width: 12px;
 		}
@@ -77,7 +70,7 @@
 	.tribe-common-c-btn-icon--caret-right {
 
 		&:before {
-			background-image: svg-inline(caret-right);
+			background-image: svg-inline(caret-right-secondary);
 			height: 20px;
 			width: 12px;
 		}

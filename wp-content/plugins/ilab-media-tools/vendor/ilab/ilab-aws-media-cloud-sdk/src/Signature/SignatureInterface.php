@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\Signature;
+namespace ILABAmazon\Signature;
 
-use ILAB_Aws\Credentials\CredentialsInterface;
+use ILABAmazon\Credentials\CredentialsInterface;
 use Psr\Http\Message\RequestInterface;
 
 /**

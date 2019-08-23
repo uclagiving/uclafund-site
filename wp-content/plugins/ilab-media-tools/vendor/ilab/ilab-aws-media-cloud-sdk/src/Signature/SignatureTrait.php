@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws\Signature;
+namespace ILABAmazon\Signature;
 
 /**
  * Provides signature calculation for SignatureV4.

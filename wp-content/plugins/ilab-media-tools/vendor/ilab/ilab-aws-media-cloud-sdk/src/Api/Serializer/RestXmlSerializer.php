@@ -1,8 +1,8 @@
 <?php
-namespace ILAB_Aws\Api\Serializer;
+namespace ILABAmazon\Api\Serializer;
 
-use ILAB_Aws\Api\StructureShape;
-use ILAB_Aws\Api\Service;
+use ILABAmazon\Api\StructureShape;
+use ILABAmazon\Api\Service;
 
 /**
  * @internal

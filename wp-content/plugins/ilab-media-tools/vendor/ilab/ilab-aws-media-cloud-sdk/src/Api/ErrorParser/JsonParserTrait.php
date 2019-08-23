@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\Api\ErrorParser;
+namespace ILABAmazon\Api\ErrorParser;
 
-use ILAB_Aws\Api\Parser\PayloadParserTrait;
+use ILABAmazon\Api\Parser\PayloadParserTrait;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -20,7 +20,7 @@ trait JsonParserTrait
             'code'        => null,
             'message'     => null,
             'type'        => $code[0] == '4' ? 'client' : 'server',
-            'parsed'      => $this->parseJson($response->getBody())
+            'parsed'      => $this->parseJson($response->getBody(), $response)
         ];
     }
 }

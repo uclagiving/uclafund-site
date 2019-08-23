@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws\Api;
+namespace ILABAmazon\Api;
 
 /**
  * DateTime overrides that make DateTime work more seamlessly as a string,

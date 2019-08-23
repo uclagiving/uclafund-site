@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws\Handler\GuzzleV5;
+namespace ILABAmazon\Handler\GuzzleV5;
 
 use GuzzleHttp\Stream\StreamDecoratorTrait;
 use GuzzleHttp\Stream\StreamInterface as GuzzleStreamInterface;

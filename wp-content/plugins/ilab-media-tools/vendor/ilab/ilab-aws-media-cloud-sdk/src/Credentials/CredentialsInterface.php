@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws\Credentials;
+namespace ILABAmazon\Credentials;
 
 /**
  * Provides access to the AWS credentials used for accessing AWS services: AWS

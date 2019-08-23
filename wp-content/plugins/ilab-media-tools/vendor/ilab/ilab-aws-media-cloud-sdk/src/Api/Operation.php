@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws\Api;
+namespace ILABAmazon\Api;
 
 /**
  * Represents an API operation.

@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\ElasticsearchService\Exception;
+namespace ILABAmazon\ElasticsearchService\Exception;
 
-use ILAB_Aws\Exception\AwsException;
+use ILABAmazon\Exception\AwsException;
 
 /**
  * Represents an error interacting with the **Amazon Elasticsearch Service** service.

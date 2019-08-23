@@ -1,10 +1,8 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
-use ILAB_Aws\AwsClientInterface;
-use ILAB_Aws\Signature\SignatureV4;
-use ILAB_Aws\Endpoint\EndpointProvider;
-use ILAB_Aws\CommandInterface;
+use ILABAmazon\Signature\SignatureV4;
+use ILABAmazon\Endpoint\EndpointProvider;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\RequestInterface;
 
@@ -22,6 +20,8 @@ class PresignUrlMiddleware
     private $serviceName;
     /** @var string */
     private $presignParam;
+    /** @var bool */
+    private $requireDifferentRegion;
 
     public function __construct(
         array $options,
@@ -35,6 +35,7 @@ class PresignUrlMiddleware
         $this->commandPool = $options['operations'];
         $this->serviceName = $options['service'];
         $this->presignParam = $options['presign_param'];
+        $this->requireDifferentRegion = !empty($options['require_different_region']);
     }
 
     public static function wrap(
@@ -43,7 +44,7 @@ class PresignUrlMiddleware
         array $options = []
     ) {
         return function (callable $handler) use ($endpointProvider, $client, $options) {
-            $f = new PreSignUrlMiddleware($options, $endpointProvider, $client, $handler);
+            $f = new PresignUrlMiddleware($options, $endpointProvider, $client, $handler);
             return $f;
         };
     }
@@ -53,8 +54,13 @@ class PresignUrlMiddleware
         if (in_array($cmd->getName(), $this->commandPool)
             && (!isset($cmd->{'__skip' . $cmd->getName()}))
         ) {
-            $cmd[$this->presignParam] = $this->createPresignedUrl($this->client, $cmd);
             $cmd['DestinationRegion'] = $this->client->getRegion();
+            if (!$this->requireDifferentRegion
+                || (!empty($cmd['SourceRegion'])
+                    && $cmd['SourceRegion'] !== $cmd['DestinationRegion'])
+            ) {
+                $cmd[$this->presignParam] = $this->createPresignedUrl($this->client, $cmd);
+            }
         }
 
         $f = $this->nextHandler;
@@ -71,7 +77,7 @@ class PresignUrlMiddleware
         $newCmd->{'__skip' . $cmdName} = true;
 
         // Serialize a request for the operation.
-        $request = \ILAB_Aws\serialize($newCmd);
+        $request = \ILABAmazon\serialize($newCmd);
         // Create the new endpoint for the target endpoint.
         $endpoint = EndpointProvider::resolve($this->endpointProvider, [
             'region'  => $cmd['SourceRegion'],

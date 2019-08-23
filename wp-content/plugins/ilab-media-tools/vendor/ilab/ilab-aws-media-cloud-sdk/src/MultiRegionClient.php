@@ -1,10 +1,8 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
-use ILAB_Aws\Endpoint\PartitionEndpointProvider;
-use ILAB_Aws\Endpoint\PartitionInterface;
-use GuzzleHttp\Promise\FulfilledPromise;
-use Psr\Http\Message\RequestInterface;
+use ILABAmazon\Endpoint\PartitionEndpointProvider;
+use ILABAmazon\Endpoint\PartitionInterface;
 
 class MultiRegionClient implements AwsClientInterface
 {
@@ -42,7 +40,7 @@ class MultiRegionClient implements AwsClientInterface
                 'internal' => true,
                 'default' => function (array $args) {
                     $namespace = manifest($args['service'])['namespace'];
-                    $klass = "ILAB_Aws\\{$namespace}\\{$namespace}Client";
+                    $klass = "ILABAmazon\\{$namespace}\\{$namespace}Client";
                     $region = isset($args['region']) ? $args['region'] : null;
 
                     return function (array $args) use ($klass, $region) {

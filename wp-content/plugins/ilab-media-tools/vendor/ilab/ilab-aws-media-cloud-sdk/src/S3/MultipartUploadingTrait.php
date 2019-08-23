@@ -1,9 +1,9 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\CommandInterface;
-use ILAB_Aws\Multipart\UploadState;
-use ILAB_Aws\ResultInterface;
+use ILABAmazon\CommandInterface;
+use ILABAmazon\Multipart\UploadState;
+use ILABAmazon\ResultInterface;
 
 trait MultipartUploadingTrait
 {
@@ -102,8 +102,8 @@ trait MultipartUploadingTrait
             $params['ACL'] = $config['acl'];
         }
 
-        // Set the content type
-        if ($type = $this->getSourceMimeType()) {
+        // Set the ContentType if not already present
+        if (empty($params['ContentType']) && $type = $this->getSourceMimeType()) {
             $params['ContentType'] = $type;
         }
 

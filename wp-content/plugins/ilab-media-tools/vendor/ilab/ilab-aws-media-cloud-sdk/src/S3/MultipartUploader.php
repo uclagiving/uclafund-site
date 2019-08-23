@@ -1,13 +1,13 @@
 <?php
-namespace ILAB_Aws\S3;
+namespace ILABAmazon\S3;
 
-use ILAB_Aws\HashingStream;
-use ILAB_Aws\Multipart\AbstractUploader;
-use ILAB_Aws\PhpHash;
-use ILAB_Aws\ResultInterface;
+use ILABAmazon\HashingStream;
+use ILABAmazon\Multipart\AbstractUploader;
+use ILABAmazon\PhpHash;
+use ILABAmazon\ResultInterface;
 use GuzzleHttp\Psr7;
 use Psr\Http\Message\StreamInterface as Stream;
-use ILAB_Aws\S3\Exception\S3MultipartUploadException;
+use ILABAmazon\S3\Exception\S3MultipartUploadException;
 
 /**
  * Encapsulates the execution of a multipart upload to S3 or Glacier.
@@ -48,6 +48,9 @@ class MultipartUploader extends AbstractUploader
      *   options detailed above to update the commands directly.
      * - part_size: (int, default=int(5242880)) Part size, in bytes, to use when
      *   doing a multipart upload. This must between 5 MB and 5 GB, inclusive.
+     * - prepare_data_source: (callable) Callback to invoke before starting the
+     *   multipart upload workflow. The callback should have a function
+     *   signature like `function () {...}`.
      * - state: (Aws\Multipart\UploadState) An object that represents the state
      *   of the multipart upload and that is used to resume a previous upload.
      *   When this option is provided, the `bucket`, `key`, and `part_size`

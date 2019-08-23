@@ -1,8 +1,8 @@
 <?php
-namespace ILAB_Aws\Endpoint;
+namespace ILABAmazon\Endpoint;
 
 use ArrayAccess;
-use ILAB_Aws\HasDataTrait;
+use ILABAmazon\HasDataTrait;
 use InvalidArgumentException as Iae;
 
 /**

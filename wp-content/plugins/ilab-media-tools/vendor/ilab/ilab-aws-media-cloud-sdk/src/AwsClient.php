@@ -1,10 +1,14 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
-use ILAB_Aws\Api\ApiProvider;
-use ILAB_Aws\Api\DocModel;
-use ILAB_Aws\Api\Service;
-use ILAB_Aws\Signature\SignatureProvider;
+use ILABAmazon\Api\ApiProvider;
+use ILABAmazon\Api\DocModel;
+use ILABAmazon\Api\Service;
+use ILABAmazon\ClientSideMonitoring\ApiCallAttemptMonitoringMiddleware;
+use ILABAmazon\ClientSideMonitoring\ApiCallMonitoringMiddleware;
+use ILABAmazon\ClientSideMonitoring\ConfigurationProvider;
+use ILABAmazon\EndpointDiscovery\EndpointDiscoveryMiddleware;
+use ILABAmazon\Signature\SignatureProvider;
 use GuzzleHttp\Psr7\Uri;
 
 /**
@@ -13,6 +17,9 @@ use GuzzleHttp\Psr7\Uri;
 class AwsClient implements AwsClientInterface
 {
     use AwsClientTrait;
+
+    /** @var array */
+    private $aliases;
 
     /** @var array */
     private $config;
@@ -58,10 +65,10 @@ class AwsClient implements AwsClientInterface
      * - credentials:
      *   (Aws\Credentials\CredentialsInterface|array|bool|callable) Specifies
      *   the credentials used to sign requests. Provide an
-     *   Aws\Credentials\CredentialsInterface object, an associative array of
+     *   ILABAmazon\Credentials\CredentialsInterface object, an associative array of
      *   "key", "secret", and an optional "token" key, `false` to use null
      *   credentials, or a callable credentials provider used to create
-     *   credentials or return null. See Aws\Credentials\CredentialProvider for
+     *   credentials or return null. See ILABAmazon\Credentials\CredentialProvider for
      *   a list of built-in credentials providers. If no credentials are
      *   provided, the SDK will attempt to load them from the environment.
      * - debug: (bool|array) Set to true to display debug information when
@@ -82,18 +89,31 @@ class AwsClient implements AwsClientInterface
      *   `http_stats_receiver` option for this to have an effect; timer: (bool)
      *   Set to true to enable a command timer that reports the total wall clock
      *   time spent on an operation in seconds.
+     * - disable_host_prefix_injection: (bool) Set to true to disable host prefix
+     *   injection logic for services that use it. This disables the entire
+     *   prefix injection, including the portions supplied by user-defined
+     *   parameters. Setting this flag will have no effect on services that do
+     *   not use host prefix injection.
      * - endpoint: (string) The full URI of the webservice. This is only
      *   required when connecting to a custom endpoint (e.g., a local version
      *   of S3).
+     * - endpoint_discovery: (Aws\EndpointDiscovery\ConfigurationInterface,
+     *   ILABAmazon\CacheInterface, array, callable) Settings for endpoint discovery.
+     *   Provide an instance of ILABAmazon\EndpointDiscovery\ConfigurationInterface,
+     *   an instance ILABAmazon\CacheInterface, a callable that provides a promise for
+     *   a Configuration object, or an associative array with the following
+     *   keys: enabled: (bool) Set to true to enable endpoint discovery,
+     *   defaults to false; cache_limit: (int) The maximum number of keys in the
+     *   endpoints cache, defaults to 1000.
      * - endpoint_provider: (callable) An optional PHP callable that
      *   accepts a hash of options including a "service" and "region" key and
      *   returns NULL or a hash of endpoint data, of which the "endpoint" key
-     *   is required. See Aws\Endpoint\EndpointProvider for a list of built-in
+     *   is required. See ILABAmazon\Endpoint\EndpointProvider for a list of built-in
      *   providers.
      * - handler: (callable) A handler that accepts a command object,
      *   request object and returns a promise that is fulfilled with an
-     *   Aws\ResultInterface object or rejected with an
-     *   Aws\Exception\AwsException. A handler does not accept a next handler
+     *   ILABAmazon\ResultInterface object or rejected with an
+     *   ILABAmazon\Exception\AwsException. A handler does not accept a next handler
      *   as it is terminal and expected to fulfill a command. If no handler is
      *   provided, a default Guzzle handler will be utilized.
      * - http: (array, default=array(0)) Set to an array of SDK request
@@ -128,7 +148,7 @@ class AwsClient implements AwsClientInterface
      *   version name (e.g., "v4"), a service name, and region, and
      *   returns a SignatureInterface object or null. This provider is used to
      *   create signers utilized by the client. See
-     *   Aws\Signature\SignatureProvider for a list of built-in providers
+     *   ILABAmazon\Signature\SignatureProvider for a list of built-in providers
      * - signature_version: (string) A string representing a custom
      *   signature version to use with a service (e.g., v4). Note that
      *   per/operation signature version MAY override this requested signature
@@ -152,7 +172,6 @@ class AwsClient implements AwsClientInterface
         if (!isset($args['exception_class'])) {
             $args['exception_class'] = $exceptionClass;
         }
-
         $this->handlerList = new HandlerList();
         $resolver = new ClientResolver(static::getArguments());
         $config = $resolver->resolve($args, $this->handlerList);
@@ -165,6 +184,11 @@ class AwsClient implements AwsClientInterface
         $this->defaultRequestOptions = $config['http'];
         $this->addSignatureMiddleware();
         $this->addInvocationId();
+        $this->addClientSideMonitoring($args);
+        $this->addEndpointParameterMiddleware($args);
+        $this->addEndpointDiscoveryMiddleware($config, $args);
+        $this->loadAliases();
+        $this->addStreamRequestPayload();
 
         if (isset($args['with_resolved'])) {
             $args['with_resolved']($config);
@@ -252,15 +276,44 @@ class AwsClient implements AwsClientInterface
         $klass = get_class($this);
 
         if ($klass === __CLASS__) {
-            return ['', 'ILAB_Aws\Exception\AwsException'];
+            return ['', 'ILABAmazon\Exception\AwsException'];
         }
 
         $service = substr($klass, strrpos($klass, '\\') + 1, -6);
 
         return [
             strtolower($service),
-            "ILAB_Aws\\{$service}\\Exception\\{$service}Exception"
+            "ILABAmazon\\{$service}\\Exception\\{$service}Exception"
         ];
+    }
+
+    private function addEndpointParameterMiddleware($args)
+    {
+        if (empty($args['disable_host_prefix_injection'])) {
+            $list = $this->getHandlerList();
+            $list->appendBuild(
+                EndpointParameterMiddleware::wrap(
+                    $this->api
+                ),
+                'endpoint_parameter'
+            );
+        }
+    }
+
+    private function addEndpointDiscoveryMiddleware($config, $args)
+    {
+        $list = $this->getHandlerList();
+
+        if (!isset($args['endpoint'])) {
+            $list->appendBuild(
+                EndpointDiscoveryMiddleware::wrap(
+                    $this,
+                    $args,
+                    $config['endpoint_discovery']
+                ),
+                'EndpointDiscoveryMiddleware'
+            );
+        }
     }
 
     private function addSignatureMiddleware()
@@ -297,6 +350,58 @@ class AwsClient implements AwsClientInterface
         $this->handlerList->prependSign(Middleware::invocationId(), 'invocation-id');
     }
 
+    private function addClientSideMonitoring($args)
+    {
+        $options = ConfigurationProvider::defaultProvider($args);
+
+        $this->handlerList->appendBuild(
+            ApiCallMonitoringMiddleware::wrap(
+                $this->credentialProvider,
+                $options,
+                $this->region,
+                $this->getApi()->getServiceId()
+            ),
+            'ApiCallMonitoringMiddleware'
+        );
+
+        $callAttemptMiddleware = ApiCallAttemptMonitoringMiddleware::wrap(
+            $this->credentialProvider,
+            $options,
+            $this->region,
+            $this->getApi()->getServiceId()
+        );
+        $this->handlerList->appendAttempt (
+            $callAttemptMiddleware,
+            'ApiCallAttemptMonitoringMiddleware'
+        );
+    }
+    private function loadAliases($file = null)
+    {
+        if (!isset($this->aliases)) {
+            if (is_null($file)) {
+                $file = __DIR__ . '/data/aliases.json';
+            }
+            $aliases = \ILABAmazon\load_compiled_json($file);
+            $serviceId = $this->api->getServiceId();
+            $version = $this->getApi()->getApiVersion();
+            if (!empty($aliases['operations'][$serviceId][$version])) {
+                $this->aliases = array_flip($aliases['operations'][$serviceId][$version]);
+            }
+        }
+    }
+
+    private function addStreamRequestPayload()
+    {
+        $streamRequestPayloadMiddleware = StreamRequestPayloadMiddleware::wrap(
+            $this->api
+        );
+
+        $this->handlerList->prependSign(
+            $streamRequestPayloadMiddleware,
+            'StreamRequestPayloadMiddleware'
+        );
+    }
+
     /**
      * Returns a service model and doc model with any necessary changes
      * applied.
@@ -311,6 +416,20 @@ class AwsClient implements AwsClientInterface
      */
     public static function applyDocFilters(array $api, array $docs)
     {
+        $aliases = \ILABAmazon\load_compiled_json(__DIR__ . '/data/aliases.json');
+        $serviceId = $api['metadata']['serviceId'];
+        $version = $api['metadata']['apiVersion'];
+
+        // Replace names for any operations with SDK aliases
+        if (!empty($aliases['operations'][$serviceId][$version])) {
+            foreach ($aliases['operations'][$serviceId][$version] as $op => $alias) {
+                $api['operations'][$alias] = $api['operations'][$op];
+                $docs['operations'][$alias] = $docs['operations'][$op];
+                unset($api['operations'][$op], $docs['operations'][$op]);
+            }
+        }
+        ksort($api['operations']);
+
         return [
             new Service($api, ApiProvider::defaultProvider()),
             new DocModel($docs)

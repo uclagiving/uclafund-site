@@ -1,8 +1,7 @@
 <?php
-namespace ILAB_Aws\Credentials;
+namespace ILABAmazon\Credentials;
 
-use ILAB_Aws\Exception\CredentialsException;
-use GuzzleHttp\Promise;
+use ILABAmazon\Exception\CredentialsException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Promise\PromiseInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -31,7 +30,7 @@ class EcsCredentialProvider
         $this->timeout = isset($config['timeout']) ? $config['timeout'] : 1.0;
         $this->client = isset($config['client'])
             ? $config['client']
-            : \ILAB_Aws\default_http_handler();
+            : \ILABAmazon\default_http_handler();
     }
 
     /**
@@ -45,7 +44,10 @@ class EcsCredentialProvider
         $request = new Request('GET', self::getEcsUri());
         return $client(
             $request,
-            ['timeout' => $this->timeout]
+            [
+                'timeout' => $this->timeout,
+                'proxy' => '',
+            ]
         )->then(function (ResponseInterface $response) {
             $result = $this->decodeResult((string) $response->getBody());
             return new Credentials(

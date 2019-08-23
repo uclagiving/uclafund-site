@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit665720fc9b281a1f79b602168dff4588
+class ComposerStaticInitde8e4f17527a322e8e7f40d08cb85c32
 {
     public static $files = array (
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
@@ -44,6 +44,7 @@ class ComposerStaticInit665720fc9b281a1f79b602168dff4588
         'M' => 
         array (
             'Monolog\\' => 8,
+            'MathParser\\' => 11,
         ),
         'I' => 
         array (
@@ -104,6 +105,10 @@ class ComposerStaticInit665720fc9b281a1f79b602168dff4588
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
+        'MathParser\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser',
+        ),
         'Inpsyde\\Wonolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/inpsyde/wonolog/src',
@@ -119,6 +124,13 @@ class ComposerStaticInit665720fc9b281a1f79b602168dff4588
     );
 
     public static $prefixesPsr0 = array (
+        'U' => 
+        array (
+            'UpdateHelper\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/kylekatarnls/update-helper/src',
+            ),
+        ),
         'P' => 
         array (
             'Pimple' => 
@@ -135,6 +147,7 @@ class ComposerStaticInit665720fc9b281a1f79b602168dff4588
         'Carbon\\Exceptions\\InvalidDateException' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Exceptions/InvalidDateException.php',
         'Carbon\\Laravel\\ServiceProvider' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Laravel/ServiceProvider.php',
         'Carbon\\Translator' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Translator.php',
+        'Carbon\\Upgrade' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Upgrade.php',
         'Composer\\Installers\\AglInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AglInstaller.php',
         'Composer\\Installers\\AimeosInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AimeosInstaller.php',
         'Composer\\Installers\\AnnotateCmsInstaller' => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers/AnnotateCmsInstaller.php',
@@ -265,6 +278,58 @@ class ComposerStaticInit665720fc9b281a1f79b602168dff4588
         'Inpsyde\\Wonolog\\Processor\\ProcessorsRegistry' => __DIR__ . '/..' . '/inpsyde/wonolog/src/Processor/ProcessorsRegistry.php',
         'Inpsyde\\Wonolog\\Processor\\WpContextProcessor' => __DIR__ . '/..' . '/inpsyde/wonolog/src/Processor/WpContextProcessor.php',
         'JsonSerializable' => __DIR__ . '/..' . '/nesbot/carbon/src/JsonSerializable.php',
+        'MathParser\\AbstractMathParser' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/AbstractMathParser.php',
+        'MathParser\\ComplexMathParser' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/ComplexMathParser.php',
+        'MathParser\\Exceptions\\DivisionByZeroException' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Exceptions/DivisionByZeroException.php',
+        'MathParser\\Exceptions\\MathParserException' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Exceptions/MathParserException.php',
+        'MathParser\\Exceptions\\ParenthesisMismatchException' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Exceptions/ParenthesisMismatchException.php',
+        'MathParser\\Exceptions\\SyntaxErrorException' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Exceptions/SyntaxErrorException.php',
+        'MathParser\\Exceptions\\UnknownConstantException' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Exceptions/UnknownConstantException.php',
+        'MathParser\\Exceptions\\UnknownFunctionException' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Exceptions/UnknownFunctionException.php',
+        'MathParser\\Exceptions\\UnknownOperatorException' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Exceptions/UnknownOperatorException.php',
+        'MathParser\\Exceptions\\UnknownTokenException' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Exceptions/UnknownTokenException.php',
+        'MathParser\\Exceptions\\UnknownVariableException' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Exceptions/UnknownVariableException.php',
+        'MathParser\\Extensions\\Complex' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Extensions/Complex.php',
+        'MathParser\\Extensions\\Math' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Extensions/Math.php',
+        'MathParser\\Extensions\\Rational' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Extensions/Rational.php',
+        'MathParser\\Interpreting\\ASCIIPrinter' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Interpreting/ASCIIPrinter.php',
+        'MathParser\\Interpreting\\ComplexEvaluator' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Interpreting/ComplexEvaluator.php',
+        'MathParser\\Interpreting\\Differentiator' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Interpreting/Differentiator.php',
+        'MathParser\\Interpreting\\Evaluator' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Interpreting/Evaluator.php',
+        'MathParser\\Interpreting\\LaTeXPrinter' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Interpreting/LaTeXPrinter.php',
+        'MathParser\\Interpreting\\RationalEvaluator' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Interpreting/RationalEvaluator.php',
+        'MathParser\\Interpreting\\TreePrinter' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Interpreting/TreePrinter.php',
+        'MathParser\\Interpreting\\Visitors\\Visitable' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Interpreting/Visitors/Visitable.php',
+        'MathParser\\Interpreting\\Visitors\\Visitor' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Interpreting/Visitors/Visitor.php',
+        'MathParser\\Lexing\\ComplexLexer' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Lexing/ComplexLexer.php',
+        'MathParser\\Lexing\\Lexer' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Lexing/Lexer.php',
+        'MathParser\\Lexing\\StdMathLexer' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Lexing/StdMathLexer.php',
+        'MathParser\\Lexing\\Token' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Lexing/Token.php',
+        'MathParser\\Lexing\\TokenDefinition' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Lexing/TokenDefinition.php',
+        'MathParser\\Lexing\\TokenType' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Lexing/TokenType.php',
+        'MathParser\\Parsing\\Nodes\\ConstantNode' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/ConstantNode.php',
+        'MathParser\\Parsing\\Nodes\\ExpressionNode' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/ExpressionNode.php',
+        'MathParser\\Parsing\\Nodes\\Factories\\AdditionNodeFactory' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Factories/AdditionNodeFactory.php',
+        'MathParser\\Parsing\\Nodes\\Factories\\DivisionNodeFactory' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Factories/DivisionNodeFactory.php',
+        'MathParser\\Parsing\\Nodes\\Factories\\ExponentiationNodeFactory' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Factories/ExponentiationNodeFactory.php',
+        'MathParser\\Parsing\\Nodes\\Factories\\MultiplicationNodeFactory' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Factories/MultiplicationNodeFactory.php',
+        'MathParser\\Parsing\\Nodes\\Factories\\NodeFactory' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Factories/NodeFactory.php',
+        'MathParser\\Parsing\\Nodes\\Factories\\SubtractionNodeFactory' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Factories/SubtractionNodeFactory.php',
+        'MathParser\\Parsing\\Nodes\\FunctionNode' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/FunctionNode.php',
+        'MathParser\\Parsing\\Nodes\\IntegerNode' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/IntegerNode.php',
+        'MathParser\\Parsing\\Nodes\\Interfaces\\ExpressionNodeFactory' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Interfaces/ExpressionNodeFactory.php',
+        'MathParser\\Parsing\\Nodes\\Node' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Node.php',
+        'MathParser\\Parsing\\Nodes\\NumberNode' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/NumberNode.php',
+        'MathParser\\Parsing\\Nodes\\PostfixOperatorNode' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/PostfixOperatorNode.php',
+        'MathParser\\Parsing\\Nodes\\RationalNode' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/RationalNode.php',
+        'MathParser\\Parsing\\Nodes\\SubExpressionNode' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/SubExpressionNode.php',
+        'MathParser\\Parsing\\Nodes\\Traits\\Numeric' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Traits/Numeric.php',
+        'MathParser\\Parsing\\Nodes\\Traits\\Sanitize' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/Traits/Sanitize.php',
+        'MathParser\\Parsing\\Nodes\\VariableNode' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Nodes/VariableNode.php',
+        'MathParser\\Parsing\\Parser' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Parser.php',
+        'MathParser\\Parsing\\Stack' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/Parsing/Stack.php',
+        'MathParser\\RationalMathParser' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/RationalMathParser.php',
+        'MathParser\\StdMathParser' => __DIR__ . '/..' . '/mossadal/math-parser/src/MathParser/StdMathParser.php',
         'Monolog\\ErrorHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/ErrorHandler.php',
         'Monolog\\Formatter\\ChromePHPFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/ChromePHPFormatter.php',
         'Monolog\\Formatter\\ElasticaFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/ElasticaFormatter.php',
@@ -513,6 +578,9 @@ class ComposerStaticInit665720fc9b281a1f79b602168dff4588
         'Symfony\\Component\\Translation\\Writer\\TranslationWriter' => __DIR__ . '/..' . '/symfony/translation/Writer/TranslationWriter.php',
         'Symfony\\Component\\Translation\\Writer\\TranslationWriterInterface' => __DIR__ . '/..' . '/symfony/translation/Writer/TranslationWriterInterface.php',
         'Symfony\\Polyfill\\Mbstring\\Mbstring' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/Mbstring.php',
+        'UpdateHelper\\ComposerPlugin' => __DIR__ . '/..' . '/kylekatarnls/update-helper/src/UpdateHelper/ComposerPlugin.php',
+        'UpdateHelper\\UpdateHelper' => __DIR__ . '/..' . '/kylekatarnls/update-helper/src/UpdateHelper/UpdateHelper.php',
+        'UpdateHelper\\UpdateHelperInterface' => __DIR__ . '/..' . '/kylekatarnls/update-helper/src/UpdateHelper/UpdateHelperInterface.php',
         'WP_Queue\\Connections\\ConnectionInterface' => __DIR__ . '/..' . '/a5hleyrich/wp-queue/src/WP_Queue/Connections/ConnectionInterface.php',
         'WP_Queue\\Connections\\DatabaseConnection' => __DIR__ . '/..' . '/a5hleyrich/wp-queue/src/WP_Queue/Connections/DatabaseConnection.php',
         'WP_Queue\\Connections\\RedisConnection' => __DIR__ . '/..' . '/a5hleyrich/wp-queue/src/WP_Queue/Connections/RedisConnection.php',
@@ -635,11 +703,11 @@ class ComposerStaticInit665720fc9b281a1f79b602168dff4588
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit665720fc9b281a1f79b602168dff4588::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit665720fc9b281a1f79b602168dff4588::$prefixDirsPsr4;
-            $loader->fallbackDirsPsr4 = ComposerStaticInit665720fc9b281a1f79b602168dff4588::$fallbackDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit665720fc9b281a1f79b602168dff4588::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit665720fc9b281a1f79b602168dff4588::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitde8e4f17527a322e8e7f40d08cb85c32::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitde8e4f17527a322e8e7f40d08cb85c32::$prefixDirsPsr4;
+            $loader->fallbackDirsPsr4 = ComposerStaticInitde8e4f17527a322e8e7f40d08cb85c32::$fallbackDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitde8e4f17527a322e8e7f40d08cb85c32::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitde8e4f17527a322e8e7f40d08cb85c32::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\Endpoint;
+namespace ILABAmazon\Endpoint;
 
-use ILAB_Aws\Exception\UnresolvedEndpointException;
+use ILABAmazon\Exception\UnresolvedEndpointException;
 
 /**
  * Endpoint providers.
@@ -15,9 +15,9 @@ use ILAB_Aws\Exception\UnresolvedEndpointException;
  * You can wrap your calls to an endpoint provider with the
  * {@see EndpointProvider::resolve} function to ensure that an endpoint hash is
  * created. If an endpoint hash is not created, then the resolve() function
- * will throw an {@see Aws\Exception\UnresolvedEndpointException}.
+ * will throw an {@see ILABAmazon\Exception\UnresolvedEndpointException}.
  *
- *     use ILAB_Aws\Endpoint\EndpointProvider;
+ *     use ILABAmazon\Endpoint\EndpointProvider;
  *     $provider = EndpointProvider::defaultProvider();
  *     // Returns an array or NULL.
  *     $endpoint = $provider(['service' => 'ec2', 'region' => 'us-west-2']);
@@ -28,7 +28,7 @@ use ILAB_Aws\Exception\UnresolvedEndpointException;
  *     ]);
  *
  * You can compose multiple providers into a single provider using
- * {@see Aws\or_chain}. This function accepts providers as arguments and
+ * {@see ILABAmazon\or_chain}. This function accepts providers as arguments and
  * returns a new function that will invoke each provider until a non-null value
  * is returned.
  *
@@ -38,7 +38,7 @@ use ILAB_Aws\Exception\UnresolvedEndpointException;
  *         }
  *     };
  *     $b = EndpointProvider::defaultProvider();
- *     $c = \ILAB_Aws\or_chain($a, $b);
+ *     $c = \ILABAmazon\or_chain($a, $b);
  *     $config = ['service' => 'ec2', 'region' => 'my-test-region'];
  *     $res = $c($config);  // $a handles this.
  *     $config['region'] = 'us-west-2';
@@ -72,7 +72,7 @@ class EndpointProvider
     /**
      * Creates and returns the default SDK endpoint provider.
      *
-     * @deprecated Use an instance of \ILAB_Aws\Endpoint\Partition instead.
+     * @deprecated Use an instance of \ILABAmazon\Endpoint\Partition instead.
      *
      * @return callable
      */

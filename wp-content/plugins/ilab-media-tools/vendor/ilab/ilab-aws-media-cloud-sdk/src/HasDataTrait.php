@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws;
+namespace ILABAmazon;
 
 /**
  * Trait implementing ToArrayInterface, \ArrayAccess, \Countable, and

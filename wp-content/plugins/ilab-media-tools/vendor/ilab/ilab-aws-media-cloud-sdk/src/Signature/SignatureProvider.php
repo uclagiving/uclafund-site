@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\Signature;
+namespace ILABAmazon\Signature;
 
-use ILAB_Aws\Exception\UnresolvedSignatureException;
+use ILABAmazon\Exception\UnresolvedSignatureException;
 
 /**
  * Signature providers.
@@ -13,9 +13,9 @@ use ILAB_Aws\Exception\UnresolvedSignatureException;
  * You can wrap your calls to a signature provider with the
  * {@see SignatureProvider::resolve} function to ensure that a signature object
  * is created. If a signature object is not created, then the resolve()
- * function will throw a {@see Aws\Exception\UnresolvedSignatureException}.
+ * function will throw a {@see ILABAmazon\Exception\UnresolvedSignatureException}.
  *
- *     use ILAB_Aws\Signature\SignatureProvider;
+ *     use ILABAmazon\Signature\SignatureProvider;
  *     $provider = SignatureProvider::defaultProvider();
  *     // Returns a SignatureInterface or NULL.
  *     $signer = $provider('v4', 's3', 'us-west-2');
@@ -23,7 +23,7 @@ use ILAB_Aws\Exception\UnresolvedSignatureException;
  *     $signer = SignatureProvider::resolve($provider, 'no', 's3', 'foo');
  *
  * You can compose multiple providers into a single provider using
- * {@see Aws\or_chain}. This function accepts providers as arguments and
+ * {@see ILABAmazon\or_chain}. This function accepts providers as arguments and
  * returns a new function that will invoke each provider until a non-null value
  * is returned.
  *
@@ -33,13 +33,18 @@ use ILAB_Aws\Exception\UnresolvedSignatureException;
  *             return new MyFooSignature();
  *         }
  *     };
- *     $c = \ILAB_Aws\or_chain($a, $b);
+ *     $c = \ILABAmazon\or_chain($a, $b);
  *     $signer = $c('v4', 'abc', '123');     // $a handles this.
  *     $signer = $c('foo', 'abc', '123');    // $b handles this.
  *     $nullValue = $c('???', 'abc', '123'); // Neither can handle this.
  */
 class SignatureProvider
 {
+    private static $s3v4SignedServices = [
+        's3' => true,
+        's3control' => true,
+    ];
+
     /**
      * Resolves and signature provider and ensures a non-null return value.
      *
@@ -111,7 +116,7 @@ class SignatureProvider
             switch ($version) {
                 case 's3v4':
                 case 'v4':
-                    return $service === 's3'
+                    return !empty(self::$s3v4SignedServices[$service])
                         ? new S3SignatureV4($service, $region)
                         : new SignatureV4($service, $region);
                 case 'v4-unsigned-body':

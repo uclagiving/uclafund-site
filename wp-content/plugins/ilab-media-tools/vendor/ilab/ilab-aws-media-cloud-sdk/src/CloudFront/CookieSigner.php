@@ -1,5 +1,5 @@
 <?php
-namespace ILAB_Aws\CloudFront;
+namespace ILABAmazon\CloudFront;
 
 class CookieSigner
 {

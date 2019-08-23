@@ -2,6 +2,7 @@
 
 namespace ILAB\MediaCloud\Tasks;
 
+use function ILAB\MediaCloud\Utilities\arrayPath;
 use ILAB\MediaCloud\Utilities\Logging\Logger;
 
 if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
@@ -14,6 +15,7 @@ if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
  * @extends AsyncRequest
  */
 abstract class BackgroundProcess extends AsyncRequest {
+	protected $chunk_size_limit = 500;
 
 	/**
 	 * Action
@@ -100,8 +102,19 @@ abstract class BackgroundProcess extends AsyncRequest {
 		$key = $this->generate_key();
 
 		if ( ! empty( $this->data ) ) {
-			Logger::info( "Saving queue: $key", $this->data);
-			update_site_option( $key, $this->data );
+			$totalChunks = ceil(count($this->data) / $this->chunk_size_limit);
+
+			for($i = 0; $i < $totalChunks; $i++) {
+				$chunk = array_slice($this->data, $i * $this->chunk_size_limit, $this->chunk_size_limit);
+				update_site_option('__'.$key.'_chunk_'.$i, $chunk);
+			}
+
+//			Logger::info( "Saving queue: $key", $this->data);
+			update_site_option( $key, [
+				'status' => 'running',
+				'current_chunk' => 0,
+				'total_chunks' => $totalChunks
+			]);
 		}
 
 		return $this;
@@ -115,10 +128,44 @@ abstract class BackgroundProcess extends AsyncRequest {
 	 *
 	 * @return $this
 	 */
-	public function update( $key, $data ) {
+	public function update( $key, $status, $data ) {
 		if ( ! empty( $data ) ) {
-			update_site_option( $key, $data );
+			$currentChunk = $status['current_chunk'];
+			Logger::info("Updating chunk data for index $currentChunk.  New size: ".count($data));
+			update_site_option( '__'.$key.'_chunk_'.$currentChunk, $data);
+		} else {
+			Logger::info("No update, proccessing next chunk.");
+			return $this->next_chunk($key, $status);
 		}
+
+		return $this;
+	}
+
+	/**
+	 * Update queue
+	 *
+	 * @param string $key Key.
+	 * @param array  $data Data.
+	 *
+	 * @return $this
+	 */
+	public function next_chunk( $key, $status ) {
+		$currentChunk = $status['current_chunk'];
+		delete_site_option( '__'.$key.'_chunk_'.$currentChunk);
+
+		$currentChunk++;
+		if ($currentChunk >= $status['total_chunks']) {
+			Logger::info("All chunks processed.");
+			$status['status'] = 'finished';
+			$this->delete($key, $status);
+		} else {
+			Logger::info("Update batch status: {$currentChunk}");
+			$status['current_chunk'] = $currentChunk;
+			update_site_option( $key, $status );
+		}
+
+		//$this->delete( $batch->key );
+
 
 		return $this;
 	}
@@ -130,7 +177,12 @@ abstract class BackgroundProcess extends AsyncRequest {
 	 *
 	 * @return $this
 	 */
-	public function delete( $key ) {
+	public function delete( $key, $status ) {
+		$totalChunks = $status['total_chunks'];
+		for($i = 0; $i < $totalChunks; $i++) {
+			delete_site_option('__'.$key.'_chunk_'.$i);
+		}
+
 		delete_site_option( $key );
 
 		return $this;
@@ -170,11 +222,29 @@ abstract class BackgroundProcess extends AsyncRequest {
 			wp_die();
 		}
 
+		Logger::info("Maybe handle {$this->identifier}");
+
 		check_ajax_referer( $this->identifier, 'nonce' );
+
+		if (is_callable('fastcgi_finish_request')) {
+			ignore_user_abort(true);
+			fastcgi_finish_request();
+		}
 
 		$this->handle();
 
 		wp_die();
+	}
+
+	protected function forceOutput() {
+		ini_set('output_buffering', 'off');
+		ini_set('zlib.output_compression', false);
+
+		ini_set('implicit_flush', true);
+		ob_implicit_flush(true);
+		for($i = 0; $i < 1000; $i++) {
+			echo "\n";
+		}
 	}
 
 	/**
@@ -296,7 +366,15 @@ abstract class BackgroundProcess extends AsyncRequest {
 
 		$batch       = new \stdClass();
 		$batch->key  = $query->$column;
-		$batch->data = maybe_unserialize( $query->$value_column );
+		$batch->status = unserialize($query->$value_column);
+		Logger::info($query->$value_column);
+
+		if ($batch->status['status'] == 'running') {
+			$currentChunk = $batch->status['current_chunk'];
+			$batch->data = get_site_option( '__'.$batch->key.'_chunk_'.$currentChunk);
+		} else {
+			$batch->data = [];
+		}
 
 		return $batch;
 	}
@@ -325,10 +403,10 @@ abstract class BackgroundProcess extends AsyncRequest {
 				break;
 			}
 
-			Logger::info( "Processing Batch", $batch->data);
+			Logger::info( "Processing Batch", $batch->status);
 			foreach ( $batch->data as $key => $value ) {
 				if ($this->shouldHandle()) {
-					Logger::info( "Running task", $value);
+//					Logger::info( "Running task", $value);
 
 					$task = $this->task( $value );
 
@@ -347,9 +425,10 @@ abstract class BackgroundProcess extends AsyncRequest {
 
 			// Update or delete current batch.
 			if ( ! empty( $batch->data ) ) {
-				$this->update( $batch->key, $batch->data );
+				$this->update( $batch->key, $batch->status, $batch->data );
 			} else {
-				$this->delete( $batch->key );
+				Logger::info("Current chunk empty, proccessing next chunk.");
+				$this->next_chunk( $batch->key, $batch->status );
 			}
 		} while ( ! $this->time_exceeded() && ! $this->memory_exceeded() && ! $this->is_queue_empty() );
 
@@ -516,7 +595,7 @@ abstract class BackgroundProcess extends AsyncRequest {
 		if ( ! $this->is_queue_empty() ) {
 			$batch = $this->get_batch();
 
-			$this->delete( $batch->key );
+			$this->delete( $batch->key, $batch->status );
 
 			wp_clear_scheduled_hook( $this->cron_hook_identifier );
 		}

@@ -1,7 +1,7 @@
 <?php
-namespace ILAB_Aws\Sms\Exception;
+namespace ILABAmazon\Sms\Exception;
 
-use ILAB_Aws\Exception\AwsException;
+use ILABAmazon\Exception\AwsException;
 
 /**
  * Represents an error interacting with the **AWS Server Migration Service** service.
