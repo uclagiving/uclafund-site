@@ -22,7 +22,7 @@
                         <div class="slide-info"></div>
                         <div></div>
                         <div class="slide-button">
-                            <a href="https://giving.ucla.edu/Campaign/Donate.aspx?SiteNum=4&fund=00412G&lg=y" class="btn btn-danger autopopulate give" title="give button">Support The Journey</a>
+                            
                         </div>
                         
                         <div></div>
