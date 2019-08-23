@@ -40,10 +40,9 @@
 
 <div class="logo_container">
     <div class="school_logo">
-        <img src="https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-600.png" srcset="https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-120.png 120w, https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-180.png 180w, https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-300.png 300w, https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-600.png 600w" alt="UCLA school logo" />
+        <img src="https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-600.png" srcset="https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-120.png 120w, https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-180.png 180w, https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-300.png 300w, https://uclafund.assets.support2.ucla.edu/2019/08/ucla-logo-600.png 600w" alt="UCLA logo" />
     </div> 
 </div>
-
 
 
 
