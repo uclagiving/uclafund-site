@@ -4,7 +4,7 @@ $( document ).ready(function() {
     /* Countdown timer function 
     https://wplearninglab.com/countdown-timer/
     =============================== */
-    var deadline = new Date(2019, 8, 5, 24, 0, 0);
+    var deadline = new Date(2019, 9, 5, 24, 0, 0); 
  
     function getTimeRemaining(endtime){
         var t = Date.parse(endtime) - Date.parse(new Date());
