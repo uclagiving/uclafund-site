@@ -1,11 +1,11 @@
-=== Media Cloud ===
+=== Media Cloud for Amazon S3, Imgix, Google Cloud Storage, DigitalOcean Spaces and more ===
 Contributors: mediacloud, interfacelab
-Tags: uploads, amazon, s3, imgix, minio, google cloud storage, digital ocean spaces, wasabi, media, cdn, rekognition, cloudfront, images, crop, image editing, image editor, media library, offload, offload s3, filepicker, smush, ewww, imagify, shortpixel
+Tags: offload, amazon, s3, imgix, uploads, google cloud storage, digital ocean spaces, wasabi, minio, media, cdn, rekognition, cloudfront, images, crop, image editing, image editor, media library, offload, offload s3, filepicker, smush, ewww, imagify, shortpixel
 Requires at least: 4.4
-Tested up to: 5.2.2
+Tested up to: 5.2.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 3.1.2
+Stable tag: 3.2.3
 Requires PHP: 5.6.4
 
 Automatically store media on Amazon S3, Google Cloud Storage, DigitalOcean Spaces + others. Serve CSS/JS assets through CDNs.  Integrate with Imgix.
@@ -25,7 +25,7 @@ Media Cloud also provides advanced image editing tools that provide improved cro
 **NOTE**: This plugin requires PHP 5.6x or higher (PHP 7.x preferred)
 
 = Upload to S3, Minio, Google Cloud Storage, Wasabi and Digital Ocean Spaces =
-Automatically copy media uploads to the cloud and serve them directly from your cloud storage provider, CloudFront or any other CDN.  Additionally, easily import your existing media library with the push of a button.
+Automatically copy media uploads to the cloud and serve them directly from your cloud storage provider, CloudFront or any other CDN.
 
 = Integrate with Imgix =
 [Imgix](https://imgix.com) will radically change the way that you build your WordPress sites and themes.  This plugin is the best integration available for WordPress.  Upload your images to S3 with our S3 tool and then host the media with Imgix, providing you with real-time image processing and automatic format delivery.  Forget ImageMagick, Imgix is light years ahead in quality and speed.
@@ -42,9 +42,6 @@ When integrating with [Imgix](https://imgix.com), Media Cloud by ILAB provides t
 = Image Cropping =
 Media Cloud by ILAB ships with the most advanced image cropping tool available for WordPress, based on Chen Fengyuan's amazing Cropper plugin for jQuery.
 
-= WP-CLI Support =
-Import your media library to the cloud, regenerate thumbnails and process your library with Amazon Rekognition using WP-CLI commands.
-
 = Compatible With Leading Image Optimizers =
 Compatible with Short Pixel, EWWW, Smush and Imagify image optimization plugins!
 
@@ -57,17 +54,22 @@ Compatible with Short Pixel, EWWW, Smush and Imagify image optimization plugins!
 * Advanced image cropping tool
 * Advanced image editing with saturation, contrast, auto-correct,
   sharpen, blur and more (only when integrated with Imgix)
+* Automatically import your settings from WP Offload Media and WP-Stateless
 
 = Premium Upgrade with Improved Support Options and More Features =
 
+* Easily import your existing media library with the push of a button
+* WP-CLI support: Import your media library to the cloud, regenerate thumbnails and process your library with Amazon Rekognition using WP-CLI commands.
 * Direct uploads integrated directly into WordPress's media library
 * Cloud storage browser that allows you to import media to your media library from the cloud
 * Dynamic Images provides Imgix-like dynamic image generation directly in the plugin, no external service needed.
 * WPML, WooCommerce and Easy Digital Downloads integration
+* Blubrry Pod Casting, Ultimate Membership integrations
 * Push/pull your CSS and JS assets to the cloud and serve them from a CDN
 * Use Google Cloud Vision as a vision provider
 * Image size manager
 * Network level multisite support
+* and more!
 
 [Compare the premium plans](https://mediacloud.press/comparison/)
 
@@ -81,7 +83,7 @@ Additionally a number of hooks and actions have been deprecated, please refer to
 
 = How does this compare to WP Offload S3? =
 
-This essentially does everything that WP Offload S3 does but is free.  It includes an import function for importing your current library to S3 that only the pro version of WP Offload S3 has.  Otherwise, they work almost exactly the same.
+This essentially does everything that WP Offload S3 does but it does a whole lot more.  This plugin is an essential part of our own development stack when creating WordPress solutions for clients and it was born out of frustration with a other "offload" plugins.
 
 = Why should I use Imgix? =
 
@@ -100,16 +102,110 @@ No, I'm just one very enthusiastic customer.
 3. Easy image cropping for all croppable image sizes defined in your theme.
 4. Make adjustments to your images like saturation, vibrancy, contrast when using Imgix.
 5. Stylize your images easily when using Imgix.
-6. Bulk import your assets to cloud storage (a free feature in Media Cloud that costs money in other offload media plugins)
-7. Watermarking is easy and non-destructive, change the watermark at any time and all watermarked images will automatically update.
-8. Redesign settings.
-9. Easily pin frequently accessed settings.
+6. Watermarking is easy and non-destructive, change the watermark at any time and all watermarked images will automatically update.
+7. Redesign settings.
+8. Easily pin frequently accessed settings.
 
 
 == Changelog ==
 
-= 3.1.2 =
+= 3.2.3 =
 
+* Fix for asset push when the CSS rule contains a url with a query string
+* Fix to insure the task heartbeat only runs once within the given interval, regardless of the number of admins logged into the admin
+* Added @{type} variable for upload paths to include the upload type.  For example, if the upload path setting is set to `upload/@{type}` then when uploading an image the upload directory will be `/upload/image/`, or when uploading a video the upload path would be `/upload/video/`, etc.
+* The Cloud Storage settings will show you a preview of your upload path when editing it.
+* Fix for invalid presign expiration time which was causing direct uploads to fail on multisite.
+* For multisite, the ability to specify different upload directories for each subsite.
+
+= 3.2.2 =
+
+* Fix for not activating when installed via Composer
+* Removed deprecated filters and actions
+
+= 3.2.1 =
+
+* Fix for task heartbeat
+* Optimize asset upload process
+* Fix for font assets not being gzipped when pushed to cloud storage
+* Fix for when images are in the root of the upload directory, they appeared broken
+
+= 3.2.0 =
+
+* Activating Media Cloud will now import your WP Offload Media or WP-Stateless settings, making the transition as smooth as possible.
+* Improved import for media uploaded with WP Offload Media or WP-Stateless
+* New and improved background processing system, completely replaced the old error prone one
+* New Task Manager shows you all running background tasks and upcoming scheduled ones
+* Vastly improved Elementor integration
+* Fixed Smush Pro integration (thanks to Brett Porcelli!)
+* Asset push now queues uploads in the background instead of during page loads
+* Support for "Bucket Only Policy" with Google Cloud Storage (thanks to Wietse Muizelaar!)
+* Fix for environment variable MCLOUD_STORAGE_GOOGLE_CREDENTIALS_FILE (thanks to Wietse Muizelaar!)
+* When "Delete Uploaded Files" is enabled, deletes can be queued in the background to be deleted in the future.  Allowing other plugins to process the upload before being removed from the local server.
+* New "Clean Uploads" task removes media from the local uploads directory.
+* Fix for path handling during migration and imports
+* Fix for Vision where items were not being queued in a background task
+* Fix for upload paths using @{version} token
+* New integrated inline help system
+* If Assets are enabled, added entries to WordPress admin bar to update build version and clear asset cache
+* The `import` command line task renamed to `migrateToStorage`
+* Added new `importFromStorage` command line task
+* Added new `updateElementor` command line task
+* Ability to hide Task Manager on multisite sub-sites
+* Improved error reporting for invalid credentials
+* Fixed dreaded white screen of doom when invalid cloud storage credentials are supplied
+* Fix for blank settings pages in more restrictive server setups
+
+
+= 3.1.7 =
+
+* Media Cloud will now upload .webp files generated by EWWW image optimizer to cloud storage
+* Displays a warning if you don't have the `mbstring` PHP extension installed
+* Added Amazons S3 video tutorial
+* Fix for environment variable for setting the view cache
+* Fixes for Storage Browser when used in Multisite
+* Support for Multisite Global Media plugin
+* Fix for hiding Media Cloud completely on multisite networks
+* Display warning that no Upload Directory has been set in multisite
+
+
+= 3.1.6 =
+
+* More detailed release notes are available at: https://mediacloud.press/blog/media-cloud-3-1-6-released/
+* Ability to specify which type of media are uploaded to cloud storage or not, for example you can configure Media Cloud to only upload audio to cloud storage.
+* Ignored mime types in cloud storage settings now supports wildcards, eg `image/*` to disallow image uploads
+* Fix for Human Made S3 Uploads migration
+* Display relevant warnings for enabled tools that require another tool that is disabled
+* When uploading to cloud storage, file size is now recorded properly in attachment metadata
+* Updated documentation
+* Vision tool has a new option for forcing term counts to update when using tagging.  WordPress usually only counts "attached" attachments in term counts, but this option circumvents that.
+* LearnDash integration fixes font errors and allows remote images to be used in certificates (Pro Version)
+* Blubrry Pod Casting integration allows you to select media from the WordPress library when creating a new episode (Pro Version)
+* Fix for importer ignoring certain mime types (Pro Version)
+* Direct uploads no longer require Imgix or Dynamic Images to be enabled (Pro Version)
+* Ability to specify what kind of media is uploaded directy to cloud storage and which is uploaded to WordPress (Pro Version)
+* For Direct Uploads, ability to specify the maximum allowed upload size (Pro Version)
+* When performing a direct upload, Media Cloud first checks that the upload file name is unique, and if not, will add a unique part to the original file name.  (Pro Version)
+
+= 3.1.5 =
+
+* Added `migrateS3Uploads` command line command to migrate uploads from Human Made S3 Uploads plugin
+* Rewritten batch tool UI
+* Fix for srcset issues with Imgix.
+* Fix for system compatibilities test on certain systems.
+* Added ability to regenerate thumbnails even when Imgix or Dynamic Images is enabled, previously only available if either was turned off  (Premium Version).
+* Fixes for Backblaze
+* Fix for Dynamic Images showing a warning about an empty needle
+* Fix for Regenerate Image in the cloud info pop-up in the media grid
+* New! Import media from cloud storage into WordPress (Premium Version)
+* Ultimate Membership integration (Pro Version)
+* Added --skip-existing flag to the command line import command (Premium Version).
+* Added options for importing files via the cloud storage browser (Pro Version).
+
+= 3.1.3 =
+
+* When the system compatibility test is run, check to see if the server's clock is correct.  An incorrect clock can cause errors with cloud storage APIs.
+* Fix for connect timeout of 0
 * Fix for blank settings pages that would appear on some hosting providers.
 * Fixed bugs when Media Cloud is being used on a C-Panel/WHM managed servers.
 * Fixed background processing when "Skip DNS" is enabled on C-Panel/WHM managed servers.
@@ -123,6 +219,8 @@ No, I'm just one very enthusiastic customer.
 
 = 3.1.1 =
 
+* Fix for migrating very large (greater than 10,000 items) media libraries to cloud storage
+* Fix for Gutenberg image blocks
 * Fixes for multi-site
 * General bug fixes
 * When transitioning from 2.x to 3.x, Media Cloud used to delete the old 2.x settings after copying them to the renamed 3.x settings.  This made it impossible to go back to 2.x without having to re-enter all of your settings.  The migration process no longer deletes your old 2.x settings.

@@ -25,19 +25,31 @@ final class View {
     }
 
     private static function getTempDir() {
-        $temp = Environment::Option(null, 'ILAB_MEDIA_CLOUD_VIEW_CACHE', null);
+        $temp = Environment::Option(null, ['MCLOUD_VIEW_CACHE', 'ILAB_MEDIA_CLOUD_VIEW_CACHE'], null);
         if (!empty($temp)) {
-            return trailingslashit($temp);
+            return trailingslashit($temp).'mcloud-views';
+        } else {
+	        $result = trailingslashit(WP_CONTENT_DIR).'mcloud-views';
         }
 
-    	return trailingslashit(WP_CONTENT_DIR);
+        if (!file_exists($result)) {
+        	@mkdir($result, 0777,true);
+        }
+
+
+        if (!file_exists($result)) {
+        	$result = '/tmp/mcloud-views';
+	        @mkdir($result, 0777,true);
+        }
+
+        return $result;
     }
 
     private static function bladeInstance() {
         if (static::$bladeInstance == null) {
             $cacheDir = static::getTempDir();
 
-            static::$bladeInstance = new BladeInstance(ILAB_VIEW_DIR, $cacheDir.'mcloud-views');
+            static::$bladeInstance = new BladeInstance(ILAB_VIEW_DIR, $cacheDir);
 
             foreach(static::$registeredViewDirectories as $directory) {
             	static::$bladeInstance->addPath($directory);
@@ -68,6 +80,18 @@ final class View {
 	        });
 
 	        static::$bladeInstance->directive('endplan', function($expression) {
+		        return '<?php endif; ?>';
+	        });
+
+	        static::$bladeInstance->directive('track', function($expression) {
+		        return "<?php if (\\ILAB\\MediaCloud\\Utilities\\LicensingManager::OptedIn($expression)): ?>";
+	        });
+
+	        static::$bladeInstance->directive('elsetrack', function($expression) {
+		        return "<?php else: ?>";
+	        });
+
+	        static::$bladeInstance->directive('endtrack', function($expression) {
 		        return '<?php endif; ?>';
 	        });
         }

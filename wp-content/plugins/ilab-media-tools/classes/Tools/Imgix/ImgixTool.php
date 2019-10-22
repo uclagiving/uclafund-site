@@ -152,7 +152,6 @@ class ImgixTool extends DynamicImagesTool {
 			return $this->renderPDF;
 		});
 
-		do_action_deprecated('ilab_imgix_setup', [], '3.0.0', 'media-cloud/imgix/setup');
 		do_action('media-cloud/imgix/setup');
 
 		if ($this->detectFaces) {
@@ -297,8 +296,12 @@ class ImgixTool extends DynamicImagesTool {
 			$imgix->setSignKey($this->signingKey);
 		}
 
+		if (isset($size['crop'])) {
+			$is_crop = !empty($size['crop']);
+		} else {
+			$is_crop = ((count($size) >= 3) && ($size[2] == 'crop'));
+		}
 
-		$is_crop = ((count($size) >= 3) && ($size[2] == 'crop'));
 		if (!$is_crop && $this->shouldCrop) {
 		    $this->shouldCrop = false;
 		    $is_crop = true;
@@ -328,7 +331,6 @@ class ImgixTool extends DynamicImagesTool {
 			'fm' => 'jpg'
 		];
 
-		$params = apply_filters_deprecated('ilab-imgix-filter-parameters', [$params, $size, $id, $meta], '3.0.0', 'media-cloud/dynamic-images/filter-parameters');
 		$params = apply_filters('media-cloud/dynamic-images/filter-parameters', $params, $size, $id, $meta);
 
 		$imageFile = (isset($meta['s3'])) ? $meta['s3']['key'] : $meta['file'];
@@ -448,7 +450,6 @@ class ImgixTool extends DynamicImagesTool {
 			}
 
 			$params = $this->buildImgixParams($params, $mimetype);
-			$params = apply_filters_deprecated('ilab-imgix-filter-parameters', [$params, $size, $id, $meta], '3.0.0', 'media-cloud/dynamic-images/filter-parameters');
 			$params = apply_filters('media-cloud/dynamic-images/filter-parameters', $params, $size, $id, $meta);
 
 			if(!isset($meta['file'])) {
@@ -672,7 +673,6 @@ class ImgixTool extends DynamicImagesTool {
 		}
 
 		$params = $this->buildImgixParams($params, $mimetype);
-		$params = apply_filters_deprecated('ilab-imgix-filter-parameters', [$params, $size, $id, $meta], '3.0.0', 'media-cloud/dynamic-images/filter-parameters');
 		$params = apply_filters('media-cloud/dynamic-images/filter-parameters', $params, $size, $id, $meta);
 
 		$imageFile = (isset($meta['s3'])) ? $meta['s3']['key'] : $meta['file'];
@@ -687,14 +687,14 @@ class ImgixTool extends DynamicImagesTool {
 		return $result;
 	}
 
-	public function urlForStorageMedia($key) {
+	public function urlForStorageMedia($key, $params = []) {
 		$imgix = new UrlBuilder($this->imgixDomains, $this->useHTTPS);
 
 		if($this->signingKey) {
 			$imgix->setSignKey($this->signingKey);
 		}
 
-		return $imgix->createURL(str_replace('%2F', '/', urlencode($key)), []);
+		return $imgix->createURL(str_replace('%2F', '/', urlencode($key)), $params);
 	}
 
 	public function fixCleanedUrls($good_protocol_url, $original_url, $context) {

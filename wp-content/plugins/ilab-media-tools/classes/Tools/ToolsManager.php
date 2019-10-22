@@ -12,12 +12,12 @@
 // **********************************************************************
 namespace ILAB\MediaCloud\Tools;
 
-use  ILAB\MediaCloud\Documentation\Docs ;
-use  ILAB\MediaCloud\Tasks\BatchManager ;
-use  ILAB\MediaCloud\Tools\Debugging\System\SystemCompatibilityTool ;
+use  ILAB\MediaCloud\Tasks\TaskManager ;
 use  ILAB\MediaCloud\Tools\Network\NetworkTool ;
 use  ILAB\MediaCloud\Utilities\Environment ;
+use  ILAB\MediaCloud\Utilities\LicensingManager ;
 use  ILAB\MediaCloud\Utilities\NoticeManager ;
+use  ILAB\MediaCloud\Utilities\Tracker ;
 use  ILAB\MediaCloud\Utilities\View ;
 use function  ILAB\MediaCloud\Utilities\arrayPath ;
 use function  ILAB\MediaCloud\Utilities\json_response ;
@@ -57,38 +57,41 @@ final class ToolsManager
     private  $networkTool = null ;
     /** @var Tool[]  */
     private  $multisiteTools = array() ;
-    /** @var BatchTool[]  */
-    private  $multisiteBatchTools = array() ;
-    private  $docs = null ;
+    /** @var bool Determines if any media cloud settings have changed. */
+    private  $settingsDidChange = false ;
     //endregion
     //region Constructor
     public function __construct()
     {
         MigrationsManager::instance()->migrate();
         $this->tools = [];
-        $this->pinnedTools = Environment::Option( 'mcloud-pinned-tools', null, [] );
+        $hasRun = get_option( 'mcloud-has-run', false );
+        
+        if ( empty($hasRun) ) {
+            static::AccountConnected();
+            $this->pinnedTools = Environment::Option( 'mcloud-pinned-tools', null, [] );
+            
+            if ( empty($this->pinnedTools) ) {
+                $this->pinnedTools = [
+                    'storage' => 1,
+                ];
+                update_option( 'mcloud-has-run', true );
+                update_option( 'mcloud-pinned-tools', $this->pinnedTools );
+            }
+        
+        } else {
+            $this->pinnedTools = Environment::Option( 'mcloud-pinned-tools', null, [] );
+        }
+        
         foreach ( static::$registeredTools as $toolName => $toolInfo ) {
             $className = $toolInfo['class'];
             $this->tools[$toolName] = new $className( $toolName, $toolInfo, $this );
-            // Register Batch Tools
-            if ( !empty($toolInfo['batchTools']) ) {
-                foreach ( $toolInfo['batchTools'] as $batchToolClass ) {
-                    $batchID = call_user_func( [ $batchToolClass, 'BatchIdentifier' ] );
-                    $processClass = call_user_func( [ $batchToolClass, 'BatchProcessClassName' ] );
-                    if ( !empty($processClass) && !empty($batchID) ) {
-                        BatchManager::registerBatchClass( $batchID, $processClass );
-                    }
-                }
-            }
             // Register CLI Commands
             if ( !empty($toolInfo['CLI']) && defined( 'WP_CLI' ) && class_exists( '\\WP_CLI' ) ) {
                 foreach ( $toolInfo['CLI'] as $cliClass ) {
                     call_user_func( [ $cliClass, 'Register' ] );
                 }
             }
-        }
-        if ( empty(static::$registeredTools['troubleshooting']) ) {
-            $this->tools['troubleshooting'] = new SystemCompatibilityTool( 'troubleshooting', static::$registeredTools['troubleshooting'], $this );
         }
         
         if ( is_multisite() ) {
@@ -120,6 +123,7 @@ final class ToolsManager
                         'media-cloud'
                     );
                     register_setting( 'ilab-media-features', "mcloud-network-mode" );
+                    $this->insertAccountSeparator();
                 }
             
             } );
@@ -133,6 +137,9 @@ final class ToolsManager
             } );
         }
         
+        add_action( 'admin_bar_menu', function ( $adminBar ) {
+            $this->addAdminBarItems( $adminBar );
+        }, 1000 );
         $actionLinksPrefix = ( is_multisite() ? 'network_admin_' : '' );
         add_filter( $actionLinksPrefix . 'plugin_action_links_' . ILAB_PLUGIN_NAME, function ( $links ) {
             $links[] = "<a href='" . ilab_admin_url( 'admin.php?page=media-cloud-settings' ) . "'>Settings</a>";
@@ -163,12 +170,27 @@ final class ToolsManager
             }
         }
         
+        if ( !extension_loaded( 'mbstring' ) ) {
+            NoticeManager::instance()->displayAdminNotice(
+                'warning',
+                "Media Cloud recommends that the <code>mbstring</code> PHP extension be installed and activated.",
+                true,
+                'mcloud-no-mbstring'
+            );
+        }
         add_action( 'admin_enqueue_scripts', function () {
+            wp_enqueue_script(
+                'mcloud-admin-js',
+                ILAB_PUB_JS_URL . '/mcloud-admin.js',
+                [ 'jquery', 'wp-util' ],
+                MEDIA_CLOUD_VERSION,
+                true
+            );
             wp_enqueue_script(
                 'ilab-settings-js',
                 ILAB_PUB_JS_URL . '/ilab-settings.js',
-                [ 'jquery' ],
-                null,
+                [ 'jquery', 'wp-util' ],
+                MEDIA_CLOUD_VERSION,
                 true
             );
             wp_enqueue_style( 'ilab-media-cloud-css', ILAB_PUB_CSS_URL . '/ilab-media-cloud.css' );
@@ -184,12 +206,23 @@ final class ToolsManager
                     'status' => 'ok',
                 ] );
             } );
-            if ( defined( 'PHP_MAJOR_VERSION' ) && PHP_MAJOR_VERSION >= 7 ) {
-                $this->docs = new Docs();
-            }
         }
         
-        BatchManager::boot();
+        add_action(
+            "updated_option",
+            function ( $setting, $oldValue = null, $newValue = null ) {
+            if ( $setting != '_transient_timeout_settings_errors' && isset( $_POST['option_page'] ) && strpos( $_POST['option_page'], 'ilab-media-' ) === 0 ) {
+                $this->settingsDidChange = true;
+            }
+        },
+            10,
+            3
+        );
+        add_action( 'shutdown', function () {
+            if ( $this->settingsDidChange ) {
+                Tracker::trackSettings();
+            }
+        } );
     }
     
     protected function setup()
@@ -223,25 +256,55 @@ final class ToolsManager
      */
     public static function Boot()
     {
+        global  $media_cloud_licensing ;
         if ( static::$booted ) {
             return;
         }
         static::$booted = true;
-        global  $media_cloud_licensing ;
         Environment::Boot();
-        // Register Tools
-        ToolsManager::registerTool( "storage", include ILAB_CONFIG_DIR . '/storage.config.php' );
-        ToolsManager::registerTool( "imgix", include ILAB_CONFIG_DIR . '/imgix.config.php' );
-        ToolsManager::registerTool( "vision", include ILAB_CONFIG_DIR . '/vision.config.php' );
-        ToolsManager::registerTool( "crop", include ILAB_CONFIG_DIR . '/crop.config.php' );
-        ToolsManager::registerTool( "debugging", include ILAB_CONFIG_DIR . '/debugging.config.php' );
-        ToolsManager::registerTool( "troubleshooting", include ILAB_CONFIG_DIR . '/troubleshooting.config.php' );
-        ToolsManager::registerTool( "batch-processing", include ILAB_CONFIG_DIR . '/batch-processing.config.php' );
-        do_action( 'media-cloud/tools/register-tools' );
+        
+        if ( !is_multisite() && ($media_cloud_licensing->is_plan__premium_only( 'multisite_basic', true ) || $media_cloud_licensing->is_plan__premium_only( 'multisite_pro', true ) || $media_cloud_licensing->is_plan__premium_only( 'multisite_unlimited', true )) ) {
+            add_action( 'admin_notices', function () {
+                ?>
+                <div class="notice notice-error">
+                    <p><?php 
+                _e( "This license is only valid for multisite WordPress sites.  Please <a href='mailto:support@mediacloud.press'>contact us</a> for assistance in selecting the correct license.", 'ilab-media-tools' );
+                ?></p>
+                </div>
+                <?php 
+            } );
+        } else {
+            // Register Tools
+            ToolsManager::registerTool( "storage", include ILAB_CONFIG_DIR . '/storage.config.php' );
+            ToolsManager::registerTool( "imgix", include ILAB_CONFIG_DIR . '/imgix.config.php' );
+            ToolsManager::registerTool( "vision", include ILAB_CONFIG_DIR . '/vision.config.php' );
+            ToolsManager::registerTool( "crop", include ILAB_CONFIG_DIR . '/crop.config.php' );
+            ToolsManager::registerTool( "debugging", include ILAB_CONFIG_DIR . '/debugging.config.php' );
+            ToolsManager::registerTool( "troubleshooting", include ILAB_CONFIG_DIR . '/troubleshooting.config.php' );
+            ToolsManager::registerTool( "batch-processing", include ILAB_CONFIG_DIR . '/batch-processing.config.php' );
+            ToolsManager::registerTool( "tasks", include ILAB_CONFIG_DIR . '/tasks.config.php' );
+            if ( LicensingManager::CanTrack() ) {
+                ToolsManager::registerTool( "opt-in", include ILAB_CONFIG_DIR . '/opt-in.config.php' );
+            }
+            do_action( 'media-cloud/tools/register-tools' );
+        }
+        
         // Make sure the NoticeManager is initialized
         NoticeManager::instance();
         // Get the party started
         ToolsManager::instance();
+        // Start the task manager
+        TaskManager::instance();
+    }
+    
+    public static function AccountConnected()
+    {
+        
+        if ( LicensingManager::CanTrack() ) {
+            Environment::UpdateOption( 'mcloud-opt-in-crisp', true );
+            Environment::UpdateOption( 'mcloud-opt-usage-tracking', true );
+        }
+    
     }
     
     /**
@@ -257,6 +320,36 @@ final class ToolsManager
     
     //endregion
     //region Menu Related
+    /**
+     * Adds items to the WordPress Admin Bar
+     *
+     * @param \WP_Admin_Bar $adminBar
+     */
+    public function addAdminBarItems( $adminBar )
+    {
+        $hasAdminBar = false;
+        foreach ( $this->tools as $toolId => $tool ) {
+            
+            if ( $tool->hasAdminBarMenu() ) {
+                $hasAdminBar = true;
+                break;
+            }
+        
+        }
+        
+        if ( $hasAdminBar ) {
+            $adminBar->add_menu( [
+                'id'    => 'media-cloud-admin-bar',
+                'href'  => admin_url( 'admin.php?page=media-cloud' ),
+                'title' => '<span class="ab-icon"></span>Media Cloud',
+            ] );
+            foreach ( $this->tools as $toolId => $tool ) {
+                $tool->addAdminMenuBarItems( $adminBar );
+            }
+        }
+    
+    }
+    
     public function addMenus( $networkMode, $networkAdminMenu )
     {
         global  $media_cloud_licensing ;
@@ -264,35 +357,46 @@ final class ToolsManager
         $networkAdminMenu = false;
         $isNetworkModeAdmin = false;
         $isLocal = true;
+        $showMenu = true;
         
-        if ( $isLocal || $isNetworkModeAdmin ) {
-            add_menu_page(
-                'Settings',
-                'Media Cloud',
-                'manage_options',
-                'media-cloud',
-                [ $this, 'renderFeatureSettings' ],
-                'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjA0OCAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGw9ImJsYWNrIiBkPSJNMTk4NCAxMTUycTAgMTU5LTExMi41IDI3MS41dC0yNzEuNSAxMTIuNWgtMTA4OHEtMTg1IDAtMzE2LjUtMTMxLjV0LTEzMS41LTMxNi41cTAtMTMyIDcxLTI0MS41dDE4Ny0xNjMuNXEtMi0yOC0yLTQzIDAtMjEyIDE1MC0zNjJ0MzYyLTE1MHExNTggMCAyODYuNSA4OHQxODcuNSAyMzBxNzAtNjIgMTY2LTYyIDEwNiAwIDE4MSA3NXQ3NSAxODFxMCA3NS00MSAxMzggMTI5IDMwIDIxMyAxMzQuNXQ4NCAyMzkuNXoiLz48L3N2Zz4='
-            );
-            add_submenu_page(
-                'media-cloud',
-                'Media Cloud Tools',
-                'Features',
-                'manage_options',
-                'media-cloud',
-                [ $this, 'renderFeatureSettings' ]
-            );
-        } else {
-            add_menu_page(
-                'Settings',
-                'Media Cloud',
-                'manage_options',
-                'media-cloud',
-                [ $this, 'renderMultisiteLanding' ],
-                'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjA0OCAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGw9ImJsYWNrIiBkPSJNMTk4NCAxMTUycTAgMTU5LTExMi41IDI3MS41dC0yNzEuNSAxMTIuNWgtMTA4OHEtMTg1IDAtMzE2LjUtMTMxLjV0LTEzMS41LTMxNi41cTAtMTMyIDcxLTI0MS41dDE4Ny0xNjMuNXEtMi0yOC0yLTQzIDAtMjEyIDE1MC0zNjJ0MzYyLTE1MHExNTggMCAyODYuNSA4OHQxODcuNSAyMzBxNzAtNjIgMTY2LTYyIDEwNiAwIDE4MSA3NXQ3NSAxODFxMCA3NS00MSAxMzggMTI5IDMwIDIxMyAxMzQuNXQ4NCAyMzkuNXoiLz48L3N2Zz4='
-            );
+        if ( is_multisite() ) {
+            $hideMenu = Environment::Option( 'media-cloud-network-hide', null, false );
+            if ( $hideMenu && !is_network_admin() ) {
+                $showMenu = false;
+            }
         }
         
+        if ( $showMenu ) {
+            
+            if ( $isLocal || $isNetworkModeAdmin ) {
+                add_menu_page(
+                    'Settings',
+                    'Media Cloud',
+                    'manage_options',
+                    'media-cloud',
+                    [ $this, 'renderFeatureSettings' ],
+                    'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjA0OCAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGw9ImJsYWNrIiBkPSJNMTk4NCAxMTUycTAgMTU5LTExMi41IDI3MS41dC0yNzEuNSAxMTIuNWgtMTA4OHEtMTg1IDAtMzE2LjUtMTMxLjV0LTEzMS41LTMxNi41cTAtMTMyIDcxLTI0MS41dDE4Ny0xNjMuNXEtMi0yOC0yLTQzIDAtMjEyIDE1MC0zNjJ0MzYyLTE1MHExNTggMCAyODYuNSA4OHQxODcuNSAyMzBxNzAtNjIgMTY2LTYyIDEwNiAwIDE4MSA3NXQ3NSAxODFxMCA3NS00MSAxMzggMTI5IDMwIDIxMyAxMzQuNXQ4NCAyMzkuNXoiLz48L3N2Zz4='
+                );
+                add_submenu_page(
+                    'media-cloud',
+                    'Media Cloud Tools',
+                    'Features',
+                    'manage_options',
+                    'media-cloud',
+                    [ $this, 'renderFeatureSettings' ]
+                );
+            } else {
+                add_menu_page(
+                    'Settings',
+                    'Media Cloud',
+                    'manage_options',
+                    'media-cloud',
+                    [ $this, 'renderMultisiteLanding' ],
+                    'data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjA0OCAxNzkyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGZpbGw9ImJsYWNrIiBkPSJNMTk4NCAxMTUycTAgMTU5LTExMi41IDI3MS41dC0yNzEuNSAxMTIuNWgtMTA4OHEtMTg1IDAtMzE2LjUtMTMxLjV0LTEzMS41LTMxNi41cTAtMTMyIDcxLTI0MS41dDE4Ny0xNjMuNXEtMi0yOC0yLTQzIDAtMjEyIDE1MC0zNjJ0MzYyLTE1MHExNTggMCAyODYuNSA4OHQxODcuNSAyMzBxNzAtNjIgMTY2LTYyIDEwNiAwIDE4MSA3NXQ3NSAxODFxMCA3NS00MSAxMzggMTI5IDMwIDIxMyAxMzQuNXQ4NCAyMzkuNXoiLz48L3N2Zz4='
+                );
+            }
+        
+        }
         add_settings_section(
             'ilab-media-features',
             'Media Cloud Features',
@@ -332,31 +436,84 @@ final class ToolsManager
                 );
             }
         }
+        $this->tools['troubleshooting']->registerMenu( 'media-cloud', $networkMode, $networkAdminMenu );
+        
         if ( $isLocal || $isNetworkModeAdmin ) {
-            
+            $this->insertSeparator( 'Settings' );
+            $displayedSettings = [];
             if ( !empty($this->pinnedTools) ) {
-                $this->insertSeparator( 'Pinned Settings' );
                 foreach ( $this->pinnedTools as $pinnedTool => $value ) {
                     if ( empty($this->tools[$pinnedTool]) ) {
                         continue;
                     }
                     $tool = $this->tools[$pinnedTool];
+                    $displayedSettings[] = $pinnedTool;
+                    
+                    if ( $this->tools[$pinnedTool]->envEnabled() && $tool->hasSettings() ) {
+                        $pinnedSlug = 'media-cloud-settings-' . $pinnedTool;
+                    } else {
+                        $pinnedSlug = 'media-cloud-settings-' . $pinnedTool . '&pinned=true';
+                    }
+                    
                     add_submenu_page(
                         'media-cloud',
                         $tool->toolInfo['name'] . ' Settings',
                         $tool->toolInfo['name'],
                         'manage_options',
-                        'media-cloud-settings&tab=' . $pinnedTool,
+                        $pinnedSlug,
                         [ $this, 'renderSettings' ]
                     );
                 }
             }
-        
+            foreach ( $this->tools as $toolId => $tool ) {
+                
+                if ( $tool->envEnabled() && $tool->hasSettings() && !in_array( $toolId, $displayedSettings ) ) {
+                    $displayedSettings[] = $toolId;
+                    add_submenu_page(
+                        'media-cloud',
+                        $tool->toolInfo['name'] . ' Settings',
+                        $tool->toolInfo['name'],
+                        'manage_options',
+                        'media-cloud-settings-' . $toolId,
+                        [ $this, 'renderSettings' ]
+                    );
+                }
+            
+            }
+            $hiddenMenus = [];
+            foreach ( $this->tools as $toolId => $tool ) {
+                
+                if ( $tool->hasSettings() && !in_array( $toolId, $displayedSettings ) ) {
+                    $hiddenMenus[] = 'media-cloud-settings-' . $toolId;
+                    add_submenu_page(
+                        'media-cloud',
+                        $tool->toolInfo['name'] . ' Settings',
+                        null,
+                        'manage_options',
+                        'media-cloud-settings-' . $toolId,
+                        [ $this, 'renderSettings' ]
+                    );
+                }
+            
+            }
+            add_filter( 'submenu_file', function ( $submenu_file ) use( $hiddenMenus ) {
+                global  $plugin_page ;
+                if ( $plugin_page && isset( $hidden_submenus[$plugin_page] ) ) {
+                    $submenu_file = 'media-cloud-settings';
+                }
+                foreach ( $hiddenMenus as $submenu ) {
+                    remove_submenu_page( 'media-cloud', $submenu );
+                }
+                return $submenu_file;
+            } );
         }
+        
         foreach ( $this->tools as $key => $tool ) {
             register_setting( 'ilab-media-tools', "mcloud-tool-enabled-{$key}" );
             register_setting( $tool->optionsGroup(), "mcloud-tool-enabled-{$key}" );
-            $tool->registerMenu( 'media-cloud', $networkMode, $networkAdminMenu );
+            if ( $key != 'troubleshooting' ) {
+                $tool->registerMenu( 'media-cloud', $networkMode, $networkAdminMenu );
+            }
             $tool->registerSettings();
             if ( !empty($tool->toolInfo['related']) ) {
                 foreach ( $tool->toolInfo['related'] as $relatedKey ) {
@@ -370,25 +527,39 @@ final class ToolsManager
                 $tool->registerBatchToolMenu( 'media-cloud', $networkMode, $networkAdminMenu );
             }
         }
-        
+        $this->insertHelpToolSeparator();
+        add_submenu_page(
+            'media-cloud',
+            'Plugin Support',
+            'Forums',
+            'manage_options',
+            'https://talk.mediacloud.press/'
+        );
+        add_submenu_page(
+            'media-cloud',
+            'Documentation',
+            'Documentation',
+            'manage_options',
+            'https://help.mediacloud.press/'
+        );
+        foreach ( $this->tools as $key => $tool ) {
+            $tool->registerHelpMenu( 'media-cloud', $networkMode, $networkAdminMenu );
+        }
         if ( $isLocal || $isNetworkModeAdmin ) {
-            $this->insertHelpToolSeparator();
-            add_submenu_page(
-                'media-cloud',
-                'Plugin Support',
-                'Support',
-                'manage_options',
-                'https://talk.mediacloud.press/'
-            );
-            if ( defined( 'PHP_MAJOR_VERSION' ) && PHP_MAJOR_VERSION >= 7 ) {
-                $this->docs->registerAdminMenu( 'media-cloud' );
-            }
-            foreach ( $this->tools as $key => $tool ) {
-                $tool->registerHelpMenu( 'media-cloud', $networkMode, $networkAdminMenu );
+            if ( LicensingManager::CanTrack() ) {
+                add_submenu_page(
+                    'media-cloud',
+                    'Opt-In Settings',
+                    'Opt-In Settings',
+                    'manage_options',
+                    'media-cloud-settings-opt-in',
+                    [ $this, 'renderSettings' ]
+                );
             }
         }
-        
-        $this->insertAccountSeparator();
+        if ( !is_multisite() || is_network_admin() ) {
+            $this->insertAccountSeparator();
+        }
     }
     
     public function insertSeparator( $title = '' )
@@ -527,27 +698,11 @@ final class ToolsManager
     }
     
     /**
-     * @param BatchTool $batchTool
-     */
-    public function addMultisiteBatchTool( $batchTool )
-    {
-        $this->multisiteBatchTools[] = $batchTool;
-    }
-    
-    /**
      * @return Tool[]
      */
     public function multisiteTools()
     {
         return $this->multisiteTools;
-    }
-    
-    /**
-     * @return BatchTool[]
-     */
-    public function multisiteBatchTools()
-    {
-        return $this->multisiteBatchTools;
     }
     
     //endregion
@@ -591,52 +746,68 @@ final class ToolsManager
      */
     public function renderSettings()
     {
-        global  $wp_settings_sections, $wp_settings_fields ;
+        global  $media_cloud_licensing ;
         
-        if ( !empty($_GET['tab']) && in_array( $_GET['tab'], array_keys( $this->tools ) ) ) {
-            $tab = $_GET['tab'];
+        if ( !is_multisite() && ($media_cloud_licensing->is_plan__premium_only( 'multisite_basic', true ) || $media_cloud_licensing->is_plan__premium_only( 'multisite_pro', true ) || $media_cloud_licensing->is_plan__premium_only( 'multisite_unlimited', true )) ) {
+            echo  View::render_view( 'base/wrong-license', [
+                'title' => 'Media Cloud ' . MEDIA_CLOUD_VERSION,
+            ] ) ;
         } else {
-            $tab = array_keys( $this->tools )[0];
-        }
-        
-        $selectedTool = $this->tools[$tab];
-        $page = $selectedTool->optionsPage();
-        $group = $selectedTool->optionsGroup();
-        $sections = [];
-        foreach ( (array) $wp_settings_sections[$page] as $section ) {
-            if ( !isset( $wp_settings_fields ) || !isset( $wp_settings_fields[$page] ) || !isset( $wp_settings_fields[$page][$section['id']] ) ) {
-                continue;
-            }
-            $help = arrayPath( $selectedTool->toolInfo, "settings/groups/{$section['id']}/help", null );
+            global  $wp_settings_sections, $wp_settings_fields ;
             
-            if ( is_array( $help ) && !empty($help) ) {
+            if ( !empty($_GET['tab']) && in_array( $_GET['tab'], array_keys( $this->tools ) ) ) {
+                $tab = $_GET['tab'];
+            } else {
                 
-                if ( !is_array( $help['data'] ) ) {
-                    $data = $help['data'];
-                    $help['data'] = $selectedTool->{$data}();
+                if ( strpos( $_GET['page'], 'media-cloud-settings-' ) === 0 ) {
+                    $tab = str_replace( 'media-cloud-settings-', '', $_GET['page'] );
+                } else {
+                    $tab = array_keys( $this->tools )[0];
                 }
             
-            } else {
-                $help = null;
             }
             
-            $sections[] = [
-                'title'       => $section['title'],
-                'id'          => $section['id'],
-                'help'        => $help,
-                'description' => arrayPath( $selectedTool->toolInfo, "settings/groups/{$section['id']}/description", null ),
-            ];
+            $selectedTool = $this->tools[$tab];
+            $page = $selectedTool->optionsPage();
+            $group = $selectedTool->optionsGroup();
+            $sections = [];
+            foreach ( (array) $wp_settings_sections[$page] as $section ) {
+                if ( !isset( $wp_settings_fields ) || !isset( $wp_settings_fields[$page] ) || !isset( $wp_settings_fields[$page][$section['id']] ) ) {
+                    continue;
+                }
+                $help = arrayPath( $selectedTool->toolInfo, "settings/groups/{$section['id']}/help", null );
+                
+                if ( is_array( $help ) && !empty($help) ) {
+                    
+                    if ( !is_array( $help['data'] ) ) {
+                        $data = $help['data'];
+                        $help['data'] = $selectedTool->{$data}();
+                    }
+                
+                } else {
+                    $help = null;
+                }
+                
+                $sections[] = [
+                    'title'       => $section['title'],
+                    'id'          => $section['id'],
+                    'doc_beacon'  => arrayPath( $selectedTool->toolInfo, "settings/groups/{$section['id']}/doc_beacon", null ),
+                    'help'        => $help,
+                    'description' => arrayPath( $selectedTool->toolInfo, "settings/groups/{$section['id']}/description", null ),
+                ];
+            }
+            echo  View::render_view( 'base/settings', [
+                'title'    => 'All Settings',
+                'tab'      => $tab,
+                'tools'    => $this->tools,
+                'tool'     => $selectedTool,
+                'group'    => $group,
+                'page'     => $page,
+                'manager'  => $this,
+                'sections' => $sections,
+            ] ) ;
         }
-        echo  View::render_view( 'base/settings', [
-            'title'    => 'All Settings',
-            'tab'      => $tab,
-            'tools'    => $this->tools,
-            'tool'     => $selectedTool,
-            'group'    => $group,
-            'page'     => $page,
-            'manager'  => $this,
-            'sections' => $sections,
-        ] ) ;
+    
     }
     
     public function renderSupport()
@@ -646,14 +817,23 @@ final class ToolsManager
     
     public function renderFeatureSettings()
     {
-        echo  View::render_view( 'base/features', [
-            'title'       => 'Media Cloud ' . MEDIA_CLOUD_VERSION,
-            'group'       => 'ilab-media-features',
-            'page'        => 'media-cloud',
-            'networkMode' => Environment::NetworkMode(),
-            'tools'       => $this->tools,
-            'manager'     => $this,
-        ] ) ;
+        global  $media_cloud_licensing ;
+        
+        if ( !is_multisite() && ($media_cloud_licensing->is_plan__premium_only( 'multisite_basic', true ) || $media_cloud_licensing->is_plan__premium_only( 'multisite_pro', true ) || $media_cloud_licensing->is_plan__premium_only( 'multisite_unlimited', true )) ) {
+            echo  View::render_view( 'base/wrong-license', [
+                'title' => 'Media Cloud ' . MEDIA_CLOUD_VERSION,
+            ] ) ;
+        } else {
+            echo  View::render_view( 'base/features', [
+                'title'       => 'Media Cloud ' . MEDIA_CLOUD_VERSION,
+                'group'       => 'ilab-media-features',
+                'page'        => 'media-cloud',
+                'networkMode' => Environment::NetworkMode(),
+                'tools'       => $this->tools,
+                'manager'     => $this,
+            ] ) ;
+        }
+    
     }
     
     public function renderNetworkSettings()
