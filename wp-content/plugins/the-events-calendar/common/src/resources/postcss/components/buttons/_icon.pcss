@@ -51,7 +51,7 @@
 		&:focus {
 
 			&:before {
-				background-image: svg-inline(caret-left-active);
+				background-image: svg-inline(caret-left);
 			}
 		}
 
@@ -80,7 +80,7 @@
 		&:focus {
 
 			&:before {
-				background-image: svg-inline(caret-right-active);
+				background-image: svg-inline(caret-right);
 			}
 		}
 
@@ -146,6 +146,26 @@
 
 			&:before {
 				background-image: svg-inline(search-disabled);
+			}
+		}
+	}
+
+	/* -------------------------------------------------------------------------
+	 *
+	 * Button: Icon Border - Theme Overrides
+	 *
+	 * ------------------------------------------------------------------------- */
+
+	/* -------------------------------------------------------------------------
+	 * Theme Overrides - Twenty Seventeen
+	 * ------------------------------------------------------------------------- */
+
+	.tribe-theme-twentyseventeen & {
+
+		.tribe-common-c-btn-icon--border {
+
+			&:hover {
+				background-color: var(--color-background);
 			}
 		}
 	}

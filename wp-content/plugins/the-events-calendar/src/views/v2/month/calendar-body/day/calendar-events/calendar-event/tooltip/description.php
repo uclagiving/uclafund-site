@@ -9,10 +9,17 @@
  *
  * @link {INSERT_ARTCILE_LINK_HERE}
  *
- * @version 4.9.4
+ * @version TBD
  *
+ * @var WP_Post $event The event post object with properties added by the `tribe_get_event` function.
+ *
+ * @see tribe_get_event() For the format of the event object.
  */
+
+if ( empty( $event->excerpt ) ) {
+	return;
+}
 ?>
-<p class="tribe-events-calendar-month__calendar-event-tooltip-description tribe-common-b3">
-	Lorem ipsum dolor sit amet, consectetur adipiscing elit. In consectetur metus tortor, et maximus libero aliquet in. Praesent rhoncus ultricies neque in imperdiet. Aenean at ex luctus, tempor justo eget, pharetra magna. Nullam ut odio maximus nisi mollis gravida.
-</p>
+<div class="tribe-events-calendar-month__calendar-event-tooltip-description tribe-common-b3">
+	<?php echo $event->excerpt; ?>
+</div>
