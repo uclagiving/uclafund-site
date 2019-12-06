@@ -142,6 +142,74 @@ trait SettingsTrait {
         ]);
     }
 
+	/**
+	 * Registers an option with a text input UI
+	 * @param $option_name
+	 * @param $title
+	 * @param $settings_slug
+	 * @param null $description
+	 * @param null $placeholder
+	 * @param null $conditions
+	 */
+	protected function registerUploadPathFieldSetting($option_name, $title, $settings_slug, $description=null, $placeholder=null, $conditions=null) {
+		add_settings_field($option_name,
+			$title,
+			[$this,'renderUploadPathFieldSetting'],
+			$this->options_page,
+			$settings_slug,
+			['option'=>$option_name, 'description'=>$description, 'placeholder' => $placeholder, 'conditions' => $conditions]);
+	}
+
+	/**
+	 * Renders a text field
+	 * @param $args
+	 */
+	public function renderUploadPathFieldSetting($args) {
+		echo View::render_view('base/fields/upload-path.php',[
+			'value' => Environment::Option($args['option']),
+			'name' => $args['option'],
+			'placeholder' => $args['placeholder'],
+			'conditions' => $args['conditions'],
+			'description' => (isset($args['description'])) ? $args['description'] : false
+		]);
+	}
+
+	/**
+	 * Registers an option with a text input UI
+	 * @param $option_name
+	 * @param $title
+	 * @param $settings_slug
+	 * @param null $description
+	 * @param null $placeholder
+	 * @param null $conditions
+	 */
+	protected function registerSubsiteUploadPathsFieldSetting($option_name, $title, $settings_slug, $description=null, $placeholder=null, $conditions=null) {
+		add_settings_field($option_name,
+			$title,
+			[$this,'renderSubsiteUploadPathsFieldSetting'],
+			$this->options_page,
+			$settings_slug,
+			['option'=>$option_name, 'description'=>$description, 'placeholder' => $placeholder, 'conditions' => $conditions]);
+	}
+
+	/**
+	 * Renders a text field
+	 * @param $args
+	 */
+	public function renderSubsiteUploadPathsFieldSetting($args) {
+		if (!is_multisite() || !is_network_admin()) {
+			echo '';
+		} else {
+			echo View::render_view('base/fields/subsite-upload-paths.php',[
+				'value' => Environment::Option($args['option']),
+				'name' => $args['option'],
+				'placeholder' => $args['placeholder'],
+				'conditions' => $args['conditions'],
+				'description' => (isset($args['description'])) ? $args['description'] : false
+			]);
+		}
+	}
+
     /**
      * Registers an option with a password input
      * @param $option_name
@@ -295,42 +363,84 @@ trait SettingsTrait {
         ]);
     }
 
-    /**
-     * Registers an option with a dropdown/select input
-     * @param $option_name
-     * @param $options
-     * @param $title
-     * @param $settings_slug
-     * @param null $description
-     * @param null $conditions
-     */
-    protected function registerSelectSetting($option_name, $options, $title, $settings_slug, $description=null, $conditions=null) {
-        add_settings_field($option_name,
-            $title,
-            [$this,'renderSelectSetting'],
-            $this->options_page,
-            $settings_slug,
-            ['option'=>$option_name,'options'=>$options,'description'=>$description, 'conditions'=>$conditions]);
-    }
+	/**
+	 * Registers an option with a dropdown/select input
+	 * @param $option_name
+	 * @param $options
+	 * @param $title
+	 * @param $settings_slug
+	 * @param null $description
+	 * @param null $conditions
+	 */
+	protected function registerSelectSetting($option_name, $options, $title, $settings_slug, $description=null, $conditions=null) {
+		add_settings_field($option_name,
+			$title,
+			[$this,'renderSelectSetting'],
+			$this->options_page,
+			$settings_slug,
+			['option'=>$option_name,'options'=>$options,'description'=>$description, 'conditions'=>$conditions]);
+	}
 
-    /**
-     * Renders the select
-     * @param $args
-     */
-    public function renderSelectSetting($args) {
-        $options = $args['options'];
-        if (!is_array($options)) {
-            $options = $this->$options();
-        }
+	/**
+	 * Registers an option with a dropdown/select input
+	 * @param $option_name
+	 * @param $options
+	 * @param $title
+	 * @param $settings_slug
+	 * @param null $description
+	 * @param null $conditions
+	 */
+	protected function registerSiteSelectSetting($option_name, $title, $settings_slug, $description=null, $conditions=null) {
+		add_settings_field($option_name,
+			$title,
+			[$this,'renderSiteSelectSetting'],
+			$this->options_page,
+			$settings_slug,
+			['option'=>$option_name, 'description'=>$description, 'conditions'=>$conditions]);
+	}
 
-        echo View::render_view('base/fields/select.php',[
-            'value' => Environment::Option($args['option']),
-            'name' => $args['option'],
-            'options' => $options,
-            'conditions' => $args['conditions'],
-            'description' => (isset($args['description'])) ? $args['description'] : false
-        ]);
-    }
+	/**
+	 * Renders the select
+	 * @param $args
+	 */
+	public function renderSelectSetting($args) {
+		$options = $args['options'];
+		if (!is_array($options)) {
+			$options = $this->$options();
+		}
+
+		echo View::render_view('base/fields/select.php',[
+			'value' => Environment::Option($args['option']),
+			'name' => $args['option'],
+			'options' => $options,
+			'conditions' => $args['conditions'],
+			'description' => (isset($args['description'])) ? $args['description'] : false
+		]);
+	}
+
+	/**
+	 * Renders the select
+	 * @param $args
+	 */
+	public function renderSiteSelectSetting($args) {
+		$siteOptions = [];
+
+		$sites = get_sites();
+		foreach($sites as $site) {
+			$id = get_object_vars($site)['blog_id'];
+			$name = get_blog_details($id)->blogname;
+
+			$siteOptions[$id] = $name;
+		}
+
+		echo View::render_view('base/fields/site-select.php',[
+			'value' => Environment::Option($args['option']),
+			'name' => $args['option'],
+			'options' => $siteOptions,
+			'conditions' => $args['conditions'],
+			'description' => (isset($args['description'])) ? $args['description'] : false
+		]);
+	}
 
     /**
      * Registers an option with a dropdown/select input

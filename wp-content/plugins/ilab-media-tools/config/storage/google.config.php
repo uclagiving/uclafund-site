@@ -43,6 +43,13 @@ return [
 		        "type" => "number",
 		        "default" => 10,
 	        ],
+	        "mcloud-storage-bucket-policy-only" => [
+		        "title" => "Use Bucket Policy Only",
+		        "description" => "Set to true to when using a bucket which has the 'Bucket Policy Only' flag enabled.  See <a target='_blank' href='https://cloud.google.com/storage/docs/bucket-policy-only'>this documentation</a> for more information.  Also, make sure to make the bucket public, as specified in <a target-'_blank' href='https://cloud.google.com/storage/docs/access-control/making-data-public#buckets'>this documentation</a>.",
+		        "display-order" => 16,
+		        "type" => "checkbox",
+		        "default" => false,
+	        ],
         ]
     ],
     "ilab-media-cloud-upload-handling" => [
@@ -52,8 +59,8 @@ return [
         "options" => [
             "mcloud-storage-privacy" => [
                 "title" => "Upload Privacy ACL",
-                "description" => "This will set the privacy for each upload.  You should leave it as <code>public-read</code> unless you are using Imgix.",
-                "display-order" => 1,
+	            "description" => "This will set the privacy for each upload.  You should leave it as <code>public-read</code> unless you are using Imgix.  If you set the <strong>Bucket Policy Only</strong> flag, this will have no effect.",
+	            "display-order" => 1,
                 "type" => "select",
                 "options" => [
                     "public-read" => "public-read",

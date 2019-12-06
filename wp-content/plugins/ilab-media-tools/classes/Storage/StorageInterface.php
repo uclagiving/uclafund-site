@@ -94,6 +94,12 @@ interface StorageInterface {
 	public function enabled();
 
 	/**
+	 * Flag that indicates if the storage interface has a settings error which prevents it from working.
+	 * @return bool
+	 */
+	public function settingsError();
+
+	/**
 	 * Validates settings.
 	 *
      * @param ErrorCollector|null $errorCollector
@@ -239,6 +245,16 @@ interface StorageInterface {
 	 * @return StorageFile[]
 	 */
 	public function dir($path = '', $delimiter = '/');
+
+	/**
+	 * Similar to dir() but returns an array of keys as strings.
+	 *
+	 * @param string $path
+	 * @param string $delimiter
+	 *
+	 * @return string[]
+	 */
+	public function ls($path = '', $delimiter = '/');
 
     /**
      * @return AdapterInterface

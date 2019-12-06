@@ -80,7 +80,7 @@ class Tribe__Events__Integrations__Freemius {
 		 *
 		 * @param  bool  $should_load
 		 */
-		$should_load = apply_filters( 'tribe_events_integrations_should_load_freemius', $this->should_load( 10 ) );
+		$should_load = apply_filters( 'tribe_events_integrations_should_load_freemius', $this->should_load( 50 ) );
 
 		if ( ! $should_load ) {
 			return;
@@ -249,7 +249,7 @@ class Tribe__Events__Integrations__Freemius {
 
 		$html .= '<p>';
 		$html .= sprintf(
-			esc_html__( 'Hi, %1$s! This is an invitation to help %2$s community. If you opt-in, some data about your usage of %2$s will be shared with our teams (so they can work their butts off to improve). We will also share some helpful info on events management. WordPress, and our products from time to time.', 'the-events-calendar' ),
+			esc_html__( 'Hi, %1$s! This is an invitation to help %2$s community. If you opt-in, some data about your usage of %2$s will be shared with our teams (so they can work their butts off to improve). We will also share some helpful info on events management, WordPress, and our products from time to time.', 'the-events-calendar' ),
 			$user_first_name,
 			$plugin_name
 		);

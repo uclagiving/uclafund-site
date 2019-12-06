@@ -10,7 +10,10 @@ namespace Tribe\Events\Service_Providers;
 
 use Tribe\Events\Views\V2\Utils;
 use Tribe__Context;
+use Tribe__Date_Utils as Dates;
 use Tribe__Events__Main as TEC;
+use Tribe__Events__Organizer as Organizer;
+use Tribe__Events__Venue as Venue;
 
 class Context extends \tad_DI52_ServiceProvider {
 
@@ -176,6 +179,95 @@ class Context extends \tad_DI52_ServiceProvider {
 						},
 					],
 					Tribe__Context::REQUEST_VAR => [ 's', 'search', 'tribe-bar-search' ],
+				],
+			],
+			'events_per_page' => [
+				'read'  => [
+					Tribe__Context::REQUEST_VAR  => 'posts_per_page',
+					Tribe__Context::TRIBE_OPTION => [ 'posts_per_page', 'postsPerPage' ],
+					Tribe__Context::OPTION       => 'posts_per_page',
+				],
+				'write' => [
+					Tribe__Context::REQUEST_VAR => 'posts_per_page',
+					Tribe__Context::TRIBE_OPTION => 'postsPerPage',
+				],
+			],
+			'month_posts_per_page' => [
+				'read'  => [
+					Tribe__Context::TRIBE_OPTION => 'monthEventAmount',
+				],
+				'write' => [
+					Tribe__Context::TRIBE_OPTION => 'monthEventAmount',
+				],
+			],
+			'today' => [
+				'read' => [
+					Tribe__Context::FUNC => static function () {
+						return Dates::build_date_object()
+						            ->setTime( 0, 0, 0 )
+						            ->format( Dates::DBDATETIMEFORMAT );
+					}
+				],
+			],
+			'now'   => [
+				'read' => [
+					Tribe__Context::FUNC => static function () {
+						return Dates::build_date_object()->format( Dates::DBDATETIMEFORMAT );
+					},
+				],
+			],
+			'start_of_week' => [
+				'read'  => [ Tribe__Context::OPTION => 'start_of_week' ],
+				'write' => [ Tribe__Context::OPTION => 'start_of_week' ],
+			],
+			'tec_post_type' => [
+				'read' => [
+					Tribe__Context::LOCATION_FUNC => [
+						'post_type',
+						static function ( $post_type ) {
+							return count( array_intersect(
+									(array) $post_type,
+									[ TEC::POSTTYPE, Venue::POSTTYPE, Organizer::POSTTYPE ] )
+							);
+						}
+					],
+				],
+			],
+			'event_post_type' => [
+				'read' => [
+					Tribe__Context::LOCATION_FUNC => [
+						'post_type',
+						static function ( $post_type ) {
+							return (array) $post_type === [ TEC::POSTTYPE ];
+						}
+					]
+				]
+			],
+			'venue_post_type' => [
+				'read' => [
+					Tribe__Context::LOCATION_FUNC => [
+						'post_type',
+						static function ( $post_type ) {
+							return (array) $post_type === [ Venue::POSTTYPE ];
+						}
+					]
+				]
+			],
+			'organizer_post_type' => [
+				'read' => [
+					Tribe__Context::LOCATION_FUNC => [
+						'post_type',
+						static function ( $post_type ) {
+							return (array) $post_type === [ Organizer::POSTTYPE ];
+						}
+					]
+				]
+			],
+			'event_category' => [
+				'read' => [
+					Tribe__Context::QUERY_PROP  => [ TEC::TAXONOMY ],
+					Tribe__Context::QUERY_VAR   => [ TEC::TAXONOMY ],
+					Tribe__Context::REQUEST_VAR => [ TEC::TAXONOMY ],
 				],
 			],
 		] );

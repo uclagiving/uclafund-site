@@ -104,3 +104,15 @@ function ilab_admin_url($path = '', $scheme = 'admin') {
 		return admin_url($path, $scheme);
 	}
 }
+
+if (!function_exists('mb_strpos')) {
+	function mb_strpos($haystack, $needle, $offset = 0) {
+		return strpos($haystack, $needle, $offset);
+	}
+}
+
+if (!function_exists('mb_strtolower')) {
+	function mb_strtolower($string) {
+		return strtolower($string);
+	}
+}

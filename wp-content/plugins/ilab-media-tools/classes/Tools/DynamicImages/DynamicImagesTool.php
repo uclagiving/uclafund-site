@@ -13,10 +13,13 @@
 
 namespace ILAB\MediaCloud\Tools\DynamicImages;
 
+use ILAB\MediaCloud\Tools\Storage\StorageTool;
 use ILAB\MediaCloud\Tools\Tool;
 use ILAB\MediaCloud\Tools\ToolsManager;
+use function ILAB\MediaCloud\Utilities\arrayPath;
 use ILAB\MediaCloud\Utilities\Environment;
 use ILAB\MediaCloud\Utilities\NoticeManager;
+use ILAB\MediaCloud\Utilities\Tracker;
 use ILAB\MediaCloud\Utilities\View;
 use function ILAB\MediaCloud\Utilities\gen_uuid;
 use function ILAB\MediaCloud\Utilities\json_response;
@@ -29,7 +32,9 @@ abstract class DynamicImagesTool extends Tool {
     protected $paramProps;
     protected $keepThumbnails;
     protected $imageQuality;
+
     protected $shouldCrop = false;
+
     protected $allSizes = null;
     protected $processedAttachments = [];
     protected $skipSizeParams = false;
@@ -155,7 +160,8 @@ abstract class DynamicImagesTool extends Tool {
 	            return $metadata;
             }
 
-	        if (in_array($attachmentId, $this->processedAttachments)) {
+	        $hasVersion = isset($metadata['s3']['v']) && ($metadata['s3']['v'] == MEDIA_CLOUD_INFO_VERSION);
+	        if ($hasVersion && in_array($attachmentId, $this->processedAttachments)) {
 	            return $metadata;
             }
 
@@ -174,14 +180,16 @@ abstract class DynamicImagesTool extends Tool {
 
 		    $didChange = false;
 		    foreach($this->allSizes as $sizeKey => $sizeData) {
-		        if (isset($metadata['sizes'][$sizeKey])) {
+		        if (isset($metadata['sizes'][$sizeKey]) && $hasVersion) {
 		            continue;
                 }
 
+			    $sizeFilename = arrayPath($metadata, "sizes/$sizeKey/file", $filename);
 			    $sizeWidth = intval($sizeData['width']);
 			    $sizeHeight = intval($sizeData['height']);
+			    $sizeS3 = arrayPath($metadata, "sizes/$sizeKey/s3", $metadata['s3']);
 
-		        if (!empty($sizeCrop)) {
+		        if (!empty($sizeData['crop'])) {
 		            $newWidth = $sizeWidth;
 		            $newHeight = $sizeHeight;
                 } else {
@@ -189,17 +197,18 @@ abstract class DynamicImagesTool extends Tool {
                 }
 
 		        $metadata['sizes'][$sizeKey] = [
-		            'file' => $filename,
-                    'width' => $newWidth,
-                    'height' => $newHeight,
+		            'file' => $sizeFilename,
+                    'width' => intval($newWidth),
+                    'height' => intval($newHeight),
                     'mime-type' => $mime,
-                    's3' => $metadata['s3']
+                    's3' => $sizeS3
                 ];
 
 		        $didChange = true;
             }
 
 		    if ($didChange) {
+		        $metadata['s3']['v'] = MEDIA_CLOUD_INFO_VERSION;
 			    update_post_meta($attachmentId, '_wp_attachment_metadata', $metadata);
             }
 
@@ -267,6 +276,14 @@ abstract class DynamicImagesTool extends Tool {
      * @return mixed|string
      */
     public function getAttachmentURL($url, $post_id) {
+	    if (!empty(apply_filters('media-cloud/dynamic-images/skip-url-generation', false))) {
+		    /** @var StorageTool $storageTool */
+		    $storageTool = ToolsManager::instance()->tools['storage'];
+
+		    $result = $storageTool->getAttachmentURL($url, $post_id);
+		    return $result;
+	    }
+
         $res = $this->buildImage($post_id, 'full');
         if(!$res || !is_array($res)) {
             return $url;
@@ -288,6 +305,16 @@ abstract class DynamicImagesTool extends Tool {
      * @return array|bool
      */
     public function imageDownsize($fail, $id, $size) {
+	    if (!empty(apply_filters('media-cloud/dynamic-images/skip-url-generation', false))) {
+		    /** @var StorageTool $storageTool */
+		    $storageTool = ToolsManager::instance()->tools['storage'];
+
+		    $result = $storageTool->forcedImageDownsize($fail, $id, $size);
+		    return $result;
+        }
+
+		$this->shouldCrop = apply_filters('media-cloud/dynamic-images/should-crop', $this->shouldCrop);
+
         $result = $this->buildImage($id, $size);
         return $result;
     }
@@ -528,6 +555,8 @@ abstract class DynamicImagesTool extends Tool {
 
         if(current_user_can('edit_post', $image_id)) {
             if(!$partial) {
+                Tracker::trackView("Image Editor", "/image/editor");
+
                 echo View::render_view('imgix/ilab-imgix-ui', [
                     'partial' => $partial,
                     'image_id' => $image_id,
@@ -661,6 +690,7 @@ abstract class DynamicImagesTool extends Tool {
 
 	        wp_update_attachment_metadata($image_id, $meta);
 
+	        Tracker::trackView("Image Editor - Save Adjustments", '/image/editor/save');
 	        json_response([
 		        'status' => 'ok'
 	        ]);
@@ -765,6 +795,8 @@ abstract class DynamicImagesTool extends Tool {
         $size = (isset($_POST['size'])) ? esc_html($_POST['size']) : null;
         $makeDefault = (isset($_POST['make_default'])) ? ($_POST['make_default'] == 1) : false;
 
+	    Tracker::trackView("Image Editor - New Preset", '/image/editor/preset/new');
+
         $this->doUpdatePresets($newKey, $name, $settings, $size, $makeDefault);
 
     }
@@ -794,6 +826,12 @@ abstract class DynamicImagesTool extends Tool {
         $size = (isset($_POST['size'])) ? esc_html($_POST['size']) : null;
         $makeDefault = (isset($_POST['make_default'])) ? ($_POST['make_default'] == 1) : false;
 
+        if ($makeDefault) {
+	        Tracker::trackView("Image Editor - Save Default Preset", '/image/editor/preset/save-default');
+        } else {
+	        Tracker::trackView("Image Editor - Save Preset", '/image/editor/preset/save');
+        }
+
         $this->doUpdatePresets($key, $name, $settings, $size, $makeDefault);
     }
 
@@ -808,6 +846,8 @@ abstract class DynamicImagesTool extends Tool {
                 'error' => 'Seems that you may have forgotten something.'
             ]);
         }
+
+	    Tracker::trackView("Image Editor - Delete Preset", '/image/editor/preset/delete');
 
         $this->doDeletePreset($key);
 

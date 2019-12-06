@@ -5,7 +5,7 @@ Plugin Name: Media Cloud
 Plugin URI: https://github.com/interfacelab/ilab-media-tools
 Description: Automatically upload media to Amazon S3 and integrate with Imgix, a real-time image processing CDN.  Boosts site performance and simplifies workflows.
 Author: interfacelab
-Version: 3.1.2
+Version: 3.2.3
 Author URI: http://interfacelab.io
 */
 // Copyright (c) 2016 Interfacelab LLC. All rights reserved.
@@ -77,8 +77,24 @@ if ( is_plugin_active( 'wp-stateless/wp-stateless-media.php' ) ) {
     return;
 }
 
+
+if ( defined( 'MEDIA_CLOUD_VERSION' ) ) {
+    deactivate_plugins( plugin_basename( __FILE__ ) );
+    add_action( 'admin_notices', function () {
+        ?>
+        <div class="notice notice-error">
+            <p><?php 
+        _e( 'There is another version of Media Cloud installed.  Please deactivate it before activating this one.', 'ilab-media-tools' );
+        ?></p>
+        </div>
+		<?php 
+    } );
+    return;
+}
+
 // Version Defines
-define( 'MEDIA_CLOUD_VERSION', '3.1.2' );
+define( 'MEDIA_CLOUD_VERSION', '3.2.3' );
+define( 'MEDIA_CLOUD_INFO_VERSION', '1.0.0' );
 // Directory defines
 define( 'ILAB_TOOLS_DIR', dirname( __FILE__ ) );
 define( 'ILAB_CONFIG_DIR', ILAB_TOOLS_DIR . '/config' );
@@ -143,7 +159,30 @@ if ( !function_exists( 'media_cloud_licensing' ) ) {
     }
     
     // Init Freemius.
-    media_cloud_licensing();
+    //	media_cloud_licensing();
+    media_cloud_licensing()->add_filter( 'permission_list', function ( $permissions ) {
+        $permissions['crisp'] = array(
+            'icon-class' => 'dashicons dashicons-admin-comments',
+            'label'      => media_cloud_licensing()->get_text_inline( 'Crisp', 'crisp' ),
+            'desc'       => media_cloud_licensing()->get_text_inline( 'Rendering Crisp\'s beacon for easy support access', 'permissions-crips' ),
+            'priority'   => 16,
+        );
+        $permissions['feature-tracking'] = array(
+            'icon-class' => 'dashicons dashicons-admin-generic',
+            'label'      => media_cloud_licensing()->get_text_inline( 'Plugin Features', 'plugin-features' ),
+            'desc'       => media_cloud_licensing()->get_text_inline( 'Anonymously track which plugin features are being used to allow us to prioritize development.', 'permissions-plugin-features' ),
+            'priority'   => 16,
+        );
+        return $permissions;
+    } );
+    media_cloud_licensing()->add_action(
+        'after_account_connection',
+        function ( $user, $install ) {
+        \ILAB\MediaCloud\Tools\ToolsManager::AccountConnected();
+    },
+        1000,
+        2
+    );
     // Signal that SDK was initiated.
     do_action( 'media_cloud_licensing_loaded' );
 }

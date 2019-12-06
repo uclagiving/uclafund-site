@@ -16,9 +16,13 @@
 
 namespace ILAB\MediaCloud\Tools;
 
+use ILAB\MediaCloud\Storage\StorageSettings;
 use ILAB\MediaCloud\Utilities\Environment;
 use ILAB\MediaCloud\Utilities\NoticeManager;
 use function ILAB\MediaCloud\Utilities\arrayPath;
+use ILAB\MediaCloud\Utilities\Prefixer;
+use ILAB\MediaCloud\Utilities\Tracker;
+use function ILAB\MediaCloud\Utilities\vomit;
 
 
 if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
@@ -52,10 +56,10 @@ abstract class Tool {
 	/** @var bool Only display the settings page when the tool is enabled */
     protected $only_when_enabled;
 
-    /** @var BatchTool[] List of batch tools for this tool */
-    protected $batchTools = [];
-
     protected $actions = [];
+
+    /** @var bool Determines if settings did change. */
+    private $settingsDidChange = false;
 
     //endregion
 
@@ -81,7 +85,11 @@ abstract class Tool {
                 if (!method_exists($this, $action['method'])) {
                     unset($this->actions[$key]);
                 } else {
-                    add_action('wp_ajax_'.str_replace('-', '_', $key), [$this, $action['method']]);
+                    $actionKey = str_replace('-', '_', $key);
+                    add_action('wp_ajax_'.$actionKey, function() use ($actionKey, $action) {
+                        check_ajax_referer($actionKey, 'nonce');
+                        call_user_func([$this, $action['method']]);
+                    });
                 }
             }
 
@@ -111,10 +119,8 @@ abstract class Tool {
             }
         }
 
-        if (isset($toolInfo['batchTools'])) {
-            foreach($toolInfo['batchTools'] as $className) {
-                $this->batchTools[] = new $className($this);
-            }
+        if (is_admin()) {
+            add_action('wp_ajax_mcloud_preview_upload_path', [$this, 'doPreviewUploadPath']);
         }
     }
 
@@ -232,9 +238,6 @@ abstract class Tool {
      * Perform any setup
      */
     public function setup() {
-        foreach($this->batchTools as $batchTool) {
-            $batchTool->setup();
-        }
     }
 
     /**
@@ -271,7 +274,19 @@ abstract class Tool {
         return $this->actions;
     }
 
+	/**
+     * Determines if the tool has user editable settings or not
+	 * @return bool
+	 */
     public function hasSettings() {
+        return false;
+    }
+
+	/**
+     * Determines if this tool installs, or wants to install, items in the admin menu bar
+	 * @return bool
+	 */
+    public function hasAdminBarMenu() {
         return false;
     }
 
@@ -285,8 +300,23 @@ abstract class Tool {
             return false;
         }
 
-        $env = ($this->env_variable) ? getenv($this->env_variable) : false;
-        return Environment::Option("mcloud-tool-enabled-$this->toolName", $env);
+        return Environment::Option("mcloud-tool-enabled-$this->toolName", $this->env_variable, false);
+    }
+
+    private function notifyMissingDependencies($shouldBeEnabled, $toolId) {
+        $problemTool = $this->toolManager->tools[$toolId];
+        $problemToolName = $problemTool->toolInfo['name'];
+        $problemUrl = admin_url('admin.php?page=media-cloud-settings&tab='.$toolId);
+	    $toolUrl = admin_url('admin.php?page=media-cloud-settings&tab='.$this->toolInfo['id']);
+	    $settingsUrl = admin_url('admin.php?page=media-cloud');
+
+        if ($shouldBeEnabled) {
+            $message = "<a href='{$toolUrl}'>{$this->toolInfo['name']}</a> requires that <a href='{$problemUrl}'>$problemToolName</a> be enabled and working.  You can enable that feature <a href='{$settingsUrl}'>here</a>.";
+        } else {
+	        $message = "<a href='{$toolUrl}'>{$this->toolInfo['name']}</a> cannot work until <a href='{$problemUrl}'>$problemToolName</a> is disabled.  You can disable that feature <a href='{$settingsUrl}'>here</a>.";
+        }
+
+	    NoticeManager::instance()->displayAdminNotice('warning', $message, true, "media-cloud-{$this->toolInfo['id']}-bad-dep-{$toolId}", 1);
     }
 
     /**
@@ -302,6 +332,7 @@ abstract class Tool {
                 if (!is_array($dep) && (strpos($dep, '!') === 0)) {
                     $dep = trim($dep, '!');
                     if ($this->toolManager->toolEnvEnabled($dep)) {
+                        $this->notifyMissingDependencies(false, $dep);
                         return false;
                     }
                 }
@@ -325,6 +356,7 @@ abstract class Tool {
             	        continue;
                     } else {
                         if (!$this->toolManager->toolEnabled($dep)) {
+	                        $this->notifyMissingDependencies(true, $dep);
                             return false;
                         }
                     }
@@ -337,63 +369,19 @@ abstract class Tool {
 
     //endregion
 
-    //region Batch Tools
+    //region Admin Menu Bar
 
-    /**
-     * Determines if this tool has any related batch tools
+	/**
+     * Allows a tool to add entries to the admin bar
      *
-     * @return bool
-     */
-    public function hasBatchTools() {
-        return (count($this->batchTools) > 0);
-    }
+	 * @param \WP_Admin_Bar $adminBar
+	 */
+    public function addAdminMenuBarItems($adminBar) {
 
-    /**
-     * Determines if this tool has any related batch tools that are enabled
-     * @return bool
-     */
-    public function hasEnabledBatchTools() {
-        /** @var BatchTool $batchTool */
-        foreach($this->batchTools as $batchTool) {
-            if ($batchTool->enabled() && (!empty($batchTool->toolInfo()))) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns information about related batch tools
-     * @return array
-     */
-    public function batchToolInfo() {
-        $results = [];
-
-        foreach($this->batchTools as $batchTool) {
-            $results[] = $batchTool->toolInfo();
-        }
-
-        return $results;
-    }
-
-    /**
-     * Returns information about related batch tools that are enabled
-     * @return array
-     */
-    public function enabledBatchToolInfo() {
-        $results = [];
-
-        foreach($this->batchTools as $batchTool) {
-            if ($batchTool->enabled()) {
-                $results[] = $batchTool->toolInfo();
-            }
-        }
-
-        return $results;
     }
 
     //endregion
+
 
     //region Settings
 
@@ -445,9 +433,15 @@ abstract class Tool {
                         $max = arrayPath($optionInfo,'max',1000);
 
                         switch($optionInfo['type']) {
-                            case 'text-field':
-                                $this->registerTextFieldSetting($option,$optionInfo['title'],$group,$description,$placeholder,$conditions);
-                                break;
+	                        case 'text-field':
+		                        $this->registerTextFieldSetting($option,$optionInfo['title'],$group,$description,$placeholder,$conditions);
+		                        break;
+	                        case 'upload-path':
+		                        $this->registerUploadPathFieldSetting($option,$optionInfo['title'],$group,$description,$placeholder,$conditions);
+		                        break;
+	                        case 'subsite-upload-paths':
+		                        $this->registerSubsiteUploadPathsFieldSetting($option,$optionInfo['title'],$group,$description,$placeholder,$conditions);
+		                        break;
                             case 'text-area':
                                 $this->registerTextAreaFieldSetting($option,$optionInfo['title'],$group,$description, $placeholder, $conditions);
                                 break;
@@ -468,6 +462,9 @@ abstract class Tool {
                                 break;
 	                        case 'custom':
 		                        $this->registerCustomFieldSetting($option,'__CUSTOMREMOVE__',$group,$optionInfo['callback'],$description, $conditions);
+		                        break;
+	                        case 'sites':
+		                        $this->registerSiteSelectSetting($option,$optionInfo['title'],$group,$description, $conditions);
 		                        break;
                         }
                     }
@@ -498,47 +495,6 @@ abstract class Tool {
      * @param $top_menu_slug
      */
     public function registerBatchToolMenu($tool_menu_slug, $networkMode = false, $networkAdminMenu = false) {
-        if (!isset($this->toolInfo['settings'])) {
-            return;
-        }
-
-        if ($this->only_when_enabled && (!$this->enabled())) {
-            return;
-        }
-
-        if (empty($this->batchTools)) {
-            return;
-        }
-
-        if ($networkMode && $networkAdminMenu) {
-            return;
-        }
-
-        $hasBatchTool = false;
-	    foreach($this->batchTools as $batchTool) {
-		    if ($batchTool->enabled()) {
-		        $hasBatchTool = true;
-		        break;
-		    }
-	    }
-
-	    if ($hasBatchTool) {
-		    ToolsManager::instance()->insertBatchToolSeparator();
-
-		    foreach($this->batchTools as $batchTool) {
-			    if ($batchTool->enabled()) {
-			        if (empty($batchTool->menuTitle())) {
-			            continue;
-                    }
-
-			        ToolsManager::instance()->addMultisiteBatchTool($batchTool);
-				    add_submenu_page($tool_menu_slug, $batchTool->pageTitle(), $batchTool->menuTitle(), $batchTool->capabilityRequirement(), $batchTool->menuSlug(), [
-					    $batchTool,
-					    'renderBatchTool'
-				    ]);
-			    }
-		    }
-        }
     }
 
     /**
@@ -593,5 +549,25 @@ abstract class Tool {
         return false;
     }
 
+    //endregion
+
+    //region Upload Path Preview
+    public function doPreviewUploadPath() {
+        check_ajax_referer('mcloud-preview-upload-path', 'nonce');
+
+        $prefix = sanitize_text_field($_REQUEST['prefix']);
+        if (empty($prefix)) {
+            wp_die();
+        }
+
+        Prefixer::nextVersion();
+        Prefixer::setType('image/jpeg');
+
+        wp_send_json([
+            'path' => Prefixer::Parse($prefix),
+            'prefix' => $prefix
+        ]);
+
+    }
     //endregion
 }

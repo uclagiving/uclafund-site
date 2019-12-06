@@ -16,6 +16,5 @@ return array(
     '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => $vendorDir . '/symfony/polyfill-mbstring/bootstrap.php',
     '712245652ebfaecd4922e7c5b5fcc010' => $vendorDir . '/ilab/ilab-aws-media-cloud-sdk/src/functions.php',
     '16eed290c5592c18dc3f16802ad3d0e4' => $vendorDir . '/ivopetkov/html5-dom-document-php/autoload.php',
-    '290dd4ba42f11019134caca05dbefe3f' => $vendorDir . '/teamtnt/tntsearch/helper/helpers.php',
     'a36a78a03571c7ba045ccfbb413ae093' => $baseDir . '/classes/Utilities/Helpers.php',
 );
