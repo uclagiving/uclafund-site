@@ -71,6 +71,61 @@
 					</td>
 				</tr>
 				<tr>
+					<td><?php _e( 'Email Sending Health Report', 'wp-offload-ses' ); ?></td>
+					<td>
+					<?php
+					if ( isset( $network_settings['enable-health-report'] ) && (bool) $network_settings['enable-health-report'] ) {
+						$hr_enabled = true;
+						echo '<span class="dashicons dashicons-yes"></span>';
+					} else {
+						$hr_enabled = false;
+						echo '<span class="dashicons dashicons-no-alt"></span>';
+					}
+					?>
+					</td>
+				</tr>
+				<?php if ( $hr_enabled ) : ?>
+					<tr>
+						<td><?php _e( 'Health Report Frequency', 'wp-offload-ses' ); ?></td>
+						<td>
+						<?php
+						$frequency   = isset( $network_settings['health-report-frequency'] ) ? $network_settings['health-report-frequency'] : 'weekly';
+						$frequencies = $this->get_health_report()->get_available_frequencies();
+
+						if ( isset( $frequencies[ $frequency ] ) ) {
+							echo $frequencies[ $frequency ];
+						}
+						?>
+						</td>
+					</tr>
+					<tr>
+						<td><?php _e( 'Health Report Recipients', 'wp-offload-ses' ); ?></td>
+						<td>
+						<?php
+						$custom_recipients = false;
+						if ( isset( $network_settings['health-report-recipients'] ) && 'custom' === $network_settings['health-report-recipients'] ) {
+							$custom_recipients = true;
+							_e( 'Custom', 'wp-offload-ses' );
+						} else {
+							_e( 'Site Admins', 'wp-offload-ses' );
+						}
+						?>
+						</td>
+					</tr>
+					<?php if ( $custom_recipients ) : ?>
+						<tr>
+							<td><?php _e( 'Health Report Custom Recipients', 'wp-offload-ses' ); ?></td>
+							<td>
+								<?php
+								if ( isset( $network_settings['health-report-custom-recipients'] ) ) {
+									echo esc_html( $network_settings['health-report-custom-recipients'] );
+								}
+								?>
+							</td>
+						</tr>
+					<?php endif; ?>
+				<?php endif; ?>
+				<tr>
 					<td><?php _e( 'Region', 'wp-offload-ses' ); ?></td>
 					<td>
 						<?php

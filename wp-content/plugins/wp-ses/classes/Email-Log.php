@@ -75,6 +75,10 @@ class Email_Log {
 			$args['subsite_id'] = isset( $atts['subsite_id'] ) ? $atts['subsite_id'] : get_current_blog_id();
 		}
 
+		if ( isset( $atts['parent'] ) ) {
+			$args['email_parent'] = $atts['parent'];
+		}
+
 		$result = $this->database->insert(
 			$this->log_table,
 			$args
@@ -175,8 +179,6 @@ class Email_Log {
 
 		if ( ! array_key_exists( $duration, self::get_log_durations() ) ) {
 			$duration = 90;
-			$wp_offload_ses->settings->set_setting( 'log-duration', $duration );
-			$wp_offload_ses->settings->save_settings();
 		}
 
 		return self::validate_duration( $duration );
@@ -290,6 +292,9 @@ class Email_Log {
 				`email_last_open_date` DATETIME,
 				`email_created` DATETIME NOT NULL,
 				`email_sent` DATETIME,
+				`email_parent` BIGINT(20),
+				`auto_retries` INT DEFAULT '0',
+				`manual_retries` INT DEFAULT '0',
 				PRIMARY KEY  (email_id),
 				INDEX email_subject (email_subject)
 				) $charset_collate;";

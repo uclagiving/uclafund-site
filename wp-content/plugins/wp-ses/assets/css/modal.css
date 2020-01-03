@@ -156,16 +156,16 @@
   color: red;
 }
 /* line 169, ../sass/modal.scss */
-#wposes-modal.wposes-tracking-modal {
+#wposes-modal.wposes-tracking-modal, #wposes-modal.wposes-health-report-modal {
   width: 350px;
   margin-top: 300px;
   text-align: center;
 }
-/* line 174, ../sass/modal.scss */
-#wposes-modal.wposes-tracking-modal .close-wposes-modal {
+/* line 175, ../sass/modal.scss */
+#wposes-modal.wposes-tracking-modal .close-wposes-modal, #wposes-modal.wposes-health-report-modal .close-wposes-modal {
   display: none;
 }
-/* line 179, ../sass/modal.scss */
+/* line 180, ../sass/modal.scss */
 #wposes-modal .actions {
   margin: 20px -30px -30px;
   padding: 20px 30px;
@@ -173,21 +173,21 @@
   background-color: #e3e3e3;
   overflow: hidden;
 }
-/* line 186, ../sass/modal.scss */
+/* line 187, ../sass/modal.scss */
 #wposes-modal .actions .right {
   margin-left: 15px;
 }
-/* line 189, ../sass/modal.scss */
+/* line 190, ../sass/modal.scss */
 #wposes-modal .actions .right:last-of-type {
   margin-left: 0;
 }
-/* line 194, ../sass/modal.scss */
+/* line 195, ../sass/modal.scss */
 #wposes-modal .actions button {
   min-width: 90px;
   float: right;
 }
 
-/* line 201, ../sass/modal.scss */
+/* line 202, ../sass/modal.scss */
 body.wposes-modal-open {
   overflow: hidden;
 }

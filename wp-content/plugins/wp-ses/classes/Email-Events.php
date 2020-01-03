@@ -212,7 +212,7 @@ class Email_Events {
 		foreach ( $links as $link ) {
 			$url = $link->getAttribute( 'href' );
 
-			if ( '' === $url ) {
+			if ( '' === $url || '#' === substr( $url, 0, 1 ) ) {
 				continue;
 			}
 
