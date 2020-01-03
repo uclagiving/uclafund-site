@@ -44,4 +44,11 @@ return [
         "options" => [
         ]
     ],
+	"ilab-media-cloud-signed-urls" => [
+		"title" => "Secure URL Settings",
+		"description" => "These settings control how pre-signed URLs work.",
+		"dynamic" => true,
+		"options" => [
+		]
+	],
 ];

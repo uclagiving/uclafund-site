@@ -13,7 +13,7 @@
 
 namespace ILAB\MediaCloud\Tools\Crop;
 
-use ILAB\MediaCloud\Storage\StorageSettings;
+use ILAB\MediaCloud\Storage\StorageGlobals;
 use ILAB\MediaCloud\Tools\Storage\StorageTool;
 use ILAB\MediaCloud\Tools\Tool;
 use ILAB\MediaCloud\Tools\ToolsManager;
@@ -98,8 +98,8 @@ class CropTool extends Tool
 
 		wp_enqueue_style( 'wp-pointer' );
 		wp_enqueue_script( 'wp-pointer' );
-		wp_enqueue_script ( 'ilab-modal-js', ILAB_PUB_JS_URL. '/ilab-modal.js', ['jquery'], false, true );
-		wp_enqueue_script ( 'ilab-media-tools-js', ILAB_PUB_JS_URL. '/ilab-media-tools.js', ['jquery'], false, true );
+		wp_enqueue_script ( 'ilab-modal-js', ILAB_PUB_JS_URL. '/ilab-modal.js', ['jquery'], MEDIA_CLOUD_VERSION, true );
+		wp_enqueue_script ( 'ilab-media-tools-js', ILAB_PUB_JS_URL. '/ilab-media-tools.js', ['jquery'], MEDIA_CLOUD_VERSION, true );
 	}
 
 	/**
@@ -529,7 +529,7 @@ class CropTool extends Tool
 		list($full_src,$full_width,$full_height,$full_cropped)=$attrs;
 
 		if ($storageTool->enabled()) {
-			if(StorageSettings::deleteOnUpload() && !StorageSettings::queuedDeletes()) {
+			if(StorageGlobals::deleteOnUpload() && !StorageGlobals::queuedDeletes()) {
                 $toDelete = trailingslashit($save_path).$filename;
                 if (file_exists($toDelete)) {
                     @unlink($toDelete);

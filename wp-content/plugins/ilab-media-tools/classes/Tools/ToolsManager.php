@@ -21,6 +21,7 @@ use  ILAB\MediaCloud\Utilities\Tracker ;
 use  ILAB\MediaCloud\Utilities\View ;
 use function  ILAB\MediaCloud\Utilities\arrayPath ;
 use function  ILAB\MediaCloud\Utilities\json_response ;
+use  ILAB\MediaCloud\Wizard\SetupWizard ;
 
 if ( !defined( 'ABSPATH' ) ) {
     header( 'Location: /' );
@@ -59,6 +60,8 @@ final class ToolsManager
     private  $multisiteTools = array() ;
     /** @var bool Determines if any media cloud settings have changed. */
     private  $settingsDidChange = false ;
+    /** @var SetupWizard|null */
+    private  $wizard = null ;
     //endregion
     //region Constructor
     public function __construct()
@@ -155,21 +158,6 @@ final class ToolsManager
                 'ilab-media-tools-extime-notice'
             );
         }
-        $runTime = Environment::Option( 'ilab_media_tools_run_time', null, 0 );
-        
-        if ( $runTime == 0 ) {
-            Environment::UpdateOption( 'ilab_media_tools_run_time', microtime( true ) );
-        } else {
-            if ( microtime( true ) - floatval( $runTime ) > 1209600 ) {
-                NoticeManager::instance()->displayAdminNotice(
-                    'info',
-                    "Thanks for using Media Cloud!  If you like it, please <a href='https://wordpress.org/support/plugin/ilab-media-tools/reviews/#new-post' target=_blank>leave a review</a>.  Thank you!",
-                    true,
-                    'ilab-media-tools-nag-notice'
-                );
-            }
-        }
-        
         if ( !extension_loaded( 'mbstring' ) ) {
             NoticeManager::instance()->displayAdminNotice(
                 'warning',
@@ -182,7 +170,12 @@ final class ToolsManager
             wp_enqueue_script(
                 'mcloud-admin-js',
                 ILAB_PUB_JS_URL . '/mcloud-admin.js',
-                [ 'jquery', 'wp-util' ],
+                [
+                'jquery',
+                'wp-util',
+                'wp-blocks',
+                'wp-element'
+            ],
                 MEDIA_CLOUD_VERSION,
                 true
             );
@@ -193,10 +186,16 @@ final class ToolsManager
                 MEDIA_CLOUD_VERSION,
                 true
             );
-            wp_enqueue_style( 'ilab-media-cloud-css', ILAB_PUB_CSS_URL . '/ilab-media-cloud.css' );
+            wp_enqueue_style(
+                'ilab-media-cloud-css',
+                ILAB_PUB_CSS_URL . '/ilab-media-cloud.css',
+                null,
+                MEDIA_CLOUD_VERSION
+            );
         } );
         
         if ( is_admin() ) {
+            $this->wizard = new SetupWizard();
             add_action( 'wp_ajax_ilab_pin_tool', function () {
                 $this->handlePinTool();
             } );
@@ -223,6 +222,15 @@ final class ToolsManager
                 Tracker::trackSettings();
             }
         } );
+        if ( !defined( 'PHP_MAJOR_VERSION' ) || PHP_MAJOR_VERSION < 7 ) {
+            NoticeManager::instance()->displayAdminNotice(
+                'warning',
+                'Media Cloud will stop supporting PHP 5 in the next major release of Media Cloud.  You should contact your hosting provider about upgrading.',
+                true,
+                'media-cloud-php-56-warning',
+                30
+            );
+        }
     }
     
     protected function setup()
@@ -287,6 +295,11 @@ final class ToolsManager
                 ToolsManager::registerTool( "opt-in", include ILAB_CONFIG_DIR . '/opt-in.config.php' );
             }
             do_action( 'media-cloud/tools/register-tools' );
+            if ( LicensingManager::ScreenSharingEnabled() ) {
+                add_action( 'admin_footer', function () {
+                    echo  View::render_view( 'support.screen-sharing', [] ) ;
+                } );
+            }
         }
         
         // Make sure the NoticeManager is initialized
@@ -385,6 +398,7 @@ final class ToolsManager
                     'media-cloud',
                     [ $this, 'renderFeatureSettings' ]
                 );
+                $this->wizard->registerMenu( 'media-cloud', $networkMode, $networkAdminMenu );
             } else {
                 add_menu_page(
                     'Settings',
@@ -409,6 +423,7 @@ final class ToolsManager
             $this->networkTool = new NetworkTool( 'network', include ILAB_CONFIG_DIR . '/network.config.php', $this );
             $this->networkTool->registerSettings();
             $this->networkTool->registerMenu( 'media-cloud', true, true );
+            $this->wizard->registerMenu( 'media-cloud', $networkMode, $networkAdminMenu );
         }
         
         if ( $isLocal || $isNetworkModeAdmin ) {
@@ -452,7 +467,8 @@ final class ToolsManager
                     if ( $this->tools[$pinnedTool]->envEnabled() && $tool->hasSettings() ) {
                         $pinnedSlug = 'media-cloud-settings-' . $pinnedTool;
                     } else {
-                        $pinnedSlug = 'media-cloud-settings-' . $pinnedTool . '&pinned=true';
+                        $pinnedSlug = 'media-cloud-settings-pinned-' . $pinnedTool;
+                        //.'&pinned=true';
                     }
                     
                     add_submenu_page(
@@ -540,7 +556,7 @@ final class ToolsManager
             'Documentation',
             'Documentation',
             'manage_options',
-            'https://help.mediacloud.press/'
+            'https://kb.mediacloud.press/'
         );
         foreach ( $this->tools as $key => $tool ) {
             $tool->registerHelpMenu( 'media-cloud', $networkMode, $networkAdminMenu );
@@ -633,6 +649,9 @@ final class ToolsManager
         foreach ( static::instance()->tools as $key => $tool ) {
             $tool->activate();
         }
+        if ( empty(Environment::Option( 'mcloud-tool-enabled-storage', null, false )) ) {
+            update_option( 'mcloud_show_wizard', true );
+        }
     }
     
     /**
@@ -715,6 +734,7 @@ final class ToolsManager
         $page_slug = $_POST['option_page'];
         check_admin_referer( $page_slug . '-options' );
         global  $new_whitelist_options ;
+        $new_whitelist_options = apply_filters( 'whitelist_options', $new_whitelist_options );
         $options = $new_whitelist_options[$page_slug];
         foreach ( $options as $option ) {
             
@@ -761,6 +781,9 @@ final class ToolsManager
                 
                 if ( strpos( $_GET['page'], 'media-cloud-settings-' ) === 0 ) {
                     $tab = str_replace( 'media-cloud-settings-', '', $_GET['page'] );
+                    if ( strpos( $tab, 'pinned-' ) === 0 ) {
+                        $tab = str_replace( 'pinned-', '', $tab );
+                    }
                 } else {
                     $tab = array_keys( $this->tools )[0];
                 }
@@ -791,20 +814,22 @@ final class ToolsManager
                 $sections[] = [
                     'title'       => $section['title'],
                     'id'          => $section['id'],
-                    'doc_beacon'  => arrayPath( $selectedTool->toolInfo, "settings/groups/{$section['id']}/doc_beacon", null ),
+                    'doc_link'    => arrayPath( $selectedTool->toolInfo, "settings/groups/{$section['id']}/doc_link", null ),
                     'help'        => $help,
                     'description' => arrayPath( $selectedTool->toolInfo, "settings/groups/{$section['id']}/description", null ),
+                    'hide-save'   => arrayPath( $selectedTool->toolInfo, "settings/groups/{$section['id']}/hide-save", false ),
                 ];
             }
             echo  View::render_view( 'base/settings', [
-                'title'    => 'All Settings',
-                'tab'      => $tab,
-                'tools'    => $this->tools,
-                'tool'     => $selectedTool,
-                'group'    => $group,
-                'page'     => $page,
-                'manager'  => $this,
-                'sections' => $sections,
+                'title'      => 'All Settings',
+                'tab'        => $tab,
+                'tools'      => $this->tools,
+                'tool'       => $selectedTool,
+                'group'      => $group,
+                'page'       => $page,
+                'jump_links' => arrayPath( $selectedTool->toolInfo, "settings/jump-links", true ),
+                'manager'    => $this,
+                'sections'   => $sections,
             ] ) ;
         }
     

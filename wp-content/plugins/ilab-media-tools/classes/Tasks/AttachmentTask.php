@@ -13,7 +13,7 @@
 
 namespace ILAB\MediaCloud\Tasks;
 
-use ILAB\MediaCloud\Storage\StorageSettings;
+use ILAB\MediaCloud\Storage\StorageGlobals;
 use ILAB\MediaCloud\Utilities\Logging\Logger;
 
 abstract class AttachmentTask extends Task {
@@ -110,16 +110,22 @@ abstract class AttachmentTask extends Task {
 				$args['nopaging'] = true;
 			}
 
-			$args['post_mime_type'] = StorageSettings::allowedMimeTypes();
+			$args['post_mime_type'] = StorageGlobals::allowedMimeTypes();
 
 			$args = $this->filterPostArgs($args);
 
 			$query = new \WP_Query($args);
 			$postIds = $query->posts;
+			if (count($postIds) === 0) {
+				return false;
+			}
+
 			foreach($postIds as $postId) {
 				$this->addItem(['id' => $postId]);
 			}
 		}
+
+		$this->state = Task::STATE_WAITING;
 
 		Logger::info("Added {$this->totalItems} to the task.");
 		return ($this->totalItems > 0);

@@ -11,8 +11,6 @@ return array(
     'Zumba\\Amplitude\\Test\\' => array($vendorDir . '/zumba/amplitude-php/test'),
     'Zumba\\Amplitude\\' => array($vendorDir . '/zumba/amplitude-php/src'),
     'WillWashburn\\' => array($vendorDir . '/willwashburn/stream/src'),
-    'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
-    'Symfony\\Component\\Translation\\' => array($vendorDir . '/symfony/translation'),
     'Symfony\\Component\\Finder\\' => array($vendorDir . '/symfony/finder'),
     'Symfony\\Component\\Debug\\' => array($vendorDir . '/symfony/debug'),
     'Superbalist\\Flysystem\\GoogleStorage\\' => array($vendorDir . '/superbalist/flysystem-google-storage/src'),
@@ -52,5 +50,5 @@ return array(
     'GPBMetadata\\Google\\Cloud\\Vision\\' => array($vendorDir . '/google/cloud-vision/metadata'),
     'GPBMetadata\\Google\\' => array($vendorDir . '/google/common-protos/metadata', $vendorDir . '/google/gax/metadata'),
     'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
-    '' => array($vendorDir . '/google/grpc-gcp/src/generated', $vendorDir . '/nesbot/carbon/src'),
+    '' => array($vendorDir . '/google/grpc-gcp/src/generated'),
 );

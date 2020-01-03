@@ -1,11 +1,11 @@
 === Media Cloud for Amazon S3, Imgix, Google Cloud Storage, DigitalOcean Spaces and more ===
-Contributors: mediacloud, interfacelab
+Contributors: mediacloud, interfacelab, freemius
 Tags: offload, amazon, s3, imgix, uploads, google cloud storage, digital ocean spaces, wasabi, minio, media, cdn, rekognition, cloudfront, images, crop, image editing, image editor, media library, offload, offload s3, filepicker, smush, ewww, imagify, shortpixel
 Requires at least: 4.4
-Tested up to: 5.2.4
+Tested up to: 5.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 3.2.3
+Stable tag: 3.3.11
 Requires PHP: 5.6.4
 
 Automatically store media on Amazon S3, Google Cloud Storage, DigitalOcean Spaces + others. Serve CSS/JS assets through CDNs.  Integrate with Imgix.
@@ -47,7 +47,6 @@ Compatible with Short Pixel, EWWW, Smush and Imagify image optimization plugins!
 
 * Upload to any of a variety of cloud storage providers (Amazon S3, Google Cloud Storage, Minio, Wasabi, Backblaze, DigitalOcean Spaces or any other S3 compatible service)
 * Host your media directly from your cloud storage provider or specify a CDN
-* Import your existing library to cloud storage
 * Integrate with Imgix media hosting
 * Use Amazon Rekognition to automatically tag and categorize images
 * Use third party cloud file providers that use S3 compatible APIs
@@ -108,6 +107,89 @@ No, I'm just one very enthusiastic customer.
 
 
 == Changelog ==
+
+= 3.3.11 =
+
+* Added us-east-2 region for Wasabi
+* You can now bulk change the privacy for a selection of files in your media library.  To do this, switch to list view in the media library, select the images you want to change, select *Change Privacy to Public* or *Change Privacy to Private* from the Bulk Actions dropdown and then click *Apply*.
+* Media Library now displays a lock for uploads that are private.
+* For private upload the WordPress admin will use signed URLs to display media, but only in the admin (unless you have use presigned URLs enabled).
+* Fix for font issue in latest LearnDash
+
+
+= 3.3.10 =
+
+* CRITICAL FIX.  Previous version introduced a library that could cause issues on some systems, it has been fixed in this version.  Please update ASAP.
+* Added new filter, "media-cloud/storage/override-privacy" that allows you to override privacy per upload.
+
+= 3.3.9 =
+
+* Fix for errors on Task Manager pages caused by a library conflict with other plugins.
+* When using the post editor after migrating an existing site to cloud storage, images appeared broken if the original images were deleted from the server.  This is now fixed.
+
+= 3.3.7 =
+
+* Massive improvement to background tasks performance.  Processing times reduced by 50 to 90% in most cases.
+* Fixed settings toggle in Google Chrome
+* Fix for srcset generation when using wp_get_attachment_image() in your theme
+
+
+= 3.3.6 =
+
+* The @{type} dynamic path prefix now works in all cases
+* EDD Free Downloads now triggers a warning instead of an error.  It is usable with Media Cloud, but if you are using Imgix and offering image downloads, it will not work as you intend.
+* Fix for server overload when running tasks
+* Support for URL signing when using CloudFront
+* Revamped Settings UI
+* Updated Freemius SDK
+* Queued deletes were on by default, they are now off by default
+
+= 3.3.5 =
+
+* Video and audio short tag is now filtered to insure that the correct URL is always being used, vital for signed URLs.
+* Fix for importing Offload Media 1.x metadata
+
+= 3.3.4 =
+
+* Critical fix for Minio, DigitalOcean and other S3 compatible services.
+
+= 3.3.3 =
+
+* Fixes for PHP 5.6 - people, it's time to upgrade to PHP 7.x!
+
+= 3.3.2 =
+
+* Fix for illegal offset error warning
+* Fix for importing from cloud storage (Premium)
+
+= 3.3.0 =
+
+* Wizards? Wizards! WIZARDS!
+* New setup wizards to quickly setup the basic settings you need to get started with Media Cloud
+* Ability to specify using expiring signed URLs for different types of media (images, video, audio, docs).  Allows you to upload images and use them without signing, but have signing enabled for videos, audio, etc.  (Premium)
+* Ability to specify different upload privacy settings for different types of media.  Allows you to upload images and have them publicly accessible, but keep video, audio, etc. private. (Premium)
+* All core Gutenberg blocks now have image or file URLs rewritten dynamically so that they are always correct.
+* Ability to control WordPress's 5.3 new "big image" support, including disabling, setting the threshold and uploading the original unscaled image to cloud storage.
+* Fix for importing items from Offload Media when migrating to Media Cloud
+* Fix for srcset generation in WordPress 5.3
+* Fix for Migrate tool not including non-media files in migration (zip, text, etc).
+* New configuration toggle for replacing the WordPress generated srcset with a bettter optimized version (WordPress 5.3+ only)
+* Update regions for Amazon Rekognition
+* New integration with Foo Gallery (Premium)
+
+= 3.2.7 =
+
+* Compatibility with WordPress 5.3
+* Fix for Direct Uploads with WordPress 5.3 (Premium)
+
+= 3.2.6 =
+
+* Updated documentation
+* Vastly improved NextGen Galleries integration (Premium)
+* New Migrate to NextGen Galleries task to import all of your existing NextGen Galleries to cloud storage (Premium)
+* Fix for you insane people have that PHP memory limits specified in gigabytes
+* Skip memory limit check when running tasks from the command line
+* Fix for EU region with Rekognition
 
 = 3.2.3 =
 
