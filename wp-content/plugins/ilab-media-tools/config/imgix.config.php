@@ -33,16 +33,16 @@ return [
             "plugin" => "wp-smushit/wp-smush.php",
             "description" => "The free version of this plugin does not optimize the main image, only thumbnails.  When the Imgix tool is enabled, thumbnails are not generated - therefore this plugin isn't any use.  The Pro (paid) version of this plugin DOES optimize the main image though."
         ],
+	    "EDD Free Downloads" => [
+		    "plugin" => "edd-free-downloads/edd-free-downloads.php",
+		    "description" => "EDD Free Downloads do not work with Imgix images.  For other types of files, EDD Free Downloads works great."
+	    ],
     ],
     "badPlugins" => [
         "BuddyPress" => [
             "plugin" => "buddypress/bp-loader.php",
             "description" => "Uploading profile or cover images results in broken images."
         ],
-	    "EDD Free Downloads" => [
-		    "plugin" => "edd-free-downloads/edd-free-downloads.php",
-		    "description" => "EDD Free Downloads does not work with Imgix URLs.  Imgix works fine with EDD, just not this particular extension."
-	    ],
     ],
 	"settings" => [
 		"options-page" => "media-tools-imgix",
@@ -50,7 +50,7 @@ return [
 		"groups" => [
 			"ilab-media-imgix-settings" => [
 				"title" => "Imgix Settings",
-				"doc_beacon" => '88',
+				"doc_link" => 'https://kb.mediacloud.press/articles/documentation/imgix/imgix-settings',
 				"description" => "Required settings for getting the Imgix integration working.",
 				"options" => [
 					"mcloud-imgix-domains" => [
@@ -73,7 +73,7 @@ return [
 			],
 			"ilab-media-imgix-image-settings" => [
 				"title" => "Imgix Image Settings",
-				"doc_beacon" => '89',
+				"doc_link" => 'https://kb.mediacloud.press/articles/documentation/imgix/imgix-image-settings',
 				"options" => [
 					"mcloud-imgix-default-quality" => [
 						"title" => "Lossy Image Quality",
@@ -109,18 +109,6 @@ return [
 					"mcloud-imgix-detect-faces" => [
 						"title" => "Detect Faces",
 						"description" => "After each upload Media Cloud will use Imgix's face detection API to detect faces in the image.  This can be used with Focus Crop in the image editor, or on the front-end however you choose.  <strong>Note:</strong> If you are relying on this functionality, the better option would be to use the <a href='admin.php?page=media-cloud-settings&tab=vision'>Vision</a> tool.  It is more accurate with less false positives.  If Vision is enabled, this setting is ignored in favor of Vision's results.",
-						"type" => "checkbox",
-						"default" => false
-					]
-				]
-			],
-			"ilab-media-imgix-gutenberg-settings" => [
-				"title" => "Imgix Gutenberg Integration",
-				"description" => "Controls integration of Imgix with Gutenberg",
-				"options" => [
-					"mcloud-imgix-disable-srcset" => [
-						"title" => "Disable srcset on image tags",
-						"description" => "Gutenberg's image block has a lot of issues and problems.  For example, it omits the width and height attributes which is a really bad practice.  And it's also because of this that it's impossible to calculate a srcset that is realistic when using Imgix.  Until they fix this, we recommend disabling srcset on image tags - <strong>but only if you use Gutenberg</strong>.  If you are not using Gutenberg, carry on with your bad self!",
 						"type" => "checkbox",
 						"default" => false
 					]

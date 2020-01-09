@@ -16,6 +16,7 @@ use DeliciousBrains\WP_Offload_SES\Notices;
 use DeliciousBrains\WP_Offload_SES\WP_Notifications;
 use DeliciousBrains\WP_Offload_SES\Utils;
 use DeliciousBrains\WP_Offload_SES\Activity_List_Table;
+use DeliciousBrains\WP_Offload_SES\Health_Report;
 
 /**
  * Class WP_Offload_SES
@@ -60,7 +61,7 @@ class WP_Offload_SES extends Plugin_Base {
 	 *
 	 * @var string
 	 */
-	protected $plugin_slug = 'wp-offload-ses';
+	protected $plugin_slug = 'wp-ses';
 
 	/**
 	 * The Amazon_Web_Services class.
@@ -93,9 +94,16 @@ class WP_Offload_SES extends Plugin_Base {
 	/**
 	 * The Notices class.
 	 *
-	 * @var Notices;
+	 * @var Notices
 	 */
 	private $notices;
+
+	/**
+	 * The Health_Report class.
+	 *
+	 * @var Health_Report
+	 */
+	private $health_report;
 
 	/**
 	 * Construct the plugin base and initialize the plugin.
@@ -123,6 +131,11 @@ class WP_Offload_SES extends Plugin_Base {
 		$this->email_log    = new Email_Log();
 		$this->email_events = new Email_Events();
 		$this->notices      = Notices::get_instance( $this );
+
+		if ( ! $this->is_pro() ) {
+			$this->health_report = new Health_Report( $this );
+		}
+
 		new WP_Notifications( $this );
 
 		// Plugin setup.
@@ -132,6 +145,7 @@ class WP_Offload_SES extends Plugin_Base {
 		add_filter( 'plugin_action_links', array( $this, 'plugin_actions_settings_link' ), 10, 2 );
 		add_filter( 'network_admin_plugin_action_links', array( $this, 'plugin_actions_settings_link' ), 10, 2 );
 		add_action( 'pre_current_active_plugins', array( $this, 'plugin_deactivated_notice' ) );
+		add_action( 'wposes_plugin_load', array( $this->settings, 'set_default_settings' ) );
 
 		// UI AJAX.
 		add_action( 'wp_ajax_wposes_activity_table', array( $this, 'ajax_activity_table' ) );
@@ -153,7 +167,7 @@ class WP_Offload_SES extends Plugin_Base {
 	public function upgrade_routines( $skip_version_check = false ) {
 		$version = get_site_option( 'wposes_lite_version', '0.0.0' );
 
-		if ( $skip_version_check || version_compare( $version, $GLOBALS['wposes_meta']['wp-offload-ses-lite']['version'], '<' ) ) {
+		if ( $skip_version_check || version_compare( $version, $this->get_plugin_version(), '<' ) ) {
 			$this->get_email_log()->install_tables();
 			$this->get_email_events()->install_tables();
 
@@ -164,7 +178,7 @@ class WP_Offload_SES extends Plugin_Base {
 			$this->maybe_migrate_from_wpses();
 
 			if ( ! $skip_version_check ) {
-				update_site_option( 'wposes_lite_version', $GLOBALS['wposes_meta']['wp-offload-ses-lite']['version'] );
+				update_site_option( 'wposes_lite_version', $this->get_plugin_version() );
 			}
 		}
 	}
@@ -303,7 +317,7 @@ class WP_Offload_SES extends Plugin_Base {
 			$this->get_plugin_page_title(),
 			$this->plugin_menu_title,
 			'manage_options',
-			$this->plugin_slug,
+			self::$plugin_page,
 			array( $this, 'render_page' )
 		);
 
@@ -333,6 +347,7 @@ class WP_Offload_SES extends Plugin_Base {
 
 		if ( ! $this->is_pro() ) {
 			$this->enqueue_script( 'wposes-tracking-prompt', 'assets/js/tracking-prompt', array( 'wposes-script', 'wposes-modal' ) );
+			$this->enqueue_script( 'wposes-health-report-prompt', 'assets/js/health-report-prompt', array( 'wposes-script', 'wposes-modal' ) );
 		}
 
 		wp_localize_script(
@@ -417,6 +432,15 @@ class WP_Offload_SES extends Plugin_Base {
 	 */
 	public function get_notices() {
 		return $this->notices;
+	}
+
+	/**
+	 * Getter for Health_Report.
+	 *
+	 * @return Health_Report
+	 */
+	public function get_health_report() {
+		return $this->health_report;
 	}
 
 	/**

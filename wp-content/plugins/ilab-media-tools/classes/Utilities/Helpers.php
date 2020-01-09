@@ -170,6 +170,22 @@ namespace ILAB\MediaCloud\Utilities {
 	}
 
 	/**
+	 * Insures all items are not null
+	 * @param array $set
+	 *
+	 * @return bool
+	 */
+	function anyNull(...$set) {
+		foreach($set as $item) {
+			if($item === null) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Determines if a postIdExists
 	 *
 	 * @param $postId
@@ -178,6 +194,71 @@ namespace ILAB\MediaCloud\Utilities {
 	 */
 	function postIdExists($postId) {
 		return is_string(get_post_status($postId));
+	}
+
+	/**
+	 * Returns the PHP memory limit in bytes.
+	 * @return int
+	 */
+	function phpMemoryLimit($default = '64M') {
+		$memory_limit = $default;
+
+		if (function_exists('ini_get')) {
+			$memory_limit = ini_get('memory_limit');
+		}
+
+		if (empty($memory_limit) || ($memory_limit == -1)) {
+			$memory_limit = $default;
+		}
+
+		preg_match('/^\s*([0-9.]+)\s*([KMGTPE])B?\s*$/i', $memory_limit, $matches);
+		$num = (float)$matches[1];
+		switch (strtoupper($matches[2])) {
+			case 'E':
+				$num = $num * 1024;
+			case 'P':
+				$num = $num * 1024;
+			case 'T':
+				$num = $num * 1024;
+			case 'G':
+				$num = $num * 1024;
+			case 'M':
+				$num = $num * 1024;
+			case 'K':
+				$num = $num * 1024;
+		}
+
+		return intval($num);
+	}
+
+	/**
+	 * Determines the mime type based on the metadata for an attachment
+	 *
+	 * @param $meta
+	 *
+	 * @return string|null
+	 */
+	function typeFromMeta($meta) {
+		if (isset($meta['sizes']) || isset($meta['image_meta'])) {
+			return 'image';
+		}
+
+		if (isset($meta['type'])) {
+			$typeParts = explode('/', $meta['type']);
+			return $typeParts[0];
+		}
+
+		if (isset($meta['mime-type'])) {
+			$typeParts = explode('/', $meta['mime-type']);
+			return $typeParts[0];
+		}
+
+		if (isset($meta['s3']) && isset($meta['s3']['mime-type'])) {
+			$typeParts = explode('/', $meta['s3']['mime-type']);
+			return $typeParts[0];
+		}
+
+		return null;
 	}
 }
 

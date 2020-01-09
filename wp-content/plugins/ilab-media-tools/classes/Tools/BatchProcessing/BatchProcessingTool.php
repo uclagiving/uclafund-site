@@ -13,7 +13,7 @@
 
 namespace ILAB\MediaCloud\Tools\BatchProcessing;
 
-use ILAB\MediaCloud\Storage\StorageSettings;
+use ILAB\MediaCloud\Storage\StorageGlobals;
 use ILAB\MediaCloud\Tools\Storage\StorageTool;
 use ILAB\MediaCloud\Tools\Tool;
 use ILAB\MediaCloud\Tools\ToolsManager;
@@ -36,6 +36,10 @@ class BatchProcessingTool extends Tool {
 	}
 
 	public function envEnabled() {
+		return true;
+	}
+
+	public function alwaysEnabled() {
 		return true;
 	}
 

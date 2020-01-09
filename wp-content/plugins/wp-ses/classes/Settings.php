@@ -319,6 +319,10 @@ class Settings {
 			'enable-click-tracking',
 			'enable-subsite-settings',
 			'override-network-settings',
+			'enable-health-report',
+			'health-report-frequency',
+			'health-report-recipients',
+			'health-report-custom-recipients',
 		);
 		return apply_filters( 'wposes_settings_whitelist', $settings_whitelist );
 	}
@@ -415,6 +419,34 @@ class Settings {
 		if ( isset( $this->settings[ $key ] ) ) {
 			unset( $this->settings[ $key ] );
 		}
+	}
+
+	/**
+	 * Set up any default settings, after the plugin
+	 * has loaded and any migration/upgrade routines have run.
+	 *
+	 * @return bool
+	 */
+	public function set_default_settings() {
+		global $wp_offload_ses;
+
+		// Set up weekly health reports for lite.
+		if ( ! $wp_offload_ses->is_pro() && ( ! is_multisite() || Utils::is_network_admin() ) ) {
+			if ( '' === $this->get_setting( 'enable-health-report', '' ) ) {
+				$this->set_setting( 'enable-health-report', true );
+				$this->set_setting( 'health-report-recipients', 'site-admins' );
+				$this->set_setting( 'health-report-frequency', 'weekly' );
+			}
+		}
+
+		// Set the default log duration.
+		if ( ! $this->get_setting( 'log-duration', false ) ) {
+			$this->set_setting( 'log-duration', 90 );
+		}
+
+		$this->save_settings();
+
+		return true;
 	}
 
 	/**

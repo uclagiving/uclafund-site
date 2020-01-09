@@ -28,7 +28,7 @@ class NoticeManager {
 
 	protected function __construct() {
 		add_action( 'admin_enqueue_scripts', function(){
-			wp_enqueue_script('ilab-dismissible-notices', ILAB_PUB_JS_URL . '/ilab-dismiss-notice.js', ['jquery', 'common'], false, true);
+			wp_enqueue_script('ilab-dismissible-notices', ILAB_PUB_JS_URL . '/ilab-dismiss-notice.js', ['jquery', 'common'], MEDIA_CLOUD_VERSION, true);
 			wp_localize_script('ilab-dismissible-notices', 'ilab_dismissible_notice', ['nonce' => wp_create_nonce( 'dismissible-notice' )]);
 		});
 
@@ -46,6 +46,15 @@ class NoticeManager {
 		}
 
 		return self::$instance;
+	}
+
+	public function displayGroupedAdminNotices($type, $notices, $dismissible = false, $dismissibleIdentifier = null, $dismissibleLength = 30) {
+		$items = array_map(function($tag) {
+			return "<li>{$tag}</li>";
+		}, $notices);
+
+		$itemsHTML = implode('', $items);
+		$this->displayAdminNotice('warning', "<ol>{$itemsHTML}</ol>", $dismissible, $dismissibleIdentifier, $dismissibleLength);
 	}
 
 	public function displayAdminNotice($type, $message, $dismissible=false, $dismissibleIdentifier = null, $dismissibleLength = 30) {

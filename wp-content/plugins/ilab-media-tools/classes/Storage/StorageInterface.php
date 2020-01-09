@@ -17,6 +17,7 @@
 namespace ILAB\MediaCloud\Storage;
 
 use ILAB\MediaCloud\Utilities\Logging\ErrorCollector;
+use ILAB\MediaCloud\Wizard\WizardBuilder;
 use League\Flysystem\AdapterInterface;
 
 if (!defined('ABSPATH')) { header('Location: /'); die; }
@@ -80,12 +81,23 @@ interface StorageInterface {
 	 */
 	public function pathLink($bucket, $key);
 
-    /**
-     * Returns true/false if this storage is using signed URLs.
-     *
-     * @return bool
-     */
-	public function usesSignedURLs();
+	/**
+	 * Returns true/false if this storage is using signed URLs.
+	 *
+	 * @param string|null $type
+	 *
+	 * @return bool
+	 */
+	public function usesSignedURLs($type = null);
+
+	/**
+	 * Returns the expiration for a particular type
+	 *
+	 * @param null|string $type
+	 *
+	 * @return int|null
+	 */
+	public function signedURLExpirationForType($type = null);
 
 	/**
 	 * Insures that all the configuration settings are valid and that the storage is enabled.
@@ -195,13 +207,27 @@ interface StorageInterface {
 	 */
 	public function info($key);
 
-    /**
-     * Insures the ACL is set on the given key.
-     * @param $key
-     * @param $acl
-     * @return mixed
-     */
+	/**
+	 * Insures the ACL is set on the given key.
+	 * @param $key
+	 * @param $acl
+	 * @return mixed
+	 */
 	public function insureACL($key, $acl);
+
+	/**
+	 * Changes the ACL on a given key.
+	 * @param $key
+	 * @param $acl
+	 */
+	public function updateACL($key, $acl);
+
+	/**
+	 * Determines if this driver can update ACLs
+	 *
+	 * @return bool
+	 */
+	public function canUpdateACL();
 
 	/**
 	 * Generates a presigned URL for an item in a bucket.
@@ -216,10 +242,11 @@ interface StorageInterface {
 	/**
 	 * Returns the URL (not-signed) for the item in a bucket
 	 * @param string $key
+	 * @param string|null $type
 	 * @throws StorageException
 	 * @return string
 	 */
-	public function url($key);
+	public function url($key, $type = null);
 
 	/**
 	 * Generates a signed URL for direct uploads

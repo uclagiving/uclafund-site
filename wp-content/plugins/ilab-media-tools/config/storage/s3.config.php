@@ -16,7 +16,7 @@ return [
     "ilab-media-cloud-provider-settings" => [
         "title" => "Provider Settings",
         "dynamic" => true,
-	    "doc_beacon" => '38',
+	    "doc_link" => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/setting-up-amazon-s3',
         "options" => [
             "mcloud-storage-s3-access-key" => [
                 "title" => "Access Key",
@@ -77,20 +77,6 @@ return [
                 "type" => "checkbox",
                 "default" => false,
             ],
-	        "mcloud-storage-use-presigned-urls" => [
-		        "title" => "Use Pre-Signed URLs",
-		        "description" => "Set to true to generate signed URLs that will expire within a specified time period.  You should use this if you've set the default ACL to private.",
-		        "display-order" => 14,
-		        "type" => "checkbox",
-		        "default" => false,
-	        ],
-	        "mcloud-storage-presigned-expiration" => [
-		        "title" => "Pre-Signed URL Expiration",
-		        "description" => "The number of minutes the signed URL is valid for.",
-		        "display-order" => 15,
-		        "type" => "number",
-		        "default" => 10,
-	        ],
         ]
     ],
     "ilab-media-cloud-upload-handling" => [
@@ -98,28 +84,92 @@ return [
         "dynamic" => true,
         "description" => "The following options control how the storage tool handles uploads.",
         "options" => [
-            "mcloud-storage-privacy" => [
-                "title" => "Upload Privacy ACL",
-                "description" => "This will set the privacy for each upload.  You should leave it as <code>public-read</code> unless you are using Imgix.",
-                "display-order" => 1,
-                "type" => "select",
-                "options" => [
-                    "public-read" => "public-read",
-                    "authenticated-read" => "authenticated-read"
-                ],
-            ],
+	        "mcloud-storage-privacy" => [
+		        "title" => "Upload Privacy ACL",
+		        "description" => "This will set the privacy for each upload.  You should leave it as <code>public-read</code> unless you are using Imgix.",
+		        "display-order" => 1,
+		        "type" => "select",
+		        "options" => [
+			        "public-read" => "Public",
+			        "authenticated-read" => "Private"
+		        ],
+	        ],
+	        "mcloud-storage-advanced-privacy" => [
+		        "title" => "Advanced Privacy",
+		        "description" => "",
+		        "display-order" => 2,
+		        "type" => "advanced-privacy",
+		        "plan" => "pro"
+	        ],
             "mcloud-storage-cache-control" => [
                 "title" => "Cache Control",
                 "description" => "Sets the Cache-Control metadata for uploads, e.g. <code>public,max-age=2592000</code>.",
-                "display-order" => 2,
+                "display-order" => 20,
                 "type" => "text-field",
             ],
             "mcloud-storage-expires" => [
                 "title" => "Content Expiration",
                 "description" => "Sets the Expire metadata for uploads.  This is the number of minutes from the date of upload.",
-                "display-order" => 3,
+                "display-order" => 21,
                 "type" => "text-field",
             ],
+	        "mcloud-storage-big-size-original-privacy" => [
+		        "title" => "Original Image Privacy ACL",
+		        "description" => "This will set the privacy for the original image upload.",
+		        "display-order" => 43,
+		        "type" => "select",
+		        "default" => 'authenticated-read',
+		        "options" => [
+			        "public-read" => "Public",
+			        "authenticated-read" => "Private"
+		        ],
+	        ],
         ]
     ],
+	"ilab-media-cloud-signed-urls" => [
+		"title" => "Secure URL Settings",
+		"description" => "These settings control how pre-signed URLs work.",
+		"dynamic" => true,
+		"options" => [
+			"mcloud-storage-use-presigned-urls" => [
+				"title" => "Use Pre-Signed URLs",
+				"description" => "Set to true to generate signed URLs that will expire within a specified time period.  You should use this if you've set the default ACL to private.",
+				"display-order" => 1,
+				"type" => "checkbox",
+				"default" => false,
+			],
+			"mcloud-storage-presigned-expiration" => [
+				"title" => "Pre-Signed URL Expiration",
+				"description" => "The number of minutes the signed URL is valid for.",
+				"display-order" => 2,
+				"type" => "number",
+				"default" => 10,
+			],
+			"mcloud-storage-use-presigned-urls-advanced" => [
+				"title" => "Advanced Pre-Signed URL Settings",
+				"description" => "",
+				"display-order" => 3,
+				"type" => "advanced-presigned",
+				"plan" => "pro"
+			],
+			"mcloud-storage-signed-cdn-base" => [
+				"display-order" => 10,
+				"title" => "Signed CDN Base URL",
+				"description" => "If you are using CloudFront as your CDN <strong>AND</strong> you are using signed URLs, specify the URL for the CloudFront distribution that you've set up for signed URLs.  For more information, read through Amazon's documentation for <a href='https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-signed-urls.html' target='_blank'>Using Signed URLs with CloudFront</a>.",
+				"type" => "text-field"
+			],
+			"mcloud-storage-cloudfront-key-id" => [
+				"title" => "CloudFront Key ID",
+				"description" => "If you are using CloudFront and signed URLs, specify the Key ID for the signing key to use with CloudFront.",
+				"display-order" => 11,
+				"type" => "text-field",
+			],
+			"mcloud-storage-cloudfront-private-key" => [
+				"title" => "CloudFront Private Key",
+				"description" => "If you are using CloudFont and signed URLs, paste the private key used for CloudFront signing.  You can also use the <code>MCLOUD_STORAGE_CLOUDFRONT_PRIVATE_KEY_FILE</code> environment variable to load this key from a file on your server.",
+				"display-order" => 12,
+				"type" => "text-area",
+			],
+		],
+	],
 ];
