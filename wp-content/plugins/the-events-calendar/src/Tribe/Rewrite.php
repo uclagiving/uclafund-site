@@ -4,12 +4,27 @@ defined( 'WPINC' ) or die;
 
 use Tribe__Events__Main as TEC;
 use Tribe__Main as Common;
+use Tribe__Utils__Array as Arr;
 
 /**
  * Rewrite Configuration Class
  * Permalinks magic Happens over here!
  */
 class Tribe__Events__Rewrite extends Tribe__Rewrite {
+
+	/**
+	 * Constant holding the transient key for delayed triggered flush from activation.
+	 *
+	 * If this value is updated make sure you look at the method in the main class of TEC.
+	 *
+	 * @see TEC::activate
+	 *
+	 * @since 5.0.0.1
+	 *
+	 * @var string
+	 */
+	const KEY_DELAYED_FLUSH_REWRITE_RULES = '_tribe_events_delayed_flush_rewrite_rules';
+
 	/**
 	 * After creating the Hooks on WordPress we lock the usage of the function
 	 * @var boolean
@@ -389,6 +404,30 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 		add_action( 'tribe_events_pre_rewrite', array( $this, 'generate_core_rules' ) );
 		add_filter( 'post_type_link', array( $this, 'filter_post_type_link' ), 15, 2 );
 		add_filter( 'url_to_postid', array( $this, 'filter_url_to_postid' ) );
+		add_action( 'wp_loaded', [ $this, 'maybe_delayed_flush_rewrite_rules' ] );
+	}
+
+	/**
+	 * When dealing with flush of rewrite rules we cannot do it from the activation process due to not all classes being
+	 * loaded just yet. We flag a transient without expiration on activation so that on the next page load we flush the
+	 * permalinks for the website.
+	 *
+	 * @see TEC::activate()
+	 *
+	 * @since 5.0.0.1
+	 *
+	 * @return void
+	 */
+	public function maybe_delayed_flush_rewrite_rules() {
+		$should_flush_rewrite_rules = tribe_is_truthy( get_transient( static::KEY_DELAYED_FLUSH_REWRITE_RULES ) );
+
+		if ( ! $should_flush_rewrite_rules ) {
+			return;
+		}
+
+		delete_transient( static::KEY_DELAYED_FLUSH_REWRITE_RULES );
+
+		flush_rewrite_rules();
 	}
 
 	/**
@@ -436,7 +475,7 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 	 * {@inheritDoc}
 	 */
 	protected function get_matcher_to_query_var_map() {
-		$matchers = [
+		$map = [
 			'month'    => 'eventDisplay',
 			'list'     => 'eventDisplay',
 			'today'    => 'eventDisplay',
@@ -456,9 +495,9 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 		 * @param  array  array of the current matchers for query vars.
 		 * @param  self   $rewrite
 		 */
-		$matchers = apply_filters( 'tribe_events_rewrite_matchers_to_query_vars_map', $matchers, $this );
+		$map = apply_filters( 'tribe_events_rewrite_matchers_to_query_vars_map', $map, $this );
 
-		return $matchers;
+		return $map;
 	}
 
 	/**
@@ -500,8 +539,9 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 				 * Categories can be hierarchical and the path will be something like
 				 * `/events/category/grand-parent/parent/child/list/page/2/`.
 				 * If we can match the category to an existing one then let's make sure to build the hierarchical slug.
+				 * We cast to comma-separated list to ensure multi-category queries will not resolve to a URL.
 				 */
-				$category_slug = $query_vars['tribe_events_cat'];
+				$category_slug = Arr::to_list( $query_vars['tribe_events_cat'] );
 				$category_term = get_term_by( 'slug', $category_slug, TEC::TAXONOMY );
 				if ( $category_term instanceof WP_Term ) {
 					$category_slug = get_term_parents_list(
@@ -530,7 +570,7 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 	}
 
 	/**
-	 * Overrides the base method, from commmon, to filter the parsed query variables and handle some cases related to
+	 * Overrides the base method, from common, to filter the parsed query variables and handle some cases related to
 	 * the `eventDisplay` query variable.
 	 *
 	 * {@inheritDoc}
@@ -592,32 +632,46 @@ class Tribe__Events__Rewrite extends Tribe__Rewrite {
 	 *               an entry..
 	 */
 	protected function get_option_controlled_slug_entry( array $localized_matchers, $default_slug, $option_name ) {
-		$using_default_archive_slug = $default_slug === tribe_get_option( $option_name, $default_slug );
+		$current_slug       = tribe_get_option( $option_name, $default_slug );
+		$using_default_slug = $default_slug === $current_slug;
 
-		$filter = static function ( $matcher ) use ( $default_slug )
-		{
-			return isset( $matcher['query_var'] )
-			       && 'post_type' === $matcher['query_var']
-			       && isset( $matcher['localized_slugs'] )
-			       && is_array( $matcher['localized_slugs'] )
-			       && in_array( $default_slug, $matcher['localized_slugs'], true );
+		$filter = static function ( $matcher ) use ( $default_slug ) {
+			return isset( $matcher['query_var'], $matcher['localized_slugs'] )
+				   && 'post_type' === $matcher['query_var']
+				   && is_array( $matcher['localized_slugs'] );
 		};
 
-		$archive_localized_matcher = array_filter( $localized_matchers, $filter );
-		$archive_localized_matcher = reset( $archive_localized_matcher );
+		$target_matcher = array_filter( $localized_matchers, $filter );
+		$target_matcher = reset( $target_matcher );
 
-		if ( $using_default_archive_slug || false === $archive_localized_matcher ) {
+		if ( $using_default_slug || false === $target_matcher ) {
 			return [];
 		}
 
-		$archive_localized_matcher['localized_slugs'][] = $archive_localized_matcher['en_slug'];
-		// Create an entry for each localized slug to replace (?:events).
+		/**
+		 * Add the slugs in the following order: default slug, option-controlled slug, localized slug.
+		 */
+		array_unshift( $target_matcher['localized_slugs'], $default_slug, $current_slug );
+
+		// Make sure we do not have duplicated slugs.
+		$target_matcher['localized_slugs'] = array_unique( $target_matcher['localized_slugs'] );
+
+		// Create a replacement string that contains all of them.
+		$all_slugs = array_unique( array_reverse( $target_matcher['localized_slugs'] ) );
+
 		$entry = [
-			'(?:' . $default_slug . ')' => [
+			// Create an entry for the localized slug to replace `(?:events)`.
+			'(?:' . $default_slug . ')'              => [
 				'query_var'       => 'post_type',
-				'en_slug'         => $archive_localized_matcher['en_slug'],
-				'localized_slugs' => $archive_localized_matcher['localized_slugs']
-			]
+				'en_slug'         => $target_matcher['en_slug'],
+				'localized_slugs' => $target_matcher['localized_slugs'],
+			],
+			// Create an entry for the localized slug to replace `(?:events|foo|bar)`.
+			'(?:' . implode( '|', $all_slugs ) . ')' => [
+				'query_var'       => 'post_type',
+				'en_slug'         => $target_matcher['en_slug'],
+				'localized_slugs' => $target_matcher['localized_slugs'],
+			],
 		];
 
 		return $entry;
