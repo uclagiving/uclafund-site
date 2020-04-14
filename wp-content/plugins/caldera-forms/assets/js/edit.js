@@ -1173,7 +1173,7 @@ jQuery(document).ready(function($){
             fieldtype.push('vars');
             for( var ft = 0; ft < fieldtype.length; ft++){
                 for( var tp in system_values ){
-                    if(typeof system_values[tp].tags === 'undefined' || typeof system_values[tp].tags[fieldtype[ft]] === 'undefined'){
+                    if( ! system_values[tp] || typeof system_values[tp].tags === 'undefined' || typeof system_values[tp].tags[fieldtype[ft]] === 'undefined'){
                         continue;
                     }
 
@@ -1483,7 +1483,7 @@ rebind_field_bindings = function(){
                 }
 
                 for(var t = 0; t<types.length; t++){
-                    if( system_values[type].tags && system_values[type].tags[types[t]]){
+                    if( system_values[type] !== null && system_values[type].tags && system_values[type].tags[types[t]]){
 
                         for( var instance = 0; instance < type_instances.length; instance++){
 
