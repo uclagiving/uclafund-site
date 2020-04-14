@@ -35,7 +35,7 @@
 		<table border="0" cellpadding="0" cellspacing="0" style="margin: 0; padding: 0" width="100%">
 			<tr>
 				<!-- wrap the main contents of the email -->
-				<td align="center" style="width: 100% !important; height: 100px !important; padding: 20px 0;" valign="top">
+				<td align="left" style="width: 100% !important; height: 100px !important; padding: 20px;" valign="top">
 					<table width="640" cellspacing="0" cellpadding="0" bgcolor="#ffffff" style="background-color: #ffffff;">
 						<tr>
 							<td>

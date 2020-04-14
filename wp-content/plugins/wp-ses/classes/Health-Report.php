@@ -84,7 +84,7 @@ class Health_Report {
 		$this->init( $this->cron_id );
 
 		if ( is_multisite() && is_main_site() ) {
-			$this->is_network_report = true;
+			$this->set_network_report();
 			$this->init( $this->network_cron_id );
 		}
 	}
@@ -93,7 +93,7 @@ class Health_Report {
 	 * Initiates the cron for the health report.
 	 *
 	 * @param string $cron The cron to use.
-	 * 
+	 *
 	 * @return bool
 	 */
 	public function init( $cron ) {
@@ -103,7 +103,6 @@ class Health_Report {
 		}
 
 		$send_time      = $this->get_next_send_time();
-		$current_time   = current_time( 'timestamp' );
 		$next_scheduled = wp_next_scheduled( $cron, array( $this->is_network_report ) );
 
 		// Invalid send time.
@@ -115,8 +114,19 @@ class Health_Report {
 		// Not scheduled yet.
 		if ( ! $next_scheduled ) {
 			wp_schedule_single_event( $send_time, $cron, array( $this->is_network_report ) );
-		} elseif ( $next_scheduled > $current_time && $next_scheduled !== $send_time ) {
-			// Frequency has changed, schedule a new cron.
+			return true;
+		}
+
+		$current_date        = (int) date( 'z', current_time( 'timestamp', 1 ) );
+		$next_scheduled_date = (int) date( 'z', $next_scheduled );
+		$expected_time       = $send_time;
+
+		if ( $next_scheduled_date === $current_date ) {
+			$expected_time = $this->get_next_send_time( '-1 day' );
+		}
+
+		// Frequency has changed, schedule a new cron.
+		if ( $next_scheduled !== $expected_time ) {
 			wp_clear_scheduled_hook( $cron, array( $this->is_network_report ) );
 			wp_schedule_single_event( $send_time, $cron, array( $this->is_network_report ) );
 		}
@@ -129,12 +139,20 @@ class Health_Report {
 	/**
 	 * Returns a timestamp of the next time the report should send.
 	 *
+	 * @param string $offset Offsets the current time.
+	 *
 	 * @return int|bool
 	 */
-	public function get_next_send_time() {
+	public function get_next_send_time( $offset = '' ) {
 		$frequency = $this->get_frequency();
 		$time      = current_time( 'mysql' );
 		$format    = 'Y-m-d H:i:s';
+
+		if ( '' !== $offset ) {
+			$date   = \DateTime::createFromFormat( $format, $time );
+			$offset = $date->modify( $offset );
+			$time   = $date->format( $format );
+		}
 
 		switch ( $frequency ) {
 			case 'monthly':
@@ -181,13 +199,12 @@ class Health_Report {
 			return $is_enabled;
 		}
 
-		$network_settings            = $this->wposes->settings->get_network_settings();
 		$subsite_settings_enabled    = $this->wposes->settings->get_setting( 'enable-subsite-settings', false );
 		$overriding_network_settings = $this->wposes->settings->get_setting( 'override-network-settings', false );
-		$is_network_enabled          = isset( $network_settings['enable-health-report'] ) ? (bool) $network_settings['enable-health-report'] : false;
+		$is_network_enabled          = $this->wposes->settings->get_network_setting( 'enable-health-report', false );
 
 		// Just checking if it's been network enabled.
-		if ( $this->is_network_report ) {
+		if ( $this->is_network_report() ) {
 			return $is_network_enabled;
 		}
 
@@ -210,6 +227,24 @@ class Health_Report {
 	}
 
 	/**
+	 * Sets the report to be a network report.
+	 *
+	 * @param bool $network If this is a network report.
+	 */
+	public function set_network_report( $network = true ) {
+		$this->is_network_report = (bool) $network;
+	}
+
+	/**
+	 * Checks if the report is a network report.
+	 *
+	 * @return bool
+	 */
+	public function is_network_report() {
+		return (bool) $this->is_network_report;
+	}
+
+	/**
 	 * Checks if the report should be sent out at the subsite level.
 	 *
 	 * @return bool
@@ -219,7 +254,7 @@ class Health_Report {
 			return false;
 		}
 
-		return ! $this->is_network_report;
+		return ! $this->is_network_report();
 	}
 
 	/**
@@ -230,7 +265,7 @@ class Health_Report {
 	 * @return bool
 	 */
 	public function send( $network = false ) {
-		$this->is_network_report = (bool) $network;
+		$this->set_network_report( $network );
 
 		if ( ! $this->should_send() ) {
 			return false;
@@ -317,9 +352,8 @@ class Health_Report {
 	 * @return string
 	 */
 	public function get_frequency() {
-		if ( $this->is_network_report ) {
-			$network_settings = $this->wposes->settings->get_network_settings();
-			return isset( $network_settings['health-report-frequency'] ) ? $network_settings['health-report-frequency'] : 'weekly';
+		if ( $this->is_network_report() ) {
+			return $this->wposes->settings->get_network_setting( 'health-report-frequency', 'weekly' );
 		}
 
 		return $this->wposes->settings->get_setting( 'health-report-frequency', 'weekly' );
@@ -331,7 +365,7 @@ class Health_Report {
 	 * @return array
 	 */
 	public function get_recipients() {
-		if ( $this->is_network_report ) {
+		if ( $this->is_network_report() ) {
 			$admins      = array();
 			$site_admins = get_site_option( 'site_admins' );
 			foreach ( $site_admins as $admin ) {

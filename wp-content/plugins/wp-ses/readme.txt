@@ -2,9 +2,9 @@
 Contributors: deliciousbrains, bradt, SylvainDeaure
 Tags: amazon ses,smtp,email delivery,gmail smtp,newsletter
 Requires at least: 5.0
-Tested up to: 5.3
+Tested up to: 5.4
 Requires PHP: 5.5+
-Stable tag: 1.3
+Stable tag: 1.4
 
 Fix your email delivery problems by sending your WordPress emails through Amazon SES's powerful email sending infrastructure.
 
@@ -177,6 +177,18 @@ Please double check the credentials match up with the credentials you received w
 4. Activity tab
 
 == Changelog ==
+
+= 1.4 - 2020-03-11 =
+* New: Added email queue to handle bulk email sending
+* New: Store a copy of attachments to prevent conflicts with other plugins
+* Improvement: Health report no longer center aligned
+* Bug fix: Health report not being sent in some situations
+* Bug fix: Invalid headers causing email to fail
+* Bug fix: Index on email log table too large for some MySQL servers
+* Bug fix: Filter for infinite log duration no longer working
+* Bug fix: Open tracking image missing alt attribute
+* Bug fix: Activity tab UI controls not aligned since WordPress 5.3
+* Bug fix: "From name" wrapped in quotes in some situations
 
 = 1.3 - 2019-12-11 =
 * [Release Summary Blog Post](https://deliciousbrains.com/wp-offload-ses-1-4-released-email-health-report/?utm_campaign=WP%2BOffload%2BSES&utm_source=wordpress.org&utm_medium=free%2Bplugin%2Blisting)
@@ -351,5 +363,4 @@ Quota and statistics Integration
 
 = 0.1.2 =
 First public Beta release
-
 

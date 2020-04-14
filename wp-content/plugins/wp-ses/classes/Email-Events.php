@@ -195,7 +195,7 @@ class Email_Events {
 
 		if ( $open_tracking ) {
 			// Add the tracking pixel.
-			$content .= '<img src="' . $this->get_open_tracking_url( $email_id ) . '" />';
+			$content .= '<img src="' . $this->get_open_tracking_url( $email_id ) . '" alt="" />';
 		}
 
 		if ( ! $click_tracking ) {

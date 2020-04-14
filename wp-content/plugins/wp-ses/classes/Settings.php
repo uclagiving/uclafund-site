@@ -47,6 +47,13 @@ class Settings {
 	private $defined_settings;
 
 	/**
+	 * Settings that have been defined at the network level.
+	 *
+	 * @var array
+	 */
+	private $network_settings;
+
+	/**
 	 * Construct the Settings class.
 	 *
 	 * @param string $settings_key      The settings key used in the database.
@@ -67,10 +74,10 @@ class Settings {
 	public function get_settings( $force = false ) {
 		if ( is_null( $this->settings ) || $force ) {
 			if ( is_multisite() ) {
-				$network_settings = get_site_option( $this->settings_key, array() );
+				$network_settings = $this->get_network_settings( $force );
 
 				if ( Utils::is_network_admin() ) {
-					$this->settings = $this->filter_settings( $network_settings );
+					$this->settings = $network_settings;
 				} else {
 					$subsite_settings = get_option( $this->settings_key, array() );
 					$this->settings   = $this->filter_settings( $network_settings, $subsite_settings );
@@ -86,10 +93,16 @@ class Settings {
 	/**
 	 * Helper function for getting the network-level settings.
 	 *
+	 * @param bool $force Get the network settings fresh.
+	 *
 	 * @return array
 	 */
-	public function get_network_settings() {
-		return $this->filter_settings( get_site_option( $this->settings_key, array() ) );
+	public function get_network_settings( $force = false ) {
+		if ( is_null( $this->network_settings ) || $force ) {
+			$this->network_settings = $this->filter_settings( get_site_option( $this->settings_key, array() ) );
+		}
+
+		return $this->network_settings;
 	}
 
 	/**
@@ -358,7 +371,7 @@ class Settings {
 	}
 
 	/**
-	 * Get a specific setting
+	 * Get a specific setting.
 	 *
 	 * @param string $key     The key of the setting to get.
 	 * @param string $default The default value if not found.
@@ -374,6 +387,25 @@ class Settings {
 		}
 
 		return apply_filters( 'wposes_get_setting', $setting, $key );
+	}
+
+	/**
+	 * Get a specific network setting.
+	 *
+	 * @param string $key     The key of the setting to get.
+	 * @param string $default The default value if not found.
+	 *
+	 * @return string
+	 */
+	public function get_network_setting( $key, $default = '' ) {
+		$this->get_network_settings();
+		if ( isset( $this->network_settings[ $key ] ) ) {
+			$network_setting = $this->network_settings[ $key ];
+		} else {
+			$network_setting = $default;
+		}
+
+		return apply_filters( 'wposes_get_network_setting', $network_setting, $key );
 	}
 
 	/**
@@ -410,7 +442,7 @@ class Settings {
 	}
 
 	/**
-	 * Delete a setting
+	 * Delete a setting.
 	 *
 	 * @param string $key The key of the setting to delete.
 	 */
@@ -418,6 +450,18 @@ class Settings {
 		$this->get_settings();
 		if ( isset( $this->settings[ $key ] ) ) {
 			unset( $this->settings[ $key ] );
+		}
+	}
+
+	/**
+	 * Delete a network setting.
+	 *
+	 * @param string $key The key of the setting to delete.
+	 */
+	public function remove_network_setting( $key ) {
+		$this->get_network_settings();
+		if ( isset( $this->network_settings[ $key ] ) ) {
+			unset( $this->network_settings[ $key ] );
 		}
 	}
 
@@ -440,7 +484,7 @@ class Settings {
 		}
 
 		// Set the default log duration.
-		if ( ! $this->get_setting( 'log-duration', false ) ) {
+		if ( false === $this->get_setting( 'log-duration', false ) ) {
 			$this->set_setting( 'log-duration', 90 );
 		}
 
@@ -450,7 +494,7 @@ class Settings {
 	}
 
 	/**
-	 * Set a setting
+	 * Set a setting.
 	 *
 	 * @param string $key   The key of the setting to set.
 	 * @param mixed  $value The value of the setting to set.
@@ -462,12 +506,33 @@ class Settings {
 	}
 
 	/**
-	 * Bulk set the settings array
+	 * Set a network setting.
+	 *
+	 * @param string $key   The key of the setting to set.
+	 * @param mixed  $value The value of the setting to set.
+	 */
+	public function set_network_setting( $key, $value ) {
+		$this->get_network_settings();
+
+		$this->network_settings[ $key ] = $value;
+	}
+
+	/**
+	 * Bulk set the settings array.
 	 *
 	 * @param array $settings The settings to set.
 	 */
 	public function set_settings( $settings ) {
 		$this->settings = $settings;
+	}
+
+	/**
+	 * Bulk set the network settings array.
+	 *
+	 * @param array $settings The settings to set.
+	 */
+	public function set_network_settings( $network_settings ) {
+		$this->network_settings = $network_settings;
 	}
 
 	/**

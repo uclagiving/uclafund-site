@@ -17,6 +17,9 @@ use DeliciousBrains\WP_Offload_SES\WP_Notifications;
 use DeliciousBrains\WP_Offload_SES\Utils;
 use DeliciousBrains\WP_Offload_SES\Activity_List_Table;
 use DeliciousBrains\WP_Offload_SES\Health_Report;
+use DeliciousBrains\WP_Offload_SES\Queue\Email_Queue;
+use DeliciousBrains\WP_Offload_SES\Queue\Queue_Status;
+use DeliciousBrains\WP_Offload_SES\Attachments;
 
 /**
  * Class WP_Offload_SES
@@ -92,6 +95,13 @@ class WP_Offload_SES extends Plugin_Base {
 	private $email_events;
 
 	/**
+	 * The Email_Queue class.
+	 *
+	 * @var Email_Queue
+	 */
+	private $email_queue;
+
+	/**
 	 * The Notices class.
 	 *
 	 * @var Notices
@@ -104,6 +114,20 @@ class WP_Offload_SES extends Plugin_Base {
 	 * @var Health_Report
 	 */
 	private $health_report;
+
+	/**
+	 * The Queue_Status class.
+	 *
+	 * @var Queue_Status
+	 */
+	private $queue_status;
+
+	/**
+	 * The Attachments class.
+	 *
+	 * @var Attachments
+	 */
+	private $attachments;
 
 	/**
 	 * Construct the plugin base and initialize the plugin.
@@ -130,7 +154,10 @@ class WP_Offload_SES extends Plugin_Base {
 		$this->ses_api      = new SES_API();
 		$this->email_log    = new Email_Log();
 		$this->email_events = new Email_Events();
+		$this->email_queue  = new Email_Queue();
+		$this->queue_status = new Queue_Status( $this );
 		$this->notices      = Notices::get_instance( $this );
+		$this->attachments  = new Attachments();
 
 		if ( ! $this->is_pro() ) {
 			$this->health_report = new Health_Report( $this );
@@ -170,6 +197,8 @@ class WP_Offload_SES extends Plugin_Base {
 		if ( $skip_version_check || version_compare( $version, $this->get_plugin_version(), '<' ) ) {
 			$this->get_email_log()->install_tables();
 			$this->get_email_events()->install_tables();
+			$this->get_email_queue()->install_tables();
+			$this->get_attachments()->install_tables();
 
 			if ( ! get_site_option( 'wposes_tracking_key' ) ) {
 				add_site_option( 'wposes_tracking_key', wp_generate_password( 20, true, true ) );
@@ -426,6 +455,15 @@ class WP_Offload_SES extends Plugin_Base {
 	}
 
 	/**
+	 * Getter for Email_Queue.
+	 *
+	 * @return Email_Queue
+	 */
+	public function get_email_queue() {
+		return $this->email_queue;
+	}
+
+	/**
 	 * Getter for Notices.
 	 *
 	 * @return Notices
@@ -441,6 +479,15 @@ class WP_Offload_SES extends Plugin_Base {
 	 */
 	public function get_health_report() {
 		return $this->health_report;
+	}
+
+	/**
+	 * Getter for Attachments.
+	 *
+	 * @return Attachments
+	 */
+	public function get_attachments() {
+		return $this->attachments;
 	}
 
 	/**
@@ -1236,7 +1283,7 @@ class WP_Offload_SES extends Plugin_Base {
 			if ( is_array( $headers ) ) {
 				$headers[] = 'Content-Type: text/html;';
 			} else {
-				$headers .= "Content-Type: text/html;\n";
+				$headers = "Content-Type: text/html;\n" . $headers;
 			}
 		}
 
@@ -1248,43 +1295,55 @@ class WP_Offload_SES extends Plugin_Base {
 			return false;
 		}
 
-		return $this->manually_send_email( $atts, $email_id );
+		if ( ! is_array( $attachments ) ) {
+			$attachments = explode( "\n", str_replace( "\r\n", "\n", $attachments ) );
+		}
+
+		foreach ( $attachments as $attachment ) {
+			$this->get_attachments()->handle_attachment( $email_id, $attachment );
+		}
+
+		$this->get_email_queue()->process_email( $email_id );
+		$this->trigger_queue();
+
+		return true;
 	}
 
 	/**
-	 * Send an email without queueing it.
-	 *
-	 * @param array $atts     The attributes of the email.
-	 * @param int   $email_id The ID of the email.
+	 * Sends an async request to trigger the queue if possible.
 	 *
 	 * @return bool
 	 */
-	public function manually_send_email( $atts, $email_id = null ) {
-		$to          = isset( $atts['to'] ) ? $atts['to'] : '';
-		$subject     = isset( $atts['subject'] ) ? $atts['subject'] : '';
-		$message     = isset( $atts['message'] ) ? $atts['message'] : '';
-		$headers     = isset( $atts['headers'] ) ? $atts['headers'] : '';
-		$attachments = isset( $atts['attachments'] ) ? $atts['attachments'] : array();
-		$email       = new Email( $to, $subject, $message, $headers, $attachments );
-		$raw         = $email->prepare( $email_id );
-		$result      = $this->get_ses_api()->send_email( $raw );
-		$status      = 'sent';
-
-		if ( is_wp_error( $result ) ) {
-			$this->add_failed_email_notice();
-			$status = 'failed';
-		} else {
-			// Fires after an email has been sent.
-			do_action( 'wpses_mailsent', $to, $subject, $message, $headers, $attachments ); // Backwards compat.
-			do_action( 'wposes_mail_sent', $to, $subject, $message, $headers, $attachments );
+	public function trigger_queue() {
+		// Make sure we're not DDOSing our own site.
+		if ( get_transient( 'wposes_triggered_queue' ) ) {
+			return false;
 		}
 
-		if ( ! is_null( $email_id ) ) {
-			$this->get_email_log()->update_email( $email_id, 'email_status', $status );
-			$this->get_email_log()->update_email( $email_id, 'email_sent', current_time( 'mysql' ) );
-		}
+		set_transient( 'wposes_triggered_queue', true, 10 );
 
-		return 'sent' === $status ? true : false;
+		$data = array(
+			'action' => 'wposes_trigger_queue',
+			'nonce'  => wp_create_nonce( 'wposes_trigger_queue' ),
+		);
+
+		$request_args = apply_filters(
+			'wposes_queue_request',
+			array(
+				'url'  => admin_url( 'admin-ajax.php' ),
+				'args' => array(
+					'timeout'   => 0.01,
+					'blocking'  => false,
+					'sslverify' => apply_filters( 'https_local_ssl_verify', false ),
+					'body'      => $data,
+					'cookies'   => $_COOKIE,
+				),
+			)
+		);
+
+		$result = wp_remote_post( $request_args['url'], $request_args['args'] );
+
+		return ! is_wp_error( $result );
 	}
 
 }

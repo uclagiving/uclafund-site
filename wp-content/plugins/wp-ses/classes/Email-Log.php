@@ -39,14 +39,31 @@ class Email_Log {
 	private $clicks_table;
 
 	/**
+	 * The table to log attachments.
+	 *
+	 * @var string
+	 */
+	private $attachments_table;
+
+	/**
+	 * The table to log email attachments.
+	 *
+	 * @var string
+	 */
+	private $email_attachments_table;
+
+	/**
 	 * Construct the log class.
 	 */
 	public function __construct() {
 		global $wpdb;
 
-		$this->database     = $wpdb;
-		$this->log_table    = $this->database->base_prefix . 'oses_emails';
-		$this->clicks_table = $this->database->base_prefix . 'oses_clicks';
+		$this->database = $wpdb;
+
+		$this->log_table               = $this->database->base_prefix . 'oses_emails';
+		$this->clicks_table            = $this->database->base_prefix . 'oses_clicks';
+		$this->attachments_table       = $this->database->base_prefix . 'oses_attachments';
+		$this->email_attachments_table = $this->database->base_prefix . 'oses_email_attachments';
 
 		$this->schedule_cron();
 		add_action( 'deliciousbrains_wp_offload_ses_log_cleanup', array( $this, 'log_cleanup' ) );
@@ -243,6 +260,9 @@ class Email_Log {
 	 * Remove outdated logs.
 	 */
 	public function log_cleanup() {
+		/** @var WP_Offload_SES $wp_offload_ses */
+		global $wp_offload_ses;
+
 		if ( ! wp_doing_cron() ) {
 			return;
 		}
@@ -260,11 +280,29 @@ class Email_Log {
 			$subsite_sql = "AND $this->log_table.subsite_id = $subsite_id";
 		}
 
+		// Delete emails and clicks for emails outside of the retention period.
 		$query = "DELETE $this->log_table, $this->clicks_table FROM $this->log_table
 					LEFT JOIN $this->clicks_table ON $this->log_table.email_id = $this->clicks_table.email_id
 					WHERE $this->log_table.email_created < NOW() - INTERVAL $duration DAY
 					$subsite_sql";
 		$this->database->query( $query );
+
+		// Delete any records from link table that no longer exist.
+		$query = "DELETE {$this->email_attachments_table}
+					FROM {$this->email_attachments_table}
+					LEFT JOIN {$this->log_table} ON {$this->email_attachments_table}.email_id = {$this->log_table}.email_id
+					WHERE {$this->log_table}.email_id IS NULL";
+		$this->database->query( $query );
+
+		// Flag any attachments that can be safely deleted.
+		$query = "UPDATE {$this->attachments_table} attachments
+					LEFT JOIN {$this->email_attachments_table} email_attachments ON email_attachments.attachment_id = attachments.id
+					SET attachments.gc = 1
+					WHERE email_attachments.attachment_id IS NULL";
+		$this->database->query( $query );
+
+		// Delete the files themselves.
+		$wp_offload_ses->get_attachments()->delete_attachments();
 	}
 
 	/**
@@ -296,9 +334,17 @@ class Email_Log {
 				`auto_retries` INT DEFAULT '0',
 				`manual_retries` INT DEFAULT '0',
 				PRIMARY KEY  (email_id),
-				INDEX email_subject (email_subject)
+				INDEX email_subject_v2 (email_subject(190))
 				) $charset_collate;";
 		dbDelta( $sql );
+
+		$indexes = (array) $wpdb->get_results( "SHOW INDEX FROM $this->log_table", ARRAY_A );
+		$indexes = wp_list_pluck( $indexes, 'Key_name' );
+
+		if ( in_array( 'email_subject', $indexes ) ) {
+			// Drop the old index.
+			$wpdb->query( "ALTER TABLE $this->log_table DROP INDEX email_subject" );
+		}
 	}
 
 }
