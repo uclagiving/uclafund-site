@@ -2,13 +2,12 @@
 
 namespace Zumba\Amplitude\Test;
 
-use PHPUnit\Framework\TestCase;
 use \Zumba\Amplitude\Event;
 
 /**
  * @group amplitude
  */
-class EventTest extends TestCase
+class EventTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider setDataProvider

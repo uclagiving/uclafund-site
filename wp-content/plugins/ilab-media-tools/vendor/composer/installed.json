@@ -1,5 +1,70 @@
 [
     {
+        "name": "defuse/php-encryption",
+        "version": "v2.2.1",
+        "version_normalized": "2.2.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/defuse/php-encryption.git",
+            "reference": "0f407c43b953d571421e0020ba92082ed5fb7620"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/defuse/php-encryption/zipball/0f407c43b953d571421e0020ba92082ed5fb7620",
+            "reference": "0f407c43b953d571421e0020ba92082ed5fb7620",
+            "shasum": ""
+        },
+        "require": {
+            "ext-openssl": "*",
+            "paragonie/random_compat": ">= 2",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "nikic/php-parser": "^2.0|^3.0|^4.0",
+            "phpunit/phpunit": "^4|^5"
+        },
+        "time": "2018-07-24T23:27:56+00:00",
+        "bin": [
+            "bin/generate-defuse-key"
+        ],
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Defuse\\Crypto\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Taylor Hornby",
+                "email": "taylor@defuse.ca",
+                "homepage": "https://defuse.ca/"
+            },
+            {
+                "name": "Scott Arciszewski",
+                "email": "info@paragonie.com",
+                "homepage": "https://paragonie.com"
+            }
+        ],
+        "description": "Secure PHP Encryption Library",
+        "keywords": [
+            "aes",
+            "authenticated encryption",
+            "cipher",
+            "crypto",
+            "cryptography",
+            "encrypt",
+            "encryption",
+            "openssl",
+            "security",
+            "symmetric key cryptography"
+        ]
+    },
+    {
         "name": "doctrine/inflector",
         "version": "v1.1.0",
         "version_normalized": "1.1.0.0",
@@ -183,26 +248,26 @@
     },
     {
         "name": "firebase/php-jwt",
-        "version": "v5.0.0",
-        "version_normalized": "5.0.0.0",
+        "version": "v5.1.0",
+        "version_normalized": "5.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/firebase/php-jwt.git",
-            "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e"
+            "reference": "4566062c68f76f43d44f1643f4970fe89757d4c6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/firebase/php-jwt/zipball/9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
-            "reference": "9984a4d3a32ae7673d6971ea00bae9d0a1abba0e",
+            "url": "https://api.github.com/repos/firebase/php-jwt/zipball/4566062c68f76f43d44f1643f4970fe89757d4c6",
+            "reference": "4566062c68f76f43d44f1643f4970fe89757d4c6",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
         "require-dev": {
-            "phpunit/phpunit": " 4.8.35"
+            "phpunit/phpunit": "^4.8|^5"
         },
-        "time": "2017-06-27T22:17:23+00:00",
+        "time": "2020-02-24T23:15:03+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -217,13 +282,13 @@
         "authors": [
             {
                 "name": "Neuman Vong",
-                "role": "Developer",
-                "email": "neuman+pear@twilio.com"
+                "email": "neuman+pear@twilio.com",
+                "role": "Developer"
             },
             {
                 "name": "Anant Narayanan",
-                "role": "Developer",
-                "email": "anant@php.net"
+                "email": "anant@php.net",
+                "role": "Developer"
             }
         ],
         "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
@@ -231,17 +296,17 @@
     },
     {
         "name": "google/auth",
-        "version": "v1.5.1",
-        "version_normalized": "1.5.1.0",
+        "version": "v1.7.1",
+        "version_normalized": "1.7.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/googleapis/google-auth-library-php.git",
-            "reference": "0f75e20e7392e863f5550ed2c2d3d50af21710fb"
+            "reference": "39e243a7d8320b1889ab8bb4cd6f98f7af83c582"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/0f75e20e7392e863f5550ed2c2d3d50af21710fb",
-            "reference": "0f75e20e7392e863f5550ed2c2d3d50af21710fb",
+            "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/39e243a7d8320b1889ab8bb4cd6f98f7af83c582",
+            "reference": "39e243a7d8320b1889ab8bb4cd6f98f7af83c582",
             "shasum": ""
         },
         "require": {
@@ -255,14 +320,15 @@
         "require-dev": {
             "friendsofphp/php-cs-fixer": "^1.11",
             "guzzlehttp/promises": "0.1.1|^1.3",
+            "kelvinmo/simplejwt": "^0.2.5",
             "phpseclib/phpseclib": "^2",
             "phpunit/phpunit": "^4.8.36|^5.7",
             "sebastian/comparator": ">=1.2.3"
         },
         "suggest": {
-            "phpseclib/phpseclib": "May be used in place of OpenSSL for signing strings. Please require version ^2."
+            "phpseclib/phpseclib": "May be used in place of OpenSSL for signing strings or for token management. Please require version ^2."
         },
-        "time": "2019-04-16T18:48:28+00:00",
+        "time": "2020-02-12T20:54:50+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -284,25 +350,25 @@
     },
     {
         "name": "google/cloud-core",
-        "version": "v1.29.0",
-        "version_normalized": "1.29.0.0",
+        "version": "v1.35.0",
+        "version_normalized": "1.35.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/googleapis/google-cloud-php-core.git",
-            "reference": "a7b3a821be80a86a111b7a271886faf3226a277d"
+            "reference": "e24a49fb1df51d6cff38c97450feffae82661c2d"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/a7b3a821be80a86a111b7a271886faf3226a277d",
-            "reference": "a7b3a821be80a86a111b7a271886faf3226a277d",
+            "url": "https://api.github.com/repos/googleapis/google-cloud-php-core/zipball/e24a49fb1df51d6cff38c97450feffae82661c2d",
+            "reference": "e24a49fb1df51d6cff38c97450feffae82661c2d",
             "shasum": ""
         },
         "require": {
-            "google/auth": "^1.5.1",
+            "google/auth": "^1.6",
             "guzzlehttp/guzzle": "^5.3|^6.0",
             "guzzlehttp/promises": "^1.3",
             "guzzlehttp/psr7": "^1.2",
-            "monolog/monolog": "~1",
+            "monolog/monolog": "^1.1|^2.0",
             "php": ">=5.5",
             "psr/http-message": "1.0.*",
             "rize/uri-template": "~0.3"
@@ -310,7 +376,7 @@
         "require-dev": {
             "erusev/parsedown": "^1.6",
             "google/common-protos": "^1.0",
-            "google/gax": "^1.0",
+            "google/gax": "^1.1",
             "opis/closure": "^3",
             "phpdocumentor/reflection": "^3.0",
             "phpunit/phpunit": "^4.8|^5.0",
@@ -320,7 +386,7 @@
             "opis/closure": "May be used to serialize closures to process jobs in the batch daemon. Please require version ^3.",
             "symfony/lock": "Required for the Spanner cached based session pool. Please require the following commit: 3.3.x-dev#1ba6ac9"
         },
-        "time": "2019-06-27T20:27:31+00:00",
+        "time": "2020-02-11T23:07:13+00:00",
         "bin": [
             "bin/google-cloud-batch"
         ],
@@ -347,21 +413,22 @@
     },
     {
         "name": "google/cloud-storage",
-        "version": "v1.12.3",
-        "version_normalized": "1.12.3.0",
+        "version": "v1.18.0",
+        "version_normalized": "1.18.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/googleapis/google-cloud-php-storage.git",
-            "reference": "79cffd74f4a876e689b0c23248eb745c894f2e82"
+            "reference": "201b69aa6f24b60718dc0bd0c1bdc6963ade0e99"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/79cffd74f4a876e689b0c23248eb745c894f2e82",
-            "reference": "79cffd74f4a876e689b0c23248eb745c894f2e82",
+            "url": "https://api.github.com/repos/googleapis/google-cloud-php-storage/zipball/201b69aa6f24b60718dc0bd0c1bdc6963ade0e99",
+            "reference": "201b69aa6f24b60718dc0bd0c1bdc6963ade0e99",
             "shasum": ""
         },
         "require": {
-            "google/cloud-core": "^1.28"
+            "google/cloud-core": "^1.35",
+            "google/crc32": "^0.1.0"
         },
         "require-dev": {
             "erusev/parsedown": "^1.6",
@@ -375,7 +442,7 @@
             "google/cloud-pubsub": "May be used to register a topic to receive bucket notifications.",
             "phpseclib/phpseclib": "May be used in place of OpenSSL for creating signed Cloud Storage URLs. Please require version ^2."
         },
-        "time": "2019-06-27T20:27:31+00:00",
+        "time": "2020-02-11T23:07:13+00:00",
         "type": "library",
         "extra": {
             "component": {
@@ -493,6 +560,50 @@
         ]
     },
     {
+        "name": "google/crc32",
+        "version": "v0.1.0",
+        "version_normalized": "0.1.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/google/php-crc32.git",
+            "reference": "a8525f0dea6fca1893e1bae2f6e804c5f7d007fb"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/google/php-crc32/zipball/a8525f0dea6fca1893e1bae2f6e804c5f7d007fb",
+            "reference": "a8525f0dea6fca1893e1bae2f6e804c5f7d007fb",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4"
+        },
+        "require-dev": {
+            "friendsofphp/php-cs-fixer": "^1.13 || v2.14.2",
+            "paragonie/random_compat": ">=2",
+            "phpunit/phpunit": "^4"
+        },
+        "time": "2019-05-09T06:24:58+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Google\\CRC32\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "Apache-2.0"
+        ],
+        "authors": [
+            {
+                "name": "Andrew Brampton",
+                "email": "bramp@google.com"
+            }
+        ],
+        "description": "Various CRC32 implementations",
+        "homepage": "https://github.com/google/php-crc32"
+    },
+    {
         "name": "google/gax",
         "version": "0.38.2",
         "version_normalized": "0.38.2.0",
@@ -584,17 +695,17 @@
     },
     {
         "name": "google/protobuf",
-        "version": "v3.9.0",
-        "version_normalized": "3.9.0.0",
+        "version": "v3.11.4",
+        "version_normalized": "3.11.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/protocolbuffers/protobuf-php.git",
-            "reference": "7b9ad7d4272ec45779bfa074efffd55586f1965c"
+            "reference": "a5001eb559dcaac0bf6d8c7edc52b3828c618185"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/protocolbuffers/protobuf-php/zipball/7b9ad7d4272ec45779bfa074efffd55586f1965c",
-            "reference": "7b9ad7d4272ec45779bfa074efffd55586f1965c",
+            "url": "https://api.github.com/repos/protocolbuffers/protobuf-php/zipball/a5001eb559dcaac0bf6d8c7edc52b3828c618185",
+            "reference": "a5001eb559dcaac0bf6d8c7edc52b3828c618185",
             "shasum": ""
         },
         "require": {
@@ -606,7 +717,7 @@
         "suggest": {
             "ext-bcmath": "Need to support JSON deserialization"
         },
-        "time": "2019-07-12T00:17:38+00:00",
+        "time": "2020-02-14T22:17:05+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -627,17 +738,17 @@
     },
     {
         "name": "grpc/grpc",
-        "version": "1.22.0",
-        "version_normalized": "1.22.0.0",
+        "version": "1.27.0",
+        "version_normalized": "1.27.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/grpc/grpc-php.git",
-            "reference": "88235e786ef9b55fcb049f00c5c5202f8086a299"
+            "reference": "a461cb1a975dde305c73168aa4494b90c3801c62"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/grpc/grpc-php/zipball/88235e786ef9b55fcb049f00c5c5202f8086a299",
-            "reference": "88235e786ef9b55fcb049f00c5c5202f8086a299",
+            "url": "https://api.github.com/repos/grpc/grpc-php/zipball/a461cb1a975dde305c73168aa4494b90c3801c62",
+            "reference": "a461cb1a975dde305c73168aa4494b90c3801c62",
             "shasum": ""
         },
         "require": {
@@ -650,7 +761,7 @@
             "ext-protobuf": "For better performance, install the protobuf C extension.",
             "google/protobuf": "To get started using grpc quickly, install the native protobuf library."
         },
-        "time": "2019-07-03T19:57:39+00:00",
+        "time": "2020-01-23T19:27:18+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -915,17 +1026,17 @@
     },
     {
         "name": "ilab/ilab-aws-media-cloud-sdk",
-        "version": "0.3.2",
-        "version_normalized": "0.3.2.0",
+        "version": "0.3.3",
+        "version_normalized": "0.3.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Interfacelab/ilab-aws-media-cloud-sdk.git",
-            "reference": "95df56a815bfaf9da9a91e1180f83654c7de5705"
+            "reference": "3cd71454919431e1d262af8f2a689d457a2edc60"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Interfacelab/ilab-aws-media-cloud-sdk/zipball/95df56a815bfaf9da9a91e1180f83654c7de5705",
-            "reference": "95df56a815bfaf9da9a91e1180f83654c7de5705",
+            "url": "https://api.github.com/repos/Interfacelab/ilab-aws-media-cloud-sdk/zipball/3cd71454919431e1d262af8f2a689d457a2edc60",
+            "reference": "3cd71454919431e1d262af8f2a689d457a2edc60",
             "shasum": ""
         },
         "require": {
@@ -959,7 +1070,7 @@
             "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages",
             "ext-sockets": "To use client-side monitoring"
         },
-        "time": "2019-11-24T19:05:50+00:00",
+        "time": "2020-03-05T10:09:37+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1000,21 +1111,21 @@
     },
     {
         "name": "ilab/ilab-flysystem-aws-s3-v3",
-        "version": "0.2.2",
-        "version_normalized": "0.2.2.0",
+        "version": "0.2.3",
+        "version_normalized": "0.2.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Interfacelab/ilab-flysystem-aws-s3-v3.git",
-            "reference": "d1ce3029d440fa99cbc845431d09bb6e6de5491e"
+            "reference": "a9c6477ec64ff12abd72bf798bf9910ce46e561a"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Interfacelab/ilab-flysystem-aws-s3-v3/zipball/d1ce3029d440fa99cbc845431d09bb6e6de5491e",
-            "reference": "d1ce3029d440fa99cbc845431d09bb6e6de5491e",
+            "url": "https://api.github.com/repos/Interfacelab/ilab-flysystem-aws-s3-v3/zipball/a9c6477ec64ff12abd72bf798bf9910ce46e561a",
+            "reference": "a9c6477ec64ff12abd72bf798bf9910ce46e561a",
             "shasum": ""
         },
         "require": {
-            "ilab/ilab-aws-media-cloud-sdk": "^0.3.2",
+            "ilab/ilab-aws-media-cloud-sdk": "^0.3.3",
             "league/flysystem": "^1.0.40",
             "php": ">=5.5.0"
         },
@@ -1022,7 +1133,7 @@
             "henrikbjorn/phpspec-code-coverage": "~1.0.1",
             "phpspec/phpspec": "^2.0.0"
         },
-        "time": "2019-11-24T19:08:03+00:00",
+        "time": "2020-03-05T10:14:11+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1381,17 +1492,17 @@
     },
     {
         "name": "intervention/image",
-        "version": "2.5.0",
-        "version_normalized": "2.5.0.0",
+        "version": "2.5.1",
+        "version_normalized": "2.5.1.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Intervention/image.git",
-            "reference": "39eaef720d082ecc54c64bf54541c55f10db546d"
+            "reference": "abbf18d5ab8367f96b3205ca3c89fb2fa598c69e"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Intervention/image/zipball/39eaef720d082ecc54c64bf54541c55f10db546d",
-            "reference": "39eaef720d082ecc54c64bf54541c55f10db546d",
+            "url": "https://api.github.com/repos/Intervention/image/zipball/abbf18d5ab8367f96b3205ca3c89fb2fa598c69e",
+            "reference": "abbf18d5ab8367f96b3205ca3c89fb2fa598c69e",
             "shasum": ""
         },
         "require": {
@@ -1408,7 +1519,7 @@
             "ext-imagick": "to use Imagick based image processing.",
             "intervention/imagecache": "Caching extension for the Intervention Image library"
         },
-        "time": "2019-06-24T14:06:31+00:00",
+        "time": "2019-11-02T09:15:47+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1453,17 +1564,17 @@
     },
     {
         "name": "ivopetkov/html5-dom-document-php",
-        "version": "v2.0.2",
-        "version_normalized": "2.0.2.0",
+        "version": "v2.2.2",
+        "version_normalized": "2.2.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/ivopetkov/html5-dom-document-php.git",
-            "reference": "5c650195e679a1d5f9dc7bb0ecd078710d165ac6"
+            "reference": "ac13ad7878d77c74bf724b1272b2f0b11edadd2b"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/ivopetkov/html5-dom-document-php/zipball/5c650195e679a1d5f9dc7bb0ecd078710d165ac6",
-            "reference": "5c650195e679a1d5f9dc7bb0ecd078710d165ac6",
+            "url": "https://api.github.com/repos/ivopetkov/html5-dom-document-php/zipball/ac13ad7878d77c74bf724b1272b2f0b11edadd2b",
+            "reference": "ac13ad7878d77c74bf724b1272b2f0b11edadd2b",
             "shasum": ""
         },
         "require": {
@@ -1474,7 +1585,7 @@
             "ivopetkov/docs-generator": "0.2.*",
             "phpunit/phpunit": "6.*"
         },
-        "time": "2019-04-17T05:28:51+00:00",
+        "time": "2020-03-06T18:06:21+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -1497,17 +1608,17 @@
     },
     {
         "name": "league/flysystem",
-        "version": "1.0.53",
-        "version_normalized": "1.0.53.0",
+        "version": "1.0.65",
+        "version_normalized": "1.0.65.0",
         "source": {
             "type": "git",
             "url": "https://github.com/thephpleague/flysystem.git",
-            "reference": "08e12b7628f035600634a5e76d95b5eb66cea674"
+            "reference": "8f17b3ba67097aafb8318cd5c553b1acf7c891c8"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/08e12b7628f035600634a5e76d95b5eb66cea674",
-            "reference": "08e12b7628f035600634a5e76d95b5eb66cea674",
+            "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8f17b3ba67097aafb8318cd5c553b1acf7c891c8",
+            "reference": "8f17b3ba67097aafb8318cd5c553b1acf7c891c8",
             "shasum": ""
         },
         "require": {
@@ -1519,7 +1630,7 @@
         },
         "require-dev": {
             "phpspec/phpspec": "^3.4",
-            "phpunit/phpunit": "^5.7.10"
+            "phpunit/phpunit": "^5.7.26"
         },
         "suggest": {
             "ext-fileinfo": "Required for MimeType",
@@ -1537,7 +1648,7 @@
             "spatie/flysystem-dropbox": "Allows you to use Dropbox storage",
             "srmklive/flysystem-dropbox-v2": "Allows you to use Dropbox storage for PHP 5 applications"
         },
-        "time": "2019-06-18T20:09:29+00:00",
+        "time": "2020-03-08T18:53:20+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1646,26 +1757,26 @@
     },
     {
         "name": "mikey179/vfsstream",
-        "version": "v1.6.6",
-        "version_normalized": "1.6.6.0",
+        "version": "v1.6.8",
+        "version_normalized": "1.6.8.0",
         "source": {
             "type": "git",
             "url": "https://github.com/bovigo/vfsStream.git",
-            "reference": "095238a0711c974ae5b4ebf4c4534a23f3f6c99d"
+            "reference": "231c73783ebb7dd9ec77916c10037eff5a2b6efe"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/095238a0711c974ae5b4ebf4c4534a23f3f6c99d",
-            "reference": "095238a0711c974ae5b4ebf4c4534a23f3f6c99d",
+            "url": "https://api.github.com/repos/bovigo/vfsStream/zipball/231c73783ebb7dd9ec77916c10037eff5a2b6efe",
+            "reference": "231c73783ebb7dd9ec77916c10037eff5a2b6efe",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "~4.5"
+            "phpunit/phpunit": "^4.5|^5.0"
         },
-        "time": "2019-04-08T13:54:32+00:00",
+        "time": "2019-10-30T15:31:00+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1694,17 +1805,17 @@
     },
     {
         "name": "monolog/monolog",
-        "version": "1.24.0",
-        "version_normalized": "1.24.0.0",
+        "version": "1.25.3",
+        "version_normalized": "1.25.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Seldaek/monolog.git",
-            "reference": "bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266"
+            "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Seldaek/monolog/zipball/bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266",
-            "reference": "bfc9ebb28f97e7a24c45bdc3f0ff482e47bb0266",
+            "url": "https://api.github.com/repos/Seldaek/monolog/zipball/fa82921994db851a8becaf3787a9e73c5976b6f1",
+            "reference": "fa82921994db851a8becaf3787a9e73c5976b6f1",
             "shasum": ""
         },
         "require": {
@@ -1740,7 +1851,7 @@
             "ruflin/elastica": "Allow sending log messages to an Elastic Search server",
             "sentry/sentry": "Allow sending log messages to a Sentry server"
         },
-        "time": "2018-11-05T09:00:11+00:00",
+        "time": "2019-12-20T14:15:16+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -1774,33 +1885,35 @@
     },
     {
         "name": "mtdowling/jmespath.php",
-        "version": "2.4.0",
-        "version_normalized": "2.4.0.0",
+        "version": "2.5.0",
+        "version_normalized": "2.5.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/jmespath/jmespath.php.git",
-            "reference": "adcc9531682cf87dfda21e1fd5d0e7a41d292fac"
+            "reference": "52168cb9472de06979613d365c7f1ab8798be895"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/adcc9531682cf87dfda21e1fd5d0e7a41d292fac",
-            "reference": "adcc9531682cf87dfda21e1fd5d0e7a41d292fac",
+            "url": "https://api.github.com/repos/jmespath/jmespath.php/zipball/52168cb9472de06979613d365c7f1ab8798be895",
+            "reference": "52168cb9472de06979613d365c7f1ab8798be895",
             "shasum": ""
         },
         "require": {
-            "php": ">=5.4.0"
+            "php": ">=5.4.0",
+            "symfony/polyfill-mbstring": "^1.4"
         },
         "require-dev": {
-            "phpunit/phpunit": "~4.0"
+            "composer/xdebug-handler": "^1.2",
+            "phpunit/phpunit": "^4.8.36|^7.5.15"
         },
-        "time": "2016-12-03T22:08:25+00:00",
+        "time": "2019-12-30T18:03:34+00:00",
         "bin": [
             "bin/jp.php"
         ],
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "2.0-dev"
+                "dev-master": "2.5-dev"
             }
         },
         "installation-source": "dist",
@@ -1828,6 +1941,121 @@
             "json",
             "jsonpath"
         ]
+    },
+    {
+        "name": "paragonie/constant_time_encoding",
+        "version": "v1.0.4",
+        "version_normalized": "1.0.4.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/paragonie/constant_time_encoding.git",
+            "reference": "2132f0f293d856026d7d11bd81b9f4a23a1dc1f6"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/paragonie/constant_time_encoding/zipball/2132f0f293d856026d7d11bd81b9f4a23a1dc1f6",
+            "reference": "2132f0f293d856026d7d11bd81b9f4a23a1dc1f6",
+            "shasum": ""
+        },
+        "require": {
+            "php": "^5.3|^7"
+        },
+        "require-dev": {
+            "paragonie/random_compat": "^1.4|^2",
+            "phpunit/phpunit": "4.*|5.*",
+            "vimeo/psalm": "^0.3|^1"
+        },
+        "time": "2018-04-30T17:57:16+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "ParagonIE\\ConstantTime\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Paragon Initiative Enterprises",
+                "email": "security@paragonie.com",
+                "homepage": "https://paragonie.com",
+                "role": "Maintainer"
+            },
+            {
+                "name": "Steve 'Sc00bz' Thomas",
+                "email": "steve@tobtu.com",
+                "homepage": "https://www.tobtu.com",
+                "role": "Original Developer"
+            }
+        ],
+        "description": "Constant-time Implementations of RFC 4648 Encoding (Base-64, Base-32, Base-16)",
+        "keywords": [
+            "base16",
+            "base32",
+            "base32_decode",
+            "base32_encode",
+            "base64",
+            "base64_decode",
+            "base64_encode",
+            "bin2hex",
+            "encoding",
+            "hex",
+            "hex2bin",
+            "rfc4648"
+        ]
+    },
+    {
+        "name": "paragonie/easyrsa",
+        "version": "v0.5.2",
+        "version_normalized": "0.5.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/paragonie/EasyRSA.git",
+            "reference": "d4f3ca9896ced5d9ef03ec783dc4ca5c0c3c5980"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/paragonie/EasyRSA/zipball/d4f3ca9896ced5d9ef03ec783dc4ca5c0c3c5980",
+            "reference": "d4f3ca9896ced5d9ef03ec783dc4ca5c0c3c5980",
+            "shasum": ""
+        },
+        "require": {
+            "defuse/php-encryption": "^2.0",
+            "paragonie/constant_time_encoding": "^1|^2",
+            "paragonie/random_compat": "^1|^2",
+            "phpseclib/phpseclib": "^2.0",
+            "sarciszewski/php-future": "^0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.*|5.*"
+        },
+        "suggest": {
+            "ext-libsodium": "Libsodium offers far better cryptography than RSA can ever offer. Use libsodium instead of EasyRSA.",
+            "paragonie/halite": "A simple and secure libsodium wrapper. Consider using Halite instead of EasyRSA."
+        },
+        "time": "2019-01-03T20:37:11+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "ParagonIE\\EasyRSA\\": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "Simple and secure asymmetric encryption powered by PHPSecLib",
+        "keywords": [
+            "asymmetric",
+            "cryptography",
+            "public-key",
+            "rsa"
+        ],
+        "abandoned": "paragonie/sodium_compat"
     },
     {
         "name": "paragonie/random_compat",
@@ -1878,6 +2106,100 @@
             "polyfill",
             "pseudorandom",
             "random"
+        ]
+    },
+    {
+        "name": "phpseclib/phpseclib",
+        "version": "2.0.25",
+        "version_normalized": "2.0.25.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/phpseclib/phpseclib.git",
+            "reference": "c18159618ed7cd7ff721ac1a8fec7860a475d2f0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/c18159618ed7cd7ff721ac1a8fec7860a475d2f0",
+            "reference": "c18159618ed7cd7ff721ac1a8fec7860a475d2f0",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "require-dev": {
+            "phing/phing": "~2.7",
+            "phpunit/phpunit": "^4.8.35|^5.7|^6.0",
+            "sami/sami": "~2.0",
+            "squizlabs/php_codesniffer": "~2.0"
+        },
+        "suggest": {
+            "ext-gmp": "Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.",
+            "ext-libsodium": "SSH2/SFTP can make use of some algorithms provided by the libsodium-php extension.",
+            "ext-mcrypt": "Install the Mcrypt extension in order to speed up a few other cryptographic operations.",
+            "ext-openssl": "Install the OpenSSL extension in order to speed up a wide variety of cryptographic operations."
+        },
+        "time": "2020-02-25T04:16:50+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "phpseclib/bootstrap.php"
+            ],
+            "psr-4": {
+                "phpseclib\\": "phpseclib/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Jim Wigginton",
+                "email": "terrafrost@php.net",
+                "role": "Lead Developer"
+            },
+            {
+                "name": "Patrick Monnerat",
+                "email": "pm@datasphere.ch",
+                "role": "Developer"
+            },
+            {
+                "name": "Andreas Fischer",
+                "email": "bantu@phpbb.com",
+                "role": "Developer"
+            },
+            {
+                "name": "Hans-Jürgen Petrich",
+                "email": "petrich@tronic-media.com",
+                "role": "Developer"
+            },
+            {
+                "name": "Graham Campbell",
+                "email": "graham@alt-three.com",
+                "role": "Developer"
+            }
+        ],
+        "description": "PHP Secure Communications Library - Pure-PHP implementations of RSA, AES, SSH2, SFTP, X.509 etc.",
+        "homepage": "http://phpseclib.sourceforge.net",
+        "keywords": [
+            "BigInteger",
+            "aes",
+            "asn.1",
+            "asn1",
+            "blowfish",
+            "crypto",
+            "cryptography",
+            "encryption",
+            "rsa",
+            "security",
+            "sftp",
+            "signature",
+            "signing",
+            "ssh",
+            "twofish",
+            "x.509",
+            "x509"
         ]
     },
     {
@@ -1982,27 +2304,27 @@
     },
     {
         "name": "psr/log",
-        "version": "1.1.0",
-        "version_normalized": "1.1.0.0",
+        "version": "1.1.2",
+        "version_normalized": "1.1.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/php-fig/log.git",
-            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd"
+            "reference": "446d54b4cb6bf489fc9d75f55843658e6f25d801"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/php-fig/log/zipball/6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
-            "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+            "url": "https://api.github.com/repos/php-fig/log/zipball/446d54b4cb6bf489fc9d75f55843658e6f25d801",
+            "reference": "446d54b4cb6bf489fc9d75f55843658e6f25d801",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2018-11-20T15:27:04+00:00",
+        "time": "2019-11-01T11:05:21+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
-                "dev-master": "1.0.x-dev"
+                "dev-master": "1.1.x-dev"
             }
         },
         "installation-source": "dist",
@@ -2160,6 +2482,52 @@
         ]
     },
     {
+        "name": "sarciszewski/php-future",
+        "version": "0.4.2",
+        "version_normalized": "0.4.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/sarciszewski/php-future.git",
+            "reference": "8bcc414eecfe68bb4600ab9b179ef6e8454b8ca0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/sarciszewski/php-future/zipball/8bcc414eecfe68bb4600ab9b179ef6e8454b8ca0",
+            "reference": "8bcc414eecfe68bb4600ab9b179ef6e8454b8ca0",
+            "shasum": ""
+        },
+        "require-dev": {
+            "phpunit/phpunit": "4.5.*"
+        },
+        "time": "2015-09-28T20:04:00+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "files": [
+                "autoload.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Scott Arciszewski",
+                "email": "scott@paragonie.com",
+                "homepage": "https://appsec.solutions",
+                "role": "Developer"
+            }
+        ],
+        "description": "Polyfill new (5.6+) features into old (5.4+) versions of PHP",
+        "keywords": [
+            "compatibility",
+            "future",
+            "hash_equals",
+            "security"
+        ]
+    },
+    {
         "name": "smalot/pdfparser",
         "version": "v0.13.3",
         "version_normalized": "0.13.3.0",
@@ -2213,17 +2581,17 @@
     },
     {
         "name": "superbalist/flysystem-google-storage",
-        "version": "7.2.1",
-        "version_normalized": "7.2.1.0",
+        "version": "7.2.2",
+        "version_normalized": "7.2.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/Superbalist/flysystem-google-cloud-storage.git",
-            "reference": "97cf8a5c9a9d368260b2791ec130690a1bec0cbd"
+            "reference": "87e2f450c0e4b5200fef9ffe6863068cc873d734"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/Superbalist/flysystem-google-cloud-storage/zipball/97cf8a5c9a9d368260b2791ec130690a1bec0cbd",
-            "reference": "97cf8a5c9a9d368260b2791ec130690a1bec0cbd",
+            "url": "https://api.github.com/repos/Superbalist/flysystem-google-cloud-storage/zipball/87e2f450c0e4b5200fef9ffe6863068cc873d734",
+            "reference": "87e2f450c0e4b5200fef9ffe6863068cc873d734",
             "shasum": ""
         },
         "require": {
@@ -2235,7 +2603,7 @@
             "mockery/mockery": "0.9.*",
             "phpunit/phpunit": "~4.0"
         },
-        "time": "2019-02-21T08:07:24+00:00",
+        "time": "2019-10-10T12:22:54+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2262,17 +2630,17 @@
     },
     {
         "name": "symfony/debug",
-        "version": "v3.4.29",
-        "version_normalized": "3.4.29.0",
+        "version": "v3.4.38",
+        "version_normalized": "3.4.38.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/debug.git",
-            "reference": "1172dc1abe44dfadd162239153818b074e6e53bf"
+            "reference": "a99278d50af8a9164219da38d61fb161a7f6e0a6"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/debug/zipball/1172dc1abe44dfadd162239153818b074e6e53bf",
-            "reference": "1172dc1abe44dfadd162239153818b074e6e53bf",
+            "url": "https://api.github.com/repos/symfony/debug/zipball/a99278d50af8a9164219da38d61fb161a7f6e0a6",
+            "reference": "a99278d50af8a9164219da38d61fb161a7f6e0a6",
             "shasum": ""
         },
         "require": {
@@ -2285,7 +2653,7 @@
         "require-dev": {
             "symfony/http-kernel": "~2.8|~3.0|~4.0"
         },
-        "time": "2019-06-18T21:26:03+00:00",
+        "time": "2020-02-03T15:10:40+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2320,23 +2688,23 @@
     },
     {
         "name": "symfony/finder",
-        "version": "v3.4.29",
-        "version_normalized": "3.4.29.0",
+        "version": "v3.4.38",
+        "version_normalized": "3.4.38.0",
         "source": {
             "type": "git",
             "url": "https://github.com/symfony/finder.git",
-            "reference": "5f80266a729e30bbcc37f8bf0e62c3d5a38c8208"
+            "reference": "5ec813ccafa8164ef21757e8c725d3a57da59200"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/symfony/finder/zipball/5f80266a729e30bbcc37f8bf0e62c3d5a38c8208",
-            "reference": "5f80266a729e30bbcc37f8bf0e62c3d5a38c8208",
+            "url": "https://api.github.com/repos/symfony/finder/zipball/5ec813ccafa8164ef21757e8c725d3a57da59200",
+            "reference": "5ec813ccafa8164ef21757e8c725d3a57da59200",
             "shasum": ""
         },
         "require": {
             "php": "^5.5.9|>=7.0.8"
         },
-        "time": "2019-05-30T15:47:52+00:00",
+        "time": "2020-02-14T07:34:21+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
@@ -2370,24 +2738,85 @@
         "homepage": "https://symfony.com"
     },
     {
-        "name": "tecnickcom/tcpdf",
-        "version": "6.2.26",
-        "version_normalized": "6.2.26.0",
+        "name": "symfony/polyfill-mbstring",
+        "version": "v1.14.0",
+        "version_normalized": "1.14.0.0",
         "source": {
             "type": "git",
-            "url": "https://github.com/tecnickcom/TCPDF.git",
-            "reference": "367241059ca166e3a76490f4448c284e0a161f15"
+            "url": "https://github.com/symfony/polyfill-mbstring.git",
+            "reference": "34094cfa9abe1f0f14f48f490772db7a775559f2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/367241059ca166e3a76490f4448c284e0a161f15",
-            "reference": "367241059ca166e3a76490f4448c284e0a161f15",
+            "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/34094cfa9abe1f0f14f48f490772db7a775559f2",
+            "reference": "34094cfa9abe1f0f14f48f490772db7a775559f2",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.3.3"
+        },
+        "suggest": {
+            "ext-mbstring": "For best performance"
+        },
+        "time": "2020-01-13T11:15:53+00:00",
+        "type": "library",
+        "extra": {
+            "branch-alias": {
+                "dev-master": "1.14-dev"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Symfony\\Polyfill\\Mbstring\\": ""
+            },
+            "files": [
+                "bootstrap.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Nicolas Grekas",
+                "email": "p@tchwork.com"
+            },
+            {
+                "name": "Symfony Community",
+                "homepage": "https://symfony.com/contributors"
+            }
+        ],
+        "description": "Symfony polyfill for the Mbstring extension",
+        "homepage": "https://symfony.com",
+        "keywords": [
+            "compatibility",
+            "mbstring",
+            "polyfill",
+            "portable",
+            "shim"
+        ]
+    },
+    {
+        "name": "tecnickcom/tcpdf",
+        "version": "6.3.5",
+        "version_normalized": "6.3.5.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/tecnickcom/TCPDF.git",
+            "reference": "19a535eaa7fb1c1cac499109deeb1a7a201b4549"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/tecnickcom/TCPDF/zipball/19a535eaa7fb1c1cac499109deeb1a7a201b4549",
+            "reference": "19a535eaa7fb1c1cac499109deeb1a7a201b4549",
             "shasum": ""
         },
         "require": {
             "php": ">=5.3.0"
         },
-        "time": "2018-10-16T17:24:05+00:00",
+        "time": "2020-02-14T14:20:12+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2412,7 +2841,7 @@
         },
         "notification-url": "https://packagist.org/downloads/",
         "license": [
-            "LGPL-3.0"
+            "LGPL-3.0-only"
         ],
         "authors": [
             {
@@ -2522,28 +2951,28 @@
     },
     {
         "name": "zumba/amplitude-php",
-        "version": "1.0.1",
-        "version_normalized": "1.0.1.0",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/zumba/amplitude-php.git",
-            "reference": "efec5ce34dde9f7b168e7d810159b9b31bbe362b"
+            "reference": "26e354d8fcb7995224c1d641f3d514c3417a244c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/zumba/amplitude-php/zipball/efec5ce34dde9f7b168e7d810159b9b31bbe362b",
-            "reference": "efec5ce34dde9f7b168e7d810159b9b31bbe362b",
+            "url": "https://api.github.com/repos/zumba/amplitude-php/zipball/26e354d8fcb7995224c1d641f3d514c3417a244c",
+            "reference": "26e354d8fcb7995224c1d641f3d514c3417a244c",
             "shasum": ""
         },
         "require": {
-            "php": ">=7.2",
+            "php": ">=5.4",
             "psr/log": "^1.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "8.3.*",
-            "squizlabs/php_codesniffer": "3.4.*"
+            "phpunit/phpunit": "4.8.*",
+            "squizlabs/php_codesniffer": "2.6.*"
         },
-        "time": "2019-08-08T15:19:30+00:00",
+        "time": "2016-05-09T13:31:11+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -2563,8 +2992,8 @@
             },
             {
                 "name": "Jonathan Foote",
-                "role": "Developer",
-                "email": "jonathan.foote@zumba.com"
+                "email": "jonathan.foote@zumba.com",
+                "role": "Developer"
             }
         ],
         "description": "PHP SDK for Amplitude",

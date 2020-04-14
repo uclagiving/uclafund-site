@@ -222,6 +222,7 @@ class Bucket
      * uploads.
      * @see https://cloud.google.com/storage/docs/json_api/v1/objects/insert Objects insert API documentation.
      * @see https://cloud.google.com/storage/docs/encryption#customer-supplied Customer-supplied encryption keys.
+     * @see https://github.com/google/php-crc32 crc32c PHP extension for hardware-accelerated validation hashes.
      *
      * @param string|resource|StreamInterface|null $data The data to be uploaded.
      * @param array $options [optional] {
@@ -231,10 +232,17 @@ class Bucket
      *           of type string or null.
      *     @type bool $resumable Indicates whether or not the upload will be
      *           performed in a resumable fashion.
-     *     @type bool $validate Indicates whether or not validation will be
-     *           applied using md5 hashing functionality. If true and the
-     *           calculated hash does not match that of the upstream server the
-     *           upload will be rejected.
+     *     @type bool|string $validate Indicates whether or not validation will
+     *           be applied using md5 or crc32c hashing functionality. If
+     *           enabled, and the calculated hash does not match that of the
+     *           upstream server, the upload will be rejected. Available options
+     *           are `true`, `false`, `md5` and `crc32`. If true, either md5 or
+     *           crc32c will be chosen based on your platform. If false, no
+     *           validation hash will be sent. Choose either `md5` or `crc32` to
+     *           force a hash method regardless of performance implications. In
+     *           PHP versions earlier than 7.4, performance will be very
+     *           adversely impacted by using crc32c unless you install the
+     *           `crc32c` PHP extension. **Defaults to** `true`.
      *     @type int $chunkSize If provided the upload will be done in chunks.
      *           The size must be in multiples of 262144 bytes. With chunking
      *           you have increased reliability at the risk of higher overhead.
@@ -813,9 +821,14 @@ class Bucket
      *           current bucket's logs.
      *     @type string $storageClass The bucket's storage class. This defines
      *           how objects in the bucket are stored and determines the SLA and
-     *           the cost of storage. Acceptable values include
-     *           `"MULTI_REGIONAL"`, `"REGIONAL"`, `"NEARLINE"`, `"COLDLINE"`,
-     *           `"STANDARD"` and `"DURABLE_REDUCED_AVAILABILITY"`.
+     *           the cost of storage. Acceptable values include the following
+     *           strings: `"STANDARD"`, `"NEARLINE"`, `"COLDLINE"` and
+     *           `"ARCHIVE"`. Legacy values including `"MULTI_REGIONAL"`,
+     *           `"REGIONAL"` and `"DURABLE_REDUCED_AVAILABILITY"` are also
+     *           available, but should be avoided for new implementations. For
+     *           more information, refer to the
+     *           [Storage Classes](https://cloud.google.com/storage/docs/storage-classes)
+     *           documentation. **Defaults to** `"STANDARD"`.
      *     @type array $versioning The bucket's versioning configuration.
      *     @type array $website The bucket's website configuration.
      *     @type array $billing The bucket's billing configuration.
@@ -843,14 +856,16 @@ class Bucket
      *           that objects need to be retained, in seconds. Retention
      *           duration must be greater than zero and less than 100 years.
      *     @type array $iamConfiguration The bucket's IAM configuration.
-     *     @type bool $iamConfiguration.bucketPolicyOnly.enabled If set and
+     *     @type bool $iamConfiguration.bucketPolicyOnly.enabled this is an alias
+     *           for $iamConfiguration.uniformBucketLevelAccess.
+     *     @type bool $iamConfiguration.uniformBucketLevelAccess.enabled If set and
      *           true, access checks only use bucket-level IAM policies or
      *           above. When enabled, requests attempting to view or manipulate
      *           ACLs will fail with error code 400. **NOTE**: Before using
-     *           Bucket Policy Only, please review the
-     *           [feature documentation](https://cloud.google.com/storage/docs/bucket-policy-only),
+     *           Uniform bucket-level access, please review the
+     *           [feature documentation](https://cloud.google.com/storage/docs/uniform-bucket-level-access),
      *           as well as
-     *           [Should You Use Bucket Policy Only](https://cloud.google.com/storage/docs/bucket-policy-only#should-you-use)
+     *           [Should You Use uniform bucket-level access](https://cloud.google.com/storage/docs/uniform-bucket-level-access#should-you-use)
      * }
      * @codingStandardsIgnoreEnd
      * @return array
@@ -1155,11 +1170,19 @@ class Bucket
     /**
      * Manage the IAM policy for the current Bucket.
      *
-     * Please note that this method may not yet be available in your project.
+     * To request a policy with conditions, pass an array with
+     * '[requestedPolicyVersion => 3]' as argument to the policy() and
+     * reload() methods.
      *
      * Example:
      * ```
      * $iam = $bucket->iam();
+     *
+     * // Returns the stored policy, or fetches the policy if none exists.
+     * $policy = $iam->policy(['requestedPolicyVersion' => 3]);
+     *
+     * // Fetches a policy from the server.
+     * $policy = $iam->reload(['requestedPolicyVersion' => 3]);
      * ```
      *
      * @codingStandardsIgnoreStart
@@ -1167,6 +1190,7 @@ class Bucket
      * @see https://cloud.google.com/storage/docs/json_api/v1/buckets/getIamPolicy Get Bucket IAM Policy
      * @see https://cloud.google.com/storage/docs/json_api/v1/buckets/setIamPolicy Set Bucket IAM Policy
      * @see https://cloud.google.com/storage/docs/json_api/v1/buckets/testIamPermissions Test Bucket Permissions
+     * @see https://cloud.google.com/iam/docs/policies#versions policy versioning.
      * @codingStandardsIgnoreEnd
      *
      * @return Iam

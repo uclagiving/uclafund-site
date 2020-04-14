@@ -96,7 +96,7 @@ class HTML5DOMElement extends \DOMElement
             if (!isset(self::$newObjectsCache['html5domdocument'])) {
                 self::$newObjectsCache['html5domdocument'] = new \IvoPetkov\HTML5DOMDocument();
             }
-            $tmpDoc = clone(self::$newObjectsCache['html5domdocument']);
+            $tmpDoc = clone (self::$newObjectsCache['html5domdocument']);
             $tmpDoc->loadHTML('<body>' . $value . '</body>');
             foreach ($tmpDoc->getElementsByTagName('body')->item(0)->childNodes as $node) {
                 $node = $this->ownerDocument->importNode($node, true);
@@ -107,7 +107,7 @@ class HTML5DOMElement extends \DOMElement
             if (!isset(self::$newObjectsCache['html5domdocument'])) {
                 self::$newObjectsCache['html5domdocument'] = new \IvoPetkov\HTML5DOMDocument();
             }
-            $tmpDoc = clone(self::$newObjectsCache['html5domdocument']);
+            $tmpDoc = clone (self::$newObjectsCache['html5domdocument']);
             $tmpDoc->loadHTML('<body>' . $value . '</body>');
             foreach ($tmpDoc->getElementsByTagName('body')->item(0)->childNodes as $node) {
                 $node = $this->ownerDocument->importNode($node, true);
@@ -130,7 +130,6 @@ class HTML5DOMElement extends \DOMElement
      */
     private function updateResult(string $value): string
     {
-
         $value = str_replace(self::$foundEntitiesCache[0], self::$foundEntitiesCache[1], $value);
         if (strstr($value, 'html5-dom-document-internal-entity') !== false) {
             $search = [];
@@ -150,6 +149,26 @@ class HTML5DOMElement extends \DOMElement
             unset($matches);
         }
         return $value;
+    }
+
+    /**
+     * Returns the updated nodeValue Property
+     * 
+     * @return string The updated $nodeValue
+     */
+    public function getNodeValue(): string
+    {
+        return $this->updateResult($this->nodeValue);
+    }
+
+    /**
+     * Returns the updated $textContent Property
+     * 
+     * @return string The updated $textContent
+     */
+    public function getTextContent(): string
+    {
+        return $this->updateResult($this->textContent);
     }
 
     /**
@@ -216,5 +235,4 @@ class HTML5DOMElement extends \DOMElement
     {
         return $this->internalQuerySelectorAll($selector);
     }
-
 }

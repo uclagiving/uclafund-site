@@ -6,11 +6,13 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'phpseclib\\' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
     'duncan3dc\\Laravel\\' => array($vendorDir . '/duncan3dc/blade/src'),
     'duncan3dc\\LaravelTests\\' => array($vendorDir . '/duncan3dc/blade/tests'),
     'Zumba\\Amplitude\\Test\\' => array($vendorDir . '/zumba/amplitude-php/test'),
     'Zumba\\Amplitude\\' => array($vendorDir . '/zumba/amplitude-php/src'),
     'WillWashburn\\' => array($vendorDir . '/willwashburn/stream/src'),
+    'Symfony\\Polyfill\\Mbstring\\' => array($vendorDir . '/symfony/polyfill-mbstring'),
     'Symfony\\Component\\Finder\\' => array($vendorDir . '/symfony/finder'),
     'Symfony\\Component\\Debug\\' => array($vendorDir . '/symfony/debug'),
     'Superbalist\\Flysystem\\GoogleStorage\\' => array($vendorDir . '/superbalist/flysystem-google-storage/src'),
@@ -18,6 +20,8 @@ return array(
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
     'Probe\\' => array($vendorDir . '/trntv/probe/src'),
+    'ParagonIE\\EasyRSA\\' => array($vendorDir . '/paragonie/easyrsa/src'),
+    'ParagonIE\\ConstantTime\\' => array($vendorDir . '/paragonie/constant_time_encoding/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),
     'Mimey\\' => array($vendorDir . '/ralouphie/mimey/src'),
     'League\\Glide\\' => array($vendorDir . '/league/glide/src'),
@@ -43,6 +47,7 @@ return array(
     'Google\\Cloud\\Vision\\' => array($vendorDir . '/google/cloud-vision/src'),
     'Google\\Cloud\\Storage\\' => array($vendorDir . '/google/cloud-storage/src'),
     'Google\\Cloud\\Core\\' => array($vendorDir . '/google/cloud-core/src'),
+    'Google\\CRC32\\' => array($vendorDir . '/google/crc32/src'),
     'Google\\Auth\\' => array($vendorDir . '/google/auth/src'),
     'Google\\ApiCore\\' => array($vendorDir . '/google/gax/src'),
     'Google\\' => array($vendorDir . '/google/common-protos/src'),
@@ -50,5 +55,6 @@ return array(
     'GPBMetadata\\Google\\Cloud\\Vision\\' => array($vendorDir . '/google/cloud-vision/metadata'),
     'GPBMetadata\\Google\\' => array($vendorDir . '/google/common-protos/metadata', $vendorDir . '/google/gax/metadata'),
     'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
+    'Defuse\\Crypto\\' => array($vendorDir . '/defuse/php-encryption/src'),
     '' => array($vendorDir . '/google/grpc-gcp/src/generated'),
 );

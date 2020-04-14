@@ -104,7 +104,11 @@ class DeleteUploadsTask extends Task {
 
 	public function prepare($options = [], $selectedItems = []) {
 		foreach($selectedItems as $selectedItem) {
-			$this->addItem(['filepath' => $selectedItem]);
+			if (file_exists($selectedItem)) {
+				$this->addItem(['filepath' => $selectedItem]);
+			} else {
+				Logger::info("DeleteUploadTasks::prepare - Skipping $selectedItem - does not exist.");
+			}
 		}
 
 		$this->addItem(['filepath' => -1]);

@@ -31,6 +31,10 @@ return [
 		    "plugin" => "robin-image-optimizer/robin-image-optimizer.php",
 		    "description" => "The image optimization process is a black box with no available way for Media Cloud to hook into it.  So while it will optimize your images, Media Cloud will be unaware that any optimizations occurred and will not transfer the result to cloud storage."
 	    ],
+	    "TranslatePress - Multilingual" => [
+		    "plugin" => "translatepress-multilingual/index.php",
+		    "description" => "There is a library conflict with TranslatePress that may prevent Media Cloud's background tasks from running.  We are working on a compatibility fix for the next release of Media Cloud."
+	    ],
     ],
     "badPlugins" => [
 	    "OptiMole" => [
@@ -49,7 +53,7 @@ return [
 			'help' => [
 				[ 'title' => 'Setup Wizard', 'wizard' => 's3' ],
 				[ 'title' => 'Watch Tutorial', 'video_url' => 'https://www.youtube.com/watch?v=kjFCACrPRtU' ],
-				[ 'title' => 'Read Documentation', 'url' => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/setting-up-amazon-s3' ],
+				[ 'title' => 'Read Documentation', 'url' => 'https://support.mediacloud.press/articles/documentation/cloud-storage/setting-up-amazon-s3' ],
 			]
 		],
 		'google' => [
@@ -58,7 +62,7 @@ return [
 			'config' => '/storage/google.config.php',
 			'help' => [
 				[ 'title' => 'Setup Wizard', 'wizard' => 'google' ],
-				[ 'title' => 'Read Documentation', 'url' => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/setting-up-google-cloud-storage' ],
+				[ 'title' => 'Read Documentation', 'url' => 'https://support.mediacloud.press/articles/documentation/cloud-storage/setting-up-google-cloud-storage' ],
 			]
 		],
 		'do' => [
@@ -67,7 +71,7 @@ return [
 			'config' => '/storage/do.config.php',
 			'help' => [
 				[ 'title' => 'Setup Wizard', 'wizard' => 'do' ],
-				[ 'title' => 'Read Documentation', 'url' => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/setting-up-digitalocean-spaces' ],
+				[ 'title' => 'Read Documentation', 'url' => 'https://support.mediacloud.press/articles/documentation/cloud-storage/setting-up-digitalocean-spaces' ],
 			]
 		],
 		'minio' => [
@@ -84,7 +88,7 @@ return [
 			'config' => '/storage/wasabi.config.php',
 			'help' => [
 				[ 'title' => 'Setup Wizard', 'wizard' => 'wasabi' ],
-				[ 'title' => 'Read Documentation', 'url' => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/setting-up-wasabi' ],
+				[ 'title' => 'Read Documentation', 'url' => 'https://support.mediacloud.press/articles/documentation/cloud-storage/setting-up-wasabi' ],
 			]
 		],
 		'other-s3' => [
@@ -101,7 +105,7 @@ return [
 			'config' => '/storage/backblaze.config.php',
 			'help' => [
 				[ 'title' => 'Setup Wizard', 'wizard' => 'backblaze' ],
-				[ 'title' => 'Read Documentation', 'url' => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/setting-up-backblaze' ],
+				[ 'title' => 'Read Documentation', 'url' => 'https://support.mediacloud.press/articles/documentation/cloud-storage/setting-up-backblaze' ],
 			]
 		],
 	],
@@ -135,7 +139,7 @@ return [
 			"ilab-media-cloud-upload-handling" => [
 				"title" => "Upload Handling",
                 "dynamic" => true,
-				"doc_link" => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/upload-handling-settings',
+				"doc_link" => 'https://support.mediacloud.press/articles/documentation/cloud-storage/upload-handling-settings',
 				"description" => "The following options control how the storage tool handles uploads.",
                 "options" => [
 	                "mcloud-storage-prefix" => [
@@ -230,19 +234,26 @@ return [
 		                "type" => "checkbox",
 		                "default" => true,
 	                ],
+	                "mcloud-storage-skip-import-other-plugin" => [
+		                "title" => "Skip Importing From Other Plugins",
+		                "description" => "Skip importing from other plugins like WP Offload Media, WP-Stateless and other cloud storage plugins.",
+		                "display-order" => 50,
+		                "type" => "checkbox",
+		                "default" => false,
+	                ],
                 ]
 			],
 			"ilab-media-cloud-signed-urls" => [
 				"title" => "Secure URL Settings",
 				"description" => "These settings control how pre-signed URLs work.",
-				"doc_link" => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/pre-signed-url-settings/',
+				"doc_link" => 'https://support.mediacloud.press/articles/documentation/cloud-storage/pre-signed-url-settings/',
 				"dynamic" => true,
 				"options" => [],
 			],
             "ilab-media-cloud-cdn-settings" => [
                 "title" => "CDN Settings",
 	            "dynamic" => true,
-	            "doc_link" => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/cdn-settings',
+	            "doc_link" => 'https://support.mediacloud.press/articles/documentation/cloud-storage/cdn-settings',
                 "description" => "If you are using CloudFront, Fastly or another CDN, enter the CDN domain here.  If you are using Imgix, the <b>CDN Base URL</b> setting is ignored, but the <b>Document CDN Base URL</b> is not.  If both are left blank, Media Tools will use the cloud storage URLs.",
                 "options" => [
                     "mcloud-storage-cdn-base" => [
@@ -257,9 +268,21 @@ return [
                     ]
                 ]
             ],
+			"ilab-media-cloud-performance-settings" => [
+				"title" => "Performance Settings",
+				"description" => "",
+				"options" => [
+					"mcloud-storage-cache-lookups" => [
+						"title" => "Cache Attachment Lookups",
+						"description" => "When this is enabled, Media Cloud will cache the results of any database queries it performs to map a URL to an attachment ID so that it can dynamically generate the correct URL.  This should be left on as some of the queries that Media Cloud uses can be slow on sites with a large number of rows in the <code>wp_post</code> database table.  But, if you are having problems, you can turn it off to restore the previous behavior.",
+						"type" => "checkbox",
+						"default" => true
+					],
+				]
+			],
 			"ilab-media-cloud-display-settings" => [
 				"title" => "Display Settings",
-				"doc_link" => 'https://kb.mediacloud.press/articles/documentation/cloud-storage/media-library-integration',
+				"doc_link" => 'https://support.mediacloud.press/articles/documentation/cloud-storage/media-library-integration',
 				"description" => "",
 				"options" => [
 					"mcloud-storage-display-badge" => [

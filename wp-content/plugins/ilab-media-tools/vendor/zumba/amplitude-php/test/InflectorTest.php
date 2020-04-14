@@ -2,13 +2,12 @@
 
 namespace Zumba\Amplitude\Test;
 
-use PHPUnit\Framework\TestCase;
 use \Zumba\Amplitude\Inflector;
 
 /**
  * @group amplitude
  */
-class InflectorTest extends TestCase
+class InflectorTest extends \PHPUnit_Framework_TestCase
 {
     public function testCamelCase()
     {
