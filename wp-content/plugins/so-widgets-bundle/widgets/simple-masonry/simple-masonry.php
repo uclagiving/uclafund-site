@@ -14,7 +14,7 @@ class SiteOrigin_Widget_Simple_Masonry_Widget extends SiteOrigin_Widget {
 			'sow-simple-masonry',
 			__('SiteOrigin Simple Masonry', 'so-widgets-bundle'),
 			array(
-				'description' => __('A simple masonry layout widget.', 'so-widgets-bundle'),
+				'description' => __('A masonry layout for images. Images can link to your posts.', 'so-widgets-bundle'),
 //				'help' => 'https://siteorigin.com/widgets-bundle/simple-masonry-widget-documentation/'
 			),
 			array(),
@@ -47,7 +47,16 @@ class SiteOrigin_Widget_Simple_Masonry_Widget extends SiteOrigin_Widget {
 				'type' => 'repeater',
 				'label' => __( 'Images', 'so-widgets-bundle' ),
 				'item_label' => array(
-					'selector'     => "[id*='title']"
+					'selectorArray' => array(
+						array(
+							'selector' => "[id*='title']",
+							'valueMethod' => 'val',
+						),
+						array(
+							'selector' => '.media-field-wrapper .current .title',
+							'valueMethod' => 'html'
+						),
+					),
 				),
 				'fields' => array(
 					'image' => array(
@@ -173,6 +182,28 @@ class SiteOrigin_Widget_Simple_Masonry_Widget extends SiteOrigin_Widget {
 						'default' => 0
 					)
 				)
+			),
+			'preloader' => array(
+				'type' => 'section',
+				'label' => __( 'Preloader', 'so-widgets-bundle' ),
+				'hide' => true,
+				'fields' => array(
+					'enabled' => array(
+						'type' => 'checkbox',
+						'label' => __( 'Enable preloader', 'so-widgets-bundle' )
+					),
+					'color' => array(
+						'type' => 'color',
+						'label' => __( 'Preloader icon color', 'so-widgets-bundle' ),
+						'default' => '#232323'
+					),
+					'height' => array(
+						'type' => 'measurement',
+						'label' => __( 'Preloader height', 'so-widgets-bundle' ),
+						'default' => '250px',
+						'description' => __( 'The size of the preloader prior to the Masonry images showing.', 'so-widgets-bundle' )
+					)
+				)
 			)
 		);
 	}
@@ -192,6 +223,7 @@ class SiteOrigin_Widget_Simple_Masonry_Widget extends SiteOrigin_Widget {
 		return array(
 			'args' => $args,
 			'items' => $items,
+			'preloader_enabled' => ! empty( $instance['preloader']['enabled'] ) ? true : false,
 			'layouts' => array(
 				'desktop' => siteorigin_widgets_underscores_to_camel_case(
 					array(
@@ -219,6 +251,19 @@ class SiteOrigin_Widget_Simple_Masonry_Widget extends SiteOrigin_Widget {
 			)
 		);
 	}
+
+	public function get_less_variables( $instance ) {
+		if ( empty( $instance['preloader'] ) || ! $instance['preloader']['enabled'] ) {
+			return array();
+		}
+		
+		return array(
+			'preloader_enabled' => 'true',
+			'preloader_height' => $instance['preloader']['height'],
+			'preloader_color' => $instance['preloader']['color']
+		);
+	}
+	
 
 	function get_form_teaser(){
 		if( class_exists( 'SiteOrigin_Premium' ) ) return false;
