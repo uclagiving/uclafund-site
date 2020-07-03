@@ -126,11 +126,11 @@ $enable_javascript = 'http://www.enable-javascript.com';
 				<!-- TOP NAV BAR UCLA to replace above code -->
 				<div style="text-align:right" class="col-md-5 col-sm-5 text-right our-info">
 					<span>
-						<a style="padding:0" href="https://uclafund.ucla.edu/alumni" class="learn" title="alumni portal">Alumni</a> | 
-						<a style="padding:0" href="https://uclafund.ucla.edu/students/" class="learn" title="student portal">Students</a> | 
-						<a style="padding:0" href="https://uclafund.ucla.edu/parents/" class="learn" title="parents portal">Parents</a> | 
-						<a style="padding:0" href="https://uclafund.ucla.edu/friends/" class="learn" title="friends portal">Friends</a> | 
-						<a style="padding:0" href="https://uclafund.ucla.edu/my-account/" class="learn" title="my account portal">My Account</a>
+						<a style="padding:0" href="https://chancellorssociety.ucla.edu/alumni" class="learn" title="alumni portal">Alumni</a> | 
+						<a style="padding:0" href="https://chancellorssociety.ucla.edu/students/" class="learn" title="student portal">Students</a> | 
+						<a style="padding:0" href="https://chancellorssociety.ucla.edu/parents/" class="learn" title="parents portal">Parents</a> | 
+						<a style="padding:0" href="https://chancellorssociety.ucla.edu/friends/" class="learn" title="friends portal">Friends</a> | 
+						<a style="padding:0" href="https://chancellorssociety.ucla.edu/my-account/" class="learn" title="my account portal">My Account</a>
 					</span>
 				</div>
 				

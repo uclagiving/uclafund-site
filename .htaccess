@@ -260,7 +260,7 @@ Require not env DenyIP
 RewriteEngine On
 RewriteCond %{REQUEST_METHOD} POST
 RewriteCond %{REQUEST_URI} ^(.*)?wp-comments-post\.php(.*)$
-RewriteCond %{HTTP_REFERER} !^http(s)?://uclafund\.ucla\.edu [NC,OR]
+RewriteCond %{HTTP_REFERER} !^http(s)?://chancellorssociety\.ucla\.edu [NC,OR]
 RewriteCond %{HTTP_USER_AGENT} ^$
 RewriteRule .* http://127.0.0.1 [L]
 </IfModule>
@@ -268,10 +268,10 @@ RewriteRule .* http://127.0.0.1 [L]
 # END All In One WP Security
 
 RewriteEngine On 
-RewriteCond %{HTTP_HOST} ^uclafund\.ucla\.edu [NC]
+RewriteCond %{HTTP_HOST} ^chancellorssociety\.ucla\.edu [NC]
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule .* https://%{HTTP:Host}%{REQUEST_URI} [L,R=permanent]
-RewriteCond %{HTTP_HOST} ^uclafund\.stage\.support2\.ucla\.edu [NC]
+RewriteCond %{HTTP_HOST} ^chancellorssociety\.stage\.support2\.ucla\.edu [NC]
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule .* https://%{HTTP:Host}%{REQUEST_URI} [L,R=permanent]
 
