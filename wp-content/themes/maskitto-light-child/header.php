@@ -91,53 +91,8 @@ $enable_javascript = 'http://www.enable-javascript.com';
 	?>"<?php if( !isset($maskitto_light['header-sticky']) || $maskitto_light['header-sticky'] == 1 ) : ?> data-sticky="1"<?php endif; ?>>
 
 	<?php if( ( isset( $maskitto_light['header-contacts'] ) && isset( $maskitto_light['header-social'] ) ) && ( $maskitto_light['header-contacts'] || $maskitto_light['header-social'] ) ) : ?>
-	<div class="header-details<?php echo ( isset($maskitto_light['header-top-accent']) && $maskitto_light['header-top-accent'] == 1 ) ? ' header-details-accent-color' : ''; ?>">
-		<div class="container">
-			<div class="row">
-				<!--ECHO email contact for website -->
-				<div class="col-md-7 col-sm-7 our-info">
-					<?php if(isset($maskitto_light['header-contacts']) && $maskitto_light['header-contacts']){ ?>
-
-						<?php if( isset($maskitto_light['header-contacts-mail']) && $maskitto_light['header-contacts-mail'] ){ ?>
-							<a href="mailto:<?php echo esc_attr($maskitto_light['header-contacts-mail']); ?>"><i class="fa fa-envelope"></i><?php echo esc_attr($maskitto_light['header-contacts-mail']); ?></a>
-						<?php } ?>
-
-						<?php if( isset($maskitto_light['header-contacts-phone']) && $maskitto_light['header-contacts-phone'] ){ ?>
-							<span><i class="fa fa-phone"></i><?php echo esc_attr($maskitto_light['header-contacts-phone']); ?></span>
-						<?php } ?>
-
-					<?php } ?>
-				</div>
-
-				<!-- Maskitto theme social icons header
-				<div class="col-md-5 col-sm-5 text-right soc-icons">
-					<?php // if(isset($maskitto_light['header-social']) && $maskitto_light['header-social']) : ?>
-						<?php // echo maskitto_light_social_icons(); ?>
-
-						<?php // if(isset($maskitto_light['header-search']) && $maskitto_light['header-search']) : ?>
-							<span class="search-input">
-								<i class="fa fa-search"></i>
-								<?php // get_search_form(); ?> 
-							</span>
-						<?php // endif; ?>
-					<?php // endif; ?>
-				</div>
-				-->
-				<!-- TOP NAV BAR UCLA to replace above code -->
-				<div style="text-align:right" class="col-md-5 col-sm-5 text-right our-info">
-					<span>
-						<a style="padding:0" href="https://chancellorssociety.ucla.edu/alumni" class="learn" title="alumni portal">Alumni</a> | 
-						<a style="padding:0" href="https://chancellorssociety.ucla.edu/students/" class="learn" title="student portal">Students</a> | 
-						<a style="padding:0" href="https://chancellorssociety.ucla.edu/parents/" class="learn" title="parents portal">Parents</a> | 
-						<a style="padding:0" href="https://chancellorssociety.ucla.edu/friends/" class="learn" title="friends portal">Friends</a> | 
-						<a style="padding:0" href="https://chancellorssociety.ucla.edu/my-account/" class="learn" title="my account portal">My Account</a>
-					</span>
-				</div>
-				
-				
-			</div>
-		</div>
-	</div>
+	
+   
 	<?php elseif( isset($maskitto_light['header-layout']) && ( $maskitto_light['header-layout'] == 2 || $maskitto_light['header-layout'] == 3 ) ) : ?>
 		<div style="height: 53px;"></div>
 	<?php endif; ?>
@@ -167,7 +122,7 @@ $enable_javascript = 'http://www.enable-javascript.com';
 				</a>
 			</div>
 
-			<div id="donate-menu-button-mobile"><a class="btn give" href="https://giving.ucla.edu/Campaign/Donate.aspx?SiteNum=4&fund=00412G&lg=y" role="button" title="menu donate button">Donate</a></div>			
+			<div id="donate-menu-button-mobile"><a class="btn give" href="https://giving.ucla.edu/Campaign/Donate.aspx?SiteNum=4&fund=00440G&lg=y" role="button" title="menu donate button">Donate</a></div>			
 
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<?php
