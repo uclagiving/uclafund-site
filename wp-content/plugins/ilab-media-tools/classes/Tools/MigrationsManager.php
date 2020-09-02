@@ -10,17 +10,17 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Tools;
+namespace MediaCloud\Plugin\Tools;
 
-use ILAB\MediaCloud\Utilities\Environment;
-use ILAB\MediaCloud\Utilities\Logging\Logger;
-use ILAB\MediaCloud\Utilities\NoticeManager;
-use function ILAB\MediaCloud\Utilities\arrayPath;
+use MediaCloud\Plugin\Utilities\Environment;
+use MediaCloud\Plugin\Utilities\Logging\Logger;
+use MediaCloud\Plugin\Utilities\NoticeManager;
+use function MediaCloud\Plugin\Utilities\arrayPath;
 
 /**
  * Manages migrating options/settings between major plugin versions
  *
- * @package ILAB\MediaCloud\Tools
+ * @package MediaCloud\Plugin\Tools
  */
 final class MigrationsManager {
     /** @var MigrationsManager The current instance */
@@ -38,7 +38,7 @@ final class MigrationsManager {
         if (file_exists($configFile)) {
             $this->config = include $configFile;
         } else {
-            Logger::warning("Could not find migrations config '$configFile'.");
+            Logger::warning("Could not find migrations config '$configFile'.", [], __METHOD__, __LINE__);
         }
     }
 
@@ -58,7 +58,7 @@ final class MigrationsManager {
      * Migrates all tools
      */
     public function migrate($force = false) {
-    	$lastVersion = get_option('mcloud_migration_last_version', null);
+    	$lastVersion = Environment::Option('mcloud_migration_last_version', null, null);
 
     	$processed = false;
     	foreach($this->config as $version => $versionData) {
@@ -78,15 +78,15 @@ final class MigrationsManager {
 
     	    $this->processMigration($version, $versionData, false, false, false);
 
-    	    update_option('mcloud_migration_last_version', $version);
+    	    Environment::UpdateOption('mcloud_migration_last_version', $version);
 	    }
 
     	if (!empty($this->deprecatedErrors)) {
-    		update_option('mcloud_migration_deprecated_errors', $this->deprecatedErrors);
+		    Environment::UpdateOption('mcloud_migration_deprecated_errors', $this->deprecatedErrors);
 	    }
 
     	if (!$processed) {
-    		$this->deprecatedErrors = get_option('mcloud_migration_deprecated_errors', []);
+    		$this->deprecatedErrors = Environment::Option('mcloud_migration_deprecated_errors', null, []);
     		if (!empty($this->deprecatedErrors)) {
 				$this->deprecatedErrors = [];
 			    foreach($this->config as $version => $versionData) {
@@ -94,7 +94,7 @@ final class MigrationsManager {
 			    }
 
 			    if (empty($this->deprecatedErrors)) {
-				    delete_option('mcloud_migration_deprecated_errors');
+				    Environment::DeleteOption('mcloud_migration_deprecated_errors');
 			    }
 		    }
 	    }
@@ -151,7 +151,7 @@ final class MigrationsManager {
     		return;
 	    }
 
-	    $lastVersion = get_option('mcloud_migration_last_version', '3.0.0');
+	    $lastVersion = Environment::Option('mcloud_migration_last_version', null, '3.0.0');
 
 	    $exist = [];
 	    foreach($this->deprecatedErrors as $oldEndVar => $newEnvVar) {

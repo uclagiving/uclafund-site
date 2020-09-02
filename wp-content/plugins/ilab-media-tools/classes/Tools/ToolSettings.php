@@ -14,11 +14,11 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Tools;
+namespace MediaCloud\Plugin\Tools;
 
-use function ILAB\MediaCloud\Utilities\arrayPath;
-use ILAB\MediaCloud\Utilities\Environment;
-use ILAB\MediaCloud\Utilities\Logging\Logger;
+use function MediaCloud\Plugin\Utilities\arrayPath;
+use MediaCloud\Plugin\Utilities\Environment;
+use MediaCloud\Plugin\Utilities\Logging\Logger;
 
 
 if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
@@ -62,6 +62,8 @@ abstract class ToolSettings {
 	//endregion
 
 
+	//region Properties
+
 	/**
 	 * @param $name
 	 *
@@ -83,7 +85,7 @@ abstract class ToolSettings {
 		}
 
 		$this->settings[$name] = $val = Environment::Option($setting, $envSetting, $default);
-			return $val;
+		return $val;
 	}
 
 	/**
@@ -111,4 +113,15 @@ abstract class ToolSettings {
 
 		return true;
 	}
+
+	/**
+	 * @param string $name
+	 */
+	public function resetProperty($name) {
+		if (isset($this->settings[$name])) {
+			unset($this->settings[$name]);
+		}
+	}
+
+	//endregion
 }

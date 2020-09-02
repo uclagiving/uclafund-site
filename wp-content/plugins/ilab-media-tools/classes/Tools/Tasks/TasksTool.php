@@ -11,50 +11,44 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Tools\Tasks;
+namespace MediaCloud\Plugin\Tools\Tasks;
 
-use GuzzleHttp\Client;
-use ILAB\MediaCloud\Storage\StorageFile;
-use ILAB\MediaCloud\Tasks\Task;
-use ILAB\MediaCloud\Tasks\TaskManager;
-use ILAB\MediaCloud\Tools\Browser\Batch\ImportFromStorageBatchProcess;
-use ILAB\MediaCloud\Tools\Browser\Tasks\ImportFromStorageTask;
-use ILAB\MediaCloud\Tools\Storage\StorageTool;
-use ILAB\MediaCloud\Tools\Tool;
-use ILAB\MediaCloud\Tools\ToolsManager;
-use function ILAB\MediaCloud\Utilities\arrayPath;
-use ILAB\MediaCloud\Utilities\Environment;
-use ILAB\MediaCloud\Utilities\Logging\Logger;
-use ILAB\MediaCloud\Utilities\Tracker;
-use ILAB\MediaCloud\Utilities\View;
-use function ILAB\MediaCloud\Utilities\json_response;
-use function ILAB\MediaCloud\Utilities\vomit;
-use Illuminate\Support\Facades\Storage;
+use MediaCloud\Plugin\Tasks\Task;
+use MediaCloud\Plugin\Tasks\TaskManager;
+use MediaCloud\Plugin\Tasks\TaskSettings;
+use MediaCloud\Plugin\Tools\Browser\Batch\ImportFromStorageBatchProcess;
+use MediaCloud\Plugin\Tools\Tool;
+use MediaCloud\Plugin\Tools\ToolsManager;
+use MediaCloud\Plugin\Utilities\Environment;
+use MediaCloud\Plugin\Utilities\View;
+use function MediaCloud\Plugin\Utilities\arrayPath;
 
 if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
 
 /**
  */
 class TasksTool extends Tool {
-	/** @var TasksToolSettings|null  */
+	/** @var TaskSettings|null  */
 	protected $settings = null;
 
 	public function __construct( $toolName, $toolInfo, $toolManager ) {
 		parent::__construct( $toolName, $toolInfo, $toolManager );
 
-		$this->settings = new TasksToolSettings();
+		$this->settings = TaskSettings::instance();
 	}
 
 	public function setup() {
 		parent::setup();
 
-		if (is_admin() && $this->settings->heartbeatEnabled) {
-			add_action('admin_enqueue_scripts', function() {
-				$script = View::render_view('base.heartbeat', [ 'heartbeatFrequency' => (int)$this->settings->heartbeatFrequency * 1000]);
-				wp_register_script('task-manager-heartbeat', '', ['jquery']);
-				wp_enqueue_script('task-manager-heartbeat');
-				wp_add_inline_script('task-manager-heartbeat', $script);
-			});
+		if (is_admin()) {
+			if ($this->settings->heartbeatEnabled) {
+				add_action('admin_enqueue_scripts', function() {
+					$script = View::render_view('base.heartbeat', [ 'heartbeatFrequency' => (int)$this->settings->heartbeatFrequency * 1000]);
+					wp_register_script('task-manager-heartbeat', '', ['jquery']);
+					wp_enqueue_script('task-manager-heartbeat');
+					wp_add_inline_script('task-manager-heartbeat', $script);
+				});
+			}
 		}
 	}
 

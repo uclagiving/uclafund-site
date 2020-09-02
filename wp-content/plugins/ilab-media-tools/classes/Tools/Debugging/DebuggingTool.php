@@ -11,18 +11,18 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Tools\Debugging;
+namespace MediaCloud\Plugin\Tools\Debugging;
 
-use ILAB\MediaCloud\Tools\Tool;
-use ILAB\MediaCloud\Tools\ToolsManager;
-use ILAB\MediaCloud\Utilities\Logging\DatabaseLogger;
-use ILAB\MediaCloud\Utilities\Logging\DatabaseLogTable;
-use ILAB\MediaCloud\Utilities\Logging\Logger;
-use ILAB\MediaCloud\Utilities\NoticeManager;
-use ILAB\MediaCloud\Utilities\View;
-use ParagonIE\EasyRSA\EasyRSA;
-use ParagonIE\EasyRSA\PublicKey;
-use Probe\ProviderFactory;
+use MediaCloud\Plugin\Tools\Tool;
+use MediaCloud\Plugin\Tools\ToolsManager;
+use MediaCloud\Plugin\Utilities\Logging\DatabaseLogger;
+use MediaCloud\Plugin\Utilities\Logging\DatabaseLogTable;
+use MediaCloud\Plugin\Utilities\Logging\Logger;
+use MediaCloud\Plugin\Utilities\NoticeManager;
+use MediaCloud\Plugin\Utilities\View;
+use MediaCloud\Vendor\ParagonIE\EasyRSA\EasyRSA;
+use MediaCloud\Vendor\ParagonIE\EasyRSA\PublicKey;
+use MediaCloud\Vendor\Probe\ProviderFactory;
 
 if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
 
@@ -143,7 +143,7 @@ class DebuggingTool extends Tool {
 	    $probeData['Globals']['DISABLE_WP_CRON'] = defined('DISABLE_WP_CRON') ? constant('DISABLE_WP_CRON') : null;
 
 	    $probeData['Uploads'] = wp_get_upload_dir();
-
+	    
 	    $probeData['Media Cloud Settings'] = [];
 	    global $wpdb;
 	    $settingsResults = $wpdb->get_results("select * from {$wpdb->options} where option_name like 'mcloud%'", ARRAY_A);

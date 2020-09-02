@@ -16,12 +16,12 @@ return [
     "id" => "imgix",
     "name" => "Imgix",
 	"description" => "Serve your media through <a target='_blank' href='https://imgix.com'>Imgix</a>, a real-time dynamic image processing service and CDN.",
-	"class" => "ILAB\\MediaCloud\\Tools\\Imgix\\ImgixTool",
+	"class" => "MediaCloud\\Plugin\\Tools\\Imgix\\ImgixTool",
 	"env" => "ILAB_MEDIA_IMGIX_ENABLED",
 	"dependencies" => [
 		"crop",
 		"storage",
-        "!glide"
+		"!optimizer"
 	],
     "related" => ["media-upload", "crop"],
 	"helpers" => [
@@ -95,12 +95,18 @@ return [
                         "title" => "Keep WordPress Thumbnails",
                         "description" => "Because Imgix can dynamically create new sizes for existing images, having WordPress create thumbnails is potentially pointless, a probable waste of space and definitely slows down uploads.  However, if you plan to stop using Imgix, having those thumbnails on S3 or locally will save you having to regenerate thumbnails later.  <strong>IMPORTANT:</strong> Thumbnails will not be generated when you perform a direct upload because those uploads are sent directly to S3 without going through your WordPress server.",
                         "type" => "checkbox",
-                        "default" => "true"
+                        "default" => true
                     ],
 					"mcloud-imgix-render-pdf-files" => [
 						"title" => "Render PDF Files",
 						"description" => "Render PDF files as images.  Like the <em>Enable Alternative Formats</em>, once you enable this option, you'll only be able to see the PDFs as images while Imgix is enabled.",
 						"type" => "checkbox"
+					],
+					"mcloud-imgix-render-svg-files" => [
+						"title" => "Render SVG Files",
+						"description" => "Render SVG files as bitmap images.  <em>This only affects image sizes other than <strong>full</strong>.</em>  When this is enabled, the other image sizes will be rendered as PNG images, this might not be what you want.",
+						"type" => "checkbox",
+						"default" => false,
 					],
 					"mcloud-imgix-detect-faces" => [
 						"title" => "Detect Faces",

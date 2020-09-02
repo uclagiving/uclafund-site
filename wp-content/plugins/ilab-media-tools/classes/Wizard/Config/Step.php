@@ -14,14 +14,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Wizard\Config;
+namespace MediaCloud\Plugin\Wizard\Config;
 
 use Acme\Tester;
-use function ILAB\MediaCloud\Utilities\arrayPath;
+use function MediaCloud\Plugin\Utilities\arrayPath;
 
 /**
  * Class Config
- * @package ILAB\MediaCloud\Wizard\Config
+ * @package MediaCloud\Plugin\Wizard\Config
  *
  */
 class Step {
@@ -253,6 +253,7 @@ class Step {
 			$data[] = [
 				'action' => $test->id(),
 				'index' => $index,
+				'wizard_ajax' => true,
 				'title' => $test->title(),
 				'nonce' => wp_create_nonce('media-cloud-wizard-test'),
 				'description' => $test->description()

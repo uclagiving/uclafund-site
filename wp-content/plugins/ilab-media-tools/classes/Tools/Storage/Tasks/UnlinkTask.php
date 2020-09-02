@@ -11,14 +11,11 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Tools\Storage\Tasks;
+namespace MediaCloud\Plugin\Tools\Storage\Tasks;
 
-use ILAB\MediaCloud\Storage\StorageGlobals;
-use ILAB\MediaCloud\Tasks\AttachmentTask;
-use ILAB\MediaCloud\Tools\Storage\StorageTool;
-use ILAB\MediaCloud\Tools\ToolsManager;
-use ILAB\MediaCloud\Utilities\Logging\Logger;
-use function ILAB\MediaCloud\Utilities\postIdExists;
+use MediaCloud\Plugin\Tasks\AttachmentTask;
+use MediaCloud\Plugin\Utilities\Logging\Logger;
+use function MediaCloud\Plugin\Utilities\postIdExists;
 
 class UnlinkTask extends AttachmentTask {
 	//region Static Task Properties
@@ -92,6 +89,17 @@ class UnlinkTask extends AttachmentTask {
 		return '/batch/unlink';
 	}
 
+	public static function warnOption() {
+		return 'unlink-task-warning-seen';
+	}
+
+	public static function warnConfirmationAnswer() {
+		return 'I UNDERSTAND';
+	}
+
+	public static function warnConfirmationText() {
+		return "It is important that you backup your database prior to running this unlink task.  To continue, please type 'I UNDERSTAND' to confirm that you have backed up your database.";
+	}
 
 
 	/**
@@ -150,7 +158,7 @@ class UnlinkTask extends AttachmentTask {
 
 		$this->updateCurrentPost($post_id);
 
-		Logger::info("Processing $post_id");
+		Logger::info("Processing $post_id", [], __METHOD__, __LINE__);
 
 		$meta = wp_get_attachment_metadata($post_id, true);
 		if (isset($meta['s3'])) {
@@ -171,7 +179,7 @@ class UnlinkTask extends AttachmentTask {
 			update_post_meta($post_id, '_wp_attachment_metadata', $meta);
 		}
 
-		Logger::info("Finished processing $post_id");
+		Logger::info("Finished processing $post_id", [], __METHOD__, __LINE__);
 
 		return true;
 	}

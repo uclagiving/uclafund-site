@@ -11,17 +11,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Tools\Storage\Tasks;
+namespace MediaCloud\Plugin\Tools\Storage\Tasks;
 
-use ILAB\MediaCloud\Storage\StorageGlobals;
-use ILAB\MediaCloud\Tasks\AttachmentTask;
-use ILAB\MediaCloud\Tasks\Task;
-use ILAB\MediaCloud\Tools\Storage\StorageTool;
-use ILAB\MediaCloud\Tools\ToolsManager;
-use ILAB\MediaCloud\Utilities\Environment;
-use ILAB\MediaCloud\Utilities\Logging\Logger;
-use Symfony\Component\Finder\Iterator\RecursiveDirectoryIterator;
-use function ILAB\MediaCloud\Utilities\postIdExists;
+use MediaCloud\Plugin\Tasks\AttachmentTask;
+use MediaCloud\Plugin\Tools\Storage\StorageTool;
+use MediaCloud\Plugin\Tools\ToolsManager;
+use MediaCloud\Plugin\Utilities\Environment;
+use MediaCloud\Plugin\Utilities\Logging\Logger;
+use function MediaCloud\Plugin\Utilities\postIdExists;
 
 class MigrateFromOtherTask extends AttachmentTask {
 	//region Static Task Properties
@@ -126,13 +123,13 @@ class MigrateFromOtherTask extends AttachmentTask {
 
 		$this->updateCurrentPost($post_id);
 
-		Logger::info("Processing $post_id");
+		Logger::info("Processing $post_id", [], __METHOD__, __LINE__);
 
 		/** @var StorageTool $storageTool */
 		$storageTool = ToolsManager::instance()->tools['storage'];
 		$storageTool->migratePostFromOtherPlugin($post_id);
 
-		Logger::info("Finished processing $post_id");
+		Logger::info("Finished processing $post_id", [], __METHOD__, __LINE__);
 
 		return true;
 	}

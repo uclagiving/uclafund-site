@@ -14,12 +14,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Wizard;
+namespace MediaCloud\Plugin\Wizard;
 
-use ILAB\MediaCloud\Storage\StorageGlobals;
-use ILAB\MediaCloud\Utilities\Environment;
-use ILAB\MediaCloud\Utilities\Logging\ErrorCollector;
-use ILAB\MediaCloud\Utilities\Tracker;
+use MediaCloud\Plugin\Tools\Storage\StorageToolSettings;
+use MediaCloud\Plugin\Utilities\Environment;
+use MediaCloud\Plugin\Utilities\Logging\ErrorCollector;
+use MediaCloud\Plugin\Utilities\Tracker;
 
 trait StorageWizardTrait {
 	/**
@@ -76,7 +76,7 @@ trait StorageWizardTrait {
 		$client = new static();
 		$errors = [];
 		try {
-			$client->upload('_troubleshooter/sample.txt',ILAB_TOOLS_DIR.'/public/text/sample-upload.txt', StorageGlobals::privacy());
+			$client->upload('_troubleshooter/sample.txt',ILAB_TOOLS_DIR.'/public/text/sample-upload.txt', StorageToolSettings::privacy());
 			Tracker::trackView("System Test - Test Uploads - Success", "/system-test/uploads/success");
 		} catch (\Exception $ex) {
 			Tracker::trackView("System Test - Test Uploads - Error", "/system-test/uploads/error");

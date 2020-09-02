@@ -11,14 +11,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Utilities;
+namespace MediaCloud\Plugin\Utilities;
 
 if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
 
 
 /**
  * Class EnvironmentOptions
- * @package ILAB\MediaCloud\Utilities
+ * @package MediaCloud\Plugin\Utilities
  */
 final class Environment {
 	private static $booted = false;
@@ -51,6 +51,19 @@ final class Environment {
 			return static::$networkMode;
 		} else {
 			return false;
+		}
+	}
+
+	/**
+	 * Enables network mode
+	 *
+	 * @param $enabled
+	 */
+	public static function UpdateNetworkMode($enabled) {
+		global $media_cloud_licensing;
+		if ($media_cloud_licensing->is_plan('pro')) {
+			static::$networkMode = $enabled;
+			update_site_option('mcloud-network-mode', $enabled);
 		}
 	}
 

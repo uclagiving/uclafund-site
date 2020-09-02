@@ -1,5 +1,5 @@
-<?php /** @var \ILAB\MediaCloud\Tasks\TaskManager $manager */?>
-<?php /** @var \ILAB\MediaCloud\Tasks\Task|null $task */?>
+<?php /** @var \MediaCloud\Plugin\Tasks\TaskManager $manager */?>
+<?php /** @var \MediaCloud\Plugin\Tasks\Task|null $task */?>
 <?php /** @var string $taskClass */?>
 <?php /** @var string $warning */?>
 @extends('../templates/sub-page')
@@ -9,7 +9,11 @@
         <div class="task-info" style="display:none">
             @include("tasks.batch.".$taskClass::identifier(), ['taskClass' => $taskClass, 'warning' => $warning])
             <div class="buttons">
+                @if($taskClass::requireConfirmation())
+                <button type="button" data-confirmation="{{$taskClass::warnConfirmationText()}}" data-confirmation-answer="{{$taskClass::warnConfirmationAnswer()}}" class="button button-primary button-start-task">Start {{$taskClass::title()}}</button>
+                @else
                 <button type="button" class="button button-primary button-start-task">Start {{$taskClass::title()}}</button>
+                @endif
             </div>
         </div>
         <div class="task-progress" style="display: none">

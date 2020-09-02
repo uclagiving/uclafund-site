@@ -98,7 +98,7 @@ function relative_admin_url($path = '', $scheme = 'admin') {
 }
 
 function ilab_admin_url($path = '', $scheme = 'admin') {
-	if (is_multisite() && \ILAB\MediaCloud\Utilities\Environment::NetworkMode()) {
+	if (is_multisite() && \MediaCloud\Plugin\Utilities\Environment::NetworkMode()) {
 		return network_admin_url($path, $scheme);
 	} else {
 		return admin_url($path, $scheme);
@@ -114,5 +114,19 @@ if (!function_exists('mb_strpos')) {
 if (!function_exists('mb_strtolower')) {
 	function mb_strtolower($string) {
 		return strtolower($string);
+	}
+}
+
+if (!function_exists('array_except')) {
+	/**
+	 * Get all of the given array except for a specified array of items.
+	 *
+	 * @param  array $array
+	 * @param  array|string $keys
+	 * @return array
+	 */
+	function array_except($array, $keys)
+	{
+		return array_diff_key($array, array_flip((array)$keys));
 	}
 }

@@ -14,9 +14,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\CLI;
+namespace MediaCloud\Plugin\CLI;
 
-use ILAB\MediaCloud\Tasks\Task;
+use MediaCloud\Plugin\Tasks\Task;
 
 if (!defined('ABSPATH')) { header('Location: /'); die; }
 
@@ -61,7 +61,6 @@ abstract class Command extends \WP_CLI_Command {
 		$task->wait();
 		$task->dumpExisting();
 		$task->loadNextData();
-
 
 		Command::Out("", true);
 		Command::Info("Found %W{$task->totalItems}%n items.", true);

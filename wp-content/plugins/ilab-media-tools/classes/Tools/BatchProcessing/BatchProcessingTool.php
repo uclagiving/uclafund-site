@@ -11,14 +11,16 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Tools\BatchProcessing;
+namespace MediaCloud\Plugin\Tools\BatchProcessing;
 
-use ILAB\MediaCloud\Storage\StorageGlobals;
-use ILAB\MediaCloud\Tools\Storage\StorageTool;
-use ILAB\MediaCloud\Tools\Tool;
-use ILAB\MediaCloud\Tools\ToolsManager;
-use ILAB\MediaCloud\Utilities\Environment;
-use ILAB\MediaCloud\Utilities\Logging\Logger;
+use MediaCloud\Plugin\Tools\Storage\StorageToolSettings;
+use MediaCloud\Plugin\Tasks\TaskDatabase;
+use MediaCloud\Plugin\Tools\Storage\StorageTool;
+use MediaCloud\Plugin\Tools\Tool;
+use MediaCloud\Plugin\Tools\ToolsManager;
+use MediaCloud\Plugin\Utilities\Environment;
+use MediaCloud\Plugin\Utilities\Logging\Logger;
+use function MediaCloud\Plugin\Utilities\json_response;
 
 if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
 
@@ -41,6 +43,21 @@ class BatchProcessingTool extends Tool {
 
 	public function alwaysEnabled() {
 		return true;
+	}
+
+	//endregion
+
+
+
+	//region Actions
+
+	public function clearBackgroundTokens() {
+		global $wpdb;
+		$wpdb->query("delete from {$wpdb->options} where option_name like '%mcloud_token_%'");
+
+		TaskDatabase::deleteOldTokens();
+
+		json_response(['status' => 'ok', 'message' => 'Tokens cleared.']);
 	}
 
 	//endregion

@@ -5,7 +5,7 @@ Plugin Name: Media Cloud
 Plugin URI: https://github.com/interfacelab/ilab-media-tools
 Description: Automatically upload media to Amazon S3 and integrate with Imgix, a real-time image processing CDN.  Boosts site performance and simplifies workflows.
 Author: interfacelab
-Version: 3.3.21
+Version: 4.1.0
 Author URI: http://interfacelab.io
 */
 // Copyright (c) 2016 Interfacelab LLC. All rights reserved.
@@ -30,14 +30,15 @@ if ( function_exists( 'media_cloud_licensing' ) ) {
     return;
 }
 
+include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-if ( !defined( 'PHP_MAJOR_VERSION' ) || PHP_MAJOR_VERSION < 5 || PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION < 6 ) {
+if ( !defined( 'PHP_MAJOR_VERSION' ) || PHP_MAJOR_VERSION < 7 || PHP_MAJOR_VERSION == 7 && PHP_MINOR_VERSION < 1 ) {
     deactivate_plugins( plugin_basename( __FILE__ ) );
     add_action( 'admin_notices', function () {
         ?>
         <div class="notice notice-error is-dismissible">
             <p><?php 
-        _e( 'Media Cloud requires PHP 5.6 or higher.', 'ilab-media-tools' );
+        _e( 'Media Cloud requires PHP 7.1 or higher.', 'ilab-media-tools' );
         ?></p>
         </div>
 		<?php 
@@ -93,8 +94,8 @@ if ( defined( 'MEDIA_CLOUD_VERSION' ) ) {
 }
 
 // Version Defines
-define( 'MEDIA_CLOUD_VERSION', '3.3.21' );
-define( 'MEDIA_CLOUD_INFO_VERSION', '1.0.1' );
+define( 'MEDIA_CLOUD_VERSION', '4.1.0' );
+define( 'MEDIA_CLOUD_INFO_VERSION', '4.0.2' );
 define( 'MCLOUD_IS_BETA', false );
 // Directory defines
 define( 'ILAB_TOOLS_DIR', dirname( __FILE__ ) );
@@ -102,6 +103,7 @@ define( 'ILAB_CONFIG_DIR', ILAB_TOOLS_DIR . '/config' );
 define( 'ILAB_HELPERS_DIR', ILAB_TOOLS_DIR . '/helpers' );
 define( 'ILAB_CLASSES_DIR', ILAB_TOOLS_DIR . '/classes' );
 define( 'ILAB_VENDOR_DIR', ILAB_TOOLS_DIR . '/vendor' );
+define( 'ILAB_LIB_DIR', ILAB_TOOLS_DIR . '/lib' );
 define( 'ILAB_VIEW_DIR', ILAB_TOOLS_DIR . '/views' );
 define( 'ILAB_PLUGIN_NAME', plugin_basename( __FILE__ ) );
 define( 'ILAB_PUB_IMG_DIR', ILAB_TOOLS_DIR . '/public/img' );
@@ -112,7 +114,11 @@ define( 'ILAB_PUB_URL', $plug_url . 'public' );
 define( 'ILAB_PUB_JS_URL', $plug_url . 'public/js' );
 define( 'ILAB_PUB_CSS_URL', $plug_url . 'public/css' );
 define( 'ILAB_PUB_IMG_URL', $plug_url . 'public/img' );
+define( 'ILAB_BLOCKS_URL', $plug_url . 'public/blocks/' );
 // Composer
+if ( file_exists( ILAB_LIB_DIR . '/autoload.php' ) ) {
+    require_once ILAB_LIB_DIR . '/autoload.php';
+}
 if ( file_exists( ILAB_VENDOR_DIR . '/autoload.php' ) ) {
     require_once ILAB_VENDOR_DIR . '/autoload.php';
 }
@@ -149,10 +155,7 @@ if ( function_exists( 'media_cloud_licensing' ) ) {
                 'has_addons'      => false,
                 'has_paid_plans'  => true,
                 'has_affiliation' => 'selected',
-                'trial'           => array(
-                'days'               => 7,
-                'is_require_payment' => true,
-            ),
+                'trial'           => false,
                 'menu'            => array(
                 'slug'    => 'media-cloud',
                 'contact' => false,
@@ -169,12 +172,6 @@ if ( function_exists( 'media_cloud_licensing' ) ) {
     // Init Freemius.
     //	media_cloud_licensing();
     media_cloud_licensing()->add_filter( 'permission_list', function ( $permissions ) {
-        $permissions['crisp'] = array(
-            'icon-class' => 'dashicons dashicons-admin-comments',
-            'label'      => media_cloud_licensing()->get_text_inline( 'Crisp', 'crisp' ),
-            'desc'       => media_cloud_licensing()->get_text_inline( 'Rendering Crisp\'s beacon for easy support access', 'permissions-crips' ),
-            'priority'   => 16,
-        );
         $permissions['feature-tracking'] = array(
             'icon-class' => 'dashicons dashicons-admin-generic',
             'label'      => media_cloud_licensing()->get_text_inline( 'Plugin Features', 'plugin-features' ),
@@ -186,27 +183,34 @@ if ( function_exists( 'media_cloud_licensing' ) ) {
     media_cloud_licensing()->add_action(
         'after_account_connection',
         function ( $user, $install ) {
-        \ILAB\MediaCloud\Tools\ToolsManager::AccountConnected();
+        \MediaCloud\Plugin\Tools\ToolsManager::AccountConnected();
     },
         1000,
         2
     );
-    media_cloud_licensing()->add_action( 'after_uninstall', [ "\\ILAB\\MediaCloud\\Tools\\ToolsManager", 'uninstall' ] );
+    media_cloud_licensing()->add_action( 'after_uninstall', [ "\\MediaCloud\\Plugin\\Tools\\ToolsManager", 'uninstall' ] );
     // Signal that SDK was initiated.
     do_action( 'media_cloud_licensing_loaded' );
 }
 
 add_action( 'plugins_loaded', function () {
-    \ILAB\MediaCloud\Tools\ToolsManager::Boot();
+    \MediaCloud\Plugin\Tools\ToolsManager::Boot();
 } );
-register_activation_hook( __FILE__, [ "\\ILAB\\MediaCloud\\Tools\\ToolsManager", 'activate' ] );
-register_deactivation_hook( __FILE__, [ "\\ILAB\\MediaCloud\\Tools\\ToolsManager", 'deactivate' ] );
+register_activation_hook( __FILE__, [ "\\MediaCloud\\Plugin\\Tools\\ToolsManager", 'activate' ] );
+register_deactivation_hook( __FILE__, [ "\\MediaCloud\\Plugin\\Tools\\ToolsManager", 'deactivate' ] );
 add_action( 'admin_init', function () {
     if ( !wp_doing_ajax() && !media_cloud_licensing()->is_activation_mode() ) {
         
         if ( get_option( 'mcloud_show_wizard' ) ) {
             delete_option( 'mcloud_show_wizard' );
-            exit( wp_redirect( admin_url( 'admin.php?page=media-cloud-wizard' ) ) );
+            
+            if ( media_cloud_licensing()->is_network_active() ) {
+                \MediaCloud\Plugin\Utilities\Environment::UpdateNetworkMode( true );
+                exit( wp_redirect( network_admin_url( 'admin.php?page=media-cloud-wizard' ) ) );
+            } else {
+                exit( wp_redirect( admin_url( 'admin.php?page=media-cloud-wizard' ) ) );
+            }
+        
         }
     
     }

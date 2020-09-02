@@ -11,9 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Utilities;
+namespace MediaCloud\Plugin\Utilities;
 
-use ILAB\MediaCloud\Utilities\Logging\Logger;
+use MediaCloud\Plugin\Utilities\Logging\Logger;
 
 final class Performance {
 	private static $perfMarkers = [];
@@ -36,7 +36,7 @@ final class Performance {
 		static::$level++;
 		static::$perfMarkers[$marker] = microtime(true);
 		$indent = str_repeat("\t", max(static::$level - 1, 0));
-		Logger::info("Timing: {$currentTime}{$indent}Start {$marker}");
+		Logger::info("Timing: {$currentTime}{$indent}Start {$marker}", [], __METHOD__, __LINE__);
 	}
 
 	public static function end($marker) {
@@ -52,7 +52,7 @@ final class Performance {
 
 			$indent = str_repeat("\t", max(static::$level - 1, 0));
 			$time = number_format(microtime(true) - static::$perfMarkers[$marker], 10);
-			Logger::info("Timing: {$currentTime}{$indent}End {$marker} => $time");
+			Logger::info("Timing: {$currentTime}{$indent}End {$marker} => $time", [], __METHOD__, __LINE__);
 			unset(static::$perfMarkers[$marker]);
 		}
 

@@ -14,10 +14,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Wizard;
+namespace MediaCloud\Plugin\Wizard;
 
-use ILAB\MediaCloud\Utilities\View;
-use ILAB\MediaCloud\Wizard\Config\Config;
+use MediaCloud\Plugin\Utilities\View;
+use MediaCloud\Plugin\Wizard\Config\Config;
 
 class SetupWizard {
 	/** @var Config[]|null  */
@@ -25,6 +25,12 @@ class SetupWizard {
 	private $defaultConfig = null;
 
 	public function __construct() {
+		if (isset($_REQUEST['wizard_ajax'])) {
+			$this->setupWizard();
+		}
+	}
+
+	protected function setupWizard() {
 		$config = include ILAB_CONFIG_DIR.'/wizard.config.php';
 		if (!is_array($config)) {
 			throw new \Exception("Invalid wizard configuration.");
@@ -56,6 +62,10 @@ class SetupWizard {
 	}
 
 	public function renderSetupWizard() {
+		if ($this->defaultConfig === null) {
+			$this->setupWizard();
+		}
+
 		if (isset($_REQUEST['wizard'])) {
 			$which = sanitize_text_field($_REQUEST['wizard']);
 			if (isset($this->registry[$which])) {

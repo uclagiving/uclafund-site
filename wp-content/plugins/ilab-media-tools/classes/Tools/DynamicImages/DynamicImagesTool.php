@@ -11,27 +11,25 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 // **********************************************************************
 
-namespace ILAB\MediaCloud\Tools\DynamicImages;
+namespace MediaCloud\Plugin\Tools\DynamicImages;
 
-use ILAB\MediaCloud\Tools\Storage\StorageTool;
-use ILAB\MediaCloud\Tools\Tool;
-use ILAB\MediaCloud\Tools\ToolsManager;
-use function ILAB\MediaCloud\Utilities\arrayPath;
-use ILAB\MediaCloud\Utilities\Environment;
-use ILAB\MediaCloud\Utilities\NoticeManager;
-use ILAB\MediaCloud\Utilities\Tracker;
-use ILAB\MediaCloud\Utilities\View;
-use function ILAB\MediaCloud\Utilities\gen_uuid;
-use function ILAB\MediaCloud\Utilities\json_response;
-use function ILAB\MediaCloud\Utilities\parse_req;
-use function ILAB\MediaCloud\Utilities\vomit;
+use MediaCloud\Plugin\Tools\Storage\StorageTool;
+use MediaCloud\Plugin\Tools\Tool;
+use MediaCloud\Plugin\Tools\ToolsManager;
+use MediaCloud\Plugin\Utilities\NoticeManager;
+use MediaCloud\Plugin\Utilities\Tracker;
+use MediaCloud\Plugin\Utilities\View;
+use function MediaCloud\Plugin\Utilities\arrayPath;
+use function MediaCloud\Plugin\Utilities\gen_uuid;
+use function MediaCloud\Plugin\Utilities\json_response;
+use function MediaCloud\Plugin\Utilities\parse_req;
 
 abstract class DynamicImagesTool extends Tool {
-    protected $signingKey = null;
+    /** @var DynamicImagesToolSettings  */
+    protected $settings = null;
+
     protected $paramPropsByType;
     protected $paramProps;
-    protected $keepThumbnails;
-    protected $imageQuality;
 
     protected $shouldCrop = false;
 
@@ -74,8 +72,8 @@ abstract class DynamicImagesTool extends Tool {
                             <p>You have an image optimizer plugin installed and activated.  Because you are using direct upload functionality, no image you upload will be processed by these plugins as these uploads go directly to your cloud storage, bypassing WordPress completely.</p>
                             <p>You should consider deactivating these image optimizer plugins.</p>
                             <?php else: ?>
-                            <div style="text-transform: uppercase; font-weight:bold; opacity: 0.8; margin-bottom: 0; padding-bottom: 0">Imgix/Dynamic Images and Image Optimizers</div>
-                            <p>You have an image optimizer plugin installed and activated.  Imgix and Dynamic Images functionality will not use the images that these plugins optimize.</p>
+                            <div style="text-transform: uppercase; font-weight:bold; opacity: 0.8; margin-bottom: 0; padding-bottom: 0">Imgix and Image Optimizers</div>
+                            <p>You have an image optimizer plugin installed and activated.  Imgix functionality will not use the images that these plugins optimize.</p>
                             <p>In the case of Imgix, Imgix will optimize images automatically for you when rendering them.</p>
                             <?php endif; ?>
                         </div>
@@ -137,12 +135,18 @@ abstract class DynamicImagesTool extends Tool {
 
         add_filter('clean_url', [$this, 'fixCleanedUrls'], 1000, 3);
 
-        if (!$this->keepThumbnails) {
+        if (empty($this->settings->keepThumbnails)) {
             add_filter('wp_image_editors', function($editors) {
-                array_unshift($editors, '\ILAB\MediaCloud\Tools\DynamicImages\DynamicImageEditor');
+                array_unshift($editors, '\MediaCloud\Plugin\Tools\DynamicImages\DynamicImageEditor');
 
                 return $editors;
             });
+        } else {
+	        add_filter('wp_image_editors', function($editors) {
+		        array_unshift($editors, '\MediaCloud\Plugin\Tools\Storage\StorageImageEditor');
+
+		        return $editors;
+	        }, PHP_INT_MAX);
         }
 
 	    add_filter('wp_get_attachment_metadata', function($metadata, $attachmentId) {
@@ -155,7 +159,13 @@ abstract class DynamicImagesTool extends Tool {
 	            return $metadata;
             }
 
-		    $mime = $metadata['s3']['mime-type'];
+	        if (!isset($metadata['s3']['mime-type'])) {
+	            $mime = get_post_mime_type($attachmentId);
+	            $metadata['s3']['mime-type'] = $mime;
+            } else {
+		        $mime = $metadata['s3']['mime-type'];
+            }
+
 		    if (strpos($mime, 'image/') !== 0) {
 		        return $metadata;
             }
@@ -881,8 +891,6 @@ abstract class DynamicImagesTool extends Tool {
     public static function currentDynamicImagesTool() {
         if (ToolsManager::instance()->toolEnabled('imgix')) {
             return ToolsManager::instance()->tools['imgix'];
-        } else if (ToolsManager::instance()->toolEnabled('glide')) {
-            return ToolsManager::instance()->tools['glide'];
         }
 
         return null;
