@@ -1,6 +1,7 @@
 <?php
 
 namespace MediaCloud\Vendor\Aws;
+use MediaCloud\Plugin\Tools\Storage\Driver\S3\S3StorageSettings;
 use MediaCloud\Vendor\GuzzleHttp\Client;
 use MediaCloud\Vendor\Psr\Http\Message\RequestInterface;
 use MediaCloud\Vendor\GuzzleHttp\ClientInterface;
@@ -519,3 +520,13 @@ function is_valid_epoch($input)
     }
     return false;
 }
+
+function safe_is_readable($filename) {
+	if (empty(S3StorageSettings::instance()->useCredentialProvider)) {
+		return false;
+	}
+
+	return is_readable($filename);
+}
+
+

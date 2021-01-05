@@ -59,6 +59,7 @@ if (!defined('ABSPATH')) { header('Location: /'); die; }
  * @property bool $cacheLookups
  * @property bool $skipOtherImport
  * @property bool $keepSubsitePath
+ * @property bool $replaceAllImageUrls
  */
 class StorageToolSettings extends ToolSettings {
 	//region Static Class Variables
@@ -95,6 +96,7 @@ class StorageToolSettings extends ToolSettings {
 		"cacheLookups" => ["mcloud-storage-cache-lookups", null, true],
 		"skipOtherImport" => ["mcloud-storage-skip-import-other-plugin", null, false],
 		"keepSubsitePath" => ["mcloud-storage-keep-subsite-path", null, false],
+		"replaceAllImageUrls" => ["mcloud-storage-replace-all-image-urls", null, true],
 	];
 
 
@@ -166,7 +168,7 @@ class StorageToolSettings extends ToolSettings {
 				}
 			}
 
-			if(!in_array($this->_privacy, ['public-read', 'authenticated-read'])) {
+			if(!in_array($this->_privacy, ['public-read', 'private', 'authenticated-read'])) {
 				NoticeManager::instance()->displayAdminNotice('error', "Your AWS S3 settings are incorrect.  The ACL '{$this->privacy}' is not valid.  Defaulting to 'public-read'.");
 				$this->_privacy = 'public-read';
 			}

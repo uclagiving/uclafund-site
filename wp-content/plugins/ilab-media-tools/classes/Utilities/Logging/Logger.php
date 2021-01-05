@@ -14,9 +14,11 @@
 namespace MediaCloud\Plugin\Utilities\Logging;
 
 use MediaCloud\Plugin\CLI\Command;
+use MediaCloud\Plugin\Tools\Debugging\DebuggingToolSettings;
 use MediaCloud\Plugin\Utilities\Environment;
 use MediaCloud\Vendor\Monolog\Formatter\LineFormatter;
 use MediaCloud\Vendor\Monolog\Handler\ErrorLogHandler;
+use MediaCloud\Vendor\Monolog\Handler\HandlerInterface;
 use MediaCloud\Vendor\Monolog\Handler\SyslogUdpHandler;
 use MediaCloud\Vendor\Monolog\Logger as MonologLogger;
 
@@ -31,6 +33,11 @@ class Logger {
 	private $time = [];
 
 	private $useWPCLI = false;
+
+	private $tempLoggers = [];
+
+	/** @var DebuggingToolSettings  */
+	private $settings = null;
 	//endregion
 
 	//region Constructor
@@ -46,7 +53,9 @@ class Logger {
 		$enabled = ($this->useWPCLI) ?: Environment::Option("mcloud-tool-enabled-debugging", 'ILAB_MEDIA_DEBUGGING_ENABLED', false);
 
 		if ($enabled) {
-			$level = Environment::Option('mcloud-debug-logging-level', null, 'info');
+			$this->settings = DebuggingToolSettings::instance();
+
+			$level = $this->settings->debugLoggingLevel;
 
 			if ($level != 'none') {
 				$realLevel = MonologLogger::INFO;
@@ -66,8 +75,8 @@ class Logger {
                 $errorLogHandler->setFormatter(new LineFormatter("%channel%.%level_name%: %message% %context% %extra%"));
 				$this->logger->pushHandler($errorLogHandler);
 
-				$papertrailHost = Environment::Option('mcloud-debug-remote-url', null, null);
-				$papertrailPort = Environment::Option('mcloud-debug-remote-url-port', null, null);
+				$papertrailHost = $this->settings->debugRemoteUrl;//Environment::Option('mcloud-debug-remote-url', null, null);
+				$papertrailPort = $this->settings->debugRemotePort;//Environment::Option('mcloud-debug-remote-url-port', null, null);
 
 				if (!empty($papertrailHost) && !empty($papertrailPort)) {
 					$papertrail = new SyslogUdpHandler($papertrailHost, $papertrailPort);
@@ -90,6 +99,52 @@ class Logger {
                     $this->logSystemError($lastError['type'], $lastError['message'], $lastError['file'], $lastError['line']);
                 }
             });
+		}
+	}
+	//endregion
+
+	//region Temporary Loggers
+
+	/**
+	 * @param string $name
+	 * @param HandlerInterface $logger
+	 */
+	public function addTemporaryLogger($name, $logger) {
+		if (empty($this->logger)) {
+			return;
+		}
+
+		$this->tempLoggers[$name] = $logger;
+		$this->logger->pushHandler($logger);
+	}
+
+	public function removeTemporaryLogger($name) {
+		if (empty($this->logger)) {
+			return;
+		}
+
+		if (isset($this->tempLoggers[$name])) {
+			$handler = $this->logger->popHandler();
+			$otherLoggers = [];
+
+			if ($handler != $this->tempLoggers[$name]) {
+				$otherLoggers[] = $handler;
+			}
+
+			while (!empty($handler) && ($handler != $this->tempLoggers[$name])) {
+				if (count($this->logger->getHandlers() == 0)) {
+					$handler = null;
+					break;
+				}
+
+				$otherLoggers[] = $handler = $this->logger->popHandler();
+			}
+
+			foreach($otherLoggers as $otherLogger) {
+				$this->logger->pushHandler($otherLogger);
+			}
+
+			unset($this->tempLoggers[$name]);
 		}
 	}
 	//endregion
