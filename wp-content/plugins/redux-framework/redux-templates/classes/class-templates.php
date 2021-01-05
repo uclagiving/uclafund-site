@@ -20,11 +20,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Templates {
 
 	/**
+	 * Default container width.
+	 *
+	 * @var int
+	 */
+	public static $content_width = 1200;
+
+	/**
 	 * ReduxTemplates Template.
 	 *
 	 * @since 4.0.0
 	 */
 	public function __construct() {
+		global $pagenow;
+		if ( ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && \Redux_Enable_Gutenberg::$is_disabled ) {
+				// We don't want to add templates unless it's a gutenberg page.
+				return;
+		}
+
 		// Include ReduxTemplates default template without wrapper.
 		add_filter( 'template_include', array( $this, 'template_include' ) );
 		// Override the default content-width when using Redux templates so the template doesn't look like crao.
@@ -38,6 +51,29 @@ class Templates {
 			}
 		}
 
+		add_filter( 'admin_body_class', array( $this, 'add_body_class' ), 999 );
+
+	}
+
+	/**
+	 * Add the redux-template class to the admin body if a redux-templates page type is selected.
+	 *
+	 * @param string $classes Classes string for admin panel.
+	 *
+	 * @since 4.1.19
+	 * @return string
+	 */
+	public function add_body_class( $classes ) {
+		global $post;
+		$screen = get_current_screen();
+		if ( 'post' === $screen->base && get_current_screen()->is_block_editor() ) {
+			$check = get_post_meta( $post->ID, '_wp_page_template', true );
+			if ( strpos( $check, 'redux-templates_' ) !== false ) {
+				$classes .= ' redux-template';
+			}
+		}
+
+		return $classes;
 	}
 
 	/**
@@ -74,8 +110,21 @@ class Templates {
 		if ( $this->check_template( $to_find ) ) {
 			global $content_width;
 			if ( $content_width < 1000 ) {
-				$content_width = 1200;
+				$content_width = get_option( '_redux_content_width', self::$content_width );
 			}
+		}
+	}
+
+	/**
+	 * Override the $content_width variable for themes so our templates work properly and don't look squished.
+	 *
+	 * @since 4.0.0
+	 */
+	public static function inline_editor_css() {
+		global $content_width;
+		if ( $content_width < 1000 ) {
+			$content_width = get_option( '_redux_content_width', self::$content_width );
+			return ".redux-template .wp-block {max-width: {$content_width}px;}";
 		}
 	}
 

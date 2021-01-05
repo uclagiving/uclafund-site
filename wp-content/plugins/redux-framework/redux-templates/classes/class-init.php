@@ -57,6 +57,7 @@ class Init {
 	public static function load() {
 		new ReduxTemplates\API();
 		new ReduxTemplates\Templates();
+		new ReduxTemplates\Notice_Overrides();
 	}
 
 	/**
@@ -132,24 +133,15 @@ class Init {
 			'i18n'              => 'redux-framework',
 			'plugin'            => REDUXTEMPLATES_DIR_URL,
 			'mokama'            => \Redux_Helpers::mokama(),
+			'key'               => \base64_encode( \Redux_Functions::gs() ), // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			'version'           => \Redux_Core::$version,
 			'supported_plugins' => array(), // Load the supported plugins.
 			'tos'               => \Redux_Connection_Banner::tos_blurb( 'import_wizard' ),
 		);
-
 		if ( ! $global_vars['mokama'] ) {
-
 			// phpcs:disable Squiz.PHP.CommentedOutCode
 			// delete_user_meta( get_current_user_id(), '_redux_templates_counts'); // To test left.
-			if ( ! \Redux_Functions_Ex::activated() ) {
-				$count = get_user_meta( get_current_user_id(), '_redux_templates_counts', true );
-				if ( '' === $count ) {
-					$count = self::$default_left;
-				}
-				$global_vars['left'] = $count;
-			} else {
-				$global_vars['left'] = 999;
-			}
+			$global_vars['left'] = ReduxTemplates\Init::left( get_current_user_id() );
 
 			// phpcs:ignore
 			// delete_user_meta( get_current_user_id(), '_redux_welcome_guide' ); // For testing.
@@ -166,6 +158,10 @@ class Init {
 			$global_vars['u'] = rtrim( \Redux_Functions_Ex::get_site_utm_url( '', 'library', true ), '1' );
 		}
 
+		// TODO - Only have this show up After 2 imports and Redux installed for a week. If they dismissed, then show up again in 30 days one last time.
+		// phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
+		// $global_vars['nps'] = __( 'Hey there. You\'ve been using Redux for a bit now, would you mind letting us know how likely you are to recommend Redux to a friend or colleague?', 'redux-framework' );
+
 		wp_localize_script(
 			'redux-templates-js',
 			'redux_templates',
@@ -178,6 +174,10 @@ class Init {
 			false,
 			$version
 		);
+		$extra_css = ReduxTemplates\Templates::inline_editor_css();
+		if ( ! empty( $extra_css ) ) {
+			wp_add_inline_style( 'redux-fontawesome', $extra_css );
+		}
 	}
 
 	/**
@@ -194,6 +194,27 @@ class Init {
 			REDUXTEMPLATES_VERSION
 		);
 	}
+
+	/**
+	 * Get the items left.
+	 *
+	 * @param int $uid User ID number.
+	 * @access public
+	 * @since 4.1.18
+	 * @return int
+	 */
+	public static function left( $uid ) {
+		$count = get_user_meta( $uid, '_redux_templates_counts', true );
+		if ( empty( $count ) ) {
+			$count = self::$default_left;
+		}
+		if ( $count <= 0 ) {
+			$count = 0;
+		}
+
+		return $count;
+	}
+
 }
 
 new Init();

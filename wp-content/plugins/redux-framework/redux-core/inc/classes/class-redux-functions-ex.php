@@ -186,6 +186,39 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 		}
 
 		/**
+		 * Check s.
+		 *
+		 * @access public
+		 * @since 4.0.0
+		 * @return bool
+		 */
+		public static function s() {
+			if ( ! empty( get_option( 'redux_p' . 'ro_lic' . 'ense_key', false ) ) ) { // phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
+				$s = get_option( 'redux_p' . 'ro_l' . 'icense_status', false ); // phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
+				if ( ! empty( $s ) && in_array( $s, array( 'valid', 'site_inactive' ), true ) ) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/**
+		 * Is file in theme.
+		 *
+		 * @param     string $file File to check.
+		 *
+		 * @return bool
+		 */
+		public static function file_in_theme( $file ) {
+			if ( strpos( dirname( $file ), get_template_directory() ) !== false ) {
+				return true;
+			} elseif ( strpos( dirname( $file ), get_stylesheet_directory() ) !== false ) {
+				return true;
+			}
+			return false;
+		}
+
+		/**
 		 * Is Redux embedded inside a plugin.
 		 *
 		 * @param     string $file File to check.
@@ -195,6 +228,10 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 		public static function is_inside_plugin( $file ) {
 			$file            = self::wp_normalize_path( $file );
 			$plugin_basename = self::wp_normalize_path( plugin_basename( $file ) );
+
+			if ( self::file_in_theme( $file ) ) {
+				return false;
+			}
 
 			if ( $plugin_basename !== $file ) {
 				$slug = explode( '/', $plugin_basename );
@@ -222,6 +259,11 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 		 * @return array|bool
 		 */
 		public static function is_inside_theme( $file = '' ) {
+
+			if ( ! self::file_in_theme( $file ) ) {
+				return false;
+			}
+
 			$theme_paths = array(
 				self::wp_normalize_path( get_template_directory() )   => get_template_directory_uri(),
 				// parent.
@@ -289,6 +331,9 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 		 * @return object - Extended field class.
 		 */
 		public static function extension_compatibility( $parent, $path, $ext_class, $new_class_name, $name ) {
+			if ( empty( $new_class_name ) ) {
+				return;
+			}
 			$upload_dir = ReduxFramework::$_upload_dir . '/extension_compatibility/';
 			if ( ! file_exists( $upload_dir . $ext_class . '.php' ) ) {
 				if ( ! is_dir( $upload_dir ) ) {
@@ -319,10 +364,16 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 					$parent->filesystem->put_contents( $upload_dir . $new_class_name . '.php', $template );
 				}
 				if ( file_exists( $upload_dir . $new_class_name . '.php' ) ) {
-					include_once $upload_dir . $new_class_name . '.php';
+					if ( ! class_exists( $new_class_name ) ) {
+						require_once $upload_dir . $new_class_name . '.php';
+					}
+					if ( class_exists( $new_class_name ) ) {
+						return new $new_class_name( $parent, $path, $ext_class );
+					}
+				} else {
+					// Why doesn't the file exist? Gah permissions.
+					return;
 				}
-
-				return new $new_class_name( $parent, $path, $ext_class );
 			}
 		}
 
