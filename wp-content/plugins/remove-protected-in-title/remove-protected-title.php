@@ -3,7 +3,7 @@
 	* Plugin Name: Remove Protected In Title
 	* Plugin URI: http://www.dejanblazeski.com/plugin-remove-protected-from-wordpress-page-title/
 	* Description: Removes "Private" or "Protected" prefix that wordpress adds to password-protected & private pages
-	* Version: 3.0
+	* Version: 3.1
 	* Author: Dejan Blazeski
 	* Author URI: http://www.dejanblazeski.com
 	* License: GPL2
