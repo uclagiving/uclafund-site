@@ -893,7 +893,7 @@ class Tribe__Events__Repositories__Event extends Tribe__Repository {
 	 *
 	 * @param float|array $value       The cost to use for the comparison; in the case of `BETWEEN`, `NOT BETWEEN`,
 	 *                                 `IN` and `NOT IN` operators this value should be an array.
-	 * @param string      $operator    Teh comparison operator to use for the comparison, one of `<`, `<=`, `>`, `>=`,
+	 * @param string      $operator    The comparison operator to use for the comparison, one of `<`, `<=`, `>`, `>=`,
 	 *                                 `=`, `BETWEEN`, `NOT BETWEEN`, `IN`, `NOT IN`.
 	 * @param string      $symbol      The desired currency symbol or symbols; this symbol can be a currency ISO code,
 	 *                                 e.g. "USD" for U.S. dollars, or a currency symbol, e.g. "$".
@@ -1285,7 +1285,7 @@ class Tribe__Events__Repositories__Event extends Tribe__Repository {
 	 * @return array The filtered event post array.
 	 */
 	protected function update_linked_post_meta( array $postarr ) {
-		// @todo create linked posts here?! Using ORM?
+		// @todo [BTRIA-592]: Create linked posts here?! Using ORM?
 		if ( isset( $postarr['meta_input']['_EventVenueID'] ) && ! tribe_is_venue( $postarr['meta_input']['_EventVenueID'] ) ) {
 			unset( $postarr['meta_input']['_EventVenueID'] );
 		}
