@@ -26,6 +26,8 @@ class SiteOrigin_Widget_LayoutSlider_Widget extends SiteOrigin_Widget_Base_Slide
 			false,
 			plugin_dir_path(__FILE__)
 		);
+
+		add_action( 'siteorigin_widgets_enqueue_frontend_scripts_sow-layout-slider', array( $this, 'register_shortcode_script' ) );
 	}
 
 	function get_widget_form(){
@@ -39,11 +41,20 @@ class SiteOrigin_Widget_LayoutSlider_Widget extends SiteOrigin_Widget_Base_Slide
 					'selectorArray' => array(
 						array(
 							'selector' => '.siteorigin-widget-field-image .media-field-wrapper .current .title',
-							'valueMethod' => 'html'
+							'valueMethod' => 'html',
 						),
 						array(
 							'selector' => '.siteorigin-widget-field-videos .siteorigin-widget-field-repeater-items  .media-field-wrapper .current .title',
-							'valueMethod' => 'html'
+							'valueMethod' => 'html',
+						),
+						array(
+							'selector' => '.siteorigin-widget-field-videos .siteorigin-widget-field-repeater-items  .media-field-wrapper .current .title',
+							'valueMethod' => 'html',
+						),
+						array(
+							'selector' => ".siteorigin-widget-field-videos [id*='url']",
+							'update_event' => 'change',
+							'value_method' => 'val',
 						),
 					),
 				),
@@ -106,9 +117,17 @@ class SiteOrigin_Widget_LayoutSlider_Widget extends SiteOrigin_Widget_Base_Slide
 								'item_name' => __('Video', 'so-widgets-bundle'),
 								'label' => __('Background videos', 'so-widgets-bundle'),
 								'item_label' => array(
-									'selector' => "[id*='frames-background_videos-url']",
-									'update_event' => 'change',
-									'value_method' => 'val'
+									'selectorArray' => array(
+										array(
+											'selector' => '.siteorigin-widget-field-file .media-field-wrapper .current .title',
+											'valueMethod' => 'html',
+										),
+										array(
+											'selector' => "[id*='url']",
+											'update_event' => 'change',
+											'value_method' => 'val',
+										),
+									),
 								),
 								'fields' => $this->video_form_fields(),
 							),
@@ -252,7 +271,7 @@ class SiteOrigin_Widget_LayoutSlider_Widget extends SiteOrigin_Widget_Base_Slide
 			'new_window' => !empty( $frame['background']['new_window'] ),
 			'videos' => $frame['background']['videos'],
 			'video-sizing' => 'background',
-			'opacity' => intval($frame['background']['opacity'])/100,
+			'opacity' => (int) $frame['background']['opacity'] / 100,
 		);
 	}
 
@@ -272,6 +291,54 @@ class SiteOrigin_Widget_LayoutSlider_Widget extends SiteOrigin_Widget_Base_Slide
 		<?php
 	}
 
+	function register_shortcode_script() {
+		wp_register_script(
+			'sow-layout-slide-control',
+			plugin_dir_url( __FILE__ ) . 'js/slide-control' . SOW_BUNDLE_JS_SUFFIX . '.js',
+			array( 'jquery', 'sow-slider-slider' ),
+			SOW_BUNDLE_VERSION,
+			true
+		);
+	}
+
+	function add_shortcode( $atts ) {
+		ob_start();
+		$atts = shortcode_atts( array(
+			'slide' => 'next',
+			'label' => '',
+		), $atts );
+
+		wp_enqueue_script( 'sow-layout-slide-control' );
+
+		if ( is_numeric( $atts['slide'] ) ) {
+			$label = sprintf( __( 'Show slide %d', 'so-widgets-bundle' ), $atts['slide'] );
+		} elseif (
+			$atts['slide'] == 'next' ||
+			$atts['slide'] == 'prev' ||
+			$atts['slide'] == 'prev' ||
+			$atts['slide'] == 'previous' ||
+			$atts['slide'] == 'first' ||
+			$atts['slide'] == 'last'
+		) {
+			if ( $atts['slide'] == 'prev' ) {
+				$atts['slide'] = 'previous';
+			}
+
+			$label = sprintf( __( '%s slide', 'so-widgets-bundle' ), ucfirst( $atts['slide'] ) );
+		} else {
+			_e( 'Slide control shortcode error: invalid slide value.', 'so-widgets-bundle' );
+		}
+
+		if ( isset( $label ) ) {
+			// Handle label overriding.
+			$label = empty( $atts['label'] ) ? $label : $atts['label'];
+
+			echo '<a class="sow-slide-control" href="#' . esc_attr( $atts['slide'] ) . '" role="button">' . esc_attr( $label ) . '</a>';
+		}
+
+		return ob_get_clean();
+	}
+
 	/**
 	 * Process the content.
 	 *
@@ -282,8 +349,10 @@ class SiteOrigin_Widget_LayoutSlider_Widget extends SiteOrigin_Widget_Base_Slide
 	 */
 	function process_content( $content, $frame ) {
 		if( function_exists( 'siteorigin_panels_render' ) ) {
+			add_shortcode( 'slide_control', array( $this, 'add_shortcode' ) );
 			$content_builder_id = substr( md5( json_encode( $content ) ), 0, 8 );
 			echo siteorigin_panels_render( 'w'.$content_builder_id, true, $content );
+			remove_shortcode( 'slide_control' );
 		}
 		else {
 			echo __( 'This widget requires Page Builder.', 'so-widgets-bundle' );
@@ -331,7 +400,7 @@ class SiteOrigin_Widget_LayoutSlider_Widget extends SiteOrigin_Widget_Base_Slide
 		$less['vertically_align'] = empty( $instance['design']['vertically_align'] ) ? 'false' : 'true';
 
 		if ( ! empty( $instance['design']['heading_shadow'] ) ) {
-			$less['heading_shadow'] = intval( $instance['design']['heading_shadow'] );
+			$less['heading_shadow'] = (int) $instance['design']['heading_shadow'];
 		}
 
 		if ( ! empty( $instance['design']['heading_color'] ) ) {

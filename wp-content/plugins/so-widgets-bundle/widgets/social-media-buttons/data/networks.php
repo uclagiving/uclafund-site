@@ -148,6 +148,12 @@ return array(
 		'icon_color' => '#FFFFFF',
 		'button_color' => '#B2C01C'
 	),
+	'discord'   => array(
+		'label'    => __( 'Discord', 'so-widgets-bundle' ),
+		'base_url' => 'https://discord.gg/',
+		'icon_color' => '#ffffff',
+		'button_color' => '#7289da',
+	),
 	'dribbble'   => array(
 		'label'    => __( 'Dribbble', 'so-widgets-bundle' ),
 		'base_url' => 'https://dribbble.com/',
@@ -189,6 +195,12 @@ return array(
 		'base_url' => 'https://news.ycombinator.com/',
 		'icon_color' => '#FFFFFF',
 		'button_color' => '#FF6600'
+	),
+	'imdb'   => array(
+		'label'    => __( 'IMDb', 'so-widgets-bundle' ),
+		'base_url' => 'https://www.imdb.com/',
+		'icon_color' => '#F3CE13',
+		'button_color' => '#000'
 	),
 	'jsfiddle'   => array(
 		'label'    => __( 'JSFiddle', 'so-widgets-bundle' ),

@@ -149,6 +149,7 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 							'name'       => __( 'Name', 'so-widgets-bundle' ),
 							'email'      => __( 'Email', 'so-widgets-bundle' ),
 							'tel'        => __( 'Phone Number', 'so-widgets-bundle' ),
+							'number'     => __( 'Number', 'so-widgets-bundle' ),
 							'subject'    => __( 'Subject', 'so-widgets-bundle' ),
 							'text'       => __( 'Text', 'so-widgets-bundle' ),
 							'textarea'   => __( 'Text Area', 'so-widgets-bundle' ),
@@ -186,6 +187,7 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 								'type'        => 'text',
 								'label'       => __( 'Missing message', 'so-widgets-bundle' ),
 								'description' => __( 'Error message to display if this field is missing.', 'so-widgets-bundle' ),
+								'default'     => __( 'Required field', 'so-widgets-bundle' ),
 							)
 						)
 					),
@@ -828,7 +830,6 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 
 			// Field labels
 			'label_font_family'          => $label_font['family'],
-			'label_font_weight'          => ! empty( $label_font['weight'] ) ? $label_font['weight'] : '',
 			'label_font_size'            => $instance['design']['labels']['size'],
 			'label_font_color'           => $instance['design']['labels']['color'],
 			'label_position'             => $label_position,
@@ -837,7 +838,6 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 
 			// Fields
 			'field_font_family'          => $field_font['family'],
-			'field_font_weight'          => ! empty( $field_font['weight'] ) ? $field_font['weight'] : '',
 			'field_font_size'            => $instance['design']['fields']['font_size'],
 			'field_font_color'           => $instance['design']['fields']['color'],
 			'field_margin'               => $instance['design']['fields']['margin'],
@@ -884,6 +884,16 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 			'outline_width'              => $instance['design']['focus']['width'],
 		);
 
+		if ( ! empty( $label_font['weight'] ) ) {
+			$vars['label_font_weight'] = $label_font['weight_raw'];
+			$lessvars_vars['label_font_style'] = $label_font['style'];
+		}
+
+		if ( ! empty( $field_font['weight'] ) ) {
+			$vars['field_font_weight'] = $field_font['weight_raw'];
+			$lessvars_vars['field_font_style'] = $field_font['style'];
+		}
+
 		$global_settings = $this->get_global_settings();
 		if ( ! empty( $global_settings['responsive_breakpoint'] ) ) {
 			$less_vars['responsive_breakpoint'] = $global_settings['responsive_breakpoint'];
@@ -913,7 +923,7 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 	 * @param array $errors
 	 * @param $instance
 	 */
-	function render_form_fields( $fields, $errors = array(), $instance ) {
+	function render_form_fields( $fields, $errors, $instance ) {
 
 		$field_ids      = array();
 		$label_position = $instance['design']['labels']['position'];
@@ -944,19 +954,20 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
             <div class="sow-form-field sow-form-field-<?php echo sanitize_html_class( $field['type'] ) ?>"><?php
 
 			$label = $field['label'];
-			if ( $indicate_required_fields && ! empty( $field['required']['required'] ) ) {
-				$label .= '*';
-			}
+			$indicate_as_required = $indicate_required_fields && ! empty( $field['required']['required'] );
 			$no_placeholder_support = ( $field['type'] != 'radio' && $field['type'] != 'checkboxes' );
 			// label should be rendered before the field, then CSS will do the exact positioning.
 			$render_label_before_field = ( $label_position != 'below' && $label_position != 'inside' ) || ( $label_position == 'inside' && ! $no_placeholder_support );
 			if ( empty( $label_position ) || $render_label_before_field ) {
-				$this->render_form_label( $field_id, $label, $label_position );
+				$this->render_form_label( $field_id, $label, $label_position, $indicate_as_required );
 			}
 
 			$show_placeholder = $label_position == 'inside';
+			if ( $show_placeholder && $indicate_as_required ) {
+				$label .= '*';
+			}
 
-			if ( ! empty( $errors[ $field_name ] ) ) {
+			if ( is_array( $errors ) && ! empty( $errors[ $field_name ] ) ) {
 				?>
                 <div class="sow-error">
 					<?php echo wp_kses_post( $errors[ $field_name ] ) ?>
@@ -986,7 +997,7 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 			?></span><?php
 
 			if ( ! empty( $label_position ) && $label_position == 'below' ) {
-				$this->render_form_label( $field_id, $label, $instance );
+				$this->render_form_label( $field_id, $label, $instance, $indicate_as_required );
 			}
 
 			if ( ! empty( $field['description'] ) ) {
@@ -1001,7 +1012,7 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 		}
 	}
 
-	function render_form_label( $field_id, $label, $position ) {
+	function render_form_label( $field_id, $label, $position, $indicate_as_required = false ) {
 		if ( ! empty( $label ) ) {
 			$label_class = '';
 			if ( ! empty( $position ) ) {
@@ -1009,7 +1020,14 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 			}
 			?><label<?php if ( ! empty( $label_class ) ) {
 				echo $label_class;
-			} ?> for="<?php echo esc_attr( $field_id ) ?>"><strong><?php echo esc_html( $label ) ?></strong></label>
+			} ?> for="<?php echo esc_attr( $field_id ) ?>">
+				<strong>
+					<?php echo esc_html( $label ) ?>
+					<?php if ( $indicate_as_required ) : ?>
+						<span class="sow-form-field-required">*</span>
+					<?php endif; ?>
+				</strong>
+			</label>
 			<?php
 		}
 	}
@@ -1102,6 +1120,14 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 							'label' => $field['label'],
 							'value' => $value,
 						);
+					}
+					break;
+
+				case 'number':
+					if ( ! is_numeric( $value ) ) {
+						$errors[ $field_name ] = __( 'Invalid number.', 'so-widgets-bundle' );
+					} else {
+						$email_fields[ $field['type'] ] = $value;
 					}
 					break;
 

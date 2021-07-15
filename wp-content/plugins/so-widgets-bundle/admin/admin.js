@@ -72,6 +72,8 @@ jQuery( function( $ ){
 				}
 			} );
 		}
+
+		$( window ).trigger( 'resize' );
 	};
 	$('#sow-widget-search input').on( {
 		keyup: widgetSearch,
@@ -79,17 +81,39 @@ jQuery( function( $ ){
 	});
 
 	$( window ).on( 'resize', function() {
-		var $descriptions = $('.so-widget-text').css('height', 'auto');
+		var $descriptions = $( '.so-widget-text:visible' );
 		var largestHeight = 0;
+		var largestHeight = [];
+		var column = 0;
 
-		$descriptions.each(function () {
-			largestHeight = Math.max(largestHeight, $(this).height()  );
-		});
+		$descriptions.css( 'height', 'auto' );
 
-		$descriptions.each(function () {
-			$( this ).css( 'height', largestHeight + "px" );
-		});
+		// Don't size text descriptions on tablet portrait and mobile devices.
+		if ( window.matchMedia( '(max-width: 960px)' ).matches ) {
+			return;
+		}
 
+		// Work out how many columns are visible per row.
+		if ( window.matchMedia( '(min-width: 1800px)' ).matches ) {
+			columnCount = 4;
+		} else if ( window.matchMedia( '(max-width: 1280px)' ).matches ) {
+			columnCount = 2;
+		} else {
+			columnCount = 3;
+		}
+
+		$descriptions.each( function( index ) {
+			column = index / columnCount;
+			// Turnicate column number - IE 11 friendly.
+			column = column < 0 ? Math.ceil( column ) : Math.floor( column );
+			$( this ).data( 'column', column )
+
+			largestHeight[ column ] = Math.max( typeof largestHeight[ column ] == 'undefined' ? 0 : largestHeight[ column ], $( this ).height() );
+		} );
+
+		$descriptions.each( function() {
+			$( this ).css( 'height', largestHeight[ $( this ).data( 'column' ) ] + 'px' );
+		} );
 	} ).trigger( 'resize' );
 
 	// Handle the tabs
@@ -144,9 +168,20 @@ jQuery( function( $ ){
 		} );
 
 		dialog.show();
+		$( '#sow-settings-dialog .so-close' ).trigger( 'focus' );
+
+		// Close dialog when escape is pressed.
+		$( window ).one( 'keyup', function( e ) {
+			if ( e.which === 27 ) {
+				dialog.hide();
+			}
+		} );
 	} );
 
-	dialog.find( '.so-close' ).on( 'click', function( e ) {
+	dialog.find( '.so-close' ).on( 'click keyup', function( e ){
+		if ( e.type == 'keyup' && ! window.sowbForms.isEnter( e ) ) {
+			return;
+		}
 		e.preventDefault();
 		dialog.hide();
 	} );

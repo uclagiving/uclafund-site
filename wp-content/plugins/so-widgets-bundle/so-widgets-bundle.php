@@ -1,8 +1,8 @@
 <?php
 /*
 Plugin Name: SiteOrigin Widgets Bundle
-Description: A collection of all widgets, neatly bundled into a single plugin. It's also a framework to code your own widgets on top of.
-Version: 1.17.11
+Description: A highly customizable collection of widgets, ready to be used anywhere, neatly bundled into a single plugin.
+Version: 1.22.0
 Text Domain: so-widgets-bundle
 Domain Path: /lang
 Author: SiteOrigin
@@ -12,7 +12,7 @@ License: GPL3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 */
 
-define('SOW_BUNDLE_VERSION', '1.17.11');
+define('SOW_BUNDLE_VERSION', '1.22.0');
 define('SOW_BUNDLE_BASE_FILE', __FILE__);
 
 // Allow JS suffix to be pre-set
@@ -47,6 +47,7 @@ class SiteOrigin_Widgets_Bundle {
 	function __construct(){
 		add_action('admin_init', array($this, 'admin_activate_widget') );
 		add_action('admin_menu', array($this, 'admin_menu_init') );
+		add_action('admin_init', array( $this, 'clear_file_cache' ) );
 		add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts') );
 		add_action('admin_enqueue_scripts', array($this, 'admin_register_scripts') );
 
@@ -158,6 +159,8 @@ class SiteOrigin_Widgets_Bundle {
 	 */
 	function clear_widget_cache() {
 		// Remove all cached CSS for SiteOrigin Widgets
+
+		require_once ABSPATH . 'wp-admin/includes/file.php';
 		if( function_exists('WP_Filesystem') && WP_Filesystem() ) {
 			global $wp_filesystem;
 			$upload_dir = wp_upload_dir();
@@ -170,6 +173,9 @@ class SiteOrigin_Widgets_Bundle {
 					$wp_filesystem->delete( $upload_dir['basedir'] . '/siteorigin-widgets/' . $file['name'] );
 				}
 			}
+
+			// Alert other plugins that we've deleted all CSS files.
+			do_action( 'siteorigin_widgets_stylesheet_cleared' );
 		}
 	}
 
@@ -313,7 +319,48 @@ class SiteOrigin_Widgets_Bundle {
 
 		}
 	}
-	
+
+	/**
+	 * Clear all old CSS files.
+	 *
+	 * @var bool $force_delete Whether to forcefully clear the file cache.
+	 * @var int $css_expire The maximum age of a file before it's removed.
+	 */
+	public static function clear_file_cache( $force_delete = false, $css_expire = 604800 ) {
+		// Use this variable to ensure this only runs once per request.
+		static $done = false;
+
+		if ( $done && ! $force_delete ) {
+			return;
+		}
+
+		if ( ! get_transient( 'sow:cleared' ) || $force_delete ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			if ( WP_Filesystem() ) {
+				global $wp_filesystem;
+				$upload_dir = wp_upload_dir();
+
+				$list = $wp_filesystem->dirlist( $upload_dir['basedir'] . '/siteorigin-widgets/' );
+				if ( ! empty( $list ) ) {
+					foreach( $list as $file ) {
+						if ( $file['lastmodunix'] < time() - $css_expire || $force_delete ) {
+							// Delete the file.
+							$wp_filesystem->delete( $upload_dir['basedir'] . '/siteorigin-widgets/' . $file['name'] );
+
+							// Alert other plugins that we've deleted a CSS file.
+							do_action( 'siteorigin_widgets_stylesheet_deleted', $file['name'] );
+						}
+					}
+				}
+			}
+
+			// Set this transient so we know when to clear all the generated CSS.
+			set_transient( 'sow:cleared', true, $css_expire );
+		}
+
+		$done = true;
+	}
+
 	/**
 	 * Register some common scripts used in forms.
 	 */
@@ -418,9 +465,10 @@ class SiteOrigin_Widgets_Bundle {
 			wp_die( __( 'Invalid request.', 'so-widgets-bundle' ), 400 );
 		}
 
-		$form_values = stripslashes_deep( array_shift( array_shift( array_values( $_POST ) ) ) );
-		$widget_object->save_global_settings( $form_values );
-		
+		$form_values = array_values( $_POST );
+		$form_values = array_shift( $form_values );
+		$widget_object->save_global_settings( stripslashes_deep( array_shift( $form_values ) ) );
+
 		wp_send_json_success();
 	}
 
@@ -724,6 +772,9 @@ class SiteOrigin_Widgets_Bundle {
 		}
 		$links['manage'] = '<a href="' . admin_url('plugins.php?page=so-widgets-plugins') . '">'.__('Manage Widgets', 'so-widgets-bundle').'</a>';
 		$links['support'] = '<a href="https://siteorigin.com/thread/" target="_blank" rel="noopener noreferrer">'.__('Support', 'so-widgets-bundle').'</a>';
+		if ( apply_filters( 'siteorigin_premium_upgrade_teaser', true ) && ! defined( 'SITEORIGIN_PREMIUM_VERSION' ) ) {
+			$links['addons'] = '<a href="https://siteorigin.com/downloads/premium/?featured_plugin=so-widgets-bundle" style="color: #3db634" target="_blank" rel="noopener noreferrer">' . __( 'Addons', 'so-widgets-bundle' ) . '</a>';
+		}
 		return $links;
 	}
 

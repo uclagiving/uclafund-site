@@ -31,11 +31,31 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 			SOW_BUNDLE_VERSION
 		);
 
+		wp_enqueue_style(
+			'sowb-widget-block',
+			plugins_url( 'widget-block' . SOW_BUNDLE_JS_SUFFIX . '.css', __FILE__ )
+		);
+
 		$widgets_metadata_list = SiteOrigin_Widgets_Bundle::single()->get_widgets_list();
 		$widgets_manager = SiteOrigin_Widgets_Widget_Manager::single();
 
-		global $wp_widget_factory;
 		$so_widgets = array();
+		// Add data for any inactive widgets.
+		foreach ( $widgets_metadata_list as $widget ) {
+			if ( ! $widget['Active'] ) {
+				include_once wp_normalize_path( $widget['File'] );
+				// The last class will always be from the widget file we just loaded.
+				$classes = get_declared_classes();
+				$widget_class = end( $classes );
+
+				$so_widgets[] = array(
+					'name' => $widget['Name'],
+					'class' => $widget_class,
+				);
+			}
+		}
+
+		global $wp_widget_factory;
 		$third_party_widgets = array();
 		foreach ( $wp_widget_factory->widgets as $class => $widget_obj ) {
 			if ( ! empty( $widget_obj ) && is_object( $widget_obj ) && is_subclass_of( $widget_obj, 'SiteOrigin_Widget' ) ) {
@@ -104,6 +124,10 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 		global $wp_widget_factory;
 
 		$widget = ! empty( $wp_widget_factory->widgets[ $widget_class ] ) ? $wp_widget_factory->widgets[ $widget_class ] : false;
+		// Attempt to activate the widget if it's not already active.
+		if ( ! empty( $widget_class ) && empty( $widget ) ) {
+			$widget = SiteOrigin_Widgets_Bundle::single()->load_missing_widget( false, $widget_class );
+		}
 
 		$instance = $attributes['widgetData'];
 
@@ -119,14 +143,36 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 			$GLOBALS['SITEORIGIN_WIDGET_BLOCK_RENDER'] = true;
 			add_filter( 'siteorigin_widgets_wrapper_classes_' . $widget->id_base, $add_custom_class_name );
 			ob_start();
-			/* @var $widget SiteOrigin_Widget */
-			$instance = $widget->update( $instance, $instance );
-			$widget->widget( array(
-				'before_widget' => '',
-				'after_widget' => '',
-				'before_title' => '<h3 class="widget-title">',
-				'after_title' => '</h3>',
-			), $instance );
+
+			// If we have pre-generated widgetHTML or there's a valid $_POST, generate the widget.
+			// We don't show the pre-generated widget when there's a valid $_POST
+			// as widgets will likely change when that happens.
+			if ( empty( $attributes['widgetHtml'] ) || ! empty( $_POST ) ) {
+				/* @var $widget SiteOrigin_Widget */
+				$instance = $widget->update( $instance, $instance );
+				$widget->widget( array(
+					'before_widget' => '',
+					'after_widget' => '',
+					'before_title' => '<h3 class="widget-title">',
+					'after_title' => '</h3>',
+				), $instance );
+			} else {
+				$widget->generate_and_enqueue_instance_styles( $instance );
+				$widget->enqueue_frontend_scripts( $instance );
+
+				// Check if this widget uses any icons that need to be enqueued.
+				if ( ! empty( $attributes['widgetIcons'] ) ) {
+					$widget_icon_families = apply_filters( 'siteorigin_widgets_icon_families', array() );
+					foreach ( $attributes['widgetIcons'] as $icon_font ) {
+						if ( ! wp_style_is( $icon_font ) ) {
+							$font_family = explode( 'siteorigin-widget-icon-font-', $icon_font )[1];
+							wp_enqueue_style( $icon_font, $widget_icon_families[ $font_family ]['style_uri'] );
+						}
+					}
+				}
+				echo $attributes['widgetHtml'];
+			}
+
 			$rendered_widget = ob_get_clean();
 			remove_filter( 'siteorigin_widgets_wrapper_classes_' . $widget->id_base, $add_custom_class_name );
 			unset( $GLOBALS['SITEORIGIN_WIDGET_BLOCK_RENDER'] );
