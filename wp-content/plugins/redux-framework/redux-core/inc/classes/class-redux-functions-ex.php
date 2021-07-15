@@ -193,12 +193,14 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 		 * @return bool
 		 */
 		public static function s() {
-			if ( ! empty( get_option( 'redux_p' . 'ro_lic' . 'ense_key', false ) ) ) { // phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
+			if ( ! get_option( 'redux_p' . 'ro_lic' . 'ense_key', false ) ) { // phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
 				$s = get_option( 'redux_p' . 'ro_l' . 'icense_status', false ); // phpcs:ignore Generic.Strings.UnnecessaryStringConcat.Found
-				if ( ! empty( $s ) && in_array( $s, array( 'valid', 'site_inactive' ), true ) ) {
+
+				if ( false !== $s && in_array( $s, array( 'valid', 'site_inactive' ), true ) ) {
 					return true;
 				}
 			}
+
 			return false;
 		}
 
@@ -308,8 +310,12 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 							unset( $theme_paths[ $key ] );
 						}
 
-						$data['parent_slug'] = end( explode( '/', end( $theme_paths ) ) );
-						$data['parent_slug'] = end( explode( '/', end( $theme_paths ) ) );
+						$theme_paths_end = end( $theme_paths );
+						$parent_slug_end = explode( '/', $theme_paths_end );
+						$parent_slug_end = end( $parent_slug_end );
+
+						$data['parent_slug'] = $theme_paths_end;
+						$data['parent_slug'] = $parent_slug_end;
 					}
 
 					return $data;

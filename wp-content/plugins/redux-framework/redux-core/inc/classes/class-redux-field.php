@@ -243,6 +243,13 @@ if ( ! class_exists( 'Redux_Field', false ) ) {
 				}
 
 				if ( ! empty( $this->field['output'] ) && is_array( $this->field['output'] ) ) {
+					if ( isset( $this->field['output']['important'] ) ) {
+						if ( $this->field['output']['important'] ) {
+							$style = str_replace( ';', ' !important;', $style );
+						}
+						unset( $this->field['output']['important'] );
+					}
+
 					$keys                     = implode( ',', $this->field['output'] );
 					$this->parent->outputCSS .= $keys . '{' . $style . '}';
 				}
@@ -250,6 +257,13 @@ if ( ! class_exists( 'Redux_Field', false ) ) {
 				// Force compiler value into an array.
 				if ( isset( $this->field['compiler'] ) && ! is_array( $this->field['compiler'] ) ) {
 					$this->field['compiler'] = array( $this->field['compiler'] );
+				}
+
+				if ( isset( $this->field['compiler']['important'] ) ) {
+					if ( $this->field['compiler']['important'] ) {
+						$style = str_replace( ';', ' !important;', $style );
+					}
+					unset( $this->field['compiler']['important'] );
 				}
 
 				if ( ! empty( $this->field['compiler'] ) && is_array( $this->field['compiler'] ) ) {
@@ -262,7 +276,7 @@ if ( ! class_exists( 'Redux_Field', false ) ) {
 		/**
 		 * Unused for now.
 		 *
-		 * @param string $data CSS data.
+		 * @param mixed $data CSS data.
 		 */
 		public function css_style( $data ) {
 

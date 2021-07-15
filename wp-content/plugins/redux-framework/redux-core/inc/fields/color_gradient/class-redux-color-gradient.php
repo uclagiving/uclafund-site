@@ -45,6 +45,8 @@ if ( ! class_exists( 'Redux_Color_Gradient', false ) ) {
 			$defaults = array(
 				'preview'        => false,
 				'preview_height' => '150px',
+				'transparent'    => true,
+				'alpha'          => false,
 			);
 
 			$this->field = wp_parse_args( $this->field, $defaults );
@@ -97,11 +99,11 @@ if ( ! class_exists( 'Redux_Color_Gradient', false ) ) {
 						'index' => $mode,
 					);
 
-					// phpcs:ignore WordPress.NamingConventions.ValidHookName
-					echo esc_html( apply_filters( 'redux/pro/render/color_alpha', $data ) );
+					// phpcs:ignore WordPress.NamingConventions.ValidHookName, WordPress.Security.EscapeOutput
+					echo apply_filters( 'redux/pro/render/color_alpha', $data );
 				}
 
-				echo '/>';
+				echo '>';
 
 				echo '<input type="hidden" class="redux-saved-color" id="' . esc_attr( $this->field['id'] ) . '-' . esc_attr( $mode ) . '-saved-color" value="">';
 
@@ -160,8 +162,7 @@ if ( ! class_exists( 'Redux_Color_Gradient', false ) ) {
 					'redux-field-color_gradient-css',
 					Redux_Core::$url . 'inc/fields/color_gradient/redux-color-gradient.css',
 					array(),
-					$this->timestamp,
-					'all'
+					$this->timestamp
 				);
 			}
 		}
@@ -177,9 +178,7 @@ if ( ! class_exists( 'Redux_Color_Gradient', false ) ) {
 			if ( Redux_Core::$pro_loaded ) {
 
 				// phpcs:ignore WordPress.NamingConventions.ValidHookName
-				$pro_data = apply_filters( 'redux/pro/color_gradient/output', $data );
-
-				return $pro_data;
+				return apply_filters( 'redux/pro/color_gradient/output', $data );
 			}
 		}
 

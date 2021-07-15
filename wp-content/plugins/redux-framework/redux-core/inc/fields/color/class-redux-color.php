@@ -20,6 +20,18 @@ if ( ! class_exists( 'Redux_Color', false ) ) {
 	class Redux_Color extends Redux_Field {
 
 		/**
+		 * Set field defaults.
+		 */
+		public function set_defaults() {
+			$defaults = array(
+				'transparent' => true,
+				'alpha'       => false,
+			);
+
+			$this->field = wp_parse_args( $this->field, $defaults );
+		}
+
+		/**
 		 * Field Render Function.
 		 * Takes the vars and outputs the HTML for the field in the settings
 		 *
@@ -43,11 +55,11 @@ if ( ! class_exists( 'Redux_Color', false ) ) {
 					'index' => '',
 				);
 
-				// phpcs:ignore WordPress.NamingConventions.ValidHookName
-				echo esc_html( apply_filters( 'redux/pro/render/color_alpha', $data ) );
+				// phpcs:ignore WordPress.NamingConventions.ValidHookName, WordPress.Security.EscapeOutput
+				echo apply_filters( 'redux/pro/render/color_alpha', $data );
 			}
 
-			echo '/>';
+			echo '>';
 
 			echo '<input type="hidden" class="redux-saved-color" id="' . esc_attr( $this->field['id'] ) . '-saved-color" value="">';
 
@@ -103,12 +115,10 @@ if ( ! class_exists( 'Redux_Color', false ) ) {
 		 *
 		 * @param string $data Field data.
 		 *
-		 * @return array|void
+		 * @return string
 		 */
-		public function css_style( $data ) {
-			$style = array();
-
-			return $style;
+		public function css_style( $data ): string {
+			return '';
 		}
 
 		/**

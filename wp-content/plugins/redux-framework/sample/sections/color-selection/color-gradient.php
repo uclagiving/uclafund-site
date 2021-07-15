@@ -1,7 +1,7 @@
 <?php
 /**
  * Redux Framework color gradient config.
- * For full documentation, please visit: http://docs.redux.io/
+ * For full documentation, please visit: http://devs.redux.io/
  *
  * @package Redux Framework
  */
@@ -12,7 +12,7 @@ Redux::set_section(
 	$opt_name,
 	array(
 		'title'      => esc_html__( 'Color Gradient', 'your-textdomain-here' ),
-		'desc'       => esc_html__( 'For full documentation on this field, visit: ', 'your-textdomain-here' ) . '<a href="//docs.redux.io/core/fields/color-gradient/" target="_blank">docs.redux.io/core/fields/color-gradient/</a>',
+		'desc'       => esc_html__( 'For full documentation on this field, visit: ', 'your-textdomain-here' ) . '<a href="https://devs.redux.io/core-fields/color-gradient.html" target="_blank">https://devs.redux.io/core-fields/color-gradient.html</a>',
 		'id'         => 'color-gradient',
 		'subsection' => true,
 		'fields'     => array(
@@ -22,7 +22,7 @@ Redux::set_section(
 				'title'    => esc_html__( 'Header Gradient Color Option', 'your-textdomain-here' ),
 				'subtitle' => esc_html__( 'Only color validation can be done on this field type', 'your-textdomain-here' ),
 				'desc'     => esc_html__( 'This is the description field, again good for additional info.', 'your-textdomain-here' ),
-				'output'   => '.site-header',
+				'output'   => '.site-header', // applies only when Redux Pro is installed and active.
 				'preview'  => true,
 				'default'  => array(
 					'from' => '#1e73be',

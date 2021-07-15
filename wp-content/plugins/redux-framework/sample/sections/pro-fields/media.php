@@ -2,7 +2,7 @@
 /**
  * Redux Pro Media Sample config.
  *
- * For full documentation, please visit: http://docs.reduxframework.com/
+ * For full documentation, please visit: http:https://devs.redux.io/
  *
  * @package Redux Pro
  */
@@ -14,19 +14,19 @@ Redux::set_section(
 	array(
 		'title'      => esc_html__( 'Media', 'your-textdomain-here' ),
 		'id'         => 'pro-media-media',
-		'desc'       => esc_html__( 'For full documentation on this field, visit: ', 'your-textdomain-here' ) . '<a href="//docs.reduxframework.com/core/fields/media/" target="_blank">docs.reduxframework.com/core/fields/media/</a>',
+		'desc'       => esc_html__( 'For full documentation on this field, visit: ', 'your-textdomain-here' ) . '<a href="https://devs.redux.io/core-fields/media.html" target="_blank">https://devs.redux.io/core-fields/media.html</a>',
 		'subsection' => true,
 		'fields'     => array(
 			array(
 				'id'           => 'pro-opt-media',
-				'type'         => 'pro-media',
+				'type'         => 'media',
 				'url'          => true,
 				'title'        => esc_html__( 'Media w/ URL', 'your-textdomain-here' ),
 				'compiler'     => 'true',
 				'desc'         => esc_html__( 'Basic media uploader with disabled URL input field.', 'your-textdomain-here' ),
 				'subtitle'     => esc_html__( 'Upload any media using the WordPress native uploader', 'your-textdomain-here' ),
 				'default'      => array(
-					'url'    => 'http://s.wordpress.org/style/images/codeispoetry.png',
+					'url'    => 'https://s.wordpress.org/style/images/codeispoetry.png',
 					'filter' => array(
 						'grayscale' => array(
 							'checked' => true,

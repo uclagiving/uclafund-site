@@ -1,7 +1,7 @@
 <?php
 /**
  * ReduxFramework Sample Config File
- * For full documentation, please visit: http://docs.redux.io/
+ * For full documentation, please visit: http://devs.redux.io/
  *
  * @package Redux Framework
  */
@@ -18,19 +18,11 @@ $opt_name = 'redux_demo';  // YOU MUST CHANGE THIS.  DO NOT USE 'redux_demo' IN 
 // Uncomment to disable demo mode.
 /* Redux::disable_demo(); */  // phpcs:ignore Squiz.PHP.CommentedOutCode
 
-$dir = dirname( __FILE__ ) . '/';
+$dir = dirname( __FILE__ ) . DIRECTORY_SEPARATOR;
 
 /*
  * --> Used within different fields. Simply examples. Search for ACTUAL DECLARATION for field examples
  */
-
-$sample_html = '';
-if ( file_exists( $dir . '/info-html.html' ) ) {
-	$fs = Redux_Filesystem::get_instance();
-	if ( method_exists( $fs, 'get_contents' ) ) {
-		$sample_html = $fs->execute( 'get_contents', $dir . '/info-html.html' );
-	}
-}
 
 // Background Patterns Reader.
 $sample_patterns_path = Redux_Core::$dir . '../sample/patterns/';
@@ -73,7 +65,7 @@ $kses_exceptions = array(
 
 /**
  * All the possible arguments for Redux.
- * For full documentation on arguments, please refer to: https://docs.redux.io/core/arguments/
+ * For full documentation on arguments, please refer to: https://devs.redux.io/core/arguments/
  */
 $theme = wp_get_theme(); // For use with some settings. Not necessary.
 
@@ -225,7 +217,7 @@ $args = array(
 // If these are left unchanged, they will not display in your panel!
 $args['admin_bar_links'][] = array(
 	'id'    => 'redux-docs',
-	'href'  => '//docs.redux.io/',
+	'href'  => '//devs.redux.io/',
 	'title' => __( 'Documentation', 'your-textdomain-here' ),
 );
 
@@ -518,7 +510,7 @@ if ( class_exists( 'Redux_Pro' ) ) {
 			'id'    => 'redux-pro-fields',
 			'icon'  => 'el el-redux',
 			'class' => 'pro_highlight',
-			'desc'  => esc_html__( 'For full documentation on this field, visit: ', 'your-textdomain-here' ) . '<a href="//docs.redux.io/premium/" target="_blank">docs.redux.io/premium/</a>',
+			'desc'  => esc_html__( 'For full documentation on this field, visit: ', 'your-textdomain-here' ) . '<a href="https://devs.redux.io/premium/" target="_blank">https://devs.redux.io/premium/</a>',
 		)
 	);
 
@@ -651,10 +643,10 @@ if ( ! function_exists( 'redux_validate_callback_function' ) ) {
 		$warning = false;
 
 		// Do your validation.
-		if ( 1 === $value ) {
+		if ( 1 === (int) $value ) {
 			$error = true;
 			$value = $existing_value;
-		} elseif ( 2 === $value ) {
+		} elseif ( 2 === (int) $value ) {
 			$warning = true;
 			$value   = $existing_value;
 		}

@@ -214,7 +214,7 @@
 												$( this ).hasClass( 'redux-typography-transform' ) ||
 												$( this ).hasClass( 'redux-typography-font-variant' ) ||
 												$( this ).hasClass( 'redux-typography-decoration' ) ) {
-												that.find( 'option[selected="selected"]' ).removeAttr( 'selected' );
+												that.find( 'option[selected="selected"]' ).attr( 'selected', false );
 												that.find( 'option[value="' + val + '"]' ).attr( 'selected', 'selected' );
 											}
 
@@ -228,7 +228,8 @@
 								);
 
 								// Init when value is changed.
-								$( this ).find( '.redux-typography-size, .redux-typography-height, .redux-typography-word, .redux-typography-letter' ).keyup(
+								$( this ).find( '.redux-typography-size, .redux-typography-height, .redux-typography-word, .redux-typography-letter' ).on(
+									'keyup',
 									function() {
 										redux.field_objects.typography.select( $( this ).parents( '.redux-container-typography:first' ) );
 									}
@@ -323,7 +324,7 @@
 	};
 
 	redux.field_objects.typography.updates = function( obj ) {
-		obj.find( '.update-google-fonts' ).bind(
+		obj.find( '.update-google-fonts' ).on(
 			'click',
 			function( e ) {
 				var $action        = $( this ).data( 'action' );

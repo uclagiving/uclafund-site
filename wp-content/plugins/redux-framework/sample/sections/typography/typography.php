@@ -1,7 +1,7 @@
 <?php
 /**
  * Redux Framework typography config.
- * For full documentation, please visit: http://docs.redux.io/
+ * For full documentation, please visit: http://devs.redux.io/
  *
  * @package Redux Framework
  */
@@ -13,7 +13,7 @@ Redux::set_section(
 	array(
 		'title'  => esc_html__( 'Typography', 'your-textdomain-here' ),
 		'id'     => 'typography',
-		'desc'   => esc_html__( 'For full documentation on this field, visit: ', 'your-textdomain-here' ) . '<a href="//docs.redux.io/core/fields/typography/" target="_blank">docs.redux.io/core/fields/typography/</a>',
+		'desc'   => esc_html__( 'For full documentation on this field, visit: ', 'your-textdomain-here' ) . '<a href="https://devs.redux.io/core-fields/typography.html" target="_blank">https://devs.redux.io/core-fields/typography.html</a>',
 		'icon'   => 'el el-font',
 		'fields' => array(
 			array(
@@ -55,6 +55,7 @@ Redux::set_section(
 					'font-size'   => '33px',
 					'line-height' => '40px',
 				),
+				'output'      => array( 'h2.site-description, h2.entry-title' ),
 				// Disable google fonts.
 				// 'google'      => false,
 				// Includes font-style and weight. Can use font-style or font-weight to declare.
@@ -74,7 +75,6 @@ Redux::set_section(
 				// Disable the font previewer
 				// 'preview'       => false,
 				// An array of CSS selectors to apply this font style to dynamically.
-				'output'      => array( 'h2.site-description, .entry-title' ),
 				// An array of CSS selectors to apply this font style to dynamically.
 				// 'compiler'    => array( 'h2.site-description-compiler' ),
 				// .
