@@ -30,7 +30,6 @@ class JJ4T3_Activator_Deactivator_Uninstaller {
 	 * @return void
 	 */
 	public static function activate() {
-
 		// Default settings for our plugin.
 		$options = array(
 			'redirect_type'        => '301',

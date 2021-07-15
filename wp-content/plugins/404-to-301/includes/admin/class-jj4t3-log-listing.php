@@ -897,6 +897,11 @@ class JJ4T3_Log_Listing extends WP_List_Table {
 		// Yes, security check is a must when you alter something.
 		check_ajax_referer( 'jj4t3_redirect_nonce', 'nonce' );
 
+		// The user should have the capability.
+		if ( ! current_user_can( JJ4T3_ACCESS ) ) {
+			wp_die();
+		}
+
 		// Verify if the 404 value is found.
 		if ( empty( $_POST['url_404'] ) ) {
 			wp_die();
@@ -907,7 +912,7 @@ class JJ4T3_Log_Listing extends WP_List_Table {
 		global $wpdb;
 
 		// Get custom redirect value from db, if exist.
-		$result = $wpdb->get_row( $wpdb->prepare( "SELECT redirect, options FROM " . JJ4T3_TABLE . " WHERE url = '%s' AND redirect IS NOT NULL LIMIT 0,1", esc_url( $url_404 ) ), 'OBJECT' );
+		$result = $wpdb->get_row( $wpdb->prepare( "SELECT redirect, options FROM " . JJ4T3_TABLE . " WHERE url = %s AND redirect IS NOT NULL LIMIT 0,1", esc_url( $url_404 ) ), 'OBJECT' );
 
 		// Get custom redirect type and url.
 		$url = empty( $result->redirect ) ? '' : esc_url( $result->redirect );
@@ -956,6 +961,11 @@ class JJ4T3_Log_Listing extends WP_List_Table {
 		// Yes, security check is a must when you alter something.
 		check_ajax_referer( 'jj4t3_redirect_nonce', 'jj4t3_redirect_nonce' );
 
+		// The user should have the capability.
+		if ( ! current_user_can( JJ4T3_ACCESS ) ) {
+			wp_die();
+		}
+
 		// Custom options for the 404 path.
 		$options = maybe_serialize(
 			array(
@@ -988,7 +998,7 @@ class JJ4T3_Log_Listing extends WP_List_Table {
 		do_action( 'jj4t3_log_list_custom_redirect_save', $url_404, $url );
 
 		// Run update query and set custom redirect.
-		$wpdb->query( $wpdb->prepare( "UPDATE " . JJ4T3_TABLE . " SET redirect = '%s', options = '%s' WHERE url = '%s'", $url, $options, $url_404 ) );
+		$wpdb->query( $wpdb->prepare( "UPDATE " . JJ4T3_TABLE . " SET redirect = %s, options = %s WHERE url = %s", $url, $options, $url_404 ) );
 
 		// Die ajax request.
 		wp_die();
@@ -1003,8 +1013,9 @@ class JJ4T3_Log_Listing extends WP_List_Table {
 	 * @return void
 	 */
 	public static function get_redirect_content() {
-
-		include_once JJ4T3_DIR . 'includes/admin/views/custom-redirect.php';
+		if ( current_user_can( JJ4T3_ACCESS ) ) {
+			include_once JJ4T3_DIR . 'includes/admin/views/custom-redirect.php';
+		}
 	}
 
 }
