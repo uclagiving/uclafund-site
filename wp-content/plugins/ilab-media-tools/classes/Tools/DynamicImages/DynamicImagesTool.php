@@ -16,6 +16,7 @@ namespace MediaCloud\Plugin\Tools\DynamicImages;
 use MediaCloud\Plugin\Tools\Storage\StorageTool;
 use MediaCloud\Plugin\Tools\Tool;
 use MediaCloud\Plugin\Tools\ToolsManager;
+use MediaCloud\Plugin\Utilities\Logging\Logger;
 use MediaCloud\Plugin\Utilities\NoticeManager;
 use MediaCloud\Plugin\Utilities\Tracker;
 use MediaCloud\Plugin\Utilities\View;
@@ -25,6 +26,8 @@ use function MediaCloud\Plugin\Utilities\json_response;
 use function MediaCloud\Plugin\Utilities\parse_req;
 
 abstract class DynamicImagesTool extends Tool {
+	protected $forcedEnabled = false;
+
     /** @var DynamicImagesToolSettings  */
     protected $settings = null;
 
@@ -42,6 +45,10 @@ abstract class DynamicImagesTool extends Tool {
         parent::__construct($toolName, $toolInfo, $toolManager);
 
         add_filter('media-cloud/dynamic-images/enabled', function($enabled){
+            if ($this->forcedEnabled) {
+                return $this->forcedEnabled;
+            }
+
             if (!$enabled) {
                 return $this->enabled();
             }
@@ -115,10 +122,9 @@ abstract class DynamicImagesTool extends Tool {
 
         $this->hookupUI();
 
-        add_filter('wp_get_attachment_url', [$this, 'getAttachmentURL'], 10000, 2);
-        add_filter('wp_prepare_attachment_for_js', array($this, 'prepareAttachmentForJS'), 1000, 3);
+        $this->setupHooks();
 
-        add_filter('image_downsize', [$this, 'imageDownsize'], 1000, 3);
+        add_filter('wp_prepare_attachment_for_js', array($this, 'prepareAttachmentForJS'), 1000, 3);
 
         add_filter('image_get_intermediate_size', [$this, 'imageGetIntermediateSize'], 0, 3);
 
@@ -170,13 +176,25 @@ abstract class DynamicImagesTool extends Tool {
 		        return $metadata;
             }
 
+		    $metadataFile = arrayPath($metadata, 'file');
+		    $width = intval(arrayPath($metadata, 'width', 0));
+		    $height = intval(arrayPath($metadata, 'height', 0));
+
+		    if (empty($metadataFile) || empty($width) || empty($height)) {
+		        Logger::warning("Metadata for image $attachmentId with mimetype $mime missing info.  File: $metadataFile, width: $width, height: $height", [], __METHOD__, __LINE__);
+		        return $metadata;
+            }
+
+		    if (!isset($metadata['sizes'])) {
+			    Logger::warning("Metadata for image $attachmentId with mimetype $mime missing sizes.", [], __METHOD__, __LINE__);
+			    return $metadata;
+            }
+
 		    if ($this->allSizes == null) {
 			    $this->allSizes = ilab_get_image_sizes();
 		    }
 
-		    $filename = pathinfo($metadata['file'], PATHINFO_BASENAME);
-		    $width = intval($metadata['width']);
-		    $height = intval($metadata['height']);
+		    $filename = pathinfo($metadataFile, PATHINFO_BASENAME);
 
 		    $didChange = false;
 		    foreach($this->allSizes as $sizeKey => $sizeData) {
@@ -230,12 +248,32 @@ abstract class DynamicImagesTool extends Tool {
         }, 100000, 3);
     }
 
+    protected function setupHooks() {
+	    add_filter('wp_get_attachment_url', [$this, 'getAttachmentURL'], 10000, 2);
+	    add_filter('image_downsize', [$this, 'imageDownsize'], 1000, 3);
+    }
+
+    protected function tearDownHooks() {
+	    remove_filter('wp_get_attachment_url', [$this, 'getAttachmentURL'], 10000);
+	    remove_filter('image_downsize', [$this, 'imageDownsize'], 1000);
+    }
+
     public function registerSettings() {
         parent::registerSettings();
 
         register_setting('ilab-imgix-preset', 'ilab-imgix-presets');
         register_setting('ilab-imgix-preset', 'ilab-imgix-size-presets');
     }
+
+	public function forceEnable($enabled) {
+		$this->forcedEnabled = $enabled;
+		if ($this->forcedEnabled) {
+		    $this->setupHooks();
+		} else {
+		    $this->tearDownHooks();
+		}
+	}
+
     //endregion
 
     //region URL Generation

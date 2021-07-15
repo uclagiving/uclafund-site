@@ -45,15 +45,21 @@ return [
 						"min" => 0,
 						"max" => 8
 					],
+					"mcloud-tasks-use-wordpress-heartbeat" => [
+						"title" => "Use WordPress Heartbeat",
+						"description" => "When this is enabled, Media Cloud will use WordPress's heartbeat.  Using this might introduce reliability issues with running tasks, however.",
+						"type" => "checkbox",
+						"default" => false
+					],
 					"mcloud-tasks-heartbeat-enabled" => [
-						"title" => "Enable Heartbeat",
+						"title" => "Enable Media Cloud Heartbeat",
 						"description" => "When this is enabled, browsing WordPress admin pages will execute an ajax method every few seconds to insure that the background tasks are being processed.  If disabled, please insure that WordPress CRON is running reliably.",
 						"type" => "checkbox",
 						"default" => true
 					],
 					"mcloud-tasks-generate-reports" => [
 						"title" => "Generate Reports",
-						"description" => "When this is enabled, certain tasks will generate CSV reports that will tell you more details about what happened when the task was running.  You can find these reports in the <code>".WP_CONTENT_DIR."/mcloud-reports/</code> directory on your server.",
+						"description" => "When this is enabled, certain tasks will generate CSV reports that will tell you more details about what happened when the task was running.  You can find these reports in the <code>".\MediaCloud\Plugin\Tasks\TaskReporter::reporterDirectory()."</code> directory on your server.",
 						"type" => "checkbox",
 						"default" => true
 					],
@@ -66,11 +72,41 @@ return [
 						"min" => 2,
 						"max" => 60
 					],
+					"mcloud-tasks-disable-plugins" => [
+						"title" => "Disable Plugins and Themes During Background Processing",
+						"description" => "When this is enabled, themes and plugins will be disabled in the background processing thread when the background process runs.  This will have <strong>NO</strong> effect on your front-end or WordPress admin, the plugins and theme are disabled in the background processing thread <strong>ONLY</strong>.",
+						"type" => "checkbox",
+						"default" => false
+					],
 				]
 			],
 
-			"ilab-media-cloud-batch-settings" => [
-				"title" => "Batch Processing Settings",
+
+			"ilab-media-cloud-batch-bulk-settings" => [
+				"title" => "Bulk Action Settings",
+				"dynamic" => true,
+				"description" => "The following settings control how tasks are run when triggered from the bulk actions menu in the Media Library.",
+				"options" => [
+					"mcloud-tasks-schedule-bulk" => [
+						"title" => "Schedule Bulk Tasks",
+						"description" => "When this is enabled, any tasks that you trigger from the list view in the Media Library will be executed in the future, allowing you to add many items to process to a single task instead of creating a bunch of separate tasks.",
+						"type" => "checkbox",
+						"default" => false
+					],
+					"mcloud-tasks-schedule-delay" => [
+						"title" => "Schedule Delay",
+						"description" => "The number of minutes in the future to schedule the task.",
+						"type" => "number",
+						"default" => 60,
+						"increment" => 1,
+						"min" => 5,
+						"max" => 2880
+					],
+				]
+			],
+
+			"ilab-media-cloud-batch-network-settings" => [
+				"title" => "Batch Processing Network Settings",
 				"dynamic" => true,
 				"description" => "The following options control how tasks like importer, thumbnail regeneration and Rekognition work.  You should only change these settings if you are having issues or if the <a href='".admin_url('admin.php?page=media-tools-troubleshooter')."' target='_blank'>system compatibility tool</a> directed you to.",
 				"options" => [

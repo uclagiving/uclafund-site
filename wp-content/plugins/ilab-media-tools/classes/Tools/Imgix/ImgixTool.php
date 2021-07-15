@@ -13,6 +13,7 @@
 
 namespace MediaCloud\Plugin\Tools\Imgix;
 
+use MediaCloud\Plugin\Tools\ImageSizes\ImageSizePrivacy;
 use MediaCloud\Plugin\Tools\Storage\StorageToolSettings;
 use MediaCloud\Plugin\Tools\DynamicImages\DynamicImagesTool;
 use MediaCloud\Plugin\Tools\Storage\StorageTool;
@@ -24,6 +25,8 @@ use MediaCloud\Plugin\Wizard\ConfiguresWizard;
 use MediaCloud\Plugin\Wizard\WizardBuilder;
 use MediaCloud\Vendor\FasterImage\FasterImage;
 use MediaCloud\Vendor\Imgix\UrlBuilder;
+use function MediaCloud\Plugin\Utilities\anyIsSet;
+use function MediaCloud\Plugin\Utilities\arrayContainsAny;
 use function MediaCloud\Plugin\Utilities\arrayPath;
 
 if(!defined('ABSPATH')) {
@@ -38,6 +41,7 @@ if(!defined('ABSPATH')) {
  * Imgix tool.
  */
 class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
+
     //region Constructor
     public function __construct($toolName, $toolInfo, $toolManager) {
 	    $this->settings = ImgixToolSettings::instance();
@@ -45,11 +49,11 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 	    parent::__construct($toolName, $toolInfo, $toolManager);
 
         add_filter('media-cloud/imgix/enabled', function($enabled){
-            return $this->enabled();
+            return $this->forcedEnabled || $this->enabled();
         });
 
 	    add_filter('media-cloud/imgix/alternative-formats/enabled', function($enabled){
-	        return ($this->enabled() && $this->settings->enabledAlternativeFormats);
+	        return ($this->forcedEnabled || $this->enabled() && $this->settings->enabledAlternativeFormats);
         });
     }
     //endregion
@@ -197,21 +201,23 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 			$params['q'] = $this->settings->imageQuality;
 		}
 
-		foreach($this->paramPropsByType['media-chooser'] as $key => $info) {
-			if(isset($params[$key]) && !empty($params[$key])) {
-				$media_id = $params[$key];
-				unset($params[$key]);
-				$markMeta = wp_get_attachment_metadata($media_id);
-				if (isset($markMeta['s3'])) {
-					$params[$info['imgix-param']] = '/'.$markMeta['s3']['key'];
-                } else {
-					$params[$info['imgix-param']] = '/'.$markMeta['file'];
-                }
-			} else {
-				unset($params[$key]);
-				if(isset($info['dependents'])) {
-					foreach($info['dependents'] as $depKey) {
-						unset($params[$depKey]);
+		if (isset($this->paramPropsByType['media-chooser'])) {
+			foreach($this->paramPropsByType['media-chooser'] as $key => $info) {
+				if(isset($params[$key]) && !empty($params[$key])) {
+					$media_id = $params[$key];
+					unset($params[$key]);
+					$markMeta = wp_get_attachment_metadata($media_id);
+					if (isset($markMeta['s3'])) {
+						$params[$info['imgix-param']] = '/'.$markMeta['s3']['key'];
+					} else {
+						$params[$info['imgix-param']] = '/'.$markMeta['file'];
+					}
+				} else {
+					unset($params[$key]);
+					if(isset($info['dependents'])) {
+						foreach($info['dependents'] as $depKey) {
+							unset($params[$depKey]);
+						}
 					}
 				}
 			}
@@ -234,6 +240,23 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 
 		unset($params['padding-width']);
 		unset($params['padding-color']);
+
+		if (!empty($this->settings->cropMode) && !anyIsSet($params, 'rect', 'fp-x', 'fp-y')) {
+			$position = $this->settings->cropPosition;
+
+			if (isset($params['crop'])) {
+				$cropParts = explode(',', $params['crop']);
+				if (arrayContainsAny($cropParts, ['faces', 'focalpoint', 'edges', 'entropy'])) {
+					return $params;
+				}
+
+				if (arrayContainsAny($cropParts, ['left', 'top', 'right', 'bottom', 'center'])) {
+					$position = $params['crop'];
+				}
+			}
+
+			$params['crop'] = str_replace('position', $position, $this->settings->cropMode);
+		}
 
 		return $params;
 	}
@@ -260,10 +283,15 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 			return [];
 		}
 
-		$imgix = new UrlBuilder($this->settings->imgixDomains[0], $this->settings->useHTTPS);
+		$domain = apply_filters('media-cloud/dynamic-images/override-domain', !empty($this->settings->imgixDomains) ? $this->settings->imgixDomains[0] : null);
+		$imgix = new UrlBuilder($domain, $this->settings->useHTTPS);
+		$key = apply_filters('media-cloud/dynamic-images/override-key', $this->settings->signingKey);
+		if(!empty($key)) {
+			$imgix->setSignKey($key);
+		}
 
-		if($this->settings->signingKey) {
-			$imgix->setSignKey($this->settings->signingKey);
+		if (!empty($this->settings->removeQueryVars)) {
+			$imgix->setIncludeLibraryParam(false);
 		}
 
 		if (isset($size['crop'])) {
@@ -294,19 +322,28 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 			];
 		}
 
-		$params = [
+		$mimetype = get_post_mime_type($id);
+
+		if(isset($meta['imgix-params']) && !$this->skipSizeParams) {
+			$params = $meta['imgix-params'];
+		} else {
+			$params = [];
+		}
+
+		$params = array_merge($params, [
 			'fit' => ($is_crop) ? 'crop' : 'fit',
 			'w' => $size[0],
 			'h' => $size[1],
 			'fm' => 'jpg'
-		];
+		]);
 
+		$params = $this->buildImgixParams($params, $mimetype);
 		$params = apply_filters('media-cloud/dynamic-images/filter-parameters', $params, $size, $id, $meta);
 
 		$imageFile = (isset($meta['s3'])) ? $meta['s3']['key'] : $meta['file'];
 
 		$result = [
-			$imgix->createURL(str_replace('%2F', '/', urlencode($imageFile)), $params),
+			$imgix->createURL(str_replace(['%2F', '%2540', '%40'], ['/', '@', '@'], urlencode($imageFile)), $params),
 			$size[0],
 			$size[1]
 		];
@@ -404,10 +441,15 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 			}
 		}
 
-		$imgix = new UrlBuilder($this->settings->imgixDomains[0], $this->settings->useHTTPS);
+		$domain = apply_filters('media-cloud/dynamic-images/override-domain', !empty($this->settings->imgixDomains) ? $this->settings->imgixDomains[0] : null);
+		$imgix = new UrlBuilder($domain, $this->settings->useHTTPS);
+		$key = apply_filters('media-cloud/dynamic-images/override-key', $this->settings->signingKey);
+		if(!empty($key)) {
+			$imgix->setSignKey($key);
+		}
 
-		if($this->settings->signingKey) {
-			$imgix->setSignKey($this->settings->signingKey);
+		if (!empty($this->settings->removeQueryVars)) {
+			$imgix->setIncludeLibraryParam(false);
 		}
 
 		if($size == 'full' && !$newSize) {
@@ -443,7 +485,7 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 
 
 			$result = [
-				$imgix->createURL(str_replace('%2F', '/', urlencode($imageFile)), ($skipParams) ? [] : $params),
+				$imgix->createURL(str_replace(['%2F', '%2540', '%40'], ['/', '@', '@'], urlencode($imageFile)), ($skipParams) ? [] : $params),
 				$meta['width'],
 				$meta['height'],
 				false
@@ -652,7 +694,7 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 			$params = array_merge($params, $mergeParams);
 		}
 
-		if($size && !is_array($size)) {
+		if($size && !is_array($size) && empty($this->settings->removeQueryVars)) {
 			$params['wpsize'] = $size;
 		}
 
@@ -671,7 +713,7 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 		}
 
 		$result = [
-			$imgix->createURL(str_replace('%2F', '/', urlencode($imageFile)), $params),
+			$imgix->createURL(str_replace(['%2F', '%2540', '%40'], ['/', '@', '@'], $imageFile), $params),
 			$params['w'],
 			$params['h'],
 			true
@@ -681,13 +723,18 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 	}
 
 	public function urlForStorageMedia($key, $params = []) {
-		$imgix = new UrlBuilder($this->settings->imgixDomains[0], $this->settings->useHTTPS);
-
-		if($this->settings->signingKey) {
-			$imgix->setSignKey($this->settings->signingKey);
+		$domain = apply_filters('media-cloud/dynamic-images/override-domain', !empty($this->settings->imgixDomains) ? $this->settings->imgixDomains[0] : null);
+		$imgix = new UrlBuilder($domain, $this->settings->useHTTPS);
+		$signingKey = apply_filters('media-cloud/dynamic-images/override-key', $this->settings->signingKey);
+		if(!empty($signingKey)) {
+			$imgix->setSignKey($signingKey);
 		}
 
-		return $imgix->createURL(str_replace('%2F', '/', urlencode($key)), $params);
+		if (!empty($this->settings->removeQueryVars)) {
+			$imgix->setIncludeLibraryParam(false);
+		}
+
+		return $imgix->createURL(str_replace(['%2F', '%2540', '%40'], ['/', '@', '@'], urlencode($key)), $params);
 	}
 
 	public function fixCleanedUrls($good_protocol_url, $original_url, $context) {
@@ -812,8 +859,9 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
      * @throws \MediaCloud\Plugin\Tools\Storage\StorageException
      */
 	public function getAttachmentURL($url, $post_id) {
+        $mimeType = get_post_mime_type($post_id);
+
 	    if ($this->settings->skipGifs) {
-	        $mimeType = get_post_mime_type($post_id);
 	        if ($mimeType == 'image/gif') {
                 /** @var StorageTool $storageTool */
                 $storageTool = ToolsManager::instance()->tools['storage'];
@@ -822,6 +870,12 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
                 return $gifURL;
             }
         }
+
+	    if (strpos($mimeType, 'image') !== 0) {
+		    if (empty(apply_filters('media-cloud/imgix/allow-non-images', false, $mimeType, $url, $post_id))) {
+		    	return $url;
+		    }
+	    }
 
         return parent::getAttachmentURL($url, $post_id);
 	}
@@ -844,6 +898,21 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
                 $result = $storageTool->forcedImageDownsize($fail, $id, $size);
                 return $result;
             }
+        }
+
+        if (empty($this->settings->servePrivateImages)) {
+			$privacy = StorageToolSettings::privacy('image');
+			if (is_string($size)) {
+				$privacy = ImageSizePrivacy::privacyForSize($size, $privacy);
+			}
+
+			if ($privacy != 'public-read') {
+				/** @var StorageTool $storageTool */
+				$storageTool = ToolsManager::instance()->tools['storage'];
+
+				$result = $storageTool->forcedImageDownsize($fail, $id, $size);
+				return $result;
+			}
         }
 
         return parent::imageDownsize($fail, $id, $size);
@@ -992,14 +1061,19 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 
     //region Testing
 
-    public function urlForKey($key) {
-        $imgix = new UrlBuilder($this->settings->imgixDomains[0], $this->settings->useHTTPS);
+    public function urlForKey($imageKey) {
+	    $domain = apply_filters('media-cloud/dynamic-images/override-domain', !empty($this->settings->imgixDomains) ? $this->settings->imgixDomains[0] : null);
+	    $imgix = new UrlBuilder($domain, $this->settings->useHTTPS);
+	    $key = apply_filters('media-cloud/dynamic-images/override-key', $this->settings->signingKey);
+	    if(!empty($key)) {
+		    $imgix->setSignKey($key);
+	    }
 
-        if($this->settings->signingKey) {
-            $imgix->setSignKey($this->settings->signingKey);
-        }
+	    if (!empty($this->settings->removeQueryVars)) {
+		    $imgix->setIncludeLibraryParam(false);
+	    }
 
-        return $imgix->createURL($key, []);
+	    return $imgix->createURL($imageKey, []);
     }
 
     //endregion
@@ -1036,7 +1110,7 @@ class ImgixTool extends DynamicImagesTool implements ConfiguresWizard {
 				->select('Complete', 'imgix setup is now complete!')
 					->group('wizard.imgix.success', 'select-buttons')
 						->option('other-features', 'Explore Other Features', null, null, null, null, 'admin:admin.php?page=media-cloud')
-						->option('advanced-imgix-settings', 'Advanced Settings', null, null, null, null, 'admin:admin.php?page=media-cloud-settings-imgix')
+						->option('advanced-imgix-settings', 'Finish &amp; Exit Wizard', null, null, null, null, 'admin:admin.php?page=media-cloud-settings-imgix')
 					->endGroup()
 				->endStep();
 

@@ -201,7 +201,7 @@ class GoogleStorage implements StorageInterface, ConfiguresWizard {
                             $errorCollector->addError("Bucket {$this->settings->bucket} does not exist.");
                         }
 
-						Logger::info("Bucket does not exist.", [], __METHOD__, __LINE__);
+						Logger::error("Bucket does not exist.", [], __METHOD__, __LINE__);
 					}
                 } catch (\Exception $ex) {
                     if ($errorCollector) {
@@ -240,6 +240,10 @@ class GoogleStorage implements StorageInterface, ConfiguresWizard {
 		}
 
 		return true;
+	}
+
+	public function settings() {
+		return $this->settings;
 	}
 
 	public function settingsError() {
@@ -283,7 +287,7 @@ class GoogleStorage implements StorageInterface, ConfiguresWizard {
                 $errorCollector->addError("Google configuration is incorrect or missing.");
             }
 
-			Logger::info('Could not create Google storage client.', [], __METHOD__, __LINE__);
+			Logger::error('Could not create Google storage client.', [], __METHOD__, __LINE__);
 		}
 
 		return $client;
@@ -296,6 +300,14 @@ class GoogleStorage implements StorageInterface, ConfiguresWizard {
 	}
 
 	public function region() {
+		return null;
+	}
+
+	public function isUsingPathStyleEndPoint() {
+		return false;
+	}
+
+	public function acl($key) {
 		return null;
 	}
 
@@ -487,7 +499,7 @@ class GoogleStorage implements StorageInterface, ConfiguresWizard {
 		}
 
 		$key = trailingslashit($key);
-		$files = $this->dir($key, null);
+		$files = $this->dir($key, null)['files'];
 		/** @var StorageFile $file */
 		foreach($files as $file) {
 			if ($file->type() == 'FILE') {
@@ -529,7 +541,7 @@ class GoogleStorage implements StorageInterface, ConfiguresWizard {
 		}
 	}
 
-	public function dir($path = '', $delimiter = '/') {
+	public function dir($path = '', $delimiter = '/', $limit = -1, $next = null) {
 		if(!$this->client) {
 			throw new InvalidStorageSettingsException('Storage settings are invalid');
 		}
@@ -559,12 +571,13 @@ class GoogleStorage implements StorageInterface, ConfiguresWizard {
 			$dirs[] = new StorageFile('DIR', $prefix);
 		}
 
-		$fileList = array_merge($dirs, $files);
-
-		return $fileList;
+		return [
+			'next' => null,
+			'files' => array_merge($dirs, $files)
+		];
 	}
 
-	public function ls($path = '', $delimiter = '/') {
+	public function ls($path = '', $delimiter = '/', $limit = -1, $next = null, $recursive = false) {
 		if(!$this->client) {
 			throw new InvalidStorageSettingsException('Storage settings are invalid');
 		}
@@ -584,18 +597,36 @@ class GoogleStorage implements StorageInterface, ConfiguresWizard {
 			$files[] = $file->name();
 		}
 
-		return $files;
+		if (!empty($recursive)) {
+			foreach($fileIter->prefixes() as $prefix) {
+				$res = $this->ls($prefix, $delimiter, $limit, $next, true);
+				if (!empty($res['files'])) {
+					$files = array_merge($files, $res['files']);
+				}
+			}
+		}
+
+		return [
+			'next' => null,
+			'files' => $files
+		];
 	}
 	//endregion
 
 	//region URLs
-	public function presignedUrl($key, $expiration = 0) {
+	public function presignedUrl($key, $expiration = 0, $options = []) {
 		if (empty($expiration)) {
 			$expiration = $this->settings->presignedURLExpiration;
 		}
 
 		$object = $this->client->bucket($this->settings->bucket)->object($key);
-		return $object->signedUrl(new Timestamp(new \DateTime("+{$expiration} minutes")));
+		$signedUrl = $object->signedUrl(new Timestamp(new \DateTime("+{$expiration} minutes")));
+
+		if (!empty($options) && is_array($options) && isset($options['ResponseContentDisposition'])) {
+			$signedUrl .= '&response-content-disposition='.$options['ResponseContentDisposition'];
+		}
+
+		return $signedUrl;
 	}
 
 	public function url($key, $type = null) {
@@ -683,7 +714,7 @@ class GoogleStorage implements StorageInterface, ConfiguresWizard {
 		$builder->select('Complete', 'Basic setup is now complete!  Configure advanced settings or setup imgix.')
 			->group('wizard.cloud-storage.providers.google.success', 'select-buttons')
 				->option('configure-imgix', 'Set Up imgix', null, null, 'imgix')
-				->option('advanced-settings', 'Advanced Settings', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
+				->option('advanced-settings', 'Finish &amp; Exit Wizard', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
 			->endGroup()
 		->endStep();
 

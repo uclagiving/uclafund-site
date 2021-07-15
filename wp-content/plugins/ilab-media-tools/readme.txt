@@ -2,10 +2,10 @@
 Contributors: mediacloud, interfacelab, freemius
 Tags: offload, amazon, s3, imgix, uploads, video, video encoding, google cloud storage, digital ocean spaces, wasabi, media, cdn, rekognition, cloudfront, images, crop, image editing, image editor, optimize, image optimization, media library, offload, offload s3, filepicker, smush, imagify, shortpixel
 Requires at least: 4.9
-Tested up to: 5.6
+Tested up to: 5.7.2
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 4.1.14
+Stable tag: 4.2.37
 Requires PHP: 7.1
 
 Automatically store media on Amazon S3, Google Cloud Storage, DigitalOcean Spaces + others. Serve CSS/JS assets through CDNs.  Integrate with Imgix.
@@ -105,7 +105,229 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 
 == Changelog ==
 
-= 4.1.14 =
+= 4.2.37 - 6/22/2021 =
+
+* Fixed an issue when running tasks that contained no data.
+* Fixes for Google Web Stories integration (Premium).
+
+= 4.2.36 - 6/20/2021 =
+
+* Added new options to Rebuild Thumbnails task.  You can now specify which media items get rebuilt; either all of them, only those that are missing sizes or those that are missing specific sizes.
+* You can now specify which image sizes get regenerated.  You can specify either all of the image sizes, only the ones missing or a single specific size.
+* In **WordPress Admin -> Media Cloud -> Settings** in the **Batch Processing** tab, you can now defer execution of any tasks that you trigger from the bulk action drop-down in the Media Library list view.  This is useful if you need to process a variety of items spread out across multiple pages but don't want to queue a bunch of single tasks to do so.
+* The **Fix Cloud Metadata** task will now allow you to specify only to work on items that are missing cloud metadata.
+* You can now select which images to process with the **Sync Local** task.
+* A new batch action for the **Sync Local** task has added to the Media Library's list view.  It's called **Download to Local Server**
+* The Media Cloud task heartbeat will now only be sent one time per user per browser regardless of the number of open tabs or windows.  Previously, if an administrator had 15 tabs open in the same browser, it would send 15 heartbeats.  Now only 1 tab will send a heartbeat and when that tab is closed, another open tab will take over sending the heartbeat.  Note that heartbeats are only sent by administrator level users or users with the `mcloud_heartbeat` permission.
+* Fixed a javascript error with the real time debug log viewer.
+* Rebuild thumbnails will now correctly rebuild thumbnails when Imgix is enabled.
+* Minor UI tweaks.
+
+= 4.2.35 - 6/17/2021 =
+
+* Fixed Replace Image functionality which would fail to work on certain versions of MySQL due to an SQL query being used being not compatible.
+* Added a drop down to control how tags are managed when replacing an image.  Controls if they should be merged, replaced or do nothing.  Default is Replace.
+* Replacing an image now replaces the title of the attachment.
+* Removed option to delete media after migration because too many people were shooting themselves in the foot.  After a successful migration, it's important you check to make sure your media has been migrated successfully and then run a Clean Uploads task after to remove files from your server.
+* Removed `--delete-migrated` from `wp mediacloud:storage migrateToCloud` command.
+* Fixed a warning for `Logger.php`
+
+= 4.2.34 - 6/17/2021 =
+
+* Added a toggle to make the **Debug Log** display log entries in realtime.
+* Added a toggle to **Batch Processing** settings that allows you to disable your theme and any plugins when processing items in the background.  Turning this on will not effect your front-end or WordPress admin, it's only applied when Media Cloud is processing a task in the background.  If you are having issues running the migration or import task, try enabling this option.
+
+= 4.2.33 - 6/15/2021 =
+
+* Fix for video and audio short codes using Classic Editor when using a storage provider with a path style endpoint and pre-signed URLs.
+* New warning that you are using a path style endpoint with DigitalOcean when you don't need to.  The only time you'd need to do that is if your bucket contains a period, for example your bucket's name is `my.bucket.is.cool`.
+* Fix for php NOTICE warnings for imgix images with malformed metadata.
+
+= 4.2.32 - 6/13/2021 =
+
+* Fix for **Import from Cloud** task where it would show an error that there was nothing to import.
+* Fix for tasks not updating the progress UI in certain instances.
+* Fix for errors with the `set_time_limit()` function on systems where that function is disabled.
+* Fix for error with Smart Slider integration.
+
+= 4.2.31 - 6/8/2021  =
+
+* Fix for Imgix with BuddyPress avatars and cover images. (Premium)
+* Made the setting **Replace srcset on image tags** disabled by default.  Will be removed in future versions of Media Cloud.
+* Added a warning if you have **Replace srcset on image tags** enabled.
+* **Cloud Tools** menu renamed **Cloud Tasks**.
+* Fix for custom defined image sizes in the **Image Size Manager** not showing up in the WordPress media selector. (Premium)
+
+
+= 4.2.30 - 6/7/2021  =
+
+* Complete overhaul of BuddyPress and BuddyBoss integration. (Premium)
+* Added a new *Migrate BuddyPress Uploads* task which will migrate existing avatar and cover images to cloud storage.  Previously, Media Cloud would migrate these as they were requested on the front end.  (Premium)
+* Added a new WP-ClI command, `wp mediacloud:buddypress migrate` that wraps the *Migrate BuddyPress Uploads* task.  (Premium)
+* Renamed Computer Vision WP-CLI command from `wp vision` to `wp mediacloud:vision`.
+* Renamed the task manager WP-CLI command from `wp taskmanager` to `wp mediacloud:tasks`.
+* Fixed bug for when you have privacy for uploads set to private, but don't have signing enabled, the error message wasn't dismissible.
+* Added new setting *Enable Real Time Processing* to BuddyPress integration that controls the real-time uploading of avatar and cover images.  When disabled, you must run the *Migrate BuddyPress Uploads* task manually to upload these things to cloud storage.  (Premium)
+* Fixed compatibility with rtMedia for BuddyPress.  (Premium)
+* Fixed the `mediacloud:storage replace` command to search all wordpress tables, including custom ones.  (Premium)
+* **Note:** if you are using rtMedia with BuddyPress, you will need to run the CLI command `mediacloud:storage replace` after running the *Migrate to Cloud* task.  You will only need to do this once.  (Premium)
+
+= 4.2.29 - 5/25/2021  =
+
+* Fix for `x-amz-bucket-region` notices
+* Easy Digital Downloads now download as files instead of opening as images or videos in the browser. (Premium)
+
+
+= 4.2.28 - 5/14/2021  =
+
+* Fix for NOTICE errors with srcset generation
+
+= 4.2.27 - 5/8/2021 =
+
+* Fix for potential fatal crash with certain integrations
+
+= 4.2.26 - 5/8/2021  =
+
+* Fix for compatibility with Root's Sage theme framework
+* HOT FIX: Fix for fatal error if Beaver Builder Pro is installed and Compatibility Manager is enabled.
+* Fix for EDD integration with variable product pricing
+* Added option to EDD integration that enables downloading the original unscaled image when the download is an image.
+
+= 4.2.23 - 5/5/2021 =
+
+* More fixes for srcset generation.
+* Ability to turn off `ixlib` and `wpsize` query parameters for imgix image URLs.  To disable these query parameters, toggle *Remove Extra Query Variables* off in Imgix settings.
+* You can now specify the default cropping mode and crop origin for imgix images in the *Imgix Settings*.  This crop mode and origin will be overridden for manually cropped images or images that have had their crop mode set in the *Image Editor*.
+
+= 4.2.22 - 5/3/2021  =
+
+* Fix for srcset generation with Imgix.
+* *System Check* has been renamed *System Test*
+* Added a plugin/theme check to the *System Test* that pinpoints any *potential* (emphasis on potential) issues with activated plugins or your current theme.
+* Added a new *Compatibility Manager* tool that allows you to disable hooks in other plugins or themes that might be causing issues with Media Cloud.  You must enable this tool in Cloud Storage Settings in the Advanced Settings panel.  Once activated, this tool will show you all the hooks that are activated on your WordPress install that might interfere with Media Cloud.  **Note that just because a plugin or theme shows up in the list, this does not mean it's incompatible.  You should only use this tool if directed by Media Cloud support**.
+* Cleaned up the *Debug Log* UI
+* The *System Test* now allows you to run a single specific test instead of having to run all tests every time.
+
+= 4.2.20 - 4/17/2021  =
+
+* Added SFO3 region to DigitalOcean setup wizard
+* Added a new top level menu item to WordPress admin called *Cloud Tools* that contains all of Media Cloud's tools and tasks.  The main Media Cloud menu was getting way too large.  This only affects non-multisite WordPress sites.
+* You can turn off the *Cloud Tools* menu, reverting to previous behavior, in *Cloud Storage Settings* in the *Display Settings* section.
+
+= 4.2.18 - 4/15/2021  =
+
+* New feature allows you to upload a new image file to replace an existing one. (Premium Only)
+* Added buttons to various media screens to regenerate thumbnails for the media being viewed. (Premium only)
+* Added a metadata panel to the attachment edit page that allows you to view and edit the cloud storage metadata for images, as well as attempt to automatically fix any issues.
+* Additionally, the metadata panel will "audit" the attachment and show you any potential issues (missing local file, etc).
+* Added a **Fix Metadata** task that will attempt to fix any cloud storage metadata issues with items in your media library.
+* Added `media-cloud/storage/prefix` filter for adding your own custom tokens to the upload path.  See an example here: https://gist.github.com/jawngee/f01c74f781b4e8cd4a6d40983e626b99
+* Added a regex filter to debug logging to skip logging any unwanted messages.
+* Fixed placement of Storage Info popup in the Media Library grid mode.
+* Fixed a visual feedback bug where Direct Uploads appeared to not have finished uploading even though they had.
+
+= 4.2.11 - 4/9/2021  =
+
+* Fix for Elementor Update task on unicode/utf-8 pages.
+* Debug log can now be filtered and searched
+* Insure logging is using appropriate logging levels
+
+= 4.2.10 - 4/8/2021  =
+
+* Added test to system check to insure that required database tables are installed.
+
+= 4.2.9 - 3/31/2021  =
+
+* Fix for potential performance issue on the front end for busy sites.
+* Fix for audio and video shortcodes for signed video URLs.
+* Fix for error when pushing js/css assets to cloud storage.
+
+= 4.2.8 - 3/16/2021  =
+
+* **Critical Fix** - Fixes missing class file for the free version that was accidentally excluded by our build system.
+  If you updated to 4.2.7, you must update to 4.2.8, otherwise uploads will fail.  If you are using the premium version,
+  this does not affect you.
+
+= 4.2.7 - 3/15/2021  =
+
+* You can specify different privacy levels to different image sizes defined in your theme using the Image Size Manager.
+  This is useful if you are selling stock photos and want to make high-res variations private until sale.
+* Added a new setting for Imgix, **Serve Private Images**.  When enabled, private images, or image sizes that have had
+  their privacy level set to private, will be rendered through imgix.  When disabled, any private images or private
+  image sizes will be served from cloud storage using signed URLs, if that's enabled.
+* If you change the privacy for an image size, make sure to run the **Update Image Privacy** task that can be found in
+  the **Task Manager**.
+* Fix for direct uploads when the upload doesn't have a mime type, for example .R3D files.  You may need to add
+  these mime types to WordPress to allow uploads though.
+* Fix for direct uploads with DigitalOcean
+* Added `media-cloud/storage/sign-url` filter to disable pre-signing image URLs in the WordPress admin.  This is very edge
+  case, so you should only use this if support directs you to, or you know what you are doing.
+
+= 4.2.6 - 2/15/2021  =
+
+* Fixes for direct uploads for huge image files
+* Fix for hyperdb not storing null values
+* Fix for support links
+* Fixes for migrate task
+* Updated to latest Freemius SDK
+
+
+= 4.2.5 - 12/31/2020  =
+
+* Fixes for migration task
+* Fix redeclared function error when using as a composer dependency
+* Fix for bug introduced 4.2.2
+* Fix for PHP 7.4 type errors
+* Fix for incorrect imgix URL generation
+* Massive overhaul of Elementor integration.  Media Cloud now will support any Elementor addon and running the
+  **Elementor Update Task** is super safe.  Instead of the brute force text search/replace we were doing before, we are
+  now analyzing every installed Elementor widget's properties for images to update and then walking your Elementor post
+  or page's structure to update accordingly.
+* Rewrote the Storage Browser from the ground up.  Much much much faster and can now handle buckets of any size and
+  file count.
+* **Update Elementor** task now generates a report on what was replaced/updated on your Elementor pages/posts.
+* Support for custom sizes in images in Elementor.
+* New integration for Google Web Stories.  If you use Google Web Stories, you may need to run the "Update Web Stories"
+  task to make sure all of your URLs are correct.  You should only have to run this task once, though you will need to
+  run it again anytime you change Media Cloud's config in such a way that it changes the URLs to your images.
+* Fix for "dynamically" resized images using Imgix that ignored the image's default parameters set in the image editor.
+* Fix for URL replacement where two or more of the same images at different sizes were being replaced by a single size
+  when using the classic editor.
+* When adding media to a post that links to the original media, we are now replacing those URLs as well.  You can turn
+  this off in **Cloud Storage Settings** in the **URL Replacement** category.
+* Disable optimizers during migrate task to prevent certain images from being skipped.
+* Fix for built-in ShortPixel optimization
+* Fixed Unlink From Cloud task not scrubbing all S3 metadata
+* Fix for imgix urls being double urlencoded
+* Fix for image sizes in gallery blocks in Gutenberg
+* PHP 8 compatibility fixes
+* Fix for direct uploads going to unicode directory names
+* CLI commands have been "namespaced" and some names have changed.  For example, what used to be
+  `wp mediacloud migrateToCloud` is now `wp mediacloud:storage migrate`.
+* The Update Elementor command line is now `wp mediacloud:elementor update`
+* Verify Library task can now be accessed from the menu
+* Verify Library task has a new option, **Include Local** that will verify everything in your Media Library, including
+  items that are not on cloud storage.  This is a good first step prior to migrating your library for the first time to
+  see if you are missing any local files which may cause your migration to fail.
+* Added new setting toggle **Replace URLs** in **Cloud Storage Settings** that allows you to turn off Media Cloud's
+  realtime URL replacement.  If you've been using Media Cloud since day zero of your WordPress site (you haven't
+  migrated an existing site) and haven't changed any settings which would change the URL for your cloud storage since
+  then (for example adding a CDN or enabling imgix), you may be able to turn this setting off.   Note that the URL
+  replacement overhead is very minimal to begin with so the potential performance gain won't be noticeable in most cases.
+* When Debugging is enabled, Media Cloud will now log to Query Monitor's log if you have that plugin installed
+  and activated.
+* Added **Reset Task Data** to the Task Manager to clear out all task data from the database, aka the nuclear option.
+* Added Report Viewer to view the reports that the various tasks that Media Cloud runs produces.
+* Added new CLI command `wp mediacloud:storage replace` which will search and replace URLs in your database.  When used
+  in conjunction with the new **Replace URLs** toggle in **Cloud Storage Settings** you can minimize all of the work
+  that Media Cloud is doing on the front end to make sure that URLs are correct.  ***There are a lot of caveats to using
+  this command***.  Please read this article for more information:
+  https://support.mediacloud.press/articles/advanced-usage/command-line/replace-urls
+* Compatibility fixes with HyperDB and LudicrousDB
+* Fix for settings sometimes not being saved when using Redis object caching
+* The Media Cloud heartbeat now only runs for administrators or users who have the `mcloud_heartbeat` capability
+
+= 4.1.14 - 12/3/2020 =
 
 * Added missing instructions that caused errors on multisite installs.
 * Added `privacy` ACL to cloud storage uploads.  Since the first days of Media Cloud, we've been using the `authenticated-read`
@@ -128,14 +350,14 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 * Fixed URL replacements for video and audio shortcodes (videos inserted with classic editor or via the [video] shortcode).
 * Last day to use BLACKFRIDAY2020 for 33% off annual licenses, ends December 3rd!
 
-= 4.1.9 =
+= 4.1.9 - 11/30/2020 =
 
 * Fix for when using the ShortPixel plugin and have Media Cloud configured **NOT** to upload PDFs to cloud storage.
 * Fix for unlinking non-image files.
 * Unlink task now generates a report which you can find in your `WP_CONTENT/mcloud-reports` directory.
 * You still have 3 days to use BLACKFRIDAY2020 for 33% off annual licenses, good until December 2nd.  Get some!
 
-= 4.1.8 =
+= 4.1.8 - 11/26/2020 =
 
 * And we're back.  Thanks to everyone for the well wishes, truly appreciated!
 * Updated Freemius SDK to latest
@@ -150,7 +372,7 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 * Added two new people to our support staff, welcome to Quynh and welcome back to Charles!
 * Use BLACKFRIDAY2020 for 33% off annual licenses, good until December 2nd.
 
-= 4.1.6 =
+= 4.1.6 - 9/23/2020 =
 
 * When Debugging is enabled, a log file will be generated next to the CSV report.  This log file includes all the logging
   that would normally be in the Debug Log, but limited to the time period the task was running.  If you are running into
@@ -168,7 +390,7 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 * Added paging to the `syncLocal` and `verify` command line commands, ex: `wp mediacloud verify verify.csv --limit=100 --page=1`
 * Fixed Sync Local, Verify Library and Regenerate Thumbnails to work with Imgix enabled.
 
-= 4.1.4 =
+= 4.1.4 - 9/22/2020 =
 
 * Fix for Regenerate Thumbnails command, it will first attempt to download the original image, if that can't be found then
   it will use the "scaled" image that WordPress 5.5 generates.
@@ -183,11 +405,11 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
   media migrated successfully.   This will generate a report in the aforementioned reports directory.
 * The `migrateToCloud` wp-cli command now accepts a `--verify` flag to force verification.
 
-= 4.1.2 =
+= 4.1.2 - 9/21/2020 =
 
 * Fix for WooCommerce integration with files that have malformed metadata
 
-= 4.1.1 =
+= 4.1.1 - 9/20/2020 =
 
 * Fix for compatibility with Amp plugin and any other plugin using symfony polyfills.
 * Fix for edge case issue where the S3 library was closing a resource stream causing a fatal error.
@@ -197,7 +419,7 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 * Fix for front end uploads with some form plugins.
 
 
-= 4.1.0 =
+= 4.1.0 - 8/28/2020 =
 
 * All third party libraries Media Cloud is using have been re-namespaced to avoid errors and issues with any other plugins using the same libraries.
 * IMPORTANT: The old Backblaze driver is being deprecated, use the Backblaze S3 Compatible driver instead.  The old one will be removed in the next version.
@@ -216,7 +438,7 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 * Fixed Migrate to Mux task
 
 
-= 4.0.11 =
+= 4.0.11 - 8/21/2020 =
 
 * Fix for deprecated `whitelist_options` filter in WP 5.5.
 * Fix for uploads not occuring when using EWWW image optimizer and other image optimizers.
@@ -225,11 +447,11 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 * Added warning about Autoptimize compatibility
 * You can now track Media Cloud development on its public trello board: https://trello.com/b/O0iNw6GL/media-cloud-development
 
-= 4.0.10 =
+= 4.0.10 - 8/20/2020 =
 
 * Fix for attachment tasks when running from the command line (thanks @yanmorinokamca)
 
-= 4.0.9 =
+= 4.0.9 - 8/12/2020 =
 
 * Direct uploads are now much faster
 * Fix for "Add New" page for uploading media when direct uploads are enabled
@@ -239,7 +461,7 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 * Fix for memory error when direct uploading extremely large images without Imgix.
 
 
-= 4.0.8 =
+= 4.0.8 - 7/23/2020 =
 
 * Fix for BuddyPress compatibility
 * Fix for WordPress's crappy image editor not saving edited images to cloud storage.
@@ -248,16 +470,16 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 * Fix for small images not uploading, or not uploading when no image sizes are defined.
 * Fix for duplicated Imgix uploads when the image being uploaded has been resized because of WordPress's dumb big image size threshold "feature".
 
-= 4.0.5 =
+= 4.0.5 - 7/20/2020 =
 
 * Fix a bug with Imgix and SVGs where SVGs are being rendered as progressive JPEGs.
 * Added new option to Imgix to control SVG rendering.  When this new option is enabled, any image size other than 'full' will be rendered as a PNG.  When turned off, the SVG is delivered as is with no conversion.
 
-= 4.0.4 =
+= 4.0.4 - 7/19/2020 =
 
 * Fix for Ultimate Member uploads
 
-= 4.0.3 =
+= 4.0.3 - 7/18/2020 =
 
 * IMPORTANT: This plugin now requires PHP 7.1 or better
 * IMPORTANT: The Dynamic Images feature has been removed.  For all four of you that were using it, you will want to migrate to Imgix before updating.

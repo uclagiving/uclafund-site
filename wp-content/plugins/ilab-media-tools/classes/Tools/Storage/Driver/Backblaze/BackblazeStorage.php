@@ -161,6 +161,10 @@ class BackblazeStorage implements StorageInterface, AuthCacheInterface, Configur
 		return $valid;
 	}
 
+	public function settings() {
+		return $this->settings;
+	}
+
 	public function enabled() {
 		if(!($this->settings->key && $this->settings->accountId && $this->settings->bucket)) {
             $adminUrl = admin_url('admin.php?page=media-cloud-settings&tab=storage');
@@ -223,6 +227,14 @@ class BackblazeStorage implements StorageInterface, AuthCacheInterface, Configur
 	}
 
 	public function region() {
+		return null;
+	}
+
+	public function isUsingPathStyleEndPoint() {
+		return false;
+	}
+
+	public function acl($key) {
 		return null;
 	}
 
@@ -297,7 +309,7 @@ class BackblazeStorage implements StorageInterface, AuthCacheInterface, Configur
 		}
 
 		$key = trailingslashit($key);
-		$files = $this->dir($key, null);
+		$files = $this->dir($key, null)['files'];
 		/** @var StorageFile $file */
 		foreach($files as $file) {
 			if ($file->type() == 'FILE') {
@@ -339,7 +351,7 @@ class BackblazeStorage implements StorageInterface, AuthCacheInterface, Configur
 		}
 	}
 
-	public function dir($path = '', $delimiter = '/') {
+	public function dir($path = '', $delimiter = '/', $limit = -1, $next = null) {
 		if(!$this->client) {
 			throw new InvalidStorageSettingsException('Storage settings are invalid');
 		}
@@ -361,10 +373,13 @@ class BackblazeStorage implements StorageInterface, AuthCacheInterface, Configur
 			}
 		}
 
-		return array_merge($dirs, $files);
+		return [
+			'next' => null,
+			'files' => array_merge($dirs, $files)
+		];
 	}
 
-	public function ls($path = '', $delimiter = '/') {
+	public function ls($path = '', $delimiter = '/', $limit = -1, $next = null, $recursive = false) {
 		if(!$this->client) {
 			throw new InvalidStorageSettingsException('Storage settings are invalid');
 		}
@@ -383,7 +398,10 @@ class BackblazeStorage implements StorageInterface, AuthCacheInterface, Configur
 			}
 		}
 
-		return $files;
+		return [
+			'next' => null,
+			'files' => $files
+		];
 	}
 
 	public function info($key) {
@@ -417,7 +435,7 @@ class BackblazeStorage implements StorageInterface, AuthCacheInterface, Configur
 	//endregion
 
 	//region URLs
-	public function presignedUrl($key, $expiration = 0) {
+	public function presignedUrl($key, $expiration = 0, $options = []) {
 		return $this->bucketUrl.$key;
 	}
 
@@ -501,7 +519,7 @@ class BackblazeStorage implements StorageInterface, AuthCacheInterface, Configur
 		$builder->select('Complete', 'Basic setup is now complete!  Configure advanced settings or setup imgix.')
 			->group('wizard.cloud-storage.providers.backblaze.success', 'select-buttons')
 				->option('configure-imgix', 'Set Up imgix', null, null, 'imgix')
-				->option('advanced-settings', 'Advanced Settings', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
+				->option('advanced-settings', 'Finish &amp; Exit Wizard', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
 			->endGroup()
 		->endStep();
 

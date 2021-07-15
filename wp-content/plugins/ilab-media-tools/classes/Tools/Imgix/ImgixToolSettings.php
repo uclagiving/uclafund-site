@@ -32,6 +32,9 @@ use MediaCloud\Plugin\Utilities\Environment;
  * @property bool renderSVG
  * @property bool detectFaces
  * @property bool generateThumbnails
+ * @property bool removeQueryVars
+ * @property ?string cropMode
+ * @property ?string cropPosition
  */
 class ImgixToolSettings extends DynamicImagesToolSettings {
 	private $_imgixDomains = null;
@@ -50,6 +53,9 @@ class ImgixToolSettings extends DynamicImagesToolSettings {
 		'generateThumbnails' => ['mcloud-imgix-generate-thumbnails', null, true],
 		'imageQuality' => ['mcloud-imgix-default-quality', null, null],
 		'renderSVG' => ['mcloud-imgix-render-svg-files', null, false],
+		'removeQueryVars' => ['mcloud-imgix-remove-extra-variables', null, false],
+		'cropMode' => ['mcloud-imgix-crop-mode', null, null],
+		'cropPosition' => ['mcloud-imgix-crop-position', null, 'center'],
 	];
 
 	public function __construct() {
@@ -61,15 +67,17 @@ class ImgixToolSettings extends DynamicImagesToolSettings {
 			if ($this->_imgixDomains === null) {
 				$this->_imgixDomains = [];
 				$domains = Environment::Option('mcloud-imgix-domains', null, '');
-				$domain_lines = explode("\n", $domains);
+				if (!empty($domains)) {
+					$domain_lines = explode("\n", $domains);
 
-				if(count($domain_lines) <= 1) {
-					$domain_lines = explode(',', $domains);
-				}
+					if(count($domain_lines) <= 1) {
+						$domain_lines = explode(',', $domains);
+					}
 
-				foreach($domain_lines as $d) {
-					if(!empty($d)) {
-						$this->_imgixDomains[] = trim($d);
+					foreach($domain_lines as $d) {
+						if(!empty($d)) {
+							$this->_imgixDomains[] = trim($d);
+						}
 					}
 				}
 			}

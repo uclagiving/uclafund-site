@@ -13,6 +13,7 @@
 
 namespace MediaCloud\Plugin\Tools\Debugging;
 
+use MediaCloud\Plugin\Tools\Debugging\System\SystemCompatibilityTool;
 use MediaCloud\Plugin\Tools\Tool;
 use MediaCloud\Plugin\Tools\ToolsManager;
 use MediaCloud\Plugin\Utilities\Logging\DatabaseLogger;
@@ -23,6 +24,7 @@ use MediaCloud\Plugin\Utilities\View;
 use MediaCloud\Vendor\ParagonIE\EasyRSA\EasyRSA;
 use MediaCloud\Vendor\ParagonIE\EasyRSA\PublicKey;
 use MediaCloud\Vendor\Probe\ProviderFactory;
+use function MediaCloud\Plugin\Utilities\discoverHooks;
 
 if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
 
@@ -32,36 +34,39 @@ if (!defined( 'ABSPATH')) { header( 'Location: /'); die; }
  * Debugging tool.
  */
 class DebuggingTool extends Tool {
-	/** @var DebuggingToolSettings|null  */
-	private $settings = null;
 
 	public function __construct( $toolName, $toolInfo, $toolManager ) {
 		parent::__construct( $toolName, $toolInfo, $toolManager );
 
 		if ($this->enabled()) {
-			$this->settings = DebuggingToolSettings::instance();
-
             Logger::instance();
 
-            if (isset($_REQUEST['page']) && ($_REQUEST['page'] == 'media-tools-debug-log') && isset($_POST['action'])) {
-            	if (!current_user_can('manage_options')) {
-            		die;
-	            }
+            if (current_user_can('manage_options')) {
+	            add_action('wp_ajax_mcloud-debug-download-debug-log', function() {
+		            check_ajax_referer('mcloud-debug-download-debug-log', 'nonce');
+		            $this->actionDownloadLog();
+	            });
 
-                if ($_POST['action'] == 'csv') {
-                    $this->generateCSV();
-                } else if ($_POST['action'] == 'bug') {
-                    $this->generateBug();
-                } else if ($_POST['action'] == 'clear-log') {
-                    $this->clearLog();
-                }
+	            add_action('wp_ajax_mcloud-debug-generate-system-report', function() {
+		            check_ajax_referer('mcloud-debug-generate-system-report', 'nonce');
+		            $this->actionGenerateReport();
+	            });
+
+	            add_action('wp_ajax_mcloud-debug-clear-debug-log', function() {
+		            check_ajax_referer('mcloud-debug-clear-debug-log', 'nonce');
+		            $this->actionClearLog();
+	            });
+
+	            add_action('wp_ajax_mcloud-get-debug-log', function() {
+		            check_ajax_referer('mcloud-get-debug-log', 'nonce');
+	            	$this->actionGetDebugLog();
+	            });
             }
 
             $link = "<a href='".admin_url('admin.php?page=media-tools-top')."'>turn it off</a>";
             $message = "Media Cloud debugging is enabled.  This may affect performance.  Unless you are troubleshooting and issue, you should $link.  You can dismiss this notice and it'll be shown to you again in 24 hours.";
             NoticeManager::instance()->displayAdminNotice('warning', $message,true, 'ilab-debug-tools-warning', 1);
         }
-
 	}
 
 
@@ -92,16 +97,76 @@ class DebuggingTool extends Tool {
         ]);
     }
 
-    public function generateCSV() {
-	    $logger = new DatabaseLogger();
+    private function actionGetDebugLog() {
+		if (!is_admin() || !current_user_can('manage_options')) {
+			die;
+		}
 
-        header('Content-Disposition: attachment;filename="media-cloud-log.csv";');
-        header('Content-Type: application/csv; charset=UTF-8');
-        echo $logger->csv();
-        die;
+	    $tableView = new DatabaseLogTable([
+	    	'screen' => 'ajax'
+	    ]);
+	    $tableView->prepare_items();
+
+	    ob_start();
+	    $tableView->display();
+	    $html = ob_get_clean();
+
+	    $doc = new \DOMDocument();
+	    libxml_use_internal_errors(true);
+	    $doc->loadHTML($html);
+
+	    /** @var \DOMNode $tableNavDiv */
+	    $tableNavDiv = null;
+	    $divs = $doc->getElementsByTagName('div');
+	    /** @var \DOMNode $div */
+	    foreach($divs as $div) {
+	    	$classAttr = $div->attributes->getNamedItem('class');
+	    	if (!empty($classAttr)) {
+			    if (strpos($classAttr->nodeValue, 'tablenav-pages') !== false) {
+				    $tableNavDiv = $div;
+				    break;
+			    }
+		    }
+	    }
+
+	    /** @var \DOMNode $logTable */
+	    $logTable = null;
+	    $tables = $doc->getElementsByTagName('table');
+	    /** @var \DOMNode $div */
+	    foreach($tables as $table) {
+		    $logTable = $table;
+		    break;
+	    }
+
+	    if (empty($tableNavDiv) || empty($logTable)) {
+	    	wp_send_json([
+	    		'status' => 'empty'
+		    ]);
+	    } else {
+	    	wp_send_json([
+			    'status' => 'ok',
+	    		'nav' => $doc->saveHTML($tableNavDiv),
+			    'table' => $doc->saveHTML($logTable)
+		    ]);
+	    }
     }
 
-    public function generateBug() {
+    private function actionDownloadLog() {
+	    $logger = new DatabaseLogger();
+
+	    wp_send_json([
+	    	'status' => 'ok',
+		    'download' => [
+		    	'file' => 'media-cloud-log.csv',
+		    	'type' => 'application/csv',
+		    	'contents' => $logger->csv(),
+		    ]
+	    ]);
+    }
+
+    private function actionGenerateReport() {
+		add_filter('media-cloud/compat/disable-apply', '__return_true', PHP_INT_MAX);
+
 	    $probe = ProviderFactory::create();
 
 	    $probeData = [
@@ -170,27 +235,31 @@ class DebuggingTool extends Tool {
 	    $probeData['Active Plugins'] = $active;
 	    $probeData['In-Active Plugins'] = $inactivePlugins;
 
+	    $foundHooks = discoverHooks(SystemCompatibilityTool::$compatibleHooks);
+	    foreach($foundHooks as &$foundHook) {
+	    	unset($foundHook['realCallable']);
+	    }
+	    $probeData['Hooks'] = $foundHooks;
 
-        header('Content-Disposition: attachment;filename="media-cloud-debug.txt";');
-        header('Content-Type: text/plain; charset=UTF-8');
-
-        $jsonData = json_encode($probeData, JSON_PRETTY_PRINT);
+	    $jsonData = json_encode($probeData, JSON_PRETTY_PRINT);
 	    $pubKey = new PublicKey(file_get_contents(ILAB_TOOLS_DIR.'/keys/public.key'));
 
-	    echo EasyRSA::encrypt($jsonData, $pubKey);
-
-        die;
+	    wp_send_json([
+	    	'status' => 'ok',
+		    'download' => [
+		    	'file' => 'media-cloud-debug.txt',
+			    'type' => 'text/plain',
+			    'contents' => EasyRSA::encrypt($jsonData, $pubKey)
+		    ]
+	    ]);
     }
 
-    public function clearLog() {
+    public function actionClearLog() {
         $logger = new DatabaseLogger();
         $logger->clearLog();
 
-        $location = admin_url('admin.php?page=media-tools-debug-log');
-        header("Location: $location", true, 302);
-        die;
+        wp_send_json(['status' => 'ok']);
     }
 
     //endregion
-
 }

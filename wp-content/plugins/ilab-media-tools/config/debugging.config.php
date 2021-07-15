@@ -40,7 +40,7 @@ return [
 					],
 					"mcloud-debug-content-filtering" => [
 						"title" => "Debug Content Filtering",
-						"description" => "If you are seeing issues with URLs not being updated correctly, enable this to troubleshoot.  When enabled, it will log content filtering as well as generate a report in <code style='white-space: nowrap'>".trailingslashit(WP_CONTENT_DIR)."mcloud-reports</code>.  <strong>DO NOT LEAVE THIS RUNNING.</strong>  Only use to troubleshoot specific pages and then make sure to turn it off.",
+						"description" => "If you are seeing issues with URLs not being updated correctly, enable this to troubleshoot.  When enabled, it will log content filtering as well as generate a report in <code style='white-space: nowrap'>".\MediaCloud\Plugin\Tasks\TaskReporter::reporterDirectory()."</code>.  <strong>DO NOT LEAVE THIS RUNNING.</strong>  Only use to troubleshoot specific pages and then make sure to turn it off.",
 						"type" => "checkbox",
 						"default" => false,
 					],
@@ -50,7 +50,7 @@ return [
 						"type" => "number",
 						"step" => 1,
 						"min" => 100,
-						"max" => 10000,
+						"max" => 1000000,
                         "default" => 1000
 					],
 					"mcloud-debug-remote-url" => [
@@ -62,6 +62,11 @@ return [
 						"title" => "Log Target Port",
 						"description" => "The port number for the remote log target to send logs to, this will be supplied by Media Cloud support.",
 						"type" => "text-field",
+					],
+					"mcloud-debug-ignored-regex" => [
+						"title" => "Ignored Regex Filters",
+						"description" => "One regex per line that will filter out debug messages.",
+						"type" => "text-area",
 					],
 				]
 			]

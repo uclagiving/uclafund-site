@@ -53,7 +53,7 @@ final class TaskManager {
 
 		static::registerTask(TestTask::class);
 
-		$this->runningTasks = Task::runningTasks();
+		$this->runningTasks = (is_admin() || defined('DOING_CRON')) ? Task::runningTasks() : [];
 		$this->setupHooks();
 	}
 
@@ -110,6 +110,7 @@ final class TaskManager {
 			add_action('wp_ajax_mcloud_start_task', [$this, 'actionStartTask']);
 			add_action('wp_ajax_mcloud_cancel_task', [$this, 'actionCancelTask']);
 			add_action('wp_ajax_mcloud_cancel_all_tasks', [$this, 'actionCancelAllTasks']);
+			add_action('wp_ajax_mcloud_nuke_all_tasks', [$this, 'actionNukeAllTasks']);
 			add_action('wp_ajax_mcloud_task_status', [$this, 'actionTaskStatus']);
 			add_action('wp_ajax_mcloud_all_task_statuses', [$this, 'actionAllTaskStatuses']);
 
@@ -139,11 +140,23 @@ final class TaskManager {
 				if (in_array($action_name, array_keys(static::$registeredTasks))) {
 					$taskClass = static::$registeredTasks[$action_name];
 
-					$task = new $taskClass();
-					$task->prepare([], $post_ids);
-					$this->queueTask($task);
+					if ($this->settings->scheduleBulkActions) {
+						$task = TaskSchedule::nextScheduledTaskOfType($taskClass::identifier());
+						if (!empty($task)) {
+							$task->selection = array_merge($task->selection, $post_ids);
+							$task->save();
+						} else {
+							$taskClass::scheduleIn($this->settings->scheduleBulkActionsDelay, [], $post_ids);
+						}
 
-					$redirect_to = admin_url('admin.php?page=mcloud-task-'.$taskClass::identifier());
+						$redirect_to = admin_url('admin.php?page=media-cloud-task-manager');
+					} else {
+						$task = new $taskClass();
+						$task->prepare([], $post_ids);
+						$this->queueTask($task);
+
+						$redirect_to = admin_url('admin.php?page=mcloud-task-'.$taskClass::identifier());
+					}
 				}
 
 				return $redirect_to;
@@ -216,17 +229,20 @@ final class TaskManager {
 	/**
 	 * Handles heartbeat
 	 *
-	 * @param $response
-	 * @param $screen_id
+	 * @param bool $canDie
 	 *
 	 * @throws \Exception
 	 */
-	public function handleHeartbeat() {
+	public function handleHeartbeat($canDie = true) {
 		$freq = get_site_option('mcloud-tasks-heartbeat-frequency', 15);
 		$lastHeartbeat = get_site_option('mcloud_last_heartbeat', 0);
 		$delta = microtime(true) - $lastHeartbeat;
 		if (($lastHeartbeat > 0) && ($delta < $freq)) {
-			wp_die();
+			if ($canDie) {
+				wp_die();
+			} else {
+				return;
+			}
 		}
 
 		update_site_option('mcloud_last_heartbeat', microtime(true));
@@ -336,6 +352,19 @@ final class TaskManager {
 				$task->save();
 			}
 		}
+
+		wp_send_json(['status' => 'ok', 'message', 'Tasks cancelled.']);
+	}
+
+	/**
+	 * Cancels all running tasks
+	 */
+	public function actionNukeAllTasks() {
+		Logger::info("Nuking All Tasks ... ", [], __METHOD__, __LINE__);
+		check_ajax_referer('mcloud_nuke_all_tasks', 'nonce');
+
+		// SQL TO DELETE IT ALL EVERYTHING
+		TaskDatabase::nukeData();
 
 		wp_send_json(['status' => 'ok', 'message', 'Tasks cancelled.']);
 	}

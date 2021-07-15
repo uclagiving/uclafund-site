@@ -1,6 +1,11 @@
 <?php /** @var \MediaCloud\Plugin\Tasks\TaskManager $manager */?>
 @extends('../templates/sub-page')
 
+@section('header')
+<div class="header-actions">
+    <a type="button" class="button button-primary" href="{{admin_url('admin.php?page=media-cloud-settings&tab=batch-processing')}}">Task Manager Settings</a>
+</div>
+@endsection
 @section('main')
     <div id="task-manager" class="settings-body" data-status-nonce="{{wp_create_nonce('mcloud_task_status')}}">
         <p>The Task Manager allows you to view all of your currently running tasks, tasks that have completed and any scheduled tasks about to happen.</p>
@@ -12,6 +17,9 @@
                     @continue(!$taskClass::runFromTaskManager())
                     <button type="button" class="button button-primary button-small button-start-task" data-task-id="{{$id}}" data-has-options="{{!empty($taskClass::taskOptions())}}" data-nonce="{{wp_create_nonce('mcloud_start_task')}}">{{$taskClass::title()}}</button>
                 @endforeach
+            </div>
+            <div class="actions">
+                <button type="button" class="button button-nuke-all button-small" data-nuke-all-nonce="{{wp_create_nonce('mcloud_nuke_all_tasks')}}">Reset All Task Data</button>
             </div>
         </div>
 

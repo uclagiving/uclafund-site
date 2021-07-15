@@ -17,6 +17,10 @@ namespace MediaCloud\Plugin\Utilities {
 
 	if (!defined('ABSPATH') && empty($GLOBALS['__composer_autoload_files'])) { header('Location: /'); die; }
 
+	if (function_exists('\MediaCloud\Plugin\Utilities\vomit')) {
+		return;
+	}
+
 	/**
 	 * Brute force debug tool
 	 * @param $what
@@ -40,7 +44,7 @@ namespace MediaCloud\Plugin\Utilities {
 	{
 		status_header( 200 );
 		header( 'Content-type: application/json; charset=UTF-8' );
-		echo json_encode($data,JSON_PRETTY_PRINT);
+		echo json_encode($data,JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 		die;
 	}
 
@@ -185,6 +189,42 @@ namespace MediaCloud\Plugin\Utilities {
 				$currentObject = $currentObject[$part];
 			}
 		}
+
+		return $default;
+	}
+
+	/**
+	 * Determines if the string starts with any of the supplied strings
+	 *
+	 * @param $haystack
+	 * @param $needles
+	 * @return bool
+	 */
+	function stringStartsWithAny($haystack, $needles) {
+		foreach($needles as $needle) {
+			if (strpos($haystack, $needle) === 0) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines if the string contains any of the supplied strings
+	 *
+	 * @param $haystack
+	 * @param $needles
+	 * @return bool
+	 */
+	function stringContainsAny($haystack, $needles) {
+		foreach($needles as $needle) {
+			if (strpos($haystack, $needle) !== false) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -217,6 +257,78 @@ namespace MediaCloud\Plugin\Utilities {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Insures all items are set
+	 *
+	 * @param array $array
+	 * @param array $set
+	 *
+	 * @return bool
+	 */
+	function anyIsSet($array,...$set) {
+		foreach($set as $item) {
+			if (isset($array[$item])) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Insures all items are set
+
+	 * @param array $array
+	 * @param array $set
+	 *
+	 * @return bool
+	 */
+	function allIsSet($array, ...$set) {
+		foreach($set as $item) {
+			if (!isset($array[$item])) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines if an array contains any of the values in another array
+	 *
+	 * @param $array
+	 * @param $values
+	 *
+	 * @return bool
+	 */
+	function arrayContainsAny($array, $values) {
+		foreach($values as $val) {
+			if (in_array($val, $array)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Determines if an array contains all of the values in another array
+	 *
+	 * @param $array
+	 * @param $values
+	 *
+	 * @return bool
+	 */
+	function arrayContainsAll($array, $values) {
+		foreach($values as $val) {
+			if (!in_array($val, $array)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -255,7 +367,7 @@ namespace MediaCloud\Plugin\Utilities {
 		if (function_exists('ini_get')) {
 			$memory_limit = ini_get('memory_limit');
 		} else {
-			Logger::info("ini_get disabled is disabled, unable to determine real memory limit", [], __FUNCTION__, __LINE__);
+			Logger::warning("ini_get disabled is disabled, unable to determine real memory limit", [], __FUNCTION__, __LINE__);
 		}
 
 		if (empty($memory_limit) || ($memory_limit == -1)) {
@@ -314,6 +426,216 @@ namespace MediaCloud\Plugin\Utilities {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Determine if a given string ends with a given substring.
+	 *
+	 * @param  string  $haystack
+	 * @param  string|string[]  $needles
+	 * @return bool
+	 */
+	function strEndsWith($haystack, $needles) {
+		foreach ((array) $needles as $needle) {
+			if ($needle !== '' && substr($haystack, -strlen($needle)) === (string) $needle) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	function discoverHooks($hooks) {
+		global $wp_filter;
+
+		$time = microtime(true);
+
+		$foundHooks = [];
+		$hashes = [];
+		$themeDir = get_theme_file_path();
+
+		foreach($hooks as $hookName) {
+			if (!isset($wp_filter[$hookName])) {
+				continue;
+			}
+
+			$wpHook = $wp_filter[$hookName];
+			foreach($wpHook->callbacks as $priority => $hooks) {
+				foreach($hooks as $hook => $hookData) {
+					if (is_array($hookData['function']) && is_object($hookData['function'][0])) {
+						if (strpos(get_class($hookData['function'][0]), 'MediaCloud') === 0) {
+							continue;
+						}
+					}
+
+					$line = 0;
+					$type = 'unknown';
+					$hookCallable = null;
+					$filename = null;
+					if (is_array($hookData['function'])) {
+						$type = 'array';
+						$hookCallable = [
+							'static' => is_string($hookData['function'][0]),
+							'class' => (is_string($hookData['function'][0])) ? $hookData['function'][0] : get_class($hookData['function'][0]),
+							'method' => $hookData['function'][1]
+						];
+
+						try {
+							$ref = new \ReflectionClass($hookData['function'][0]);
+							$filename = $ref->getFileName();
+							$line = $ref->getStartLine();
+						} catch (\Exception $ex) {
+							Logger::error("Error discovering hook: ".$ex->getMessage(), [], __METHOD__, __LINE__);
+						}
+					} else if (is_string($hookData['function'])) {
+						$type = 'function';
+						$hookCallable = [
+							'function' => $hookData['function']
+						];
+
+						try {
+							$ref = new \ReflectionFunction($hookData['function']);
+							$filename = $ref->getFileName();
+							$line = $ref->getStartLine();
+						} catch (\Exception $ex) {
+							Logger::error("Error discovering hook: ".$ex->getMessage(), [], __METHOD__, __LINE__);
+						}
+					} else if ($hookData['function'] instanceof \Closure) {
+						$type = 'closure';
+						$hookCallable = [];
+
+						try {
+							$ref = new \ReflectionFunction($hookData['function']);
+							$line = $ref->getStartLine();
+							$filename = $ref->getFileName();
+							if ($ref->isClosure() && !empty($ref->getClosureThis())) {
+								if (strpos(get_class($ref->getClosureThis()), 'MediaCloud') === 0) {
+									continue;
+								}
+							}
+						} catch (\Exception $ex) {
+							Logger::error("Error discovering hook: ".$ex->getMessage(), [], __METHOD__, __LINE__);
+						}
+					}
+
+					if (!empty($filename)) {
+						if (strpos($filename, WP_PLUGIN_DIR) !== false) {
+							$filename = ltrim(str_replace(WP_PLUGIN_DIR, '', $filename), '/');
+							$filenameParts = explode('/', $filename);
+							$pluginFolder = array_shift($filenameParts);
+
+							$plugins = get_plugins('/'.$pluginFolder);
+							if (count($plugins) > 0) {
+								$plugin = array_values($plugins)[0];
+
+								$hash = md5(serialize([
+									'hook' => $hookName,
+									'priority' => $priority,
+									'type' => 'plugin',
+									'plugin' => $pluginFolder,
+									'callableType' => $type,
+									'callable' => $hookCallable,
+								]));
+
+								if (!in_array($hash, $hashes)) {
+									$hashes[] = $hash;
+
+									$foundHooks[] = [
+										'hook' => $hookName,
+										'priority' => $priority,
+										'type' => 'plugin',
+										'plugin' => $pluginFolder,
+										'name' => $plugin['Name'],
+										'callableType' => $type,
+										'callable' => $hookCallable,
+										'realCallable' => $hookData['function'],
+										'basename' => pathinfo('/'.$filename, PATHINFO_BASENAME),
+										'filename' => '/'.$filename,
+										'line' => $line,
+										'hash' => $hash
+									];
+								}
+							}
+						} else if (strpos($filename, $themeDir) !== false) {
+							$themeInfo = wp_get_theme();
+							$filename = ltrim(str_replace($themeDir, '', $filename), '/');
+							$filenameParts = explode('/', $filename);
+							$themeFolder = array_shift($filenameParts);
+
+							$hash = md5(serialize([
+								'hook' => $hookName,
+								'priority' => $priority,
+								'type' => 'plugin',
+								'plugin' => $themeFolder,
+								'callableType' => $type,
+								'callable' => $hookCallable,
+							]));
+
+							if (!in_array($hash, $hashes)) {
+								$hashes[] = $hash;
+
+								$foundHooks[] = [
+									'hook' => $hookName,
+									'priority' => $priority,
+									'type' => 'theme',
+									'plugin' => $themeFolder,
+									'name' => $themeInfo->get('Name'),
+									'callableType' => $type,
+									'callable' => $hookCallable,
+									'realCallable' => $hookData['function'],
+									'basename' => pathinfo('/'.$filename, PATHINFO_BASENAME),
+									'filename' => '/'.$filename,
+									'line' => $line,
+									'hash' => $hash
+								];
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $foundHooks;
+	}
+
+	/**
+	 * Disables non-Media Cloud hooks and filters for the specified action/filter names
+	 *
+	 * @param string[] $hooks
+	 */
+	function disableHooks($hooks) {
+		global $wp_filter;
+
+		foreach($hooks as $hookName) {
+			if (!isset($wp_filter[$hookName])) {
+				continue;
+			}
+
+			$wpHook = $wp_filter[$hookName];
+			foreach($wpHook->callbacks as $priority => $hooks) {
+				foreach($hooks as $hook => $hookData) {
+					if (is_array($hookData['function']) && is_object($hookData['function'][0])) {
+						if (strpos(get_class($hookData['function'][0]), 'MediaCloud') === 0) {
+							continue;
+						}
+					}
+
+					$wpHook->remove_filter($hook, $hookData['function'], $priority);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Wrapper for set_time_limit to see if it is enabled.
+	 *
+	 * @since 2.6.0
+	 * @param int $limit Time limit.
+	 */
+	function ilab_set_time_limit( $limit = 0 ) {
+		if ( function_exists( 'set_time_limit' ) && false === strpos( ini_get( 'disable_functions' ), 'set_time_limit' ) && ! ini_get( 'safe_mode' ) ) { // phpcs:ignore PHPCompatibility.IniDirectives.RemovedIniDirectives.safe_modeDeprecatedRemoved
+			@set_time_limit( $limit ); // @codingStandardsIgnoreLine
+		}
 	}
 }
 

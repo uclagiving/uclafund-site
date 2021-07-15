@@ -198,7 +198,7 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
 
 				if (empty($valid) && empty($connectError)) {
 					try {
-						Logger::info("Bucket does not exist, trying to list buckets.", [], __METHOD__, __LINE__);
+						Logger::warning("Bucket does not exist, trying to list buckets.", [], __METHOD__, __LINE__);
 
 						$result = $client->listBuckets();
 						$buckets = $result->get('Buckets');
@@ -216,7 +216,7 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
                                 $errorCollector->addError("Bucket {$this->settings->bucket} does not exist.");
                             }
 
-                            Logger::info("Bucket does not exist.", [], __METHOD__, __LINE__);
+                            Logger::error("Bucket does not exist.", [], __METHOD__, __LINE__);
                         }
 					} catch(AwsException $ex) {
                         if ($errorCollector) {
@@ -268,6 +268,10 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
 
 	public function settingsError() {
     	return $this->settings->settingsError;
+	}
+
+	public function settings() {
+    	return $this->settings;
 	}
 
 	public function client() {
@@ -475,8 +479,41 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
 		return $this->settings->region;
 	}
 
+	public function isUsingPathStyleEndPoint() {
+		if (in_array(static::identifier(), ['s3', 'google', 'backblaze', 'wasabi'])) {
+			return false;
+		}
+
+		return $this->settings->endPointPathStyle;
+	}
+
 	public function insureACL($key, $acl) {
 
+	}
+
+	public function acl($key) {
+		try {
+			$result = $this->client->getObjectAcl([
+				'Bucket' => $this->settings->bucket,
+				'Key' => $key
+			]);
+
+			$grants = arrayPath($result, 'Grants', []);
+			foreach($grants as $grant) {
+				if (arrayPath($grant, 'Grantee/URI') === 'http://acs.amazonaws.com/groups/global/AllUsers') {
+					return (arrayPath($grant, 'Permission') === 'READ') ? 'public-read' : 'private';
+				}
+
+				if (arrayPath($grant, 'Grantee/URI') === 'http://acs.amazonaws.com/groups/global/AuthenticatedUsers') {
+					return (arrayPath($grant, 'Permission') === 'READ') ? 'authenticated-read' : 'private';
+				}
+			}
+
+			return null;
+		} catch (\Exception $ex) {
+			Logger::error("Error fetching ACL for '$key'.  Exception: ".$ex->getMessage(), [], __METHOD__, __LINE__);
+			return null;
+		}
 	}
 
 	public function updateACL($key, $acl) {
@@ -708,11 +745,12 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
 		return $fileInfo;
 	}
 
-	public function dir($path = '', $delimiter = '/') {
+	public function dir($path = '', $delimiter = '/', $limit = -1, $next = null) {
 		if(!$this->client) {
 			throw new InvalidStorageSettingsException('Storage settings are invalid');
 		}
 
+		$foundDirs = [];
 		$contents = [];
 		try {
 			$args =  [
@@ -724,33 +762,61 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
 				$args['Delimiter'] = $delimiter;
 			}
 
-			$results  = $this->client->getPaginator('ListObjects', $args);
+			if ($limit !== -1) {
+				$args['MaxKeys'] = $limit;
+			}
 
-			foreach($results as $result) {
-				if (!empty($result['CommonPrefixes'])) {
-					foreach($result['CommonPrefixes'] as $prefix) {
-						$contents[] = new StorageFile('DIR', $prefix['Prefix']);
+			if (!empty($next)) {
+				$args['ContinuationToken'] = $next;
+			}
+
+			$results  = $this->client->getPaginator('ListObjectsV2', $args);
+
+			$result = $results->current();
+			if (empty($result)) {
+				return [
+					'next' => null,
+					'files' => []
+				];
+			}
+
+			if (!empty($result['CommonPrefixes'])) {
+				foreach($result['CommonPrefixes'] as $prefix) {
+					$decodedPrefix = urldecode($prefix['Prefix']);
+					if (in_array($decodedPrefix, $foundDirs)) {
+						continue;
 					}
-				}
 
-				if (!empty($result['Contents'])) {
-					foreach($result['Contents'] as $object) {
-						if ($object['Key'] == $path) {
-							continue;
-						}
-
-						$contents[] = new StorageFile('FILE', $object['Key'], null, $object['LastModified'], intval($object['Size']), $this->presignedUrl($object['Key']));
-					}
+					$foundDirs[] = $decodedPrefix;
+					$contents[] = new StorageFile('DIR', $decodedPrefix);
 				}
 			}
-		} catch(AwsException $ex) {
 
+			if (!empty($result['Contents'])) {
+				foreach($result['Contents'] as $object) {
+					if ($object['Key'] == $path) {
+						continue;
+					}
+
+					$contents[] = new StorageFile('FILE', $object['Key'], null, $object['LastModified'], intval($object['Size']), $this->presignedUrl($object['Key']));
+				}
+			}
+
+			return [
+				'next' => isset($result['NextContinuationToken']) ? $result['NextContinuationToken'] : null,
+				'files' => $contents
+			];
+		} catch(AwsException $ex) {
+			Logger::error("Error listing objects for $path: ".$ex->getMessage(), [], __METHOD__, __LINE__);
 		}
 
-		return $contents;
+		return [
+			'next' => null,
+			'files' => []
+		];
 	}
 
-	public function ls($path = '', $delimiter = '/') {
+	public function ls($path = '', $delimiter = '/', $limit = -1, $next = null, $recursive = false) {
 		if(!$this->client) {
 			throw new InvalidStorageSettingsException('Storage settings are invalid');
 		}
@@ -766,29 +832,73 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
 				$args['Delimiter'] = $delimiter;
 			}
 
-			$results  = $this->client->getPaginator('ListObjects', $args);
+			if ($limit !== -1) {
+				$args['MaxKeys'] = $limit;
+			}
 
-			foreach($results as $result) {
-				if (!empty($result['Contents'])) {
-					foreach($result['Contents'] as $object) {
-						if ($object['Key'] == $path) {
+			if (!empty($next)) {
+				$args['ContinuationToken'] = $next;
+			}
+
+			$results  = $this->client->getPaginator('ListObjectsV2', $args);
+
+			$result = $results->current();
+			if (empty($recursive) && (empty($result) || empty($result['Contents']))) {
+				return [
+					'next' => null,
+					'files' => []
+				];
+			}
+
+			if (!empty($result['Contents'])) {
+				foreach($result['Contents'] as $object) {
+					if ($object['Key'] == $path) {
+						continue;
+					}
+
+					$contents[] = $object['Key'];
+				}
+			}
+
+			if (!empty($recursive)) {
+				$recursiveDirs = [];
+				if (!empty($result['CommonPrefixes'])) {
+					foreach($result['CommonPrefixes'] as $prefix) {
+						$decodedPrefix = urldecode($prefix['Prefix']);
+						if (in_array($decodedPrefix, $recursiveDirs)) {
 							continue;
 						}
 
-						$contents[] = $object['Key'];
+						$recursiveDirs[] =  $decodedPrefix;
+					}
+				}
+
+				foreach($recursiveDirs as $recursiveDir) {
+					$ls = $this->ls($recursiveDir, $delimiter, $limit, $next, true);
+					if (!empty($ls['files'])) {
+						$contents = array_merge($contents, $ls['files']);
 					}
 				}
 			}
-		} catch(AwsException $ex) {
 
+
+			return [
+				'next' => isset($result['NextContinuationToken']) ? $result['NextContinuationToken'] : null,
+				'files' => $contents
+			];
+		} catch(AwsException $ex) {
+			Logger::error("Error listing objects for $path: ".$ex->getMessage(), [], __METHOD__, __LINE__);
 		}
 
-		return $contents;
+		return [
+			'next' => null,
+			'files' => []
+		];
 	}
 	//endregion
 
 	//region URLs
-	protected function presignedRequest($key, $expiration = 0) {
+	protected function presignedRequest($key, $expiration = 0, $options = []) {
 		if(!$this->client) {
 			throw new InvalidStorageSettingsException('Storage settings are invalid');
 		}
@@ -801,13 +911,24 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
 			$expiration = 1;
 		}
 
-		$command = $this->client->getCommand('GetObject', ['Bucket' => $this->settings->bucket, 'Key' => $key]);
+		$commandOptions = [
+			'Bucket' => $this->settings->bucket,
+			'Key' => $key
+		];
+
+		if (!empty($options) && is_array($options)) {
+			$commandOptions = array_merge($commandOptions, $options);
+		}
+
+		$command = $this->client->getCommand('GetObject', $commandOptions);
 
 		return $this->client->createPresignedRequest($command, "+".((int)$expiration)." minutes");
 	}
 
-	public function presignedUrl($key, $expiration = 0) {
-		if ((StorageToolSettings::driver() === 's3') && ($this->settings->validSignedCDNSettings())) {
+	public function presignedUrl($key, $expiration = 0, $options = []) {
+		$ignoreCDN = apply_filters('media-cloud/storage/ignore-cdn', false);
+
+		if ((StorageToolSettings::driver() === 's3') && ($this->settings->validSignedCDNSettings()) && empty($ignoreCDN)) {
 			if (empty($expiration)) {
 				$expiration = $this->settings->presignedURLExpiration;
 			}
@@ -839,7 +960,7 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
 
 			return $url;
 		} else {
-		    $req = $this->presignedRequest($key, $expiration);
+		    $req = $this->presignedRequest($key, $expiration, $options);
 		    $uri = $req->getUri();
 		    $url = $uri->__toString();
 
@@ -947,7 +1068,7 @@ class S3Storage implements S3StorageInterface, ConfiguresWizard {
 		$builder->select('Complete', 'Basic setup is now complete!  Configure advanced settings or setup imgix.')
 			->group('wizard.cloud-storage.providers.s3.success', 'select-buttons')
 				->option('configure-imgix', 'Set Up imgix', null, null, 'imgix')
-				->option('advanced-settings', 'Advanced Settings', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
+				->option('advanced-settings', 'Finish &amp; Exit Wizard', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
 			->endGroup()
 		->endStep();
 

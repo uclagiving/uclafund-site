@@ -16,6 +16,7 @@
 
 namespace MediaCloud\Plugin\Tools\Storage;
 
+use MediaCloud\Plugin\Tools\ToolSettings;
 use MediaCloud\Plugin\Utilities\Logging\ErrorCollector;
 
 if (!defined('ABSPATH')) { header('Location: /'); die; }
@@ -116,6 +117,12 @@ interface StorageInterface {
 	public function settingsError();
 
 	/**
+	 * Settings for this instance
+	 * @return ToolSettings
+	 */
+	public function settings();
+
+	/**
 	 * Validates settings.
 	 *
      * @param ErrorCollector|null $errorCollector
@@ -142,6 +149,13 @@ interface StorageInterface {
 	 * @return string|null
 	 */
 	public function region();
+
+	/**
+	 * If using a custom endpoint, is it a path style endpoint
+	 * @return bool
+	 */
+	public function isUsingPathStyleEndPoint();
+
 
 	/**
 	 * Determines if a file exists in a given bucket.
@@ -212,6 +226,14 @@ interface StorageInterface {
 	public function info($key);
 
 	/**
+	 * Returns the ACL for the given key
+	 * @param string $key
+	 * @throws StorageException
+	 * @return string|null
+	 */
+	public function acl($key);
+
+	/**
 	 * Insures the ACL is set on the given key.
 	 * @param $key
 	 * @param $acl
@@ -240,8 +262,9 @@ interface StorageInterface {
 	 * @throws StorageException
 	 * @return string
 	 * @param int $expiration
+	 * @param array $options
 	 */
-	public function presignedUrl($key, $expiration = 0);
+	public function presignedUrl($key, $expiration = 0, $options = []);
 
 	/**
 	 * Returns the URL (not-signed) for the item in a bucket
@@ -272,20 +295,25 @@ interface StorageInterface {
 	/**
 	 * @param string $path
 	 * @param string $delimiter
+	 * @param int $limit
+	 * @param string $next
 	 *
 	 * @return StorageFile[]
 	 */
-	public function dir($path = '', $delimiter = '/');
+	public function dir($path = '', $delimiter = '/', $limit = -1, $next = null);
 
 	/**
 	 * Similar to dir() but returns an array of keys as strings.
 	 *
 	 * @param string $path
 	 * @param string $delimiter
+	 * @param int $limit
+	 * @param string $next
+	 * @param bool $recursive
 	 *
-	 * @return string[]
+	 * @return array
 	 */
-	public function ls($path = '', $delimiter = '/');
+	public function ls($path = '', $delimiter = '/', $limit = -1, $next = null, $recursive = false);
 
 	/**
 	 * Determines if the storage provider supports browsing

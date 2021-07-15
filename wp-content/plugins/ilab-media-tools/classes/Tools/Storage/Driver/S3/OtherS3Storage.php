@@ -79,7 +79,7 @@ class OtherS3Storage extends S3Storage {
 		$url = $this->url($key);
 		$presignedUrl = $this->presignedUrl($key);
 
-		$defaults = stream_context_get_default();
+		$defaults = stream_context_get_options(stream_context_get_default());
 		stream_context_set_default(['http'=>['method'=>'HEAD']]);
 		$headers = get_headers($presignedUrl, 1);
 		stream_context_set_default($defaults);
@@ -90,12 +90,24 @@ class OtherS3Storage extends S3Storage {
 			stream_context_set_default($defaults);
 		}
 
-		$length = (arrayPath($headers, 'Content-Length', false));
+		if (!empty($headers[0]) && (strpos($headers[0], '403 Forbidden') !== false)) {
+			throw new StorageException("Cannot fetch info for $url.");
+		}
+
+		$length = arrayPath($headers, 'Content-Length', false);
+		if (empty($length)) {
+			$length = arrayPath($headers, 'content-length', false);
+		}
+
 		if ($length && is_array($length)) {
 			$length = $length[count($length) - 1];
 		}
 
-		$type = (arrayPath($headers, 'Content-Type', false));
+		$type = arrayPath($headers, 'Content-Type', false);
+		if (empty($type)) {
+			$type = arrayPath($headers, 'content-type', false);
+		}
+		
 		if ($type && is_array($type)) {
 			$type = $type[count($type) - 1];
 		}
@@ -181,7 +193,7 @@ class OtherS3Storage extends S3Storage {
 		$builder->select('Complete', 'Basic setup is now complete!  Configure advanced settings or setup imgix.')
 			->group('wizard.cloud-storage.providers.other-s3.success', 'select-buttons')
 				->option('configure-imgix', 'Set Up imgix', null, null, 'imgix')
-				->option('advanced-settings', 'Advanced Settings', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
+				->option('advanced-settings', 'Finish &amp; Exit Wizard', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
 			->endGroup()
 		->endStep();
 

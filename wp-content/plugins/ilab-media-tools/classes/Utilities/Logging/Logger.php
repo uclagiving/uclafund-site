@@ -86,12 +86,20 @@ class Logger {
 					$this->logger->pushHandler(new DatabaseLoggerHandler($realLevel));
 				}
 
+				$this->logger->pushHandler(new QueryMonitorLoggerHandler($realLevel));
 			}
 
-            set_error_handler(function($errno, $errstr, $errfile, $errline, $errContext) {
-                $this->logSystemError($errno, $errstr, $errfile, $errline);
-                return false;
-            });
+			if (version_compare(phpversion(), '8', '>=')) {
+				set_error_handler(function($errno, $errstr, $errfile, $errline) {
+					$this->logSystemError($errno, $errstr, $errfile, $errline);
+					return false;
+				});
+			} else {
+				set_error_handler(function($errno, $errstr, $errfile, $errline, $errContext) {
+					$this->logSystemError($errno, $errstr, $errfile, $errline);
+					return false;
+				});
+			}
 
             register_shutdown_function(function(){
                 $lastError = error_get_last();
@@ -172,16 +180,25 @@ class Logger {
         }
     }
 
-	private function prepMessage($message, $function = null, $line = null) {
+	private function prepMessage($message, $function, $line, &$context) {
 		if (!empty($function)) {
-			if (!empty($line)) {
-				$message = ':'.$line.' '.$message;
-			}
 
 			$functionParts = explode('\\', $function);
 			$function = array_pop($functionParts);
+			$functionParts = explode('::', $function);
+			$prefix = $function;
+			if (count($functionParts) > 1) {
+				$context['__class'] = array_shift($functionParts);
+				$context['__method'] = array_shift($functionParts);
+				$context['__line'] = intval($line);
+				$prefix = '';
+			} else {
+				if (!empty($line)) {
+					$prefix = $prefix.':'.$line.' ';
+				}
+			}
 
-			$message = $function.$message.(empty($line) ? '' : ' ');
+			$message = $prefix.$message;
 		}
 
 		$pid = @getmypid();
@@ -193,34 +210,46 @@ class Logger {
 	}
 
 	protected function doLogInfo($message, $context=[], $function = null, $line = null) {
+		if (!empty($this->settings) && $this->settings->matchesFilter($message)) {
+			return;
+		}
+
 	    if ($this->useWPCLI) {
             Command::Info($message, true);
         }
 
 		if ($this->logger) {
-			$message = $this->prepMessage($message, $function, $line);
+			$message = $this->prepMessage($message, $function, $line, $context);
 			$this->logger->addInfo($message, array_merge($this->context, $context));
 		}
 	}
 
 	protected function doLogWarning($message, $context=[], $function = null, $line = null) {
-        if ($this->useWPCLI) {
+		if (!empty($this->settings) && $this->settings->matchesFilter($message)) {
+			return;
+		}
+
+		if ($this->useWPCLI) {
             Command::Warn($message);
         }
 
 		if ($this->logger) {
-			$message = $this->prepMessage($message, $function, $line);
+			$message = $this->prepMessage($message, $function, $line, $context);
 			$this->logger->addWarning($message, array_merge($this->context, $context));
 		}
 	}
 
 	protected function doLogError($message, $context=[], $function = null, $line = null) {
-        if ($this->useWPCLI) {
+		if (!empty($this->settings) && $this->settings->matchesFilter($message)) {
+			return;
+		}
+
+		if ($this->useWPCLI) {
             Command::Error($message." => ".((isset($context['exception'])) ? $context['exception'] : "No error message"));
         }
 
         if ($this->logger) {
-	        $message = $this->prepMessage($message, $function, $line);
+	        $message = $this->prepMessage($message, $function, $line, $context);
 	        $this->logger->addError($message, array_merge($this->context, $context));
 		}
 	}
@@ -228,7 +257,7 @@ class Logger {
 	protected function doStartTiming($message, $context=[], $function = null, $line = null) {
 		if ($this->logger) {
 			$this->time[] = microtime(true);
-			$message = $this->prepMessage($message, $function, $line);
+			$message = $this->prepMessage($message, $function, $line, $context);
 			$this->logger->addInfo($message, array_merge($this->context, $context));
 		}
 	}
@@ -237,7 +266,7 @@ class Logger {
 		if ($this->logger) {
 			$time = array_pop($this->time);
 			$context['time'] = microtime(true) - $time;
-			$message = $this->prepMessage($message, $function, $line);
+			$message = $this->prepMessage($message, $function, $line, $context);
 			$this->logger->addInfo($message, array_merge($this->context, $context));
 		}
 	}
@@ -255,6 +284,14 @@ class Logger {
 		}
 
 		return self::$instance;
+	}
+
+	public static function backtrace($context=[], $function = null, $line = null) {
+		$stack = debug_backtrace(0);
+		array_shift($stack);
+
+		$stackJSON = "<pre>".esc_html(json_encode($stack, JSON_PRETTY_PRINT))."</pre>";
+		Logger::info("Stack Dump:\n$stackJSON", $context, $function, $line);
 	}
 
 	/**

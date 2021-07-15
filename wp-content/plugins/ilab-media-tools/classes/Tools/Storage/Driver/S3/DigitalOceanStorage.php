@@ -106,6 +106,7 @@ class DigitalOceanStorage extends OtherS3Storage {
 					->selectField('mcloud-storage-s3-endpoint', 'Custom Endpoint', "", null, [
 						'nyc3.digitaloceanspaces.com' => 'nyc3.digitaloceanspaces.com',
 						'sfo2.digitaloceanspaces.com' => 'sfo2.digitaloceanspaces.com',
+						'sfo3.digitaloceanspaces.com' => 'sfo3.digitaloceanspaces.com',
 						'sgp1.digitaloceanspaces.com' => 'sgp1.digitaloceanspaces.com',
 						'fra1.digitaloceanspaces.com' => 'fra1.digitaloceanspaces.com',
 						'ams3.digitaloceanspaces.com' => 'ams3.digitaloceanspaces.com',
@@ -119,7 +120,7 @@ class DigitalOceanStorage extends OtherS3Storage {
 		$builder->select('Complete', 'Basic setup is now complete!  Configure advanced settings or setup imgix.')
 			->group('wizard.cloud-storage.providers.do.success', 'select-buttons')
 				->option('configure-imgix', 'Set Up imgix', null, null, 'imgix')
-				->option('advanced-settings', 'Advanced Settings', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
+				->option('advanced-settings', 'Finish &amp; Exit Wizard', null, null, null, null, 'admin:admin.php?page=media-cloud-settings&tab=storage')
 			->endGroup()
 		->endStep();
 
