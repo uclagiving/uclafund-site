@@ -541,49 +541,58 @@ if (class_exists('ReduxFramework')) {
  */
 
 require get_template_directory() . "/inc/widgets/sh-slider.php";
-add_action('widgets_init',
-    create_function('', 'return register_widget("Maskitto_Slider");')
-);
+add_action ( 'widgets_init', 'Maskitto_Widget_init_Maskitto_Slider' );
+function Maskitto_Widget_init_Maskitto_Slider() {
+    return register_widget("Maskitto_Slider");
+}
 
 require get_template_directory() . "/inc/widgets/sh-services.php";
-add_action('widgets_init',
-    create_function('', 'return register_widget("Maskitto_Services");')
-);
+add_action ( 'widgets_init', 'Maskitto_Widget_init_Maskitto_Services' );
+function Maskitto_Widget_init_Maskitto_Services() {
+    return register_widget("Maskitto_Services");
+}
 
 require get_template_directory() . "/inc/widgets/sh-portfolio.php";
-add_action('widgets_init',
-    create_function('', 'return register_widget("Maskitto_Projects");')
-);
+add_action ( 'widgets_init', 'Maskitto_Widget_init_Maskitto_Projects' );
+function Maskitto_Widget_init_Maskitto_Projects() {
+    return register_widget("Maskitto_Projects");
+}
 
 require get_template_directory() . "/inc/widgets/sh-partners.php";
-add_action('widgets_init',
-    create_function('', 'return register_widget("Maskitto_Partners");')
-);
+add_action ( 'widgets_init', 'Maskitto_Widget_init_Maskitto_Partners' );
+function Maskitto_Widget_init_Maskitto_Partners() {
+    return register_widget("Maskitto_Partners");
+}
 
 require get_template_directory() . "/inc/widgets/sh-blog.php";
-add_action('widgets_init',
-    create_function('', 'return register_widget("Maskitto_Blog");')
-);
+add_action ( 'widgets_init', 'Maskitto_Widget_init_Maskitto_Blog' );
+function Maskitto_Widget_init_Maskitto_Blog() {
+    return register_widget("Maskitto_Blog");
+}
 
 require get_template_directory() . "/inc/widgets/sh-include_page.php";
-add_action('widgets_init',
-     create_function('', 'return register_widget("Maskitto_Include_Other_Page");')
-);
+add_action ( 'widgets_init', 'Maskitto_Widget_init_Maskitto_Include_Other_Page' );
+function Maskitto_Widget_init_Maskitto_Include_Other_Page() {
+    return register_widget("Maskitto_Include_Other_Page");
+}
 
 require get_template_directory() . "/inc/widgets/sh-counter.php";
-add_action('widgets_init',
-     create_function('', 'return register_widget("Maskitto_Counter");')
-);
+add_action ( 'widgets_init', 'Maskitto_Widget_init_Maskitto_Counter' );
+function Maskitto_Widget_init_Maskitto_Counter() {
+    return register_widget("Maskitto_Counter");
+}
 
 require get_template_directory() . "/inc/widgets/sh-testimonials.php";
-add_action('widgets_init',
-     create_function('', 'return register_widget("Maskitto_Testimonials");')
-);
+add_action ( 'widgets_init', 'Maskitto_Widget_init_Maskitto_Testimonials' );
+function Maskitto_Widget_init_Maskitto_Testimonials() {
+    return register_widget("Maskitto_Testimonials");
+}
 
 require get_template_directory() . "/inc/widgets/sh-slogan.php";
-add_action('widgets_init',
-     create_function('', 'return register_widget("Maskitto_Slogan");')
-);
+add_action ( 'widgets_init', 'Maskitto_Widget_init_Maskitto_Slogan' );
+function Maskitto_Widget_init_Maskitto_Slogan() {
+    return register_widget("Maskitto_Slogan");
+}
 
 
 /**
