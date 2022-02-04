@@ -40,15 +40,6 @@ class SiteOrigin_Widget_Anything_Carousel_Widget extends SiteOrigin_Widget_Base_
 		);
 	}
 
-	function override_carousel_settings() {
-		return array(
-			'slides_to_scroll_text' => array(
-				'label' => __( 'Slides to show ', 'so-widgets-bundle' ),
-				'description' => __( 'The number of slides to show on %s.', 'so-widgets-bundle' ),
-			),
-		);
-	}
-
 	function get_widget_form() {
 		$useable_units = array(
 			'px',
@@ -83,42 +74,10 @@ class SiteOrigin_Widget_Anything_Carousel_Widget extends SiteOrigin_Widget_Base_
 				),
 			),
 			'carousel_settings' => $this->carousel_settings_form_fields(),
-			'design' => array(
-				'type' => 'section',
-				'label' => __( 'Design', 'so-widgets-bundle' ),
-				'hide' => true,
-				'fields' => array(
+			'design' => $this->design_settings_form_fields(
+				array(
 					'item_title' => array(
-						'type' => 'section',
-						'label' => __( 'Item title', 'so-widgets-bundle' ),
-						'hide' => true,
 						'fields' => array(
-							'tag' => array(
-								'type' => 'select',
-								'label' => __( 'HTML Tag', 'so-widgets-bundle' ),
-								'default' => 'h4',
-								'options' => array(
-									'h1' => __( 'H1', 'so-widgets-bundle' ),
-									'h2' => __( 'H2', 'so-widgets-bundle' ),
-									'h3' => __( 'H3', 'so-widgets-bundle' ),
-									'h4' => __( 'H4', 'so-widgets-bundle' ),
-									'h5' => __( 'H5', 'so-widgets-bundle' ),
-									'h6' => __( 'H6', 'so-widgets-bundle' ),
-									'p' => __( 'Paragraph', 'so-widgets-bundle' ),
-								),
-							),
-							'font' => array(
-								'type' => 'font',
-								'label' => __( 'Font', 'so-widgets-bundle' ),
-							),
-							'size' => array(
-								'type' => 'measurement',
-								'label' => __( 'Size', 'so-widgets-bundle' ),
-							),
-							'color' => array(
-								'type' => 'color',
-								'label' => __( 'Text color', 'so-widgets-bundle' ),
-							),
 							'bottom_margin' => array(
 								'type' => 'measurement',
 								'label' => __( 'Bottom margin', 'so-widgets-bundle' ),
@@ -199,13 +158,33 @@ class SiteOrigin_Widget_Anything_Carousel_Widget extends SiteOrigin_Widget_Base_
 								'label' => __( 'Dots selected and hover color', 'so-widgets-bundle' ),
 								'default' => '#f14e4e',
 							),
-
 						),
 					),
-				),
+				)
 			),
 			'responsive' => $this->responsive_form_fields(),
 		);
+	}
+
+	function modify_instance( $instance ) {
+		if ( empty( $instance ) ) {
+			return array();
+		}
+
+		// If slides_to_scroll existed (regardless of value) prior to the introduction 
+		// of slides_to_show, set slides_to_scroll to slides_to_show to prevent unintended change.
+		if (
+			! empty( $instance['responsive'] ) &&
+			! empty( $instance['responsive']['desktop'] ) &&
+			! isset( $instance['responsive']['desktop']['slides_to_show'] )
+		) {
+			$instance['responsive']['desktop']['slides_to_show'] = $instance['responsive']['desktop']['slides_to_scroll'];
+			$instance['responsive']['tablet']['landscape']['slides_to_show'] = $instance['responsive']['tablet']['landscape']['slides_to_scroll'];
+			$instance['responsive']['tablet']['portrait']['slides_to_show'] = $instance['responsive']['tablet']['portrait']['slides_to_scroll'];
+			$instance['responsive']['mobile']['slides_to_show'] = $instance['responsive']['mobile']['slides_to_scroll'];	
+		}
+
+		return $instance;
 	}
 
 	function get_style_name( $instance ) {
@@ -247,6 +226,8 @@ class SiteOrigin_Widget_Anything_Carousel_Widget extends SiteOrigin_Widget_Base_
 			$less_vars['item_font_style'] = $item_font['style'];
 			$less_vars['item_font_weight'] = $item_font['weight_raw'];
 		}
+
+		$less_vars = $this->responsive_less_variables( $less_vars, $instance );
 
 		return $less_vars;
 	}

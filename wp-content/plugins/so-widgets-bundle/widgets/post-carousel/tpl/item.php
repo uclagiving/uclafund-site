@@ -2,7 +2,7 @@
 while( $settings['posts']->have_posts() ) :
 	$settings['posts']->the_post();
 	?>
-	<div class="sow-carousel-item" tabindex="-1">
+	<div class="sow-carousel-item" tabindex="-1" style="float: left;">
 		<div class="sow-carousel-thumbnail">
 			<?php
 			if ( has_post_thumbnail() ) :
@@ -30,16 +30,17 @@ while( $settings['posts']->have_posts() ) :
 				</a>
 			<?php endif; ?>
 		</div>
-		<h3>
+		<<?php echo esc_attr( $settings['item_title_tag'] ); ?> class="sow-carousel-item-title">
 			<a
 				href="<?php the_permalink(); ?>"
 				id="sow-carousel-id-<?php echo the_ID(); ?>"
 				<?php echo $settings['link_target'] == 'new' ? 'target="_blank" rel="noopener noreferrer"': ''; ?>
 				tabindex="-1"
 			>
-			<?php the_title(); ?>
+
+				<?php echo esc_html( get_the_title() ); ?>
 			</a>
-		</h3>
+		</<?php echo esc_attr( $settings['item_title_tag'] ); ?>>
 	</div>
 <?php
 endwhile;
