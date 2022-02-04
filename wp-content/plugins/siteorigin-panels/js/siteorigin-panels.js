@@ -197,6 +197,9 @@ module.exports = panels.view.dialog.extend( {
 		// Render the dialog and attach it to the builder interface
 		this.renderDialog( this.parseDialogContent( $( '#siteorigin-panels-dialog-history' ).html(), {} ) );
 
+		// Set the history URL.
+		this.$( 'form.history-form' ).attr( 'action', this.builder.config.editorPreview );
+
 		this.$( 'iframe.siteorigin-panels-history-iframe' ).on( 'load', function () {
 			var $$ = $( this );
 			$$.show();
@@ -1541,31 +1544,41 @@ module.exports = panels.view.dialog.extend({
 		}
 
 		// Update the row styles if they've loaded
-		if (!_.isUndefined(this.styles) && this.styles.stylesLoaded) {
+		if ( ! _.isUndefined( this.styles ) && this.styles.stylesLoaded ) {
 			// This is an edit dialog, so there are styles
-			var style = {};
+			var newStyles = {};
 			try {
-				style = this.getFormValues('.so-sidebar .so-visual-styles.so-row-styles').style;
+				newStyles = this.getFormValues( '.so-sidebar .so-visual-styles.so-row-styles' ).style;
 			}
 			catch (err) {
-				console.log('Error retrieving row styles - ' + err.message);
+				console.log( 'Error retrieving row styles - ' + err.message );
 			}
 
-			this.model.set('style', style);
+			// Have there been any Style changes?
+			if ( JSON.stringify( this.model.attributes.style ) !== JSON.stringify( newStyles ) ) {
+				this.model.set( 'style', newStyles );
+				this.model.trigger( 'change:styles' );
+				this.model.trigger( 'change:styles-row' );
+			}
 		}
 
 		// Update the cell styles if any are showing.
-		if (!_.isUndefined(this.cellStyles) && this.cellStyles.stylesLoaded) {
+		if ( !_.isUndefined( this.cellStyles ) && this.cellStyles.stylesLoaded ) {
 
-			var style = {};
+			var newStyles = {};
 			try {
-				style = this.getFormValues('.so-sidebar .so-visual-styles.so-cell-styles').style;
+				newStyles = this.getFormValues( '.so-sidebar .so-visual-styles.so-cell-styles' ).style;
 			}
 			catch (err) {
 				console.log('Error retrieving cell styles - ' + err.message);
 			}
 
-			this.cellStyles.model.set('style', style);
+			// Has there been any Style changes?
+			if ( JSON.stringify( this.model.attributes.style ) !== JSON.stringify( newStyles ) ) {
+				this.cellStyles.model.set( 'style', newStyles );
+				this.model.trigger( 'change:styles' );
+				this.model.trigger( 'change:styles-cell' );
+			}
 		}
 
 		if (args.refresh) {
@@ -1917,13 +1930,18 @@ module.exports = panels.view.dialog.extend( {
 
 		if ( this.styles.stylesLoaded ) {
 			// If the styles view has loaded
-			var style = {};
+			var newStyles = {};
 			try {
-				style = this.getFormValues( '.so-sidebar .so-visual-styles' ).style;
+				newStyles = this.getFormValues( '.so-sidebar .so-visual-styles' ).style;
 			}
 			catch ( e ) {
 			}
-			this.model.set( 'style', style );
+
+			// Have there been any Style changes?
+			if ( JSON.stringify( this.model.attributes.style ) !== JSON.stringify( newStyles ) ) {
+				this.model.set( 'style', newStyles );
+				this.model.trigger( 'change:styles' );
+			}
 		}
 
 		this.savingWidget = false;
@@ -2307,7 +2325,7 @@ module.exports = {
 },{}],13:[function(require,module,exports){
 module.exports = {
 	isBlockEditor: function() {
-		return typeof wp.blocks !== 'undefined';
+		return typeof wp.blocks !== 'undefined' && jQuery( '.block-editor-page' ).length
 	},
 
 	isClassicEditor: function( builder ) {
@@ -2688,8 +2706,9 @@ jQuery( function ( $ ) {
 			builderType: $panelsMetabox.data( 'builder-type' ),
 			builderSupports: $panelsMetabox.data( 'builder-supports' ),
 			loadOnAttach: panelsOptions.loadOnAttach && $( '#auto_draft' ).val() == 1,
-			loadLiveEditor: $panelsMetabox.data('live-editor') == 1,
-			liveEditorPreview: container.data('preview-url')
+			loadLiveEditor: $panelsMetabox.data( 'live-editor' ) == 1,
+			liveEditorCloseAfter: $panelsMetabox.data( 'live-editor-close' ) == 1,
+			editorPreview: container.data( 'preview-url' )
 		};
 	}
 	else if ( $( '.siteorigin-panels-builder-form' ).length ) {
@@ -2707,7 +2726,8 @@ jQuery( function ( $ ) {
 			builderType: $$.data( 'type' ),
 			builderSupports: $$.data( 'builder-supports' ),
 			loadLiveEditor: false,
-			liveEditorPreview: $$.data( 'preview-url' )
+			liveEditorCloseAfter: false,
+			editorPreview: $$.data( 'preview-url' )
 		};
 	}
 
@@ -2777,7 +2797,7 @@ jQuery( function ( $ ) {
 
 // WP 5.7+: Prevent undesired "restore content" notice.
 if ( typeof window.wp.autosave !== 'undefined' && jQuery( '#siteorigin-panels-metabox' ).length ) {
-	jQuery( document ).on( 'ready', function( e ) {
+	jQuery( function( e ) {
 		var blog_id = typeof window.autosaveL10n !== 'undefined' && window.autosaveL10n.blog_id;
 		
 		// Ensure sessionStorage is working, and we were able to find a blog id.
@@ -3704,7 +3724,6 @@ module.exports = Backbone.Model.extend( {
 		title = title.replace( /<\/?[^>]+(>|$)/g, "" );
 		var parts = title.split( " " );
 		parts = parts.slice( 0, 20 );
-		console.log(parts);
 		return parts.join( ' ' );
 	},
 
@@ -3712,20 +3731,38 @@ module.exports = Backbone.Model.extend( {
 	 * Iterate an array and find a valid field we can use for a title. Supports multidimensional arrays.
 	 *
 	 * @param values An array containing field values.
+	 * @returns object thisView The current widget instance.
+	 * @returns object fields The fields we're specifically check for.
+	 * @param object check_sub_fields Whether we should check sub fields.
+	 *
 	 * @returns string The title we found. If we weren't able to find one, it returns false.
 	 */
-	getTitleFromValues: function( values, thisView ) {
+	getTitleFromValues: function( values, thisView, fields = false, check_sub_fields = true ) {
 		var widgetTitle = false;
 		for ( const k in values ) {
 			if ( typeof values[ k ] == 'object' ) {
-				// Field is an array, check child for valid titles.
-				widgetTitle = thisView.getTitleFromValues( values[ k ], thisView );
+				if ( check_sub_fields ) {
+					// Field is an object, check child for valid titles.
+					widgetTitle = thisView.getTitleFromValues( values[ k ], thisView, fields );
+					if ( widgetTitle ) {
+						break;
+					}
+				}
+			// Check for predefined title fields.
+			} else if ( typeof fields == 'object' ) {
+				for ( var i = 0; i < fields.length; i++ ) {
+					if ( k == fields[i] ) {
+						widgetTitle = thisView.cleanTitle( values[ k ] )
+						break;
+					}
+				}
 				if ( widgetTitle ) {
 					break;
 				}
 			// Ensure field isn't a required WB field, and if its not, confirm it's valid.
 			} else if (
-				k.charAt(0) !== '_' &&
+				typeof fields != 'object' &&
+				k.charAt( 0 ) !== '_' &&
 				k !== 'so_sidebar_emulator_id' &&
 				k !== 'option_name' &&
 				thisView.isValidTitle( values[ k ] )
@@ -3764,15 +3801,15 @@ module.exports = Backbone.Model.extend( {
 		var widgetTitle = false;
 
 		// Check titleFields for valid titles.
-		_.each( titleFields, function( title ) {
-			if ( thisView.isValidTitle( values[ title ] ) ) {
-				widgetTitle = thisView.cleanTitle( values[ title ] );
-				return false;
-			}
-		} );
+		widgetTitle = this.getTitleFromValues(
+			values,
+			thisView,
+			titleFields,
+			typeof widgetData.panels_title_check_sub_fields != 'undefined' ? widgetData.panels_title_check_sub_fields : false
+		);
 
 		if ( ! widgetTitle && ! titleFieldOnly ) {
-			// No titles were found. Let's check the rest of the fields for a valid title..
+			// No titles were found. Let's check the rest of the fields for a valid title.
 			widgetTitle = this.getTitleFromValues( values, thisView );
 		}
 
@@ -4146,6 +4183,7 @@ module.exports = Backbone.View.extend( {
 
 		this.config = _.extend( {
 			loadLiveEditor: false,
+			liveEditorCloseAfter: false,
 			builderSupports: {}
 		}, options.config );
 
@@ -4512,8 +4550,9 @@ module.exports = Backbone.View.extend( {
 		var builderID = builderView.$el.attr( 'id' );
 
 		// Create the sortable for the rows
-		this.rowsSortable = this.$( '.so-rows-container' ).sortable( {
-			appendTo: '#wpwrap',
+		var wpVersion = $( 'body' ).attr( 'class' ).match( /branch-([0-9-]+)/ )[0].replace( /\D/g,'' );
+		this.rowsSortable = this.$( '.so-rows-container:not(.sow-row-color)' ).sortable( {
+			appendTo: wpVersion >= 59 ? 'parent' : '#wpwrap',
 			items: '.so-row-container',
 			handle: '.so-row-move',
 			// For the block editor, where it's possible to have multiple Page Builder blocks on a page.
@@ -4762,19 +4801,41 @@ module.exports = Backbone.View.extend( {
 	 * @returns {panels.view.builder}
 	 */
 	addLiveEditor: function () {
-		if ( _.isEmpty( this.config.liveEditorPreview ) ) {
+		if ( _.isEmpty( this.config.editorPreview ) ) {
 			return this;
 		}
 
 		// Create the live editor and set the builder to this.
 		this.liveEditor = new panels.view.liveEditor( {
 			builder: this,
-			previewUrl: this.config.liveEditorPreview
+			previewUrl: this.config.editorPreview
 		} );
 
 		// Display the live editor button in the toolbar
 		if ( this.liveEditor.hasPreviewUrl() ) {
-			this.$( '.so-builder-toolbar .so-live-editor' ).show();
+			var addLEButton = false;
+			if ( ! panels.helpers.editor.isBlockEditor() ) {
+				addLEButton = true;
+			} else if ( wp.data.select( 'core/editor' ).getEditedPostAttribute( 'status' ) != 'auto-draft' ) {
+				addLEButton = true;
+			} else {
+				// Block Editor powered page that's an auto draft. To avoid a 404, we need to save the draft.
+				$( '.editor-post-save-draft' ).trigger( 'click' );
+				var openLiveEditorAfterSave = setInterval( function() {
+					if (
+						! wp.data.select('core/editor').isSavingPost() &&
+						! wp.data.select('core/editor').isAutosavingPost() &&
+						wp.data.select('core/editor').didPostSaveRequestSucceed()
+					) {
+						clearInterval( openLiveEditorAfterSave );
+						this.$( '.so-builder-toolbar .so-live-editor' ).show();
+					}
+				}.bind( this ), 250 );
+			}
+
+			if ( addLEButton ) {
+				this.$( '.so-builder-toolbar .so-live-editor' ).show();
+			}
 		}
 
 		this.trigger( 'builder_live_editor_added' );
@@ -4799,7 +4860,7 @@ module.exports = Backbone.View.extend( {
 	 * @return {panels.view.builder}
 	 */
 	addHistoryBrowser: function () {
-		if ( _.isEmpty( this.config.liveEditorPreview ) ) {
+		if ( _.isEmpty( this.config.editorPreview ) ) {
 			return this;
 		}
 
@@ -5994,6 +6055,19 @@ module.exports = Backbone.View.extend( {
 					}
 				}
 
+				// Is this field an ACF Repeater?
+				if ( $$.parents( '.acf-repeater' ).length ) {
+					// If field is empty, skip it - this is to avoid indexes which are admin only.
+					if ( fieldValue == '' ) {
+						return;
+					}
+
+					// Ensure only the standard PB fields are set up.
+					// This allows for the rest of the ACF fields to be handled
+					// as objects rather than an array.
+					parts.slice( parts[2], parts.length );
+				}
+
 				// Now convert this into an array
 				if ( fieldValue !== null ) {
 					for ( var i = 0; i < parts.length; i ++ ) {
@@ -6246,8 +6320,16 @@ module.exports = Backbone.View.extend( {
 	/**
 	 * Close the Live Editor
 	 */
-	close: function () {
+	close: function ( closeAfter = true ) {
 		if ( ! this.$el.is( ':visible' ) ) {
+			return this;
+		}
+
+		if ( closeAfter && this.builder.config.liveEditorCloseAfter ) {
+			// Live Editor is set to be closed upon saving the page.
+			// This is done using a trigger rather than a redirect to confirm if
+			// the user wants to save.
+			$( '#wp-admin-bar-view a' )[0].click(); // JS click.
 			return this;
 		}
 
@@ -6264,9 +6346,13 @@ module.exports = Backbone.View.extend( {
 	 * Close the Live Editor and save the post.
 	 */
 	closeAndSave: function(){
-		this.close();
+		this.close( false );
 		// Finds the submit input for saving without publishing draft posts.
-		$( '#submitdiv input[type="submit"][name="save"]' ).trigger( 'click' );
+		if ( $( '.block-editor-page' ).length ) {
+			$( '.editor-post-publish-button' )[0].click();
+		} else {
+			$( '#submitdiv input[type="submit"][name="save"]' )[0].click();
+		}
 	},
 
 	/**
@@ -6575,6 +6661,7 @@ module.exports = Backbone.View.extend( {
 		}, this );
 
 		this.listenTo( this.model, 'change:label', this.onLabelChange );
+		this.listenTo( this.model, 'change:styles-row ', this.toggleVisibilityFade );
 	},
 
 	/**
@@ -6627,6 +6714,8 @@ module.exports = Backbone.View.extend( {
 			this.$('.so-row-toolbar' ).remove();
 		}
 
+		this.toggleVisibilityFade();
+
 		// Resize the rows when ever the widget sortable moves
 		this.listenTo( this.builder, 'widget_sortable_move', this.resizeRow );
 		this.listenTo( this.builder, 'builder_resize', this.resizeRow );
@@ -6634,6 +6723,32 @@ module.exports = Backbone.View.extend( {
 		this.resizeRow();
 
 		return this;
+	},
+
+	checkIfStyleExists: function( styles, setting ) {
+		return typeof styles[ setting ] !== 'undefined' && styles[ setting ] == 'on';
+	},
+
+	/**
+	 * Toggle Visibility: Check if row is hidden and apply fade as needed.
+	 */
+	toggleVisibilityFade: function() {
+		var styles = this.model.attributes.style;
+		if ( typeof styles == 'undefined' ) {
+			return;
+		}
+		if (
+			this.checkIfStyleExists( styles, 'disable_row' ) ||
+			this.checkIfStyleExists( styles, 'disable_desktop' ) ||
+			this.checkIfStyleExists( styles, 'disable_tablet' ) ||
+			this.checkIfStyleExists( styles, 'disable_mobile' ) ||
+			this.checkIfStyleExists( styles, 'disable_logged_in' ) ||
+			this.checkIfStyleExists( styles, 'disable_logged_out' )
+		) {
+			this.$el.addClass( 'so-hidden-row' );
+		} else {
+			this.$el.removeClass( 'so-hidden-row' );
+		}
 	},
 
 	/**
@@ -7282,6 +7397,9 @@ module.exports = Backbone.View.extend( {
 			text.on( 'change', setValue );
 			unit.on( 'change', setValue );
 		} );
+		
+		// Allow other plugins to setup custom fields.
+		$( document ).trigger( 'setup_style_fields', this );
 	}
 
 } );
@@ -7316,6 +7434,7 @@ module.exports = Backbone.View.extend( {
 	initialize: function () {
 		this.listenTo(this.model, 'destroy', this.onModelDestroy);
 		this.listenTo(this.model, 'change:values', this.onModelChange);
+		this.listenTo( this.model, 'change:styles ', this.toggleVisibilityFade );
 		this.listenTo(this.model, 'change:label', this.onLabelChange);
 	},
 
@@ -7369,10 +7488,38 @@ module.exports = Backbone.View.extend( {
 			dialog.setupDialog();
 		}
 
+		this.toggleVisibilityFade();
+
 		// Add the global builder listeners
-		this.listenTo(this.cell.row.builder, 'after_user_adds_widget', this.afterUserAddsWidgetHandler);
+		this.listenTo( this.cell.row.builder, 'after_user_adds_widget', this.afterUserAddsWidgetHandler );
 
 		return this;
+	},
+
+	checkIfStyleExists: function( styles, setting ) {
+		return typeof styles[ setting ] !== 'undefined' && styles[ setting ] == 'on';
+	},
+
+	/**
+	 * Toggle Visibility: Check if row is hidden and apply fade as needed.
+	 */
+	toggleVisibilityFade: function() {
+		var styles = this.model.attributes.style;
+		if ( typeof styles == 'undefined' ) {
+			return;
+		}
+		if (
+			this.checkIfStyleExists( styles, 'disable_widget' ) ||
+			this.checkIfStyleExists( styles, 'disable_desktop' ) ||
+			this.checkIfStyleExists( styles, 'disable_tablet' ) ||
+			this.checkIfStyleExists( styles, 'disable_mobile' ) ||
+			this.checkIfStyleExists( styles, 'disable_logged_in' ) ||
+			this.checkIfStyleExists( styles, 'disable_logged_out' )
+		) {
+			this.$el.addClass( 'so-hidden-widget' );
+		} else {
+			this.$el.removeClass( 'so-hidden-widget' );
+		}
 	},
 
 	/**
