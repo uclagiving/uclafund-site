@@ -3,17 +3,13 @@ Contributors: Shelob9, Desertsnowman, christiechirinos, andrewza, nahuelmahe
 Tags: form, contact form, forms, form creator, form manager, mailchimp, paypal, stripe, login, payment, forms manager, forms creation
 Requires at least: 5.2
 Tested up to: 5.4.2
-Stable tag: 1.9.4
+Stable tag: 1.9.6
 License: GPLv2
 Requires PHP: 5.6
 
 Responsive form builder for contact forms, user registration and login forms, Mailchimp, PayPal Express and more.
 
 == Description ==
-**Caldera Forms will be sunset/retired on 31 Dec 2021.**
-**Security, WordPress compatibility, and maintenance updates will continue until that time.** 
-**To find out what this means for you and your forms, please read the full initial update on the <a href="https://calderaforms.com/2021/03/the-future-of-caldera-forms/" title="the-future-of-caldera-forms">CalderaForms.com</a> blog, and stay tuned there for future updates.**
-
 Caldera Form is a free and powerful WordPress plugin that creates responsive forms with a simple drag and drop editor. Caldera Forms has many free user-friendly add-ons for both beginners and web developers. Learn more about Caldera Forms at <a href="https://calderaforms.com?utm_source=dotOrg&utm_medium=plugins&utm_campaign=caldera-forms">CalderaForms.com</a>.
 
 Caldera Forms' visual editor simplifies form building for WordPress. Set up your form with multiple columns, add additional pages, and funnel user responses with conditional logic to get more robust data and relevant information from your customers and site visitors. Anti-spam, AJAX, notification emails, and database entry tracking are enabled by default.
@@ -773,6 +769,15 @@ This could also be a sign of a more serious issue on your server, but is probabl
 5. **Go Further With Form Processors** - Auto-responders, conditional recipients, redirects are included! Go further with our add-ons!
 
 == Changelog ==
+
+= Caldera Forms 1.9.6 (December 13, 2021) Regenerating dependencies =
+See: [https://calderaforms.com/updates/caldera-forms-1-9-6](https://calderaforms.com/updates/caldera-forms-1-9-6?utm_source=dotOrg&utm_medium=plugins&utm_campaign=caldera-forms&utm_term=1-9.6)
+* Regenerate dependencies
+
+= Caldera Forms 1.9.5 (November 4, 2021) 0 - CF-1.9.5 - ... =
+See: [https://calderaforms.com/updates/caldera-forms-1-9-5](https://calderaforms.com/updates/caldera-forms-1-9-5?utm_source=dotOrg&utm_medium=plugins&utm_campaign=caldera-forms&utm_term=1-9.5)
+* Fix sanitization issue
+* Fix dependency version issue
 
 = Caldera Forms 1.9.4 (February 26, 2021) Saving buttons, forms and creators =
 See: [https://calderaforms.com/updates/caldera-forms-1-9-4](https://calderaforms.com/updates/caldera-forms-1-9-4?utm_source=dotOrg&utm_medium=plugins&utm_campaign=caldera-forms&utm_term=1-9.4)
