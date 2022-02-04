@@ -8,12 +8,12 @@ class AIOWPSecurity_Process_Renamed_Login_Page
 
     function __construct()
     {
-        add_action('login_init', array(&$this, 'aiowps_login_init'));
-        add_filter('site_url', array(&$this, 'aiowps_site_url'), 10, 2);
-        add_filter('network_site_url', array(&$this, 'aiowps_site_url'), 10, 2);
-        add_filter('wp_redirect', array(&$this, 'aiowps_wp_redirect'), 10, 2);
-        add_filter('register', array(&$this, 'register_link'));
-        add_filter('user_request_action_email_content', array(&$this, 'aiowps_user_request_email_content'), 10, 2);
+        add_action('login_init', array($this, 'aiowps_login_init'));
+        add_filter('site_url', array($this, 'aiowps_site_url'), 10, 2);
+        add_filter('network_site_url', array($this, 'aiowps_site_url'), 10, 2);
+        add_filter('wp_redirect', array($this, 'aiowps_wp_redirect'), 10, 2);
+        add_filter('register', array($this, 'register_link'));
+        add_filter('user_request_action_email_content', array($this, 'aiowps_user_request_email_content'), 10, 2);
         remove_action('template_redirect', 'wp_redirect_admin_locations', 1000); //To prevent redirect to login page when people type "login" at end of home URL
 
     }
@@ -206,7 +206,16 @@ class AIOWPSecurity_Process_Renamed_Login_Page
                 || (!get_option('permalink_structure') && isset($_GET[$login_slug]))){
             if(empty($action) && is_user_logged_in()){
                 //if user is already logged in but tries to access the renamed login page, send them to the dashboard
-                AIOWPSecurity_Utility::redirect_to_url(AIOWPSEC_WP_URL."/wp-admin");
+                // or to requested redirect-page, filterd in 'login_redirect'.
+                if (isset($_REQUEST['redirect_to'])) {
+                  $redirect_to = $_REQUEST['redirect_to'];
+                  $requested_redirect_to = $redirect_to;
+                } else {
+                  $redirect_to = admin_url();
+                  $requested_redirect_to = '';
+                }
+                $redirect_to = apply_filters('login_redirect', $redirect_to, $requested_redirect_to, wp_get_current_user());
+                AIOWPSecurity_Utility::redirect_to_url($redirect_to);
             }else{
                 global $wp_version;
                 do_action('aiowps_rename_login_load');
