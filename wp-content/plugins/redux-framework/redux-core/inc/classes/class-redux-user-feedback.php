@@ -60,9 +60,9 @@ class Redux_User_Feedback {
 	/**
 	 * Class constructor.
 	 *
-	 * @param string $args Arguments.
+	 * @param array $args Arguments.
 	 */
-	public function __construct( $args ) {
+	public function __construct( array $args ) {
 
 		$this->slug = $args['slug'];
 		$this->name = $args['name'];
@@ -87,9 +87,10 @@ class Redux_User_Feedback {
 	 * Seconds to words.
 	 *
 	 * @param string $seconds Seconds in time.
-	 * @return string
+	 *
+	 * @return string|null
 	 */
-	public function seconds_to_words( $seconds ) {
+	public function seconds_to_words( string $seconds ): ?string {
 
 		// Get the years.
 		$years = ( intval( $seconds ) / YEAR_IN_SECONDS ) % 100;
@@ -144,6 +145,8 @@ class Redux_User_Feedback {
 		} elseif ( $seconds > 0 ) {
 			return __( 'a second', 'redux-framework' );
 		}
+
+		return null;
 	}
 
 	/**
@@ -245,7 +248,7 @@ class Redux_User_Feedback {
 					.notice.redux-notice {
 						padding: 20px !important;
 					}
-					.notice.redux-noticee .redux-notice-inner {
+					.notice.redux-notice .redux-notice-inner {
 						display: block;
 					}
 					.notice.redux-notice .redux-notice-inner .redux-notice-content {

@@ -19,6 +19,8 @@ if ( ! class_exists( 'Redux_Extensions', false ) ) {
 		 * Redux_Extensions constructor.
 		 *
 		 * @param object $parent ReduxFramework object pointer.
+		 *
+		 * @throws ReflectionException Exception.
 		 */
 		public function __construct( $parent ) {
 			parent::__construct( $parent );
@@ -68,7 +70,7 @@ if ( ! class_exists( 'Redux_Extensions', false ) ) {
 				// phpcs:ignore WordPress.NamingConventions.ValidHookName
 				do_action( "redux/extensions/{$core->args['opt_name']}/before", $core );
 
-				if ( isset( $core->old_opt_name ) && null !== $core->old_opt_name ) {
+				if ( isset( $core->old_opt_name ) ) {
 					// phpcs:ignore WordPress.NamingConventions.ValidHookName
 					do_action( 'redux/extensions/' . $core->old_opt_name . '/before', $core );
 				}
@@ -78,7 +80,7 @@ if ( ! class_exists( 'Redux_Extensions', false ) ) {
 				$path = untrailingslashit( $path );
 
 				// Backwards compatibility for extensions.
-				$instance_extensions = Redux::get_extensions( $core->args['opt_name'], '' );
+				$instance_extensions = Redux::get_extensions( $core->args['opt_name'] );
 				if ( ! empty( $instance_extensions ) ) {
 					foreach ( $instance_extensions as $name => $extension ) {
 						if ( ! isset( $core->extensions[ $name ] ) ) {
@@ -121,7 +123,7 @@ if ( ! class_exists( 'Redux_Extensions', false ) ) {
 				// phpcs:ignore WordPress.NamingConventions.ValidHookName
 				do_action( "redux/extensions/{$core->args['opt_name']}", $core );
 
-				if ( isset( $core->old_opt_name ) && null !== $core->old_opt_name ) {
+				if ( isset( $core->old_opt_name ) ) {
 					// phpcs:ignore WordPress.NamingConventions.ValidHookName
 					do_action( 'redux/extensions/' . $core->old_opt_name, $core );
 				}

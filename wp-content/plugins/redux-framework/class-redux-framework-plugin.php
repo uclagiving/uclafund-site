@@ -30,7 +30,7 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		/**
 		 * Use this value as the text domain when translating strings from this plugin. It should match
 		 * the Text Domain field set in the plugin header, as well as the directory name of the plugin.
-		 * Additionally, text domains should only contain letters, number and hypens, not underscores
+		 * Additionally, text domains should only contain letters, number and hyphens, not underscores
 		 * or spaces.
 		 *
 		 * @access      protected
@@ -52,7 +52,7 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 * Class instance.
 		 *
 		 * @access      private
-		 * @var         \Redux_Framework_Plugin $instance The one true Redux_Framework_Plugin
+		 * @var         Redux_Framework_Plugin $instance The one true Redux_Framework_Plugin
 		 * @since       3.0.0
 		 */
 		private static $instance;
@@ -61,7 +61,7 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 * Crash flag.
 		 *
 		 * @access      private
-		 * @var         \Redux_Framework_Plugin $crash Crash flag if inside a crash.
+		 * @var         Redux_Framework_Plugin $crash Crash flag if inside a crash.
 		 * @since       4.1.15
 		 */
 		public static $crash = false;
@@ -73,8 +73,9 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 * @since       3.1.3
 		 * @return      self::$instance The one true Redux_Framework_Plugin
 		 */
-		public static function instance() {
+		public static function instance(): ?Redux_Framework_Plugin {
 			$path = REDUX_PLUGIN_FILE;
+			$res  = false;
 
 			if ( function_exists( 'get_plugin_data' ) && file_exists( $path ) ) {
 				$data = get_plugin_data( $path );
@@ -85,7 +86,7 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 
 				if ( is_plugin_active( 'redux-framework/redux-framework.php' ) && true === $res ) {
 					echo '<div class="error"><p>' . esc_html__( 'Redux Framework version 4 is activated but not loaded. Redux Framework version 3 is still installed and activated.  Please deactivate Redux Framework version 3.', 'redux-framework' ) . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput
-					return;
+					return null;
 				}
 			}
 
@@ -104,13 +105,13 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		}
 
 		/**
-		 * Shim for geting instance
+		 * Shim for getting instance
 		 *
 		 * @access      public
 		 * @since       4.0.1
 		 * @return      self::$instance The one true Redux_Framework_Plugin
 		 */
-		public static function get_instance() {
+		public static function get_instance(): ?Redux_Framework_Plugin {
 			return self::instance();
 		}
 
@@ -160,6 +161,17 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 			// Include Redux_Core.
 			if ( file_exists( dirname( __FILE__ ) . '/redux-core/framework.php' ) ) {
 				require_once dirname( __FILE__ ) . '/redux-core/framework.php';
+			}
+
+			Redux_Core::$redux_templates_enabled     = (bool) get_option( 'use_redux_templates' );
+			Redux_Core::$extendify_templates_enabled = (bool) get_option( 'use_extendify_templates', true );
+
+			// Including extendify sdk.
+			if ( true === (bool) get_option( 'use_extendify_templates', true ) ) {
+				if ( file_exists( dirname( __FILE__ ) . '/extendify-sdk/loader.php' ) ) {
+					$GLOBALS['extendify_sdk_partner'] = 'Redux';
+					require_once dirname( __FILE__ ) . '/extendify-sdk/loader.php';
+				}
 			}
 
 			if ( file_exists( dirname( __FILE__ ) . '/redux-templates/redux-templates.php' ) ) {
@@ -260,32 +272,10 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 * Fired on plugin activation
 		 *
 		 * @access      public
-		 * @since       3.0.0
-		 *
-		 * @param       boolean $network_wide True if plugin is network activated, false otherwise.
-		 *
 		 * @return      void
+		 * @since       3.0.0
 		 */
-		public static function activate( $network_wide ) {
-			// phpcs:disable
-			//if ( function_exists( 'is_multisite' ) && is_multisite() ) {
-			//	if ( $network_wide ) {
-			//		// Get all blog IDs.
-			//		$blog_ids = self::get_blog_ids();
-			//
-			//		foreach ( $blog_ids as $blog_id ) {
-			//			switch_to_blog( $blog_id );
-			//			self::single_activate();
-			//		}
-			//		restore_current_blog();
-			//	} else {
-			//		self::single_activate();
-			//	}
-			//} else {
-			//	self::single_activate();
-			//}
-			// phpcs:enable
-
+		public static function activate() {
 			delete_site_transient( 'update_plugins' );
 		}
 
@@ -299,7 +289,7 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 *
 		 * @return      void
 		 */
-		public static function deactivate( $network_wide ) {
+		public static function deactivate( ?bool $network_wide ) {
 			if ( function_exists( 'is_multisite' ) && is_multisite() ) {
 				if ( $network_wide ) {
 					// Get all blog IDs.
@@ -325,13 +315,13 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 * Fired when a new WPMU site is activated
 		 *
 		 * @access      public
-		 * @since       3.0.0
 		 *
 		 * @param       int $blog_id The ID of the new blog.
 		 *
 		 * @return      void
+		 * @since       3.0.0
 		 */
-		public function activate_new_site( $blog_id ) {
+		public function activate_new_site( int $blog_id ) {
 			if ( 1 !== did_action( 'wpmu_new_blog' ) ) {
 				return;
 			}
@@ -354,11 +344,11 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 
 			$var = '0';
 
-			// Get an array of IDs (We have to do it this way because WordPress ays so, however reduntant.
+			// Get an array of IDs (We have to do it this way because WordPress says so, however redundant).
 			$result = wp_cache_get( 'redux-blog-ids' );
 			if ( false === $result ) {
 
-				// WordPress asys get_col is discouraged?  I found no alternative.  So...ignore! - kp.
+				// WordPress says get_col is discouraged?  I found no alternative.  So...ignore! - kp.
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 				$result = $wpdb->get_col( $wpdb->prepare( "SELECT blog_id FROM $wpdb->blogs WHERE archived = %s AND spam = %s AND deleted = %s", $var, $var, $var ) );
 
@@ -376,8 +366,6 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 * @return      void
 		 */
 		private static function single_activate() {
-			$notices = array();
-
 			$nonce = wp_create_nonce( 'redux_framework_demo' );
 
 			$notices   = get_option( 'ReduxFrameworkPlugin_ACTIVATED_NOTICES', array() );
@@ -421,25 +409,20 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 *
 		 * @access      public
 		 * @since       3.0.0
-		 * @global      string $pagenow The current page being displayed
 		 * @return      void
 		 */
 		public function options_toggle_check() {
-			global $pagenow;
-
 			if ( isset( $_GET['nonce'] ) && wp_verify_nonce( sanitize_key( $_GET['nonce'] ), 'redux_framework_demo' ) ) {
 				if ( isset( $_GET['redux-framework-plugin'] ) && 'demo' === $_GET['redux-framework-plugin'] ) {
-					$url = admin_url( add_query_arg( array( 'page' => 'redux-framework' ), 'tools.php' ) );
+					$url = admin_url( add_query_arg( array( 'page' => 'redux-framework' ), 'options-general.php' ) );
 
-					if ( 'demo' === $_GET['redux-framework-plugin'] ) {
-						if ( false === $this->options['demo'] ) {
-							$this->options['demo'] = true;
-							$url                   = admin_url( add_query_arg( array( 'page' => 'redux_demo' ), 'admin.php' ) );
-						} else {
-							$this->options['demo'] = false;
-
-						}
+					if ( false === $this->options['demo'] ) {
+						$this->options['demo'] = true;
+						$url                   = admin_url( add_query_arg( array( 'page' => 'redux_demo' ), 'admin.php' ) );
+					} else {
+						$this->options['demo'] = false;
 					}
+
 					if ( is_multisite() && $this->plugin_network_activated ) {
 						update_site_option( 'ReduxFrameworkPlugin', $this->options );
 					} else {
@@ -458,13 +441,13 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 * Add a settings link to the Redux entry in the plugin overview screen
 		 *
 		 * @param array  $links Links array.
-		 * @param string $file Plugin filename/slug.
+		 * @param string $file  Plugin filename/slug.
 		 *
 		 * @return array
 		 * @see   filter:plugin_action_links
 		 * @since 1.0
 		 */
-		public function add_settings_link( $links, $file ) {
+		public function add_settings_link( array $links, string $file ): array {
 
 			if ( strpos( REDUX_PLUGIN_FILE, $file ) === false ) {
 				return $links;
@@ -491,7 +474,7 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 *
 		 * @return string
 		 */
-		private function get_site_url( $path = '' ) {
+		private function get_site_url( string $path = '' ): string {
 			$url = 'https://redux.io';
 
 			if ( ! empty( $path ) ) {
@@ -504,14 +487,14 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		/**
 		 * Url with utm tags
 		 *
-		 * @param string $path Path on site.
-		 * @param string $utm_medium Medium var.
-		 * @param string $utm_content Content var.
-		 * @param bool   $utm_campaign Campaign var.
+		 * @param string      $path         Path on site.
+		 * @param string      $utm_medium   Medium var.
+		 * @param string|null $utm_content  Content var.
+		 * @param bool        $utm_campaign Campaign var.
 		 *
 		 * @return string
 		 */
-		public function get_site_utm_url( $path, $utm_medium, $utm_content = null, $utm_campaign = false ) {
+		public function get_site_utm_url( string $path, string $utm_medium, string $utm_content = null, bool $utm_campaign = false ): string {
 			$url = self::get_site_url( $path );
 
 			if ( ! $utm_campaign ) {
@@ -541,17 +524,20 @@ if ( ! class_exists( 'Redux_Framework_Plugin', false ) ) {
 		 * Edit plugin metalinks
 		 *
 		 * @access      public
-		 * @since       3.0.0
 		 *
-		 * @param       array  $links The current array of links.
-		 * @param       string $file  A specific plugin row.
+		 * @param array  $links The current array of links.
+		 * @param string $file  A specific plugin row.
 		 *
 		 * @return      array The modified array of links
+		 * @since       3.0.0
 		 */
-		public function plugin_metalinks( $links, $file ) {
+		public function plugin_metalinks( array $links, string $file ): array {
 			if ( strpos( $file, 'redux-framework.php' ) !== false && is_plugin_active( $file ) ) {
-				$links[] = '<a href="' . esc_url( admin_url( add_query_arg( array( 'page' => 'redux-framework' ), 'tools.php' ) ) ) . '">' . esc_html__( 'What is this?', 'redux-framework' ) . '</a>';
-				$links[] = '<a href="' . esc_url( admin_url( add_query_arg( array( 'post_type' => 'page' ), 'post-new.php' ) ) ) . '#redux_templates=1">' . esc_html__( 'Template Library', 'redux-framework' ) . '</a>';
+				$links[] = '<a href="' . esc_url( admin_url( add_query_arg( array( 'page' => 'redux-framework' ), 'options-general.php' ) ) ) . '">' . esc_html__( 'What is this?', 'redux-framework' ) . '</a>';
+
+				if ( true === Redux_Core::$redux_templates_enabled ) {
+					$links[] = '<a href="' . esc_url( admin_url( add_query_arg( array( 'post_type' => 'page' ), 'post-new.php' ) ) ) . '#redux_templates=1">' . esc_html__( 'Template Library', 'redux-framework' ) . '</a>';
+				}
 			}
 
 			return $links;

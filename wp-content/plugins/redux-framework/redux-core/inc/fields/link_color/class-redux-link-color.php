@@ -71,15 +71,12 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 				echo 'type="text"';
 				echo 'data-default-color="' . esc_attr( $this->field['default']['regular'] ) . '"';
 
-				if ( Redux_Core::$pro_loaded ) {
-					$data = array(
-						'field' => $this->field,
-						'index' => 'regular',
-					);
+				$data = array(
+					'field' => $this->field,
+					'index' => 'regular',
+				);
 
-					// phpcs:ignore WordPress.NamingConventions.ValidHookName, WordPress.Security.EscapeOutput
-					echo apply_filters( 'redux/pro/render/color_alpha', $data );
-				}
+				echo Redux_Functions_Ex::output_alpha_data( $data ); // phpcs:ignore WordPress.Security.EscapeOutput
 
 				echo '>';
 				echo '</span>';
@@ -96,15 +93,12 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 				echo 'type="text"';
 				echo 'data-default-color="' . esc_attr( $this->field['default']['hover'] ) . '"';
 
-				if ( Redux_Core::$pro_loaded ) {
-					$data = array(
-						'field' => $this->field,
-						'index' => 'hover',
-					);
+				$data = array(
+					'field' => $this->field,
+					'index' => 'hover',
+				);
 
-					// phpcs:ignore WordPress.NamingConventions.ValidHookName, WordPress.Security.EscapeOutput
-					echo apply_filters( 'redux/pro/render/color_alpha', $data );
-				}
+				echo Redux_Functions_Ex::output_alpha_data( $data ); // phpcs:ignore WordPress.Security.EscapeOutput
 
 				echo '>';
 				echo '</span>';
@@ -121,15 +115,12 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 				echo 'type="text"';
 				echo 'data-default-color="' . esc_attr( $this->field['default']['visited'] ) . '"';
 
-				if ( Redux_Core::$pro_loaded ) {
-					$data = array(
-						'field' => $this->field,
-						'index' => 'visited',
-					);
+				$data = array(
+					'field' => $this->field,
+					'index' => 'visited',
+				);
 
-					// phpcs:ignore WordPress.NamingConventions.ValidHookName, WordPress.Security.EscapeOutput
-					echo apply_filters( 'redux/pro/render/color_alpha', $data );
-				}
+				echo Redux_Functions_Ex::output_alpha_data( $data ); // phpcs:ignore WordPress.Security.EscapeOutput
 
 				echo '>';
 				echo '</span>';
@@ -146,15 +137,12 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 				echo 'type="text"';
 				echo 'data-default-color="' . esc_attr( $this->field['default']['active'] ) . '"';
 
-				if ( Redux_Core::$pro_loaded ) {
-					$data = array(
-						'field' => $this->field,
-						'index' => 'active',
-					);
+				$data = array(
+					'field' => $this->field,
+					'index' => 'active',
+				);
 
-					// phpcs:ignore WordPress.NamingConventions.ValidHookName, WordPress.Security.EscapeOutput
-					echo apply_filters( 'redux/pro/render/color_alpha', $data );
-				}
+				echo Redux_Functions_Ex::output_alpha_data( $data ); // phpcs:ignore WordPress.Security.EscapeOutput
 
 				echo '>';
 				echo '</span>';
@@ -171,15 +159,12 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 				echo 'type="text"';
 				echo 'data-default-color="' . esc_attr( $this->field['default']['focus'] ) . '"';
 
-				if ( Redux_Core::$pro_loaded ) {
-					$data = array(
-						'field' => $this->field,
-						'index' => 'focus',
-					);
+				$data = array(
+					'field' => $this->field,
+					'index' => 'focus',
+				);
 
-					// phpcs:ignore WordPress.NamingConventions.ValidHookName, WordPress.Security.EscapeOutput
-					echo apply_filters( 'redux/pro/render/color_alpha', $data );
-				}
+				echo Redux_Functions_Ex::output_alpha_data( $data ); // phpcs:ignore WordPress.Security.EscapeOutput
 
 				echo '>';
 				echo '</span>';
@@ -188,7 +173,7 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 
 		/**
 		 * Enqueue Function.
-		 * If this field requires any scripts, or css define this function and register/enqueue the scripts/css
+		 * If this field requires any scripts, or CSS define this function and register/enqueue the scripts/css
 		 *
 		 * @since       1.0.0
 		 * @access      public
@@ -207,9 +192,10 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 				true
 			);
 
-			if ( Redux_Core::$pro_loaded ) {
-				// phpcs:ignore WordPress.NamingConventions.ValidHookName
-				do_action( 'redux/pro/enqueue/color_alpha', $this->field );
+			if ( isset( $this->field['color_alpha'] ) && $this->field['color_alpha'] ) {
+				if ( ! wp_script_is( 'redux-wp-color-picker-alpha-js' ) ) {
+					wp_enqueue_script( 'redux-wp-color-picker-alpha-js' );
+				}
 			}
 
 			if ( $this->parent->args['dev_mode'] ) {
@@ -260,7 +246,7 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 		/**
 		 * Output CSS/compiler.
 		 *
-		 * @param mixed $style Style to output.
+		 * @param string|null|array $style Style to output.
 		 */
 		public function output( $style = '' ) {
 			if ( ! empty( $style ) ) {
@@ -283,7 +269,9 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 							$style_string .= implode( ',', $this->field['output'] ) . '{' . $value . '}';
 						} else {
 							if ( 1 === count( $this->field['output'] ) ) {
-								foreach ( $this->field['output'] as $sel => $elem ) {
+								$elem = '';
+
+								foreach ( $this->field['output'] as $elem ) {
 									break;
 								}
 
@@ -291,7 +279,7 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 									$selector_arr = explode( ',', $elem );
 									$sel_list     = '';
 
-									foreach ( $selector_arr as $idx => $selector ) {
+									foreach ( $selector_arr as $selector ) {
 										$sel_list .= $selector . ':' . $key . ',';
 									}
 
@@ -302,7 +290,7 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 								}
 							} else {
 								$blah = '';
-								foreach ( $this->field['output'] as $k => $sel ) {
+								foreach ( $this->field['output'] as $sel ) {
 									$blah .= $sel . ':' . $key . ',';
 								}
 
@@ -337,7 +325,7 @@ if ( ! class_exists( 'Redux_Link_Color', false ) ) {
 								$style_string .= $this->field['compiler'][0] . ':' . $key . '{' . $value . '}';
 							} else {
 								$blah = '';
-								foreach ( $this->field['compiler'] as $k => $sel ) {
+								foreach ( $this->field['compiler'] as $sel ) {
 									$blah .= $sel . ':' . $key . ',';
 								}
 

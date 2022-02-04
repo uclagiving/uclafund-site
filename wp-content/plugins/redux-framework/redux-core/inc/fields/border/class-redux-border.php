@@ -58,8 +58,8 @@ if ( ! class_exists( 'Redux_Border', false ) ) {
 				'right'  => isset( $this->value['border-right'] ) ? filter_var( $this->value['border-right'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ) : filter_var( $this->value['right'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
 				'bottom' => isset( $this->value['border-bottom'] ) ? filter_var( $this->value['border-bottom'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ) : filter_var( $this->value['bottom'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
 				'left'   => isset( $this->value['border-left'] ) ? filter_var( $this->value['border-left'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ) : filter_var( $this->value['left'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION ),
-				'color'  => isset( $this->value['border-color'] ) ? $this->value['border-color'] : $this->value['color'],
-				'style'  => isset( $this->value['border-style'] ) ? $this->value['border-style'] : $this->value['style'],
+				'color'  => $this->value['border-color'] ?? $this->value['color'],
+				'style'  => $this->value['border-style'] ?? $this->value['style'],
 			);
 
 			if ( ( isset( $this->value['width'] ) || isset( $this->value['border-width'] ) ) ) {
@@ -188,7 +188,7 @@ if ( ! class_exists( 'Redux_Border', false ) ) {
 			 * Color
 			 * */
 			if ( false !== $this->field['color'] ) {
-				$default = isset( $this->field['default']['border-color'] ) ? $this->field['default']['border-color'] : '';
+				$default = $this->field['default']['border-color'] ?? '';
 
 				if ( empty( $default ) ) {
 					$default = ( isset( $this->field['default']['color'] ) ) ? $this->field['default']['color'] : '#ffffff';
@@ -203,15 +203,12 @@ if ( ! class_exists( 'Redux_Border', false ) ) {
 				echo 'data-default-color="' . esc_attr( $default ) . '"';
 				echo 'data-id="' . esc_attr( $this->field['id'] ) . '"';
 
-				if ( Redux_Core::$pro_loaded ) {
-					$data = array(
-						'field' => $this->field,
-						'index' => '',
-					);
+				$data = array(
+					'field' => $this->field,
+					'index' => '',
+				);
 
-					// phpcs:ignore WordPress.NamingConventions.ValidHookName, WordPress.Security.EscapeOutput
-					echo apply_filters( 'redux/pro/render/color_alpha', $data );
-				}
+				echo Redux_Functions_Ex::output_alpha_data( $data ); // phpcs:ignore WordPress.Security.EscapeOutput
 
 				echo '>';
 			} else {
@@ -246,9 +243,10 @@ if ( ! class_exists( 'Redux_Border', false ) ) {
 				true
 			);
 
-			if ( Redux_Core::$pro_loaded ) {
-				// phpcs:ignore WordPress.NamingConventions.ValidHookName
-				do_action( 'redux/pro/enqueue/color_alpha', $this->field );
+			if ( isset( $this->field['color_alpha'] ) && $this->field['color_alpha'] ) {
+				if ( ! wp_script_is( 'redux-wp-color-picker-alpha-js' ) ) {
+					wp_enqueue_script( 'redux-wp-color-picker-alpha-js' );
+				}
 			}
 
 			if ( $this->parent->args['dev_mode'] ) {
@@ -281,18 +279,18 @@ if ( ! class_exists( 'Redux_Border', false ) ) {
 		/**
 		 * Output CSS styling.
 		 *
-		 * @param string $data Value array.
+		 * @param mixed $data Value array.
 		 *
-		 * @return string|void
+		 * @return string
 		 */
-		public function css_style( $data ) {
+		public function css_style( $data ): string {
 			$style = '';
 
 			$this->check_for_all();
 
 			if ( isset( $this->field['all'] ) && true === $this->field['all'] ) {
-				$border_width = isset( $data['border-width'] ) ? $data['border-width'] : '0px';
-				$val          = isset( $data['border-top'] ) ? $data['border-top'] : $border_width;
+				$border_width = $data['border-width'] ?? '0px';
+				$val          = $data['border-top'] ?? $border_width;
 
 				$data['border-top']    = $val;
 				$data['border-bottom'] = $val;
@@ -310,10 +308,10 @@ if ( ! class_exists( 'Redux_Border', false ) ) {
 				$border_width = $data['border-width'];
 			}
 
-			$this->field['top']    = isset( $this->field['top'] ) ? $this->field['top'] : true;
-			$this->field['bottom'] = isset( $this->field['bottom'] ) ? $this->field['bottom'] : true;
-			$this->field['left']   = isset( $this->field['left'] ) ? $this->field['left'] : true;
-			$this->field['right']  = isset( $this->field['right'] ) ? $this->field['right'] : true;
+			$this->field['top']    = $this->field['top'] ?? true;
+			$this->field['bottom'] = $this->field['bottom'] ?? true;
+			$this->field['left']   = $this->field['left'] ?? true;
+			$this->field['right']  = $this->field['right'] ?? true;
 
 			if ( true === $this->field['top'] ) {
 				$clean_value['top'] = ! empty( $data['border-top'] ) ? $data['border-top'] : $border_width;
@@ -357,7 +355,7 @@ if ( ! class_exists( 'Redux_Border', false ) ) {
 		 *
 		 * @return null|string|string[]
 		 */
-		private function strip_alphas( $s ) {
+		private function strip_alphas( string $s ) {
 			// Regex is our friend.  THERE ARE FOUR LIGHTS!!
 			return preg_replace( '/[^\d.-]/', '', $s );
 		}

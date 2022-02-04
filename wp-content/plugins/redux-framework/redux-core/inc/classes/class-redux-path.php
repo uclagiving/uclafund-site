@@ -26,11 +26,11 @@ if ( ! class_exists( 'Redux_Path', false ) ) {
 		/**
 		 * Gets Redux path.
 		 *
-		 * @param string $relative_path Self explanitory.
+		 * @param string $relative_path Self-explanatory.
 		 *
 		 * @return string
 		 */
-		public static function get_path( $relative_path ) {
+		public static function get_path( string $relative_path ): string {
 			$path = Redux_Core::$redux_path . $relative_path;
 
 			if ( Redux_Core::$pro_loaded ) {
@@ -53,7 +53,7 @@ if ( ! class_exists( 'Redux_Path', false ) ) {
 		 *
 		 * @param string $relative_path Path.
 		 */
-		public static function require_class( $relative_path ) {
+		public static function require_class( string $relative_path ) {
 			$path = self::get_path( $relative_path );
 
 			if ( file_exists( $path ) ) {
