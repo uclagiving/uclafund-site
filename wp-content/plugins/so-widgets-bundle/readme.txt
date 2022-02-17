@@ -3,8 +3,8 @@ Tags: widget, button, slider, hero, google maps, image, carousel, features, icon
 Requires at least: 4.2
 Tested up to: 5.9
 Requires PHP: 5.6.20
-Stable tag: 1.29.1
-Build time: 2022-01-27T15:12:13+02:00
+Stable tag: 1.30.0
+Build time: 2022-02-14T16:18:21+02:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -99,6 +99,14 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.30.0 - 14 February 2022 =
+* Button and Contact Form: Migrated `onclick` to `on_click` to avoid a Worfence flag.
+* Call To Action: Remove `Use default background colors` setting.
+* Social Media Buttons: Added new settings: `Icon color hover` and `Background color hover`.
+
+= 1.29.2 - 04 February 2022 =
+* Widgets Block: Excluded the Contact Form from caching. Resolves error on first submission.
 
 = 1.29.1 - 27 January 2022 =
 * Updated `Tested up to` tag to `5.9`.
