@@ -562,22 +562,26 @@ class Installer_Theme_Class {
         if ( (is_array( $this->installer_repo_with_themes )) && (!(empty($this->installer_repo_with_themes))) ) {
             foreach ( $this->installer_repo_with_themes as $k => $repo_slug ) {
                 //Step2: Let's checked if we have update for this theme
-                $update_available = get_option( $this->installer_themes_available_updates[$repo_slug] );
-                if ( $update_available ) {
-                    if ( (is_array( $update_available )) && (!(empty($update_available))) ) {
-                        //Has updates available coming from this specific theme repo
-                        //Let's loop through the themes that needs update
-                        foreach ( $update_available as $theme_slug => $v ) {
-                            //Add to response API
-                            $the_value->response [$theme_slug] = array(
-                                'theme' => $theme_slug,
-                                'new_version' => $v['new_version'],
-                                'url' => $v['url'],
-                                'package' => $v['package']
-                            );
+                if (isset($this->installer_themes_available_updates[$repo_slug]))
+                {
+                    $update_available = get_option( $this->installer_themes_available_updates[$repo_slug] );
+                    if ( $update_available ) {
+                        if ( (is_array( $update_available )) && (!(empty($update_available))) ) {
+                            //Has updates available coming from this specific theme repo
+                            //Let's loop through the themes that needs update
+                            foreach ( $update_available as $theme_slug => $v ) {
+                                //Add to response API
+                                $the_value->response [$theme_slug] = array(
+                                    'theme' => $theme_slug,
+                                    'new_version' => $v['new_version'],
+                                    'url' => $v['url'],
+                                    'package' => $v['package']
+                                );
+                            }
                         }
                     }
                 }
+                
             }
         }
         //Return
