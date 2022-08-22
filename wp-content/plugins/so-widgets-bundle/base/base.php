@@ -29,19 +29,22 @@ function siteorigin_widget_add_inline_css($css){
 /**
  * Print any inline styles that have been added with siteorigin_widget_add_inline_css
  */
-function siteorigin_widget_print_styles(){
+function siteorigin_widget_print_styles() {
 	global $siteorigin_widgets_inline_styles;
 	if ( ! empty( $siteorigin_widgets_inline_styles ) ) {
-        foreach ($siteorigin_widgets_inline_styles as $widget_css) {
-            ?>
-            <style type="text/css"><?php echo($widget_css) ?></style><?php
-        }
-    }
+		foreach ( $siteorigin_widgets_inline_styles as $widget_css ) {
+			if ( ! empty( $widget_css ) ) {
+				?>
+				<style<?php echo current_theme_supports( 'html5', 'style' ) ? '' : ' type="text/css"'; ?>><?php echo( $widget_css ); ?></style>
+				<?php
+			}
+		}
+	}
 
 	$siteorigin_widgets_inline_styles = array();
 }
-add_action('wp_head', 'siteorigin_widget_print_styles');
-add_action('wp_footer', 'siteorigin_widget_print_styles');
+add_action( 'wp_head', 'siteorigin_widget_print_styles' );
+add_action( 'wp_footer', 'siteorigin_widget_print_styles' );
 
 /**
  * The ajax handler for getting a list of available icons.
@@ -107,7 +110,8 @@ function siteorigin_widget_get_icon($icon_value, $icon_styles = false, $title = 
 		}
 		return '<span class="' . esc_attr( $family_style ) . '" data-sow-icon="' . $unicode . '"
 		' . ( ! empty( $icon_styles ) ? 'style="' . implode( '; ', $icon_styles ) . '"' : '' ) . ' '. 
-		( ! empty( $title ) ? 'title="' . esc_attr( $title ) .'"' : '' ) .'></span>';
+		( ! empty( $title ) ? 'title="' . esc_attr( $title ) .'"' : '' ) .'
+		aria-hidden="true"></span>';
 	}
 	else {
 		return false;
@@ -124,11 +128,12 @@ $sow_registered_fonts = array();
 function siteorigin_widget_get_font($font_value) {
 
 	$web_safe = array(
-		'Arial' => 'Arial, "Helvetica Neue", Helvetica, sans-serif',
-		'Helvetica Neue' => '"Helvetica Neue", Helvetica, Arial, sans-serif',
-		'Lucida Grande' => 'Lucida, Verdana, sans-serif',
-		'Georgia' => '"Times New Roman", Times, serif',
-		'Courier New' => 'Courier, mono',
+		'Arial' => 'Arial, Helvetica Neue, Helvetica, sans-serif',
+		'Courier New' => 'Courier New, Courier, Lucida Sans Typewriter, Lucida Typewriter, monospace',
+		'Georgia' => 'Georgia, Times, Times New Roman, serif',
+		'Helvetica Neue' => 'Helvetica Neue, Helvetica, Arial, sans-serif',
+		'Lucida Grande' => 'Lucida Grande, Lucida Sans Unicode, Lucida Sans, Geneva, Verdana, sans-serif',
+		'Times New Roman' => 'Times New Roman, Times, Baskerville, Georgia, serif',
 		'default' => 'default',
 	);
 
@@ -211,8 +216,9 @@ function sow_esc_url( $url ) {
 		if( empty($url) ) return '';
 	}
 
-	$protocols = wp_allowed_protocols();
+	$protocols = apply_filters( 'siteorigin_esc_url_protocols', wp_allowed_protocols() );
 	$protocols[] = 'skype';
+	$protocols[] = 'steam';
 	return esc_url( $url, $protocols );
 }
 
@@ -229,8 +235,9 @@ function sow_esc_url_raw( $url ) {
 		$url = get_the_permalink( (int) $matches[1] );
 	}
 
-	$protocols = wp_allowed_protocols();
+	$protocols = apply_filters( 'siteorigin_esc_url_protocols', wp_allowed_protocols() );
 	$protocols[] = 'skype';
+	$protocols[] = 'steam';
 	return esc_url_raw( $url, $protocols );
 }
 
@@ -278,10 +285,11 @@ function siteorigin_widgets_font_families( ){
 	// Add the default fonts
 	$font_families = array(
 		'Arial' => 'Arial',
+		'Courier New' => 'Courier New',
+		'Georgia' => 'Georgia',
 		'Helvetica Neue' => 'Helvetica Neue',
 		'Lucida Grande' => 'Lucida Grande',
-		'Georgia' => 'Georgia',
-		'Courier New' => 'Courier New',
+		'Times New Roman' => 'Times New Roman',
 	);
 
 	// Add in all the Google font families

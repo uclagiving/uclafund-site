@@ -1,6 +1,7 @@
 <?php
 
 class SiteOrigin_Widgets_Bundle_Widget_Block {
+	var $widgetAnchor;
 	/**
 	 * Get the singleton instance
 	 *
@@ -30,7 +31,7 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 			plugins_url( 'widget-block' . SOW_BUNDLE_JS_SUFFIX . '.js', __FILE__ ),
 			array(
 				// The WP 5.8 Widget Area requires a specific editor script to be used.
-				$current_screen->base == is_object( $current_screen ) && 'widgets' ? 'wp-edit-widgets' : 'wp-editor',
+				is_object( $current_screen ) && $current_screen->base == 'widgets' ? 'wp-edit-widgets' : 'wp-editor',
 				'wp-blocks',
 				'wp-i18n',
 				'wp-element',
@@ -56,9 +57,16 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 				// The last class will always be from the widget file we just loaded.
 				$classes = get_declared_classes();
 				$widget_class = end( $classes );
+				// For SiteOrigin widgets, just display the widget's name. For third party widgets, display the Author
+				// to try avoid confusion when the widgets have the same name.
+				if ( $widget['Author'] != 'SiteOrigin' && strpos( $widget['Name'], $widget['Author'] ) === false ) {
+					$widget_name = sprintf( __( '%s by %s', 'so-widgets-bundle' ), $widget['Name'], $widget['Author'] );
+				} else {
+					$widget_name = $widget['Name'];
+				}
 
 				$so_widgets[] = array(
-					'name' => $widget['Name'],
+					'name' => $widget_name,
 					'class' => $widget_class,
 				);
 			}
@@ -72,8 +80,7 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 				$author = '';
 				// Try to find a widget's author from its file metadata, by matching the filename to the ID (which is derived from the filename).
 				foreach ( $widgets_metadata_list as $widget_metadata ) {
-					$filename = $widgets_manager->get_widget_filename( $widget_obj->id_base );
-					if ( $widget_metadata['ID'] == $filename ) {
+					if ( $widgets_manager->get_class_from_path( wp_normalize_path( $widget_metadata['File'] ) ) == $class ) {
 						$author = $widget_metadata['Author'];
 						break;
 					}
@@ -121,6 +128,10 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 		$so_widgets_bundle->enqueue_registered_widgets_scripts();
 	}
 
+	function add_widget_id( $id, $instance, $widget ) {
+		return $this->widgetAnchor;
+	}
+
 	public function render_widget_block( $attributes ) {
 		if ( empty( $attributes['widgetClass'] ) ) {
 			return '<div>'.
@@ -128,8 +139,8 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 				   '</div>';
 		}
 
-		$widget_class = $attributes['widgetClass'];
 
+		$widget_class = $attributes['widgetClass'];
 		global $wp_widget_factory;
 
 		$widget = ! empty( $wp_widget_factory->widgets[ $widget_class ] ) ? $wp_widget_factory->widgets[ $widget_class ] : false;
@@ -137,8 +148,6 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 		if ( ! empty( $widget_class ) && empty( $widget ) ) {
 			$widget = SiteOrigin_Widgets_Bundle::single()->load_missing_widget( false, $widget_class );
 		}
-
-		$instance = $attributes['widgetData'];
 
 		// Support for Additional CSS classes.
 		$add_custom_class_name = function( $class_names ) use ( $attributes ) {
@@ -150,9 +159,11 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 
 		if ( ! empty( $widget ) && is_object( $widget ) && is_subclass_of( $widget, 'SiteOrigin_Widget' ) ) {
 			$GLOBALS['SITEORIGIN_WIDGET_BLOCK_RENDER'] = true;
+			$instance = $attributes['widgetData'];
 			add_filter( 'siteorigin_widgets_wrapper_classes_' . $widget->id_base, $add_custom_class_name );
-			ob_start();
 
+
+			ob_start();
 			// If we have pre-generated widgetHTML or there's a valid $_POST, generate the widget.
 			// We don't show the pre-generated widget when there's a valid $_POST
 			// as widgets will likely change when that happens.
@@ -177,6 +188,11 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 					)
 				)
 			) {
+				// Add anchor to widget wrapper.
+				if ( ! empty( $attributes['anchor'] ) ) {
+					$this->widgetAnchor = $attributes['anchor'];
+					add_filter( 'siteorigin_widgets_wrapper_id_' . $widget->id_base, array( $this, 'add_widget_id' ), 10, 3 );
+				}
 				/* @var $widget SiteOrigin_Widget */
 				$instance = $widget->update( $instance, $instance );
 				$widget->widget( array(
@@ -185,6 +201,10 @@ class SiteOrigin_Widgets_Bundle_Widget_Block {
 					'before_title' => '<h3 class="widget-title">',
 					'after_title' => '</h3>',
 				), $instance );
+
+				if ( ! empty( $attributes['anchor'] ) ) {
+					remove_filter( 'siteorigin_widgets_wrapper_id_' . $widget->id_base, array( $this, 'add_widget_id' ), 10 );
+				}
 			} else {
 				$widget->generate_and_enqueue_instance_styles( $instance );
 				$widget->enqueue_frontend_scripts( $instance );

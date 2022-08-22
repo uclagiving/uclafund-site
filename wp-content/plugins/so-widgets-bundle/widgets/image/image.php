@@ -32,12 +32,32 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 				'label' => __( 'Image file', 'so-widgets-bundle' ),
 				'library' => 'image',
 				'fallback' => true,
+				'state_emitter' => array(
+					'callback' => 'conditional',
+					'args'     => array(
+						'has_external_image[show]: isNaN( val )',
+						'has_external_image[hide]: ! isNaN( val )'
+					),
+				)
 			),
 
 			'size' => array(
 				'type' => 'image-size',
 				'label' => __( 'Image size', 'so-widgets-bundle' ),
 				'custom_size' => true,
+			),
+
+			'size_external' => array(
+				'type' => 'image-size',
+				'label' => __( 'External image size', 'so-widgets-bundle' ),
+				'sizes' => array(
+					'full' => __( 'Full', 'so-widgets-bundle' ),
+				),
+				'custom_size' => true,
+				'state_handler' => array(
+					'has_external_image[show]' => array( 'show' ),
+					'has_external_image[hide]' => array( 'hide' ),
+				),
 			),
 
 			'align' => array(
@@ -142,10 +162,18 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 			);
 		}
 
+		if ( ! empty( $instance['size_external'] ) && $instance['size_external'] == 'custom_size' ) {
+			$external_size = array(
+				'width' => $instance['size_external_width'],
+				'height' => $instance['size_external_height'],
+			);
+		}
+
 		$src = siteorigin_widgets_get_attachment_image_src(
 			$instance['image'],
 			$instance['size'],
-			! empty( $instance['image_fallback'] ) ? $instance['image_fallback'] : false
+			! empty( $instance['image_fallback'] ) ? $instance['image_fallback'] : false,
+			! empty( $external_size ) ? $external_size : array()
 		);
 
 		$attr = array();
@@ -185,7 +213,14 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 		$attr['rel'] = ! empty( $instance['rel'] ) ? $instance['rel'] : '';
 
 		if ( function_exists( 'wp_lazy_loading_enabled' ) && wp_lazy_loading_enabled( 'img', 'sow-image' ) ) {
-			$attr['loading'] = 'lazy';
+			// Allow other plugins to override whether this widget is lazy loaded or not.
+			$attr['loading'] = apply_filters(
+				'siteorigin_widgets_image_lazy_load',
+				// If WordPress 5.9 or higher is being used, let WordPress control if Lazy Load is enabled.
+				function_exists( 'wp_get_loading_attr_default' ) ? wp_get_loading_attr_default( 'the_content' ) : 'lazy',
+				$instance,
+				$this
+			);
 		}
 		
 		$link_atts = array();
@@ -252,8 +287,7 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 
 	function generate_anchor_open( $url, $link_attributes ) {
 		?>
-		<a
-			href="<?php echo sow_esc_url( $url ); ?>"
+		<a href="<?php echo sow_esc_url( $url ); ?>"
 			<?php
 			foreach ( $link_attributes as $attr => $val ) {
 				if ( ! empty( $val ) ) {

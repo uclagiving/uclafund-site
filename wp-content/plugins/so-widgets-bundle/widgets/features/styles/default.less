@@ -32,8 +32,6 @@
 
 	.sow-features-feature {
 		.box-sizing(border-box);
-		display: flex;
-		float: left;
 		padding: 0 25px;
 		position: relative;
 
@@ -49,7 +47,6 @@
 		}
 
 		&.sow-icon-container-position-top {
-			flex-direction: column;
 			text-align: center;
 
 			.sow-icon-container {
@@ -58,7 +55,6 @@
 		}
 
 		&.sow-icon-container-position-right {
-			flex-direction: row;
 			text-align: left;
 
 			.sow-icon-container {
@@ -67,7 +63,6 @@
 		}
 
 		&.sow-icon-container-position-left {
-			flex-direction: row-reverse;
 			text-align: left;
 
 			.sow-icon-container {
@@ -76,7 +71,6 @@
 		}
 
 		&.sow-icon-container-position-bottom {
-			flex-direction: column-reverse;
 			text-align: center;
 
 			.sow-icon-container {
@@ -97,15 +91,16 @@
 			height: @container_size;
 			text-decoration: none;
 			width: @container_size;
+			flex: 0 0 @container_size;
 
 			& when not ( @per_row = 1 ) {
 				margin: auto;
 			}
 
-			[class^="sow-icon-"],
+			&:not(.sow-container-none) [class^="sow-icon-"],
 			.sow-icon-image {
 				align-items: center;
-				color: #FFFFFF;
+				color: #fff;
 				display: flex;
 				height: @container_size;
 				justify-content: center;
@@ -129,7 +124,7 @@
 		@{title_tag} {
 			margin: 1em 0;
 
-			a{
+			a {
 				color: inherit;
 				text-decoration: none;
 
@@ -140,6 +135,7 @@
 		}
 
 		p.sow-more-text {
+
 			a {
 				color: inherit;
 				font-weight: 500;
@@ -204,8 +200,8 @@
 			margin: 0;
 
 			.sow-features-feature {
-				display: block;
-				float: none;
+				display: block !important;
+				float: none !important;
 				margin-bottom: 40px;
 				width: 100% !important;
 
@@ -218,6 +214,12 @@
 				clear: none;
 			}
 
+			.sow-icon-container-position-left .sow-icon-container,
+			.sow-icon-container-position-right .sow-icon-container {
+				display: flex;
+				justify-content: center;
+				width: 100%;
+			}
 		}
 	}
 }
