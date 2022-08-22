@@ -3,9 +3,9 @@
 Plugin Name: Progress Bar
 Plugin URI: https://github.com/jazzsequence/progress-bar
 Description: A simple progress bar shortcode that can be styled with CSS.
-Version: 2.1.5
+Version: 2.1.6
 Author: Chris Reynolds
-Author URI: https://jazzsequence.com/progress-bar/
+Author URI: https://progressbar.jazzsequence.com/
 License: GPL3
 */
 
