@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 
 require_once Redux_Pro::$dir . 'core/inc/extensions/icon_select/font-awesome-5-free.php';
 
-Redux::setSection(
+Redux::set_section(
 	$opt_name,
 	array(
 		'title'      => esc_html__( 'Icon Select', 'your-textdomain-here' ),
@@ -35,7 +35,7 @@ Redux::setSection(
 				// If needed to initialize the icon.
 				'prefix'           => 'fa',
 
-				// How each icons begins for this given font.
+				// How each icon begins for this given font.
 				'selector'         => 'fa-',
 
 				// Change the height of the container. defaults to 300px; .
