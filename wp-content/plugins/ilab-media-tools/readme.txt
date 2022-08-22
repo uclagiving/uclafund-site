@@ -2,11 +2,11 @@
 Contributors: mediacloud, interfacelab, freemius
 Tags: offload, amazon, s3, imgix, uploads, video, video encoding, google cloud storage, digital ocean spaces, wasabi, media, cdn, rekognition, cloudfront, images, crop, image editing, image editor, optimize, image optimization, media library, offload, offload s3, filepicker, smush, imagify, shortpixel
 Requires at least: 4.9
-Tested up to: 5.7.2
+Tested up to: 5.9.3
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 4.2.37
-Requires PHP: 7.1
+Stable tag: 4.4.0
+Requires PHP: 7.4
 
 Automatically store media on Amazon S3, Google Cloud Storage, DigitalOcean Spaces + others. Serve CSS/JS assets through CDNs.  Integrate with Imgix.
 
@@ -104,6 +104,80 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 
 
 == Changelog ==
+
+= 4.4.0 - 4/7/2022 =
+
+* **IMPORTANT**: This release has a breaking change if you are using the **Mux/Video Encoding** feature.  If you are using the video.js or hls.js video player, you will need to enable the separate *Video Player* feature to continue using those players.  There will be a notification in WordPress admin warning you about this, but only if it applies to you.
+* Upgraded video.js player to latest 7.19.0
+* Upgraded hls.js player to latest 1.1.5
+* Separated the video player into it's own feature from the video encoding feature.
+* Video player now supports playing any uploaded videos, not just Mux encoded videos.
+* You can now allow video downloads for logged in users only in *Video Player Settings*
+* The Video Player gutenberg block allows you to override the download setting for an individual video.
+* Filmstrip generation can now be enabled regardless of video player in use.
+
+= 4.3.11 - 3/8/2022 =
+
+* Added new option to imgix to disable `urlencode()` the filename which may cause issues for certain unicode characters in filenames.  If imgix is working fine for you, you should not turn this on.
+* Fixed missing regions in the setup wizard for Wasabi
+
+= 4.3.9 - 3/4/2022 =
+
+* Fixed Imagify API integration.
+
+= 4.3.8 - 3/2/2022 =
+
+* Update to latest AWS SDK.  Fixes critical issue where deleting items from cloud storage would fail due to a bug in the SDK.  If you are using S3 or S3 compatible storage, you need to upgrade to this.
+* Fixed a misspelling in the wizard
+
+= 4.3.7 - 3/1/2022 =
+
+* Various fixes for **BuddyBoss** and **BuddyPress**
+* **Migrate to Cloud** task will now copy BuddyBoss media that isn't related to profile images or cover photos, meaning any media uploaded to timelines, groups, forums, etc.  Use the Migrate BuddyPress task for cover photos and profile images.
+* Fixed a caching issue for BuddyBoss/BuddyPress where changing cover images where would not update the cover photo.
+* Full support for BuddyBoss's video and document uploads.
+* **Note** if you want to delete uploads from your local server, you will need to turn on both **Delete Uploads** in **Cloud Storage Settings** and **Delete Uploads** in the BuddyPress integration settings.
+* Fixed a bug preventing the background delete task for BuddyPress from working.
+
+= 4.3.6 - 3/1/2022 =
+
+* Critical fix for some libraries that were not being imported correctly.  On some systems this would cause a fatal error depending on what other plugins you had installed.
+
+= 4.3.4 - 2/28/2022 =
+
+* **NOW REQUIRES PHP 7.4**  Installing on PHP < 7.4 will not work and result in errors.
+* Fixed an issue that would prevent certain tasks from running
+* Sign up to be notified about our new product for WordPress coming in April 2022: [Preflight for WordPress](https://preflight.ju.mp)
+* Fixed compatibility with BuddyPress 6.x
+* Fixed compatibility with BuddyBoss 1.8.x including video.  **Note:** Mux encoding does not work with BuddyBoss and it's impossible to make it work.  You can have it enabled and Mux will encode videos but the videos that are played on the front end will be the uploaded MP4 source.  It's best to turn Mux off if you are using it with BuddyBoss.
+* Added new Wasabi and S3 regions.
+* All third party libraries have been updated to the latest versions.
+* Fixed MUX gutenberg block registration
+* Filmstrip generation with Mux now warns you if GD is not installed
+* Media Cloud now makes **EWWW Image Optimizer** run during the upload process which fixes a lot of issues with other plugins like Elementor.  You can disable this in **Cloud Storage Settings** if your uploads have become unbearably slow.
+* Fixed compatibility with **EWWW Image Optimizer** bulk optimizer.
+* Generated `.webp` file names are stored in S3 metadata.
+* `.webp` files are deleted from cloud storage when deleting an upload.
+* When queueing deletes, you can now specify the delay in minutes before items in the queue get processed.
+* Built-in image optimizer now properly queues deletes if that setting is enabled.
+* For the free version, if you are using Elementor with an image optimizer that isn't **EWWW Image Optimizer**, you are going to have problems and that configuration isn't supported.  You should consider a switch to EWWW or upgrading to the premium version.
+* For the premium version, if you are using Elementor with an image optimizer that isn't **EWWW Image Optimizer**, make sure to turn on **Queue Deletes** in **Cloud Storage Settings** and **Auto Update Elementor** in **Integration Settings**.
+* Fix for images specified in the customizer when using the Astra theme.
+* PDF thumbnails generated with the ImageMagick extension are now uploaded to cloud storage properly.
+* Fixed an error with PDF uploads and ImageMagick that would prevent the PDF from being uploaded to cloud storage in certain circumstances.
+* Fixed the Render PDF functionality of imgix to now properly render PDFs.
+* Large PDF uploads would cause a fatal memory error on some systems.  Now, you can now upload PDFs of any size without issues (subject to WordPress and web server limitations).
+* PDF upload speed should be greatly improved.  If you don't care about generating PDF preview images, you can improve it even more by turning off **Extract PDF Page Size** in the **Image and PDF Upload Handling** section of **Cloud Storage Settings**.
+* Added a new setting **Background Only When Using the Media Library** that, when enabled, limits image optimizations to only run in the background when using the WordPress Media Library pages in the admin, otherwise the image optimizations will run during the upload.  Enabling this could improve compatibility with some plugins.
+* Image Optimizations that fail would prevent the upload from being transferred to cloud storage.  That has been fixed.
+* Updated the Imagify Image Optimization driver.
+* Background optimizations now start a lot a sooner.
+* Added **Update URLs** task to search and replace URLs in the WordPress database.
+* Added a switch to the **Migrate to Cloud** task that will do a search and replace for migrated URLs during the migration process.
+* When files are deleted from the server, everything about the deletion is now logged when debugging is enabled.
+* Fixed issues with WordPress 5.8 and 5.9
+* Fixed compatibility with PHP 7.4 and 8.0
+* Updated latest Freemius SDK
 
 = 4.2.37 - 6/22/2021 =
 
