@@ -33,10 +33,10 @@ define('DB_PASSWORD', $_SERVER["RDS_PASSWORD"]);
 /** MySQL hostname */
 define('DB_HOST', $_SERVER["RDS_HOSTNAME"]);
 
-if (strpos($_SERVER['HTTP_HOST'],'chancellorssocietyphp8.stage.support2.ucla.edu') !== false)
+if (strpos($_SERVER['HTTP_HOST'],'chancellorssociety.stage.support2.ucla.edu') !== false)
 {
-	define('WP_SITEURL', 'https://chancellorssocietyphp8.stage.support2.ucla.edu');
-	define('WP_HOME', 'https://chancellorssocietyphp8.stage.support2.ucla.edu');
+	define('WP_SITEURL', 'https://chancellorssociety.stage.support2.ucla.edu');
+	define('WP_HOME', 'https://chancellorssociety.stage.support2.ucla.edu');
 }
 else
 {

@@ -149,8 +149,6 @@ $enable_javascript = 'http://www.enable-javascript.com';
 
 </header>
 	<div id="wrapper">
-
-	TODO: UCLAEA REMOVE ME!!! Silas hereeeeeeee
 		<noscript>
 			<div class="enable-javascript">
 				<?php _e( 'Javascript is disabled in your web browser. Please enable it', 'maskitto-light' ); ?> 
