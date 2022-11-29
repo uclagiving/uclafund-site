@@ -2,10 +2,7 @@
 
 if (!defined('ABSPATH')) die('No direct access allowed');
 
-/**
- * If we ever change the API of the Updraft_Notices class, then we'll need to rename and version it, e.g. Updraft_Notices_1_0, because otherwise a plugin may find that it's loaded an older instance than it wanted from another plugin.
- */
-abstract class Updraft_Notices {
+abstract class Updraft_Notices_1_2 {
 
 	protected $notices_content;
 	
@@ -23,26 +20,47 @@ abstract class Updraft_Notices {
 	protected $autobackup_bottom_or_report = array('autobackup', 'bottom', 'report', 'report-plain');
 
 	/**
-	 * Global adverts that appear in all products will be returned to the child to display.
+	 * Global adverts that appear in all products will be returned to the child to display
 	 *
-	 * @return Array - a 2d array of notices with all the data for each notice
+	 * @return array
 	 */
 	protected function populate_notices_content() {
 		return array();
 	}
 	
 	/**
-	 * Call this method to setup the notices
+	 * Call this method to setup the notices.
 	 */
 	abstract protected function notices_init();
+	
+	/**
+	 * Checks if the plugin is installed and checks status if needed.
+	 *
+	 * @param null    $product             - Plugin to check
+	 * @param boolean $also_require_active - bool to indicate if active status is required or not
+	 *
+	 * @return boolean Returns true, if plugin is installed otherwise false
+	 */
+	protected function is_plugin_installed($product = null, $also_require_active = false) {
+		if ($also_require_active) return class_exists($product);
+		if (!function_exists('get_plugins')) include_once(ABSPATH.'wp-admin/includes/plugin.php');
+		$plugins = get_plugins();
+		foreach ($plugins as $value) {
+			if ($value['TextDomain'] == $product) {
+				// We have found the plugin so return false so that we do not display this advert.
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
-	 * Returns false if a translation is present for the current locale and true otherwise.
+	 * Checks if translation is needed or not
 	 *
-	 * @param String $plugin_base_dir
-	 * @param String $product_name
+	 * @param string $plugin_base_dir - Base directory of plugin
+	 * @param string $product_name    - Plugin name
 	 *
-	 * @return Boolean
+	 * @return boolean Returns true if translation is needed, otherwise false
 	 */
 	protected function translation_needed($plugin_base_dir, $product_name) {
 		$wplang = get_locale();
@@ -51,48 +69,48 @@ abstract class Updraft_Notices {
 		if (is_file($plugin_base_dir.'/languages/'.$product_name.'-'.$wplang.'.mo')) return false;
 		return true;
 	}
-
+	
 	/**
-	 * This method is used to generate the correct URL output for the start of the URL.
+	 * Generates the start of a HTML URL
 	 *
-	 * @param Boolean $html_allowed - a boolean value to indicate if HTML can be used or not
-	 * @param String  $url          - the url to use
-	 * @param Boolean $https        - a boolean value to indicate if https should be used or not
-	 * @param String  $website_home - a string to be displayed
+	 * @param boolean $html_allowed - indicates if HTML is allowed or not
+	 * @param string $url           - the URL
+	 * @param boolean $https        - the protocol to use
+	 * @param string $website_home  - the product website name
 	 *
-	 * @return String                returns a string of the completed url
+	 * @return string returns a partial HTML URL
 	 */
 	protected function url_start($html_allowed, $url, $https = false, $website_home = null) {
 		$proto = ($https) ? 'https' : 'http';
 		if (strpos($url, $website_home) !== false) {
-			return $html_allowed ? "<a href=".apply_filters(str_replace('.', '_', $website_home).'_link', $proto.'://'.$url).">" : "";
+			return $html_allowed ? "<a href=".apply_filters(str_replace('.', '_', $website_home).'_link', $proto.'://'.$url).'>' : '';
 		} else {
-			return $html_allowed ? "<a href=\"$proto://$url\">" : "";
+			return $html_allowed ? '<a href="'.$proto.'://'.$url.'">' : '';
 		}
 	}
 
 	/**
-	 * This method is used to generate the correct URL output for the end of the URL.
+	 * Generate the end of a HTML URL
 	 *
-	 * @param Boolean $html_allowed - a boolean value to indicate if HTML can be used or not
-	 * @param String  $url          - the url to use
-	 * @param Boolean $https        - a boolean value to indicate if https should be used or not
+	 * @param boolean $html_allowed - indicates if HTML is allowed or not
+	 * @param string  $url          - the URL
+	 * @param boolean $https        - the protocol to use
 	 *
-	 * @return String                returns a string of the completed url
+	 * @return string returns a partial HTML URL
 	 */
 	protected function url_end($html_allowed, $url, $https = false) {
-		$proto = ($https) ? 'https' : 'http';
-		return $html_allowed ? '</a>' : " ($proto://$url)";
+		$proto = $https ? 'https' : 'http';
+		return $html_allowed ? '</a>' : ' ('.$proto.'://'.$url.')';
 	}
 
 	/**
-	 * Prepares and then renders or returns a notice.
+	 * Renders notice
 	 *
-	 * @param Boolean|String $notice                 - id of notice or false for 'get_notice_data' to decide
-	 * @param String         $position               - notice position
-	 * @param Boolean        $return_instead_of_echo - whether to return the notice(true) or render it to the page(false)
+	 * @param mixed   $notice                 - a specific notice to render or false
+	 * @param string  $position               - position of the notice
+	 * @param boolean $return_instead_of_echo - indicates if we should echo notice or return as string
 	 *
-	 * @return Void|String
+	 * @return mixed Returns string or echos notice
 	 */
 	public function do_notice($notice = false, $position = 'top', $return_instead_of_echo = false) {
 
@@ -101,7 +119,7 @@ abstract class Updraft_Notices {
 		if (false === $notice) $notice = apply_filters('updraft_notices_force_id', false, $this);
 		
 		$notice_content = $this->get_notice_data($notice, $position);
-
+		
 		if (false != $notice_content) {
 			return $this->render_specified_notice($notice_content, $return_instead_of_echo, $position);
 		}
@@ -110,10 +128,10 @@ abstract class Updraft_Notices {
 	/**
 	 * This method will return a notice ready for display.
 	 *
-	 * @param Boolean $notice   - the notice to grab the data
-	 * @param String  $position - position of notice
+	 * @param  boolean $notice   - a specific notice to render or false
+	 * @param  string  $position - position of the notice
 	 *
-	 * @return Array
+	 * @return array returns notice data
 	 */
 	protected function get_notice_data($notice = false, $position = 'top') {
 
@@ -124,9 +142,7 @@ abstract class Updraft_Notices {
 			// Does the notice support the position specified?
 			if (isset($this->notices_content[$notice]['supported_positions']) && !in_array($position, $this->notices_content[$notice]['supported_positions'])) return false;
 
-			/*
-				First check if the advert passed can be displayed and hasn't been dismissed, we do this by checking what dismissed value we should be checking.
-			*/
+			// First check if the advert passed can be displayed and hasn't been dismissed, we do this by checking what dismissed value we should be checking.
 			$dismiss_time = $this->notices_content[$notice]['dismiss_time'];
 
 			$dismiss = $this->check_notice_dismissed($dismiss_time);
@@ -139,7 +155,7 @@ abstract class Updraft_Notices {
 			return $this->notices_content[$notice];
 		}
 
-		// create an array to add non-seasonal adverts to so that if a seasonal advert can't be returned we can choose a random advert from this array.
+		// Create an array to add non-seasonal adverts to so that if a seasonal advert can't be returned we can choose a random advert from this array.
 		$available_notices = array();
 
 		// If Advert wasn't passed then next we should check to see if a seasonal advert can be returned.
@@ -147,15 +163,13 @@ abstract class Updraft_Notices {
 			// Does the notice support the position specified?
 			if (isset($this->notices_content[$notice_id]['supported_positions']) && !in_array($position, $this->notices_content[$notice_id]['supported_positions'])) continue;
 			
-			// If the advert has a validity function, then require the advert to be valid
+			// If the advert has a validity function, then require the advert to be valid.
 			if (!empty($notice_data['validity_function']) && !call_user_func(array($this, $notice_data['validity_function']))) continue;
 		
+		
 			if (isset($notice_data['valid_from']) && isset($notice_data['valid_to'])) {
-
 				if ($this->skip_seasonal_notices($notice_data)) return $notice_data;
-
 			} else {
-
 				$dismiss_time = $this->notices_content[$notice_id]['dismiss_time'];
 				$dismiss = $this->check_notice_dismissed($dismiss_time);
 			
@@ -165,34 +179,42 @@ abstract class Updraft_Notices {
 		
 		if (empty($available_notices)) return false;
 
-		// If a seasonal advert can't be returned then we will return a random advert
+		// If a seasonal advert can't be returned then we will return a random advert.
 
 		// Here we give a 25% chance for the rate advert to be returned before selecting a random advert from the entire collection which also includes the rate advert
 		if (0 == rand(0, 3) && isset($available_notices['rate'])) return $available_notices['rate'];
-
-		/*
-			Using shuffle here as something like rand which produces a random number and uses that as the array index fails, this is because in future an advert may not be numbered and could have a string as its key which will then cause errors.
-		*/
 		
+		// Using shuffle here as something like rand which produces a random number and uses that as the array index fails, this is because in future an advert may not be numbered and could have a string as its key which will then cause errors.
 		shuffle($available_notices);
 		return $available_notices[0];
 	}
 
 	/**
-	 * This method returns false although it's usually overridden to determine whether to prepare a seasonal notice(returns true) or not(returns false).
+	 * Skip seasonal notices
 	 *
-	 * @param Array $notice_data - all data for the notice
+	 * @param array $notice_data - an array of data for the chosen notice
 	 *
-	 * @return Boolean
+	 * @return boolean
 	 */
 	protected function skip_seasonal_notices($notice_data) {// phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		return false;
 	}
 
 	/**
-	 * When overridden this method should check whether a notice is dismissed(returns true) or not(returns false).
+	 * Returns affiliate ID
 	 *
-	 * @param String $dismiss_time - dismiss time id for the notice
+	 * @return mixed Returns affiliate ID
+	 */
+	public function get_affiliate_id() {
+		return $this->self_affiliate_id;
+	}
+
+	/**
+	 * Checks if the notice has been dismissed
+	 *
+	 * @param string $dismiss_time - dismiss time
+	 *
+	 * @return mixed
 	 */
 	abstract protected function check_notice_dismissed($dismiss_time);
 }
