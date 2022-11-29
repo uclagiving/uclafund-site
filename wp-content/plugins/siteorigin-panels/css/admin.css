@@ -153,101 +153,6 @@
 .siteorigin-panels-builder .so-rows-container {
   padding: 20px 15px 0 15px;
 }
-.siteorigin-panels-builder .so-rows-container .so-row-color-1.so-row-color {
-  background-color: #CDE2EC;
-  border: 1px solid #a4cadd;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-color-1.so-row-color.so-row-color-selected:before {
-  background: #a8cdde;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-1 .so-cells .cell .cell-wrapper {
-  background-color: #CDE2EC;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-1 .so-cells .cell.cell-selected .cell-wrapper {
-  background-color: #99c4d8;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-1 .so-cells .cell .resize-handle {
-  background-color: #e7f1f6;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-1 .so-cells .cell .resize-handle:hover {
-  background-color: #dcebf2;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-color-2.so-row-color {
-  background-color: #F2C2BE;
-  border: 1px solid #e9968f;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-color-2.so-row-color.so-row-color-selected:before {
-  background: #ea9a93;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-2 .so-cells .cell .cell-wrapper {
-  background-color: #F2C2BE;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-2 .so-cells .cell.cell-selected .cell-wrapper {
-  background-color: #e68a83;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-2 .so-cells .cell .resize-handle {
-  background-color: #f8dedc;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-2 .so-cells .cell .resize-handle:hover {
-  background-color: #f5d2cf;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-color-3.so-row-color {
-  background-color: #D5CCDF;
-  border: 1px solid #b9aac9;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-color-3.so-row-color.so-row-color-selected:before {
-  background: #bbadcb;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-3 .so-cells .cell .cell-wrapper {
-  background-color: #D5CCDF;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-3 .so-cells .cell.cell-selected .cell-wrapper {
-  background-color: #b1a0c3;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-3 .so-cells .cell .resize-handle {
-  background-color: #e7e2ed;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-3 .so-cells .cell .resize-handle:hover {
-  background-color: #dfd9e7;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-color-4.so-row-color {
-  background-color: #CAE7CD;
-  border: 1px solid #a3d6a9;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-color-4.so-row-color.so-row-color-selected:before {
-  background: #a7d7ac;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-4 .so-cells .cell .cell-wrapper {
-  background-color: #CAE7CD;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-4 .so-cells .cell.cell-selected .cell-wrapper {
-  background-color: #99d19f;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-4 .so-cells .cell .resize-handle {
-  background-color: #e3f2e4;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-4 .so-cells .cell .resize-handle:hover {
-  background-color: #d8edda;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-color-5.so-row-color {
-  background-color: #E2DCB1;
-  border: 1px solid #d3ca88;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-color-5.so-row-color.so-row-color-selected:before {
-  background: #d4cb8c;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-5 .so-cells .cell .cell-wrapper {
-  background-color: #E2DCB1;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-5 .so-cells .cell.cell-selected .cell-wrapper {
-  background-color: #cfc57d;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-5 .so-cells .cell .resize-handle {
-  background-color: #ece8cb;
-}
-.siteorigin-panels-builder .so-rows-container .so-row-container.so-row-color-5 .so-cells .cell .resize-handle:hover {
-  background-color: #e8e3c0;
-}
 .siteorigin-panels-builder .so-rows-container h3.so-row-label {
   display: inline-block;
   font-size: 1em;
@@ -318,6 +223,7 @@
   background: #a00;
 }
 .siteorigin-panels-builder .so-rows-container .so-row-toolbar .so-dropdown-wrapper .so-dropdown-links-wrapper ul li.so-row-colors-container {
+  clear: both;
   display: flex;
   justify-content: space-around;
   padding: 5px;
@@ -897,6 +803,133 @@
   padding-left: 15px;
   padding-right: 15px;
   margin: 0 -15px;
+}
+/* Toggle Switch used on the custom home page interface and Toggle Style Admin fields. */
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch,
+#panels-home-page .so-toggle-switch {
+  background-color: #fff;
+  background-image: linear-gradient(to bottom, #eee, #fff 25px);
+  border-radius: 24px;
+  box-shadow: inset 0 -1px #fff, inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  display: inline-block;
+  height: 24px;
+  margin: 0 10px 0 0;
+  padding: 3px;
+  position: relative;
+  vertical-align: top;
+  width: 68px;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input,
+#panels-home-page .so-toggle-switch .so-toggle-switch-input {
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label,
+#panels-home-page .so-toggle-switch .so-toggle-switch-label {
+  background: #eceeef;
+  border-radius: inherit;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
+  display: block;
+  font-size: 12px;
+  height: inherit;
+  position: relative;
+  text-transform: uppercase;
+  transition-property: opacity background;
+  transition: 0.15s ease-out;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:before,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:before,
+#panels-home-page .so-toggle-switch .so-toggle-switch-label:before,
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:after,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:after,
+#panels-home-page .so-toggle-switch .so-toggle-switch-label:after {
+  line-height: 1;
+  margin-top: -0.5em;
+  position: absolute;
+  top: 50%;
+  transition: inherit;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:before,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:before,
+#panels-home-page .so-toggle-switch .so-toggle-switch-label:before {
+  color: #aaa;
+  content: attr(data-off);
+  right: 11px;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.5);
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:after,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:after,
+#panels-home-page .so-toggle-switch .so-toggle-switch-label:after {
+  color: #fff;
+  content: attr(data-on);
+  left: 13px;
+  opacity: 0;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.2);
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label,
+#panels-home-page .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label {
+  background: #47a8d8;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:before,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:before,
+#panels-home-page .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:before {
+  opacity: 0;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:after,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:after,
+#panels-home-page .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:after {
+  opacity: 1;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle,
+#panels-home-page .so-toggle-switch .so-toggle-switch-handle {
+  background-image: linear-gradient(to bottom, #fff 40%, #f0f0f0);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  height: 22px;
+  left: 4px;
+  position: absolute;
+  top: 4px;
+  transition: left 0.15s ease-out;
+  width: 22px;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle:before,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle:before,
+#panels-home-page .so-toggle-switch .so-toggle-switch-handle:before {
+  background-image: -moz-linear-gradient(top, #eee, #fff);
+  background-image: -o-linear-gradient(top, #eee, #fff);
+  background-image: -webkit-linear-gradient(top, #eee, #fff);
+  background-image: linear-gradient(to bottom, #eee, #fff);
+  background: #f9f9f9;
+  border-radius: 7px;
+  box-shadow: inset 0 1px rgba(0, 0, 0, 0.02);
+  content: '';
+  height: 14px;
+  left: 50%;
+  margin: -7px 0 0 -7px;
+  position: absolute;
+  top: 50%;
+  width: 14px;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-handle,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-handle,
+#panels-home-page .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-handle {
+  box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
+  left: 48px;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-green > .so-toggle-switch-input:checked ~ .so-toggle-switch-label,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-green > .so-toggle-switch-input:checked ~ .so-toggle-switch-label,
+#panels-home-page .so-toggle-switch .so-toggle-switch-green > .so-toggle-switch-input:checked ~ .so-toggle-switch-label {
+  background: #4fb845;
 }
 .so-panels-dialog,
 .block-editor-page {
@@ -2112,6 +2145,38 @@
 .block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field input {
   font-size: 12px;
 }
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch {
+  padding: 0;
+  height: 18px;
+  width: 51px;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle {
+  height: 16.5px;
+  left: 1px;
+  top: 0.5px;
+  width: 16.5px;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-handle,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-handle {
+  left: 33.8px;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label::before,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label::before,
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label::after,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label::after {
+  font-size: 9px;
+  margin-top: -4px;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label::before,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label::before {
+  right: 9px;
+}
+.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label::after,
+.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label::after {
+  left: 9px;
+}
 .so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-fields,
 .block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-fields {
   margin-top: 20px;
@@ -2132,7 +2197,9 @@
   clear: both;
 }
 .so-panels-dialog .so-visual-styles .style-input-wrapper input,
-.block-editor-page .so-visual-styles .style-input-wrapper input {
+.block-editor-page .so-visual-styles .style-input-wrapper input,
+.so-panels-dialog .so-visual-styles .style-input-wrapper select,
+.block-editor-page .so-visual-styles .style-input-wrapper select {
   max-width: 100%;
 }
 .so-panels-dialog .so-visual-styles .style-input-wrapper .wp-picker-clear,
@@ -2587,133 +2654,6 @@
 #panels-home-page #panels-view-as-page {
   display: inline-block;
   margin-left: 50px;
-}
-/* Toggle Switch used on the custom home page interface and Toggle Style Admin fields. */
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch,
-#panels-home-page .so-toggle-switch {
-  background-color: #fff;
-  background-image: linear-gradient(to bottom, #eee, #fff 25px);
-  border-radius: 24px;
-  box-shadow: inset 0 -1px #fff, inset 0 1px 1px rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-  display: inline-block;
-  height: 24px;
-  margin: 0 10px 0 0;
-  padding: 3px;
-  position: relative;
-  vertical-align: top;
-  width: 68px;
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input,
-#panels-home-page .so-toggle-switch .so-toggle-switch-input {
-  left: 0;
-  opacity: 0;
-  position: absolute;
-  top: 0;
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label,
-#panels-home-page .so-toggle-switch .so-toggle-switch-label {
-  background: #eceeef;
-  border-radius: inherit;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 2px rgba(0, 0, 0, 0.15);
-  display: block;
-  font-size: 12px;
-  height: inherit;
-  position: relative;
-  text-transform: uppercase;
-  transition-property: opacity background;
-  transition: 0.15s ease-out;
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:before,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:before,
-#panels-home-page .so-toggle-switch .so-toggle-switch-label:before,
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:after,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:after,
-#panels-home-page .so-toggle-switch .so-toggle-switch-label:after {
-  line-height: 1;
-  margin-top: -0.5em;
-  position: absolute;
-  top: 50%;
-  transition: inherit;
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:before,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:before,
-#panels-home-page .so-toggle-switch .so-toggle-switch-label:before {
-  color: #aaa;
-  content: attr(data-off);
-  right: 11px;
-  text-shadow: 0 1px rgba(255, 255, 255, 0.5);
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:after,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-label:after,
-#panels-home-page .so-toggle-switch .so-toggle-switch-label:after {
-  color: #fff;
-  content: attr(data-on);
-  left: 13px;
-  opacity: 0;
-  text-shadow: 0 1px rgba(0, 0, 0, 0.2);
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label,
-#panels-home-page .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label {
-  background: #47a8d8;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), inset 0 0 3px rgba(0, 0, 0, 0.2);
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:before,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:before,
-#panels-home-page .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:before {
-  opacity: 0;
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:after,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:after,
-#panels-home-page .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-label:after {
-  opacity: 1;
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle,
-#panels-home-page .so-toggle-switch .so-toggle-switch-handle {
-  background-image: linear-gradient(to bottom, #fff 40%, #f0f0f0);
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
-  height: 22px;
-  left: 4px;
-  position: absolute;
-  top: 4px;
-  transition: left 0.15s ease-out;
-  width: 22px;
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle:before,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-handle:before,
-#panels-home-page .so-toggle-switch .so-toggle-switch-handle:before {
-  background-image: -moz-linear-gradient(top, #eee, #fff);
-  background-image: -o-linear-gradient(top, #eee, #fff);
-  background-image: -webkit-linear-gradient(top, #eee, #fff);
-  background-image: linear-gradient(to bottom, #eee, #fff);
-  background: #f9f9f9;
-  border-radius: 7px;
-  box-shadow: inset 0 1px rgba(0, 0, 0, 0.02);
-  content: '';
-  height: 14px;
-  left: 50%;
-  margin: -7px 0 0 -7px;
-  position: absolute;
-  top: 50%;
-  width: 14px;
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-handle,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-handle,
-#panels-home-page .so-toggle-switch .so-toggle-switch-input:checked ~ .so-toggle-switch-handle {
-  box-shadow: -1px 1px 5px rgba(0, 0, 0, 0.2);
-  left: 48px;
-}
-.so-panels-dialog .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-green > .so-toggle-switch-input:checked ~ .so-toggle-switch-label,
-.block-editor-page .so-visual-styles .style-section-fields .style-field-wrapper .style-field-toggle .so-toggle-switch .so-toggle-switch-green > .so-toggle-switch-input:checked ~ .so-toggle-switch-label,
-#panels-home-page .so-toggle-switch .so-toggle-switch-green > .so-toggle-switch-input:checked ~ .so-toggle-switch-label {
-  background: #4fb845;
 }
 .siteorigin-panels-builder-form .siteorigin-panels-builder {
   border: 1px solid #d0d0d0;
