@@ -4,7 +4,6 @@ import {
     fetchData as goalsData,
     state as goalsState,
 } from '@onboarding/pages/Goals'
-import { Landing, state as welcomeState } from '@onboarding/pages/Landing'
 import {
     SiteInformation,
     fetcher as siteInfoFetcher,
@@ -31,30 +30,29 @@ import {
 
 // pages added here will need to match the orders table on the Styles base
 const defaultPages = [
-    ['welcome', { component: Landing, state: welcomeState.getState }],
-    [
-        'goals',
-        {
-            component: Goals,
-            fetcher: goalsFetcher,
-            fetchData: goalsData,
-            state: goalsState.getState,
-        },
-    ],
     [
         'site-type',
         {
             component: SiteTypeSelect,
             fetcher: siteTypeFetcher,
             fetchData: siteTypeData,
-            state: siteTypeState.getState,
+            state: siteTypeState,
+        },
+    ],
+    [
+        'goals',
+        {
+            component: Goals,
+            fetcher: goalsFetcher,
+            fetchData: goalsData,
+            state: goalsState,
         },
     ],
     [
         'style',
         {
             component: SiteStyle,
-            state: siteStyleState.getState,
+            state: siteStyleState,
         },
     ],
     [
@@ -63,7 +61,7 @@ const defaultPages = [
             component: SitePages,
             fetcher: sitePagesFetcher,
             fetchData: sitePagesData,
-            state: sitePagesState.getState,
+            state: sitePagesState,
         },
     ],
     [
@@ -72,16 +70,13 @@ const defaultPages = [
             component: SiteInformation,
             fetcher: siteInfoFetcher,
             fetchData: siteInfoData,
-            state: siteInfoState.getState,
+            state: siteInfoState,
         },
     ],
-    [
-        'confirmation',
-        { component: SiteSummary, state: confirmationState.getState },
-    ],
+    ['confirmation', { component: SiteSummary, state: confirmationState }],
 ]
 
-const pages = defaultPages.filter(
+const pages = defaultPages?.filter(
     (pageKey) => !window.extOnbData?.partnerSkipSteps?.includes(pageKey[0]),
 )
 export { pages }

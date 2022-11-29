@@ -12,7 +12,6 @@ use Extendify\Config;
  */
 class Admin
 {
-
     /**
      * The instance
      *
@@ -38,7 +37,6 @@ class Admin
 
         self::$instance = $this;
         $this->loadScripts();
-        $this->addAdminMenu();
         $this->redirectOnce();
         $this->addMetaField();
     }
@@ -80,29 +78,11 @@ class Admin
                     return;
                 }
 
-                if (!$this->checkItsGutenbergPost($hook)) {
-                    return;
-                }
-
-                $this->addScopedScriptsAndStyles();
+                $this->addScopedScriptsAndStyles($hook);
             }
         );
     }
 
-    /**
-     * Adds settings menu
-     *
-     * @return void
-     */
-    public function addAdminMenu()
-    {
-        \add_action('admin_menu', function () {
-            if (Config::$environment === 'DEVELOPMENT' || Config::$showOnboarding) {
-                \add_submenu_page('extendify', \__('Welcome', 'extendify'), \__('Welcome', 'extendify'), Config::$requiredCapability, 'extendify', '', 400);
-                \add_submenu_page('extendify', 'Extendify Launch', 'Extendify Launch', Config::$requiredCapability, 'post-new.php?extendify=onboarding', '', 500);
-            }
-        });
-    }
 
     /**
      * Redirect once to Launch, only once (at least once) when
@@ -116,14 +96,14 @@ class Admin
             if (\get_option('extendify_launch_loaded', 0)
                 // These are here for legacy reasons.
                 || \get_option('extendify_onboarding_skipped', 0)
-                || \get_option('extendify_onboarding_completed', 0)
+                || Config::$launchCompleted
             ) {
                 return;
             }
 
             // Only redirect if we aren't already on the page.
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-            if (isset($_GET['extendify'])) {
+            if (isset($_GET['page']) && $_GET['page'] === 'extendify-launch') {
                 return;
             }
 
@@ -134,51 +114,84 @@ class Admin
                 && \get_option('admin_email') === $user->user_email
                 && in_array('administrator', $user->roles, true)
             ) {
-                \wp_safe_redirect(\admin_url() . 'post-new.php?extendify=onboarding');
+                \wp_safe_redirect(\admin_url() . 'admin.php?page=extendify-launch');
             }
         });
     }
 
     /**
-     * Makes sure we are on the correct page
+     * Check if partner data is available.
      *
-     * @param string $hook - An optional hook provided by WP to identify the page.
-     * @return boolean
+     * @return array
      */
-    public function checkItsGutenbergPost($hook = '')
+    public function checkPartnerDataSources()
     {
-        if (isset($GLOBALS['typenow']) && \use_block_editor_for_post_type($GLOBALS['typenow'])) {
-            return $hook && in_array($hook, ['post.php', 'post-new.php'], true);
-        }
+        $return = [];
 
-        return false;
+        try {
+            if (defined('EXTENDIFY_ONBOARDING_BG')) {
+                $return['bgColor'] = constant('EXTENDIFY_ONBOARDING_BG');
+                $return['fgColor'] = constant('EXTENDIFY_ONBOARDING_TXT');
+                $return['logo'] = constant('EXTENDIFY_PARTNER_LOGO');
+            }
+
+            $data = get_option('extendify_partner_data');
+            if ($data) {
+                $return['bgColor'] = $data['backgroundColor'];
+                $return['fgColor'] = $data['foregroundColor'];
+                // Need this check to avoid errors if no partner logo is set in Airtable.
+                $return['logo'] = $data['logo'] ? $data['logo'][0]['thumbnails']['large']['url'] : null;
+            }
+        } catch (\Exception $e) {
+            // Do nothing here, set variables below. Coding Standards require something to be in the catch.
+            $e;
+        }//end try
+
+        return $return;
     }
 
     /**
      * Adds various JS scripts
      *
+     * @param string $hook - The WP admin page identifier.
+     *
      * @return void
      */
-    public function addScopedScriptsAndStyles()
+    public function addScopedScriptsAndStyles($hook)
     {
+        if ($hook !== 'extendify_page_extendify-launch') {
+            return;
+        }
+
+        $partnerData = $this->checkPartnerDataSources();
+
+        $bgColor = isset($partnerData['bgColor']) ? $partnerData['bgColor'] : '#2c39bd';
+        $fgColor = isset($partnerData['fgColor']) ? $partnerData['fgColor'] : '#ffffff';
+        $logo = isset($partnerData['logo']) ? $partnerData['logo'] : null;
+
         $version = Config::$environment === 'PRODUCTION' ? Config::$version : uniqid();
+        $scriptAssetPath = EXTENDIFY_PATH . 'public/build/extendify-onboarding.asset.php';
+        $fallback = [
+            'dependencies' => [],
+            'version' => $version,
+        ];
+        $scriptAsset = file_exists($scriptAssetPath) ? require $scriptAssetPath : $fallback;
+        foreach ($scriptAsset['dependencies'] as $style) {
+            wp_enqueue_style($style);
+        }
 
         \wp_enqueue_script(
             Config::$slug . '-onboarding-scripts',
             EXTENDIFY_BASE_URL . 'public/build/extendify-onboarding.js',
-            [
-                'wp-i18n',
-                'wp-components',
-                'wp-element',
-                'wp-editor',
-            ],
-            $version,
+            $scriptAsset['dependencies'],
+            $scriptAsset['version'],
             true
         );
         \wp_add_inline_script(
             Config::$slug . '-onboarding-scripts',
-            'window.extOnbData = ' . wp_json_encode([
+            'window.extOnbData = ' . \wp_json_encode([
                 'globalStylesPostID' => \WP_Theme_JSON_Resolver::get_user_global_styles_post_id(),
+                'editorStyles' => \get_block_editor_settings([], null),
                 'site' => \esc_url_raw(\get_site_url()),
                 'adminUrl' => \esc_url_raw(\admin_url()),
                 'pluginUrl' => \esc_url_raw(EXTENDIFY_BASE_URL),
@@ -187,14 +200,15 @@ class Admin
                 'config' => Config::$config,
                 'wpRoot' => \esc_url_raw(\rest_url()),
                 'nonce' => \wp_create_nonce('wp_rest'),
-                'partnerLogo' => defined('EXTENDIFY_PARTNER_LOGO') ? constant('EXTENDIFY_PARTNER_LOGO') : null,
-                'partnerName' => defined('EXTENDIFY_PARTNER_NAME') ? constant('EXTENDIFY_PARTNER_NAME') : null,
+                'partnerLogo' => $logo,
+                'partnerName' => \esc_attr(Config::$sdkPartner),
                 'partnerSkipSteps' => defined('EXTENDIFY_SKIP_STEPS') ? constant('EXTENDIFY_SKIP_STEPS') : [],
                 'devbuild' => \esc_attr(Config::$environment === 'DEVELOPMENT'),
                 'version' => Config::$version,
                 'insightsId' => \get_option('extendify_site_id', ''),
                 // Only send insights if they have opted in explicitly.
                 'insightsEnabled' => defined('EXTENDIFY_INSIGHTS_URL'),
+                'activeTests' => \get_option('extendify_active_tests', []),
             ]),
             'before'
         );
@@ -205,14 +219,12 @@ class Admin
             Config::$slug . '-onboarding-styles',
             EXTENDIFY_BASE_URL . 'public/build/extendify-onboarding.css',
             [],
-            $version,
-            'all'
+            $version
         );
-        $bg = defined('EXTENDIFY_ONBOARDING_BG') ? constant('EXTENDIFY_ONBOARDING_BG') : '#2c39bd';
-        $txt = defined('EXTENDIFY_ONBOARDING_TXT') ? constant('EXTENDIFY_ONBOARDING_TXT') : '#ffffff';
+
         \wp_add_inline_style(Config::$slug . '-onboarding-styles', "body {
-            --ext-partner-theme-primary-bg: {$bg};
-            --ext-partner-theme-primary-text: {$txt};
+            --ext-partner-theme-primary-bg: {$bgColor};
+            --ext-partner-theme-primary-text: {$fgColor};
         }");
     }
 }

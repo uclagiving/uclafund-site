@@ -8,13 +8,14 @@ const initialState = {
     },
     feedbackMissingSiteType: '',
     feedbackMissingGoal: '',
+    exitFeedback: undefined,
     siteTypeSearch: [],
     style: null,
     pages: [],
     plugins: [],
     goals: [],
 }
-const store = (set, get) => ({
+const state = (set, get) => ({
     ...initialState,
     setSiteType(siteType) {
         set({ siteType })
@@ -23,12 +24,11 @@ const store = (set, get) => ({
         const siteInformation = { ...get().siteInformation, [name]: value }
         set({ siteInformation })
     },
-    setFeedbackMissingSiteType(feedback) {
-        set({ feedbackMissingSiteType: feedback })
-    },
-    setFeedbackMissingGoal(feedback) {
-        set({ feedbackMissingGoal: feedback })
-    },
+    setFeedbackMissingSiteType: (feedbackMissingSiteType) =>
+        set({ feedbackMissingSiteType }),
+    setFeedbackMissingGoal: (feedbackMissingGoal) =>
+        set({ feedbackMissingGoal }),
+    setExitFeedback: (exitFeedback) => set({ exitFeedback }),
     has(type, item) {
         if (!item?.id) return false
         return get()[type].some((t) => t.id === item.id)
@@ -38,7 +38,7 @@ const store = (set, get) => ({
         set({ [type]: [...get()[type], item] })
     },
     remove(type, item) {
-        set({ [type]: get()[type].filter((t) => t.id !== item.id) })
+        set({ [type]: get()[type]?.filter((t) => t.id !== item.id) })
     },
     reset(type) {
         set({ [type]: [] })
@@ -66,24 +66,10 @@ const store = (set, get) => ({
     },
 })
 
-const withDevtools = devtools(store, {
-    name: 'Extendify Launch User Selection',
-})
-const withPersist = persist(withDevtools, {
-    name: 'extendify-site-selection',
-    getStorage: () => localStorage,
-    partialize: (state) => ({
-        siteType: state?.siteType ?? {},
-        siteInformation: state?.siteInformation ?? {},
-        feedbackMissingSiteType: state?.feedbackMissingSiteType ?? '',
-        feedbackMissingGoal: state?.feedbackMissingGoal ?? '',
-        siteTypeSearch: state?.siteTypeSearch ?? [],
-        style: state?.style ?? null,
-        pages: state?.pages ?? [],
-        plugins: state?.plugins ?? [],
-        goals: state?.goals ?? [],
+export const useUserSelectionStore = create(
+    persist(devtools(state, { name: 'Extendify User Selection' }), {
+        name: 'extendify-site-selection',
+        getStorage: () => localStorage,
     }),
-})
-export const useUserSelectionStore = window?.extOnbData?.devbuild
-    ? create(withDevtools)
-    : create(withPersist)
+    state,
+)

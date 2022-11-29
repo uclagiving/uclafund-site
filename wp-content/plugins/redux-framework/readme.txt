@@ -4,7 +4,7 @@ Tags: patterns, templates, blocks, gutenberg, library, editor, page builder
 Requires at least: 4.0
 Requires PHP: 7.1
 Tested up to: 6.1
-Stable tag: 4.3.17
+Stable tag: 4.3.20
 License: GPL-3.0+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -80,8 +80,6 @@ You can also contribute code via our <a href="https://github.com/reduxframework/
 <h4>🔐 Privacy</h4>
 Redux does not interact with end users on your website. Our templates will continue to work even if Redux is uninstalled. If a product is using Redux the option panel will cease to function without Redux.
 
-Redux utilizes [AppSero](https://appsero.com/) for account management as well as to enable our premium offerings. You can find their privacy policy here: [https://appsero.com/privacy-policy/](https://appsero.com/privacy-policy/). Activation of Redux is not necessary, but additional features such as Google Font Updates and increased access to the Gutenberg block template, layout, and pattern library will be limited.
-
 The Redux plugin uses a custom API to fetch our content library and our Gutenberg block templates, layouts, and patterns. To improve the service and stability we store logs which may or may not contain the following:
 <ul>
 <li>browser type</li>
@@ -91,7 +89,7 @@ The Redux plugin uses a custom API to fetch our content library and our Gutenber
 <li>anonymized IP address</li>
 </ul>
 
-API requests are only made when a user clicks on the Library button, launches the Redux Challenge, or opts into Google Font updates.
+API requests are only made when a user clicks on the Library button or opts into Google Font updates.
 
 For more details on our privacy policy: [https://redux.io/privacy](https://redux.io/privacy)
 For more details on our terms and conditions: [https://redux.io/terms](https://redux.io/terms)
@@ -105,6 +103,31 @@ Once Installed and Activated you will be invited to Activate your Redux account.
 If you want, you can use the [Gutenberg](https://wordpress.org/plugins/gutenberg/) plugin to get bleeding-edge experiments by the Gutenberg team.
 
 == Changelog ==
+
+= 4.3.20 =
+* Added: Widget Areas extension (for use with Classic Widgets only).
+* Fixed: `spinner` field returning JavaScript error.
+* Fixed: `required` not working outside a `repeater` when `repeater` field is loaded somewhere in the project.
+* Fixed: JS error when `typography` `font-style` set to `false`.
+* Updated: Removed registration verbiage from Google Fonts update notice.
+* Updated: Extendify Library 1.0.1
+
+= 4.3.19 =
+* Fixed: Extendify menu item appearing when it should not.
+* Fixed: Blank page template would cause fatal error.
+
+= 4.3.18 =
+* New: Typography `weights` argument to override standard default weights.
+* Updated Extendify Library 0.10.2
+* Updated: Font Awesome 6.2.0
+* Modified: Attempt to override old theme embedded extensions that use the 3.x loading method.
+* Fixed: Social Profiles in metaboxes, hopefully.
+* Fixed: `slides` field not showing image upon select. Thanks @animeiswrong
+* Removed: Social Profiles Widget (use the shortcode in HTML widget instead. See docs).
+* Removed: Redux template library (use Extendify template library instead).
+* Removed: Appsero registration for Redux Pro.
+* Modified: Cleanup of old or outdated code.
+* Release date: September 26, 2022
 
 = 4.3.17 =
 * Added: Social Profiles extension. [https://devs.redux.io/core-extensions/social-profiles.html](https://devs.redux.io/core-extensions/social-profiles.html)

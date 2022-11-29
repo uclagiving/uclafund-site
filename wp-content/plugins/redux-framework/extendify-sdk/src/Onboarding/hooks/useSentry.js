@@ -10,9 +10,7 @@ if (window.extOnbData.insightsEnabled) {
         integrations: [new BrowserTracing()],
         release: window.extOnbData?.version,
         environment: window?.extOnbData?.devbuild ? 'dev' : 'production',
-
-        // TODO: consider lowering this in production to reduce the amount of data sent
-        tracesSampleRate: 1.0,
+        tracesSampleRate: 0.25,
         beforeSend(event) {
             // Check if it is an exception, and if so, show the report dialog
             if (event.exception) {
@@ -28,6 +26,7 @@ export const useSentry = () => {
     const { pages, currentPageIndex } = usePagesStore()
 
     useEffect(() => {
+        if (!window.extOnbData.insightsEnabled) return
         Sentry.setUser({ id: window.extOnbData?.insightsId })
         Sentry.configureScope((scope) => {
             scope.setExtra('Partner', window.extOnbData?.partnerName)
@@ -38,6 +37,7 @@ export const useSentry = () => {
     }, [orderId])
 
     useEffect(() => {
+        if (!window.extOnbData.insightsEnabled) return
         const p = [...pages].map((p) => p[0])
         Sentry.addBreadcrumb({
             type: 'navigation',

@@ -14,7 +14,6 @@ if (!defined('ABSPATH')) {
  */
 class WPController
 {
-
     /**
      * Parse theme.json file.
      *
@@ -31,7 +30,7 @@ class WPController
         return new \WP_REST_Response([
             'success' => true,
             'styles' => $themeJson->get_stylesheet(),
-        ], 200);
+        ]);
     }
 
     /**
@@ -44,7 +43,8 @@ class WPController
     {
         $params = $request->get_json_params();
         \update_option($params['option'], $params['value']);
-        return new \WP_REST_Response(['success' => true], 200);
+
+        return new \WP_REST_Response(['success' => true]);
     }
 
     /**
@@ -59,6 +59,6 @@ class WPController
         return new \WP_REST_Response([
             'success' => true,
             'data' => $value,
-        ], 200);
+        ]);
     }
 }

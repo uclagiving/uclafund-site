@@ -1,43 +1,62 @@
+import { registerCoreBlocks } from '@wordpress/block-library'
 import { useSelect } from '@wordpress/data'
+import { useDispatch } from '@wordpress/data'
 import { useEffect, useState } from '@wordpress/element'
 import { SWRConfig, useSWRConfig } from 'swr'
 import { RetryNotice } from '@onboarding/components/RetryNotice'
-import { useDisableWelcomeGuide } from '@onboarding/hooks/useDisableWelcomeGuide'
-import { useBodyScrollLock } from '@onboarding/hooks/useScrollLock'
 import { CreatingSite } from '@onboarding/pages/CreatingSite'
-import { Finished } from '@onboarding/pages/Finished'
 import { useGlobalStore } from '@onboarding/state/Global'
 import { usePagesStore } from '@onboarding/state/Pages'
 import { updateOption } from './api/WPApi'
+import { ExitModal } from './components/ExitModal'
 import { useSentry } from './hooks/useSentry'
 import { useTelemetry } from './hooks/useTelemetry'
 import { NeedsTheme } from './pages/NeedsTheme'
+import { useUserSelectionStore } from './state/UserSelections'
 
 export const Onboarding = () => {
+    const { updateSettings } = useDispatch('core/block-editor')
     const [retrying, setRetrying] = useState(false)
-    const { component: CurrentPage } = usePagesStore((state) =>
-        state.currentPageData(),
-    )
+    const { siteType } = useUserSelectionStore()
+    const CurrentPage = usePagesStore((state) => {
+        const pageData = state.getCurrentPageData()
+        return pageData?.component
+    })
     const { fetcher, fetchData } = usePagesStore((state) =>
-        state.nextPageData(),
+        state.getNextPageData(),
     )
+    const { setPage, currentPageIndex } = usePagesStore()
     const { mutate } = useSWRConfig()
-    const generating = useGlobalStore((state) => state.generating)
-    const generatedPages = useGlobalStore((state) => state.generatedPages)
+    const { generating } = useGlobalStore()
     const [show, setShow] = useState(false)
     const [needsTheme, setNeedsTheme] = useState(false)
     const theme = useSelect((select) => select('core').getCurrentTheme())
     const { Sentry } = useSentry()
-    useDisableWelcomeGuide()
-    useBodyScrollLock()
     useTelemetry()
 
     const page = () => {
         if (needsTheme) return <NeedsTheme />
-        if (Object.keys(generatedPages)?.length) return <Finished />
+        // Site type is required to progress
+        if (!siteType?.slug && currentPageIndex !== 0) {
+            setPage(0)
+            return null
+        }
         if (generating) return <CreatingSite />
+        if (!CurrentPage) return null
         return <CurrentPage />
     }
+
+    useEffect(() => {
+        // Add editor styles to use for live previews
+        updateSettings(window.extOnbData.editorStyles)
+    }, [updateSettings])
+
+    useEffect(() => {
+        // Keep an eye on this. If WP starts registering blocks when
+        // importing the block-library module (as they likely should be doing)
+        // then we will need to have a conditional here
+        registerCoreBlocks()
+    }, [])
 
     useEffect(() => {
         // Check that the textdomain came back and that it's extendable
@@ -47,23 +66,8 @@ export const Onboarding = () => {
     }, [theme])
 
     useEffect(() => {
-        if (!show) return
-        // If the library happens to be open, try to close it.
-        const timeout = setTimeout(() => {
-            window.dispatchEvent(
-                new CustomEvent('extendify::close-library', { bubbles: true }),
-            )
-        }, 0)
-        document.title = 'Extendify Launch' // Don't translate
-        return () => clearTimeout(timeout)
-    }, [show])
-
-    useEffect(() => {
-        const q = new URLSearchParams(window.location.search)
-        if (['onboarding'].includes(q.get('extendify'))) {
-            setShow(true)
-            updateOption('extendify_launch_loaded', new Date().toISOString())
-        }
+        setShow(true)
+        updateOption('extendify_launch_loaded', new Date().toISOString())
     }, [])
 
     useEffect(() => {
@@ -119,6 +123,7 @@ export const Onboarding = () => {
                 {page()}
             </div>
             {retrying && <RetryNotice />}
+            <ExitModal />
         </SWRConfig>
     )
 }

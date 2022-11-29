@@ -39,7 +39,7 @@ Redux::set_section(
 				// Use if you want to hook in your own CSS compiler.
 				'compiler'    => true,
 
-				// Select a backup non-google font in addition to a google font.
+				// Select a backup non-google font in addition to a Google font.
 				'font-backup' => true,
 
 				// Enable all Google Font style/weight variations to be added to the page.

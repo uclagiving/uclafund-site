@@ -35,7 +35,6 @@ function addDefaults(request) {
         request.data.remaining_imports = remainingImports
         request.data.entry_point = userState.entryPoint
         request.data.total_imports = userState.imports
-        request.data.participating_tests = userState.activeTestGroups()
     }
     return request
 }
@@ -66,15 +65,7 @@ Axios.interceptors.response.use(
 )
 
 Axios.interceptors.request.use(
-    (request) => {
-        const q = new URLSearchParams(window.location.search)
-        if (['onboarding'].includes(q.get('extendify'))) {
-            throw new axios.Cancel(
-                'Library is not available while running Launch',
-            )
-        }
-        return checkDevMode(addDefaults(request))
-    },
+    (request) => checkDevMode(addDefaults(request)),
     (error) => error,
 )
 

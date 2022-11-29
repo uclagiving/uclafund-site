@@ -7,11 +7,24 @@ import { LeftArrowIcon, RightArrowIcon } from '@onboarding/svg'
 
 export const PageControl = () => {
     const { previousPage, currentPageIndex, pages } = usePagesStore()
+    const { openExitModal, setExitButtonHovered } = useGlobalStore()
     const onFirstPage = currentPageIndex === 0
     const currentPageKey = Array.from(pages.keys())[currentPageIndex]
 
     return (
         <div className="flex items-center space-x-2">
+            {onFirstPage && (
+                <div className="fixed top-0 right-0 px-3 md:px-6 py-2">
+                    <button
+                        className="flex items-center p-1 text-gray-900 font-medium button-focus md:focus:bg-transparent bg-transparent shadow-none"
+                        type="button"
+                        title={__('Exit Launch', 'extendify')}
+                        onMouseEnter={setExitButtonHovered}
+                        onClick={openExitModal}>
+                        <span className="dashicons dashicons-no-alt text-white md:text-black"></span>
+                    </button>
+                </div>
+            )}
             <div
                 className={classNames('flex flex-1', {
                     'justify-end': currentPageKey === 'welcome',
@@ -19,11 +32,21 @@ export const PageControl = () => {
                 })}>
                 {onFirstPage || (
                     <button
-                        className="flex items-center px-4 py-3 text-partner-primary-bg font-medium button-focus bg-gray-100 hover:bg-gray-200 focus:bg-gray-200"
+                        className="flex items-center px-4 py-3 font-medium button-focus text-gray-900 bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 bg-transparent"
                         type="button"
                         onClick={previousPage}>
                         <RightArrowIcon className="h-5 w-5" />
                         {__('Back', 'extendify')}
+                    </button>
+                )}
+                {onFirstPage && (
+                    <button
+                        className="flex items-center px-4 py-3 font-medium button-focus text-gray-900 bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 bg-transparent"
+                        type="button"
+                        onMouseEnter={setExitButtonHovered}
+                        onClick={openExitModal}>
+                        <RightArrowIcon className="h-5 w-5" />
+                        {__('Exit Launch', 'extendify')}
                     </button>
                 )}
                 <NextButton />
@@ -38,7 +61,7 @@ const NextButton = () => {
     const canLaunch = useUserSelectionStore((state) => state.canLaunch())
     const onLastPage = currentPageIndex === totalPages - 1
     const currentPageKey = Array.from(pages.keys())[currentPageIndex]
-    const pageState = pages.get(currentPageKey).state()
+    const pageState = pages.get(currentPageKey).state.getState()
 
     if (canLaunch && onLastPage) {
         return (
@@ -52,6 +75,7 @@ const NextButton = () => {
             </button>
         )
     }
+
     return (
         <button
             className="flex items-center px-4 py-3 font-bold bg-partner-primary-bg text-partner-primary-text button-focus"

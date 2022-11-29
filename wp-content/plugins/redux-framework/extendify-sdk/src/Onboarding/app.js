@@ -1,12 +1,6 @@
-import domReady from '@wordpress/dom-ready'
 import { render } from '@wordpress/element'
 import { Onboarding } from '@onboarding/Onboarding'
+import './app.css'
 
-const extendify = Object.assign(document.createElement('div'), {
-    id: 'extendify-onboarding-root',
-    className: 'extendify-onboarding',
-})
-document.body.append(extendify)
-domReady(() => {
-    window._wpLoadBlockEditor && render(<Onboarding />, extendify)
-})
+const launch = document.getElementById('extendify-onboarding-page')
+launch && render(<Onboarding />, launch)
