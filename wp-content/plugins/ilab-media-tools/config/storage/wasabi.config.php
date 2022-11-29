@@ -42,12 +42,16 @@ return [
 			        'us-east-1' => 'US East 1',
 			        'us-east-2' => 'US East 2',
 			        'us-west-1' => 'US West',
-			        'us-central' => 'US Central',
+			        'us-central-1' => 'US Central (Texas)',
+			        'ca-central-1' => 'Canada Central',
 			        'eu-central-1' => 'EU (Amsterdam)',
+			        'eu-central-2' => 'EU (Frankfurt)',
 			        'eu-west-1' => 'EU (London)',
 			        'eu-west-2' => 'EU (Paris)',
 			        'ap-northeast-1' => 'Asia Pacific (Tokyo)',
 			        'ap-northeast-2' => 'Asia Pacific (Osaka)',
+			        'ap-southeast-1' => 'Singapore',
+			        'ap-southeast-2' => 'Australia',
 		        ],
 	        ],
         ]
@@ -91,7 +95,7 @@ return [
 	"ilab-media-cloud-image-upload-handling" => [
 		"title" => "Image Upload Handling",
 		"dynamic" => true,
-		"doc_link" => 'https://support.mediacloud.press/articles/documentation/cloud-storage/upload-handling-settings',
+		"doc_link" => 'https://docs.mediacloud.press/articles/documentation/cloud-storage/upload-handling-settings',
 		"description" => "The following options control how the storage tool handles image uploads.",
 		"options" => [
 			"mcloud-storage-big-size-original-privacy" => [

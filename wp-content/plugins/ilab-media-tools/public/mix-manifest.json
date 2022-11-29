@@ -5,6 +5,7 @@
     "/js/ilab-media-direct-upload.js": "/js/ilab-media-direct-upload.js",
     "/js/ilab-media-direct-upload-google.js": "/js/ilab-media-direct-upload-google.js",
     "/js/ilab-media-direct-upload-other-s3.js": "/js/ilab-media-direct-upload-other-s3.js",
+    "/js/ilab-media-direct-upload-r2.js": "/js/ilab-media-direct-upload-r2.js",
     "/js/ilab-media-direct-upload-s3.js": "/js/ilab-media-direct-upload-s3.js",
     "/js/ilab-media-grid.js": "/js/ilab-media-grid.js",
     "/css/ilab-media-cloud.css": "/css/ilab-media-cloud.css",
@@ -21,6 +22,7 @@
     "/js/mux-admin.js": "/js/mux-admin.js",
     "/js/mux-hls.js": "/js/mux-hls.js",
     "/js/mux-player.js": "/js/mux-player.js",
+    "/js/mux-player-admin.js": "/js/mux-player-admin.js",
     "/models/face_landmark_68_model-weights_manifest.json": "/models/face_landmark_68_model-weights_manifest.json",
     "/models/ssd_mobilenetv1_model-weights_manifest.json": "/models/ssd_mobilenetv1_model-weights_manifest.json",
     "/js/face-api.js": "/js/face-api.js"

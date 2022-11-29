@@ -281,7 +281,7 @@ class StorageTool extends Tool
             
             if ( is_admin() ) {
                 
-                if ( empty(get_option( 'uploads_use_yearmonth_folders' )) && empty(StorageToolSettings::prefixFormat()) ) {
+                if ( current_user_can( 'manage_options' ) && empty(get_option( 'uploads_use_yearmonth_folders' )) && empty(StorageToolSettings::prefixFormat()) ) {
                     $mediaUrl = ilab_admin_url( 'options-media.php' );
                     $settingsUrl = ilab_admin_url( 'admin.php?page=media-cloud-settings#upload-handling' );
                     NoticeManager::instance()->displayAdminNotice(
@@ -294,7 +294,7 @@ class StorageTool extends Tool
                 }
                 
                 
-                if ( !empty($this->settings->replaceSrcSet) ) {
+                if ( current_user_can( 'manage_options' ) && !empty($this->settings->replaceSrcSet) ) {
                     $settingsUrl = ilab_admin_url( 'admin.php?page=media-cloud-settings#responsive-image-settings' );
                     NoticeManager::instance()->displayAdminNotice(
                         'warning',
@@ -306,7 +306,7 @@ class StorageTool extends Tool
                 }
                 
                 
-                if ( StorageToolSettings::driver() === 'do' && strpos( $this->client()->bucket(), '.' ) === false && !empty($this->client()->settings()->endPointPathStyle) ) {
+                if ( current_user_can( 'manage_options' ) && StorageToolSettings::driver() === 'do' && strpos( $this->client()->bucket(), '.' ) === false && !empty($this->client()->settings()->endPointPathStyle) ) {
                     $settingsUrl = ilab_admin_url( 'admin.php?page=media-cloud-settings#provider-settings' );
                     NoticeManager::instance()->displayAdminNotice(
                         'info',
@@ -598,13 +598,15 @@ class StorageTool extends Tool
             
             $this->hookupUI();
         } else {
-            
             if ( !empty($this->client) && $this->client->settingsError() ) {
-                $adminUrl = admin_url( 'admin.php?page=media-cloud-settings&tab=storage' );
-                $testUrl = admin_url( 'admin.php?page=media-tools-troubleshooter' );
-                NoticeManager::instance()->displayAdminNotice( 'error', "Your cloud storage settings are incorrect.  Please <a href='{$adminUrl}'>verify your settings</a> or run the <a href='{$testUrl}'>systems test</a> to troubleshoot the issue." );
+                
+                if ( current_user_can( 'manage_options' ) ) {
+                    $adminUrl = admin_url( 'admin.php?page=media-cloud-settings&tab=storage' );
+                    $testUrl = admin_url( 'admin.php?page=media-tools-troubleshooter' );
+                    NoticeManager::instance()->displayAdminNotice( 'error', "Your cloud storage settings are incorrect.  Please <a href='{$adminUrl}'>verify your settings</a> or run the <a href='{$testUrl}'>systems test</a> to troubleshoot the issue." );
+                }
+            
             }
-        
         }
     
     }
@@ -619,7 +621,7 @@ class StorageTool extends Tool
                 $error = true;
             }
         }
-        if ( $error ) {
+        if ( $error && current_user_can( 'manage_options' ) ) {
             NoticeManager::instance()->displayAdminNotice( 'error', 'There is a serious issue with your storage settings.  Please check them and try again.' );
         }
         $privacyErrors = [];
@@ -812,8 +814,9 @@ class StorageTool extends Tool
         );
         // Now the goods
         $data = $this->handleUpdateAttachmentMetadata( $data, $id );
+        $shouldSkip = apply_filters( 'media-cloud/storage/ignore-metadata-update', false, $id );
         
-        if ( $this->settings->uploadOriginal && isset( $data['original_image'] ) ) {
+        if ( !$shouldSkip && $this->settings->uploadOriginal && isset( $data['original_image'] ) ) {
             $s3Data = $this->uploadOriginalImage( $data, $id, $this->preserveFilePaths );
             if ( !empty($s3Data) ) {
                 $data['original_image_s3'] = $s3Data;
@@ -2113,6 +2116,9 @@ class StorageTool extends Tool
                 $new_url = str_replace( '//s3-.amazonaws', '//s3.amazonaws', $new_url );
             }
         }
+        if ( !empty($new_url) && strpos( $new_url, 'http' ) !== 0 ) {
+            $new_url = 'https://' . $new_url;
+        }
         return ( $new_url ?: $url );
     }
     
@@ -2444,6 +2450,9 @@ class StorageTool extends Tool
                         StorageToolSettings::cacheControl(),
                         StorageToolSettings::expires()
                     );
+                    if ( !empty($url) && strpos( $url, 'http' ) !== 0 ) {
+                        $url = 'https://' . $url;
+                    }
                     Logger::info(
                         "\tFinished uploading {$filename} to S3.",
                         [],
@@ -2775,7 +2784,7 @@ TEMPLATE;
             add_filter( 'manage_media_columns', function ( $cols ) {
                 $cols["cloud"] = 'Cloud';
                 return $cols;
-            } );
+            }, PHP_INT_MAX );
             add_action(
                 'manage_media_custom_column',
                 function ( $column_name, $id ) {
@@ -2794,13 +2803,31 @@ TEMPLATE;
                         $lockIcon = $this->lockIcon();
                         //ILAB_PUB_IMG_URL.'/ilab-icon-lock.svg';
                         $lockImg = ( !empty($privacy) && $privacy !== StorageConstants::ACL_PUBLIC_READ ? "<img class='mcloud-lock' src='{$lockIcon}' height='22'>" : '' );
-                        echo  "<a class='media-cloud-info-link' data-post-id='{$id}' data-container='list' data-mime-type='{$mimeType}' href='" . $meta['s3']['url'] . "' target=_blank><img src='{$cloudIcon}' width='24'>{$lockImg}</a>" ;
+                        echo  "<div class='media-list-cloud-icons'><a class='media-cloud-info-link' data-post-id='{$id}' data-container='list' data-mime-type='{$mimeType}' href='" . $meta['s3']['url'] . "' target=_blank><img src='{$cloudIcon}' width='24'>{$lockImg}</a>" ;
                     }
                 
                 }
             
             },
-                10,
+                PHP_INT_MAX - 10,
+                2
+            );
+            add_action(
+                'manage_media_custom_column',
+                function ( $column_name, $id ) {
+                
+                if ( $column_name == "cloud" ) {
+                    $meta = wp_get_attachment_metadata( $id );
+                    if ( empty($meta) && !isset( $meta['s3'] ) ) {
+                        $meta = get_post_meta( $id, 'ilab_s3_info', true );
+                    }
+                    if ( !empty($meta) && isset( $meta['s3'] ) ) {
+                        echo  "</div>" ;
+                    }
+                }
+            
+            },
+                PHP_INT_MAX,
                 2
             );
             add_filter( 'bulk_actions-upload', function ( $actions ) {
@@ -2886,9 +2913,20 @@ TEMPLATE;
                 if ( get_current_screen()->base == 'upload' ) {
                     ?>
                     <style>
+                        div.media-list-cloud-icons {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+                        }
+
                         th.column-cloud, td.column-cloud {
-                            width: 60px !important;
-                            max-width: 60px !important;
+                            max-width: 120px !important;
+                            width: 120px !important;
+                            /*display: flex;*/
+                            /*align-items: center;*/
+                            /*justify-content: center;*/
+                            /*gap: 8px;*/
                             text-align: center;
                         }
                     </style>
@@ -4348,6 +4386,9 @@ TEMPLATE;
     
     private function displayOptimizerAdminNotice( $builtInImageOptimizer )
     {
+        if ( !current_user_can( 'manage_options' ) ) {
+            return;
+        }
         $type = 'warning';
         $suffix = '';
         

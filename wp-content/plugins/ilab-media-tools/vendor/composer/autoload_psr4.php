@@ -6,6 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Yuloh\\BcCompPolyfill\\' => array($vendorDir . '/yuloh/bccomp-polyfill/src'),
     'MediaCloud\\Plugin\\' => array($baseDir . '/classes'),
 );

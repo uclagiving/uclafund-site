@@ -348,6 +348,10 @@ abstract class Tool {
     }
 
     private function notifyMissingDependencies($shouldBeEnabled, $toolId) {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
         $problemTool = $this->toolManager->tools[$toolId];
         $problemToolName = $problemTool->toolInfo['name'];
         $problemUrl = admin_url('admin.php?page=media-cloud-settings&tab='.$toolId);
@@ -500,6 +504,9 @@ abstract class Tool {
                         switch($optionInfo['type']) {
 	                        case 'text-field':
 		                        $this->registerTextFieldSetting($option,$optionInfo['title'],$group, $description, $placeholder, $conditions, isset($optionInfo['default']) ? $optionInfo['default'] : null);
+		                        break;
+	                        case 'color':
+		                        $this->registerColorFieldSetting($option, $optionInfo['title'], $group, $description, $conditions, isset($optionInfo['default']) ? $optionInfo['default'] : null);
 		                        break;
 	                        case 'webhook':
 	                            $this->registerWebhookSetting($option, $optionInfo['title'], $group, !empty($optionInfo['editable']), $description, $conditions, isset($optionInfo['default']) ? $optionInfo['default'] : null);

@@ -7,15 +7,10 @@ namespace Composer\Autoload;
 class ComposerStaticInit3bdcac5365e8601e4e5e07643ff6c0d1
 {
     public static $files = array (
-        '85a81ab1badda9626343846e0ceed435' => __DIR__ . '/..' . '/yuloh/bccomp-polyfill/src/functions.php',
         'a36a78a03571c7ba045ccfbb413ae093' => __DIR__ . '/../..' . '/classes/Utilities/Helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'Y' => 
-        array (
-            'Yuloh\\BcCompPolyfill\\' => 21,
-        ),
         'M' => 
         array (
             'MediaCloud\\Plugin\\' => 18,
@@ -23,14 +18,14 @@ class ComposerStaticInit3bdcac5365e8601e4e5e07643ff6c0d1
     );
 
     public static $prefixDirsPsr4 = array (
-        'Yuloh\\BcCompPolyfill\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/yuloh/bccomp-polyfill/src',
-        ),
         'MediaCloud\\Plugin\\' => 
         array (
             0 => __DIR__ . '/../..' . '/classes',
         ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -38,6 +33,7 @@ class ComposerStaticInit3bdcac5365e8601e4e5e07643ff6c0d1
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit3bdcac5365e8601e4e5e07643ff6c0d1::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit3bdcac5365e8601e4e5e07643ff6c0d1::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit3bdcac5365e8601e4e5e07643ff6c0d1::$classMap;
 
         }, null, ClassLoader::class);
     }

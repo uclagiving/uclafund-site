@@ -21,6 +21,9 @@ return [
 		"video-player",
 	],
 	"env" => "MCLOUD_MUX_ENABLED",
+	"CLI" => [
+		\MediaCloud\Plugin\Tools\Video\CLI\VideoCommands::class,
+	],
 	"settings" => [
 		"options-page" => "media-cloud-mux",
 		"options-group" => "media-cloud-mux",
@@ -46,7 +49,7 @@ return [
 			],
 			"media-cloud-mux-credentials" => [
 				"title" => "Credentials",
-				"doc_link" => 'https://support.mediacloud.press/articles/documentation/video-encoding/mux-credentials',
+				"doc_link" => 'https://docs.mediacloud.press/articles/documentation/video-encoding/credentials',
 				"options" => [
 					"media-cloud-mux-token-id" => [
 						"title" => "Token ID",
@@ -72,7 +75,7 @@ return [
 			],
 			"media-cloud-mux-encoding-settings" => [
 				"title" => "Encoding Settings",
-				"doc_link" => 'https://support.mediacloud.press/articles/documentation/video-encoding/mux-encoding-settings',
+				"doc_link" => 'https://docs.mediacloud.press/articles/documentation/video-encoding/encoding-settings',
 				"options" => [
 					"media-cloud-mux-normalize-audio" => [
 						"title" => "Normalize Audio",
@@ -96,7 +99,7 @@ return [
 			],
 			"media-cloud-mux-integration" => [
 				"title" => "WordPress Integration",
-				"doc_link" => 'https://support.mediacloud.press/articles/documentation/video-encoding/mux-integration',
+				"doc_link" => 'https://docs.mediacloud.press/articles/documentation/video-encoding/integration',
 				"options" => [
 					"media-cloud-mux-process-uploads" => [
 						"title" => "Import Uploaded Videos",

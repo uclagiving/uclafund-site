@@ -619,6 +619,7 @@ abstract class Task extends Model implements \JsonSerializable {
 					}
 
 					if (static::stopOnError()) {
+						Logger::error("Unspecified error running task", [], __METHOD__, __LINE__);
 						$this->error($this->errorMessage);
 
 						$result = self::TASK_ERROR;
@@ -640,6 +641,7 @@ abstract class Task extends Model implements \JsonSerializable {
 					}
 				}
 			} catch (\Exception $ex) {
+				Logger::error("Error running task: ".$ex->getMessage(), [], __METHOD__, __LINE__);
 
 				$this->state = self::STATE_ERROR;
 				$this->endTime = time();
@@ -1023,6 +1025,7 @@ abstract class Task extends Model implements \JsonSerializable {
 
 	//region JSON
 
+	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
 		if ($this->state >= self::STATE_COMPLETE) {
 			$remaining = 0;
