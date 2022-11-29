@@ -35,10 +35,27 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 			)
 		);
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_template_assets' ) );
+
 	}
 
 	function register_image_sizes() {
-		add_image_size( 'sow-blog-portfolio', 375, 375, true );
+		$image_sizes = apply_filters( 'siteorigin_widgets_blog_image_sizes', array(
+			'portfolio' => array(
+				375,
+				375
+			),
+			'grid' => array(
+				720,
+				480
+			),
+			'alternate' => array(
+				950,
+				630
+			)
+		) );
+		foreach ( $image_sizes as $k => $size ) {
+			add_image_size( 'sow-blog-' . $k, (int) $size[0], (int) $size[1], true );
+		}
 	}
 
 	function get_widget_form() {
@@ -75,6 +92,11 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 							'type' => 'checkbox',
 							'label' => __( 'Featured Image', 'so-widgets-bundle' ),
 							'default' => true,
+						),
+						'featured_image_size' => array(
+							'type' => 'image-size',
+							'label' => __( 'Featured Image Size', 'siteorigin-premium' ),
+							'custom_size' => true,
 						),
 						'content' => array(
 							'type' => 'select',
@@ -138,6 +160,11 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 							'type' => 'checkbox',
 							'label' => __( 'Post Categories', 'so-widgets-bundle' ),
 							'default' => true,
+						),
+						'tags' => array(
+							'type' => 'checkbox',
+							'label' => __( 'Post Tags', 'so-widgets-bundle' ),
+							'default' => false,
 						),
 						'comment_count' => array(
 							'type' => 'checkbox',
@@ -853,6 +880,17 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 			}
 		}
 
+		// Add featured image default for instances of the Blog widget created prior to the Featured Image Size setting.
+		if ( ! isset( $instance['settings']['featured_image_size'] ) ) {
+			if ( $instance['template'] == 'grid' || $instance['template'] == 'alternate' || $instance['template'] == 'portfolio' ) {
+				$instance['settings']['featured_image_size'] = 'sow-blog-' . $instance['template'];
+			} else {
+				$instance['settings']['featured_image_size'] = 'full';
+			}
+			$instance['settings']['featured_image_size_width'] = 0;
+			$instance['settings']['featured_image_size_height'] = 0;
+		}
+
 		$instance['paged_id'] = ! empty( $instance['_sow_form_id'] ) ? (int) substr( $instance['_sow_form_id'], 0, 5 ) : null;
 
 		return $instance;
@@ -898,6 +936,9 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 			$template_settings['filter_categories'] = ! empty( $instance['settings']['filter_categories'] );
 		}
 
+		// Add the current template to the settings array to allow for easier referencing.
+		$instance['settings']['template'] = $instance['template'];
+
 		return array(
 			'title' => $instance['title'],
 			'settings' => $instance['settings'],
@@ -907,6 +948,12 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 	}
 
 	static public function post_meta( $settings ) {
+		if ( is_sticky() ) {
+			?>
+			<span class="sow-featured-post"><?php echo esc_html__( 'Sticky', 'so-widgets-bundle' ); ?></span>
+			<?php
+		}
+
 		if ( $settings['date'] ) :	
 			$date_format = isset( $settings['date_format'] ) ? $settings['date_format'] : null;
 			?>
@@ -945,6 +992,12 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 			</span>
 		<?php endif; ?>
 
+		<?php if ( ! empty( $settings['tags'] ) && has_tag() ) : ?>
+			<span class="sow-entry-tags">
+				<?php the_tags( '' ); ?>
+			</span>
+		<?php endif; ?>
+
 		<?php if ( comments_open() && $settings['comment_count'] ) : ?>
 			<span class="sow-entry-comments">
 				<?php
@@ -958,18 +1011,29 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 		<?php endif;
 	}
 
-	static public function post_featured_image( $settings, $categories = false, $size = 'post-thumbnail' ) {
+	static public function post_featured_image( $settings, $categories = false, $size = 'full' ) {
 		if ( $settings['featured_image'] && has_post_thumbnail() ) : ?>
 			<div class="sow-entry-thumbnail">
 				<?php if ( $categories && $settings['categories'] && has_category() ) : ?>
 					<div class="sow-thumbnail-meta">
-						<?php
-						echo get_the_category_list();
-						?>
+						<?php echo get_the_category_list(); ?>
 					</div>
 				<?php endif; ?>
 				<a href="<?php the_permalink(); ?>">
-					<?php the_post_thumbnail( $size ); ?>
+					<?php
+					if ( ! empty( $settings['featured_image_size'] ) ) {
+						$size = $settings['featured_image_size'] == 'custom_size' ? array( $settings['featured_image_size_width'], $settings['featured_image_size_height'] ) : $settings['featured_image_size'];
+					} else {
+						// Check if this template has a different default image size.
+						if (
+							$size == 'full' &&
+							has_image_size( 'sow-blog-' . $settings['template'] )
+						) {
+							$size = 'sow-blog-' . $settings['template'];
+						}
+					}
+					the_post_thumbnail( $size );
+					?>
 				</a>
 			</div>
 			<?php
@@ -997,7 +1061,7 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 		if ( $setup ) {
 			set_query_var(
 				'siteorigin_blog_excerpt_length',
-				apply_filters( 'siteorigin_widgets_blog_excerpt_length', ! empty( $settings['excerpt_length'] ) ? $settings['excerpt_length'] : 55 )
+				apply_filters( 'siteorigin_widgets_blog_excerpt_length', isset( $settings['excerpt_length'] ) ? $settings['excerpt_length'] : 55 )
 			);
 			add_filter( 'excerpt_length', array( $this, 'alter_excerpt_length' ), 1000 );
 			add_filter( 'excerpt_more', array( $this, 'alter_excerpt_more_indicator' ) );
@@ -1012,7 +1076,7 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 	}
 
 	function alter_excerpt_more_indicator( $indicator ) {
-		return '...';
+		return apply_filters( 'siteorigin_widgets_blog_excerpt_trim', get_query_var( 'siteorigin_blog_excerpt_length' ) == 0 ? '' : '...' );
 	}
 
 	function alter_excerpt_length( $length = 55 ) {
@@ -1028,9 +1092,13 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 
 		$length = get_query_var( 'siteorigin_blog_excerpt_length' );
 		$excerpt = get_the_excerpt();
-		$excerpt_add_read_more = str_word_count( $excerpt ) >= $length;
+		$excerpt_add_read_more = count( preg_split( '~[^\p{L}\p{N}\']+~u', $excerpt ) ) >= $length;
 		if ( ! has_excerpt() ) {
-			$excerpt = wp_trim_words( $excerpt, $length, '...' );
+			$excerpt = wp_trim_words(
+				$excerpt,
+				$length,
+				apply_filters( 'siteorigin_widgets_blog_excerpt_trim', '...' )
+			);
 		}
 
 		if ( $settings['read_more'] && ( has_excerpt() || $excerpt_add_read_more ) ) {
@@ -1067,6 +1135,18 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 		}
 
 		if ( ! empty( $pagination_markup ) ) {
+			// To resolve a potential issue with the Block Editor, we need to override REST URLs with the actual permalink.
+			if (
+				defined( 'REST_REQUEST' ) &&
+				strpos( $pagination_markup, 'sowb/v1/widgets/previews' ) !== false
+			) {
+				$pagination_markup = str_replace(
+					// All non-standard pagination won't have the full URL present so what we replace changes.
+					strpos( $pagination_markup, rest_url() ) !== false ? esc_url_raw( rest_url() ) . 'sowb/v1/widgets/previews/' : '/wp-json/sowb/v1/widgets/previews',
+					get_the_permalink(),
+					$pagination_markup
+				);
+			}
 			?>
 			<nav class="sow-post-navigation">
 				<h2 class="screen-reader-text"><?php esc_html_e( 'Post navigation', 'so-widgets-bundle' ); ?></h2>
@@ -1077,6 +1157,22 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 			<?php
 		}
 	}
+
+	function get_form_teaser() {
+		if ( class_exists( 'SiteOrigin_Premium' ) ) return false;
+		return array(
+			sprintf(
+				__( 'Get more pagination themes and Ajax reloading with %sSiteOrigin Premium%s', 'so-widgets-bundle' ),
+				'<a href="https://siteorigin.com/downloads/premium/?featured_addon=plugin/blog" target="_blank" rel="noopener noreferrer">',
+				'</a>'
+			),
+			sprintf(
+				__( 'Adjust the post Read More link text and choose a custom post date format with %sSiteOrigin Premium%s', 'so-widgets-bundle' ),
+				'<a href="https://siteorigin.com/downloads/premium/?featured_addon=plugin/blog" target="_blank" rel="noopener noreferrer">',
+				'</a>'
+			),
+		);
+	}	
 }
 
 siteorigin_widget_register( 'sow-blog', __FILE__, 'SiteOrigin_Widget_Blog_Widget' );

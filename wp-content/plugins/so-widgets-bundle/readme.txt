@@ -1,10 +1,10 @@
 === SiteOrigin Widgets Bundle ===
 Tags: widget, button, slider, hero, google maps, image, carousel, lottie, features, icons, price table, tinymce, social icons
 Requires at least: 4.2
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 5.6.20
-Stable tag: 1.40.0
-Build time: 2022-08-20T16:42:55+02:00
+Stable tag: 1.44.1
+Build time: 2022-11-25T20:07:41+00:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -105,6 +105,72 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.44.1 - 25 November 2022 =
+* Icon Field: Resolved jQuery Migrate flag.
+* Contact Form: Resolved notice when Message field not used.
+* Features: Resolved  PHP 8 `Division by 0 Error` if `Features per row` not set.
+* Simple Masonry: Changed to use pure CSS (`object-fit`) for sizing images.
+
+= 1.44.0 - 10 November 2022 =
+* Anything Carousel: Prevented potential loss of styling when looping items.
+* Google Maps: Prevented position reset from affecting the info window.
+* Simple Masonry: Added a Layout settings section.
+* Simple Masonry: Added Image Title settings.
+* Simple Masonry: Removed defaults set to 0.
+* Simple Masonry: Removed the `loading` attribute if the preloader is enabled.
+* Font Awesome: Resolved Gear icon migration issue.
+* TinyMCE Field: Prevented PHP 8 `Uncaught TypeError: TinyMCE plugins filtered incorrectly`.
+* Updated `Tested up to` tag to `6.1`.
+* Developer: Added an `html` form field.
+
+= 1.43.0 - 13 October 2022 =
+* Blog: Improved `Continue reading` output when non-Latin characters are present.
+* Blog: Fixed the Grid template responsive collapse behavior.
+* Blog: Added a new Post Tags setting.
+* Contact Form: Prevented a potential notice when inserting a new form.
+* Post Carousel: Ensured navigation dots can appear when arrows are disabled.
+* Post Carousel: Increased `Post Title > Color` specificity to avoid potential theme conflicts.
+* Widget Block: Removed the Widget Type field label.
+
+= 1.42.2 - 06 October 2022 =
+* Blog: Resolved potential incorrect Widget Block pagination URL.
+* Blog: Removed the Blog Widget from the Widgets Block cache.
+* Updated Google Fonts list.
+* Updated Font Awesome 6.1.1 to 6.2.0.
+
+= 1.42.1 - 23 September 2022 =
+* Blog: Updated settings CSS specificity.
+* Blog: Resolved error when loading posts using Ajax.
+* Google Maps: Prevented Google logo from being hidden by theme styles.
+
+= 1.42.0 - 21 September 2022 =
+* Blog: Added a `Featured Image Size` setting.
+* Blog: Increased Alternate template featured image to full-width on mobile.
+* Carousels: Update to only allow positive values in the `Slides to Scroll` and `Slides to Show` settings.
+* Contact Form: Added `Honeypot` and `Browser Check` spam prevention settings.
+* Editor: Prevented potential error by passing all expected `widget_text` arguments.
+* Image Grid: Added `Display Image Title` setting and related options.
+* Post Carousel: Added widget preview support.
+
+= 1.41.0 - 13 September 2022 =
+* Blog: Adjusted `article` tag CSS to ensure priority over theme styling.
+* Blog: Removed featured image center alignment for the Alternate template.
+* Blog: Added featured image sizes for the Grid, Alternate, and Portfolio templates.
+* Features: Added a new setting `Bottom align More link text.`
+* Google Maps: Only setup consent if Google Maps not already setup.
+* LiteSpeed Cache: Ensured purge header isn't set if headers already sent.
+* Post Carousel: Resolved Overlay Theme `Slides to Scroll` incorrect count.
+* Developer: Added `siteorigin_widgets_blog_excerpt_trim` filter.
+* Developer: Added `siteorigin_widgets_blog_image_sizes` filter.
+
+= 1.40.2 - 03 September 2022 =
+* Blog: Added SiteOrigin Premium Blog Addon CTA.
+
+= 1.40.1 - 30 August 2022 =
+* Contact Form: Added a new Dropdown Select setting `Allow multiple selections`.
+* Blog: Added a `Sticky` indicator to post meta.
+* Blog: Factored numbers into the Excerpt Length count.
 
 = 1.40.0 - 20 August 2022 =
 * Blog: Added `Excerpt Length` setting. The excerpt length can also be set using `siteorigin_widgets_blog_excerpt_length`.

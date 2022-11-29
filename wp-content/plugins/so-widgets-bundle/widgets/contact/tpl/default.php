@@ -22,7 +22,10 @@ else {
 		);
 	}
 	?>
-	<form action="#contact-form-<?php echo esc_attr( $short_hash ); ?>"
+	<form
+		<?php if ( ! empty( $global_settings['scrollto'] ) ) : ?>
+			action="#contact-form-<?php echo esc_attr( $short_hash ); ?>"
+		<?php endif; ?>
 		method="POST" class="sow-contact-form" id="contact-form-<?php echo esc_attr( $short_hash ) ?>">
 
 		<?php if ( ! empty( $result['errors']['_general'] ) ) : ?>
@@ -34,8 +37,9 @@ else {
 		<?php endif ?>
 
 		<?php $this->render_form_fields( $instance['fields'], $result['errors'], $instance ) ?>
-		<input type="hidden" name="instance_hash" value="<?php echo esc_attr( $instance_hash ) ?>" />
-		<?php wp_nonce_field( '_contact_form_submit' ) ?>
+		<?php if ( $template_vars['honeypot'] ) : ?>
+			<input type="text" name="sow-<?php echo esc_attr( $instance['_sow_form_id'] ); ?>" class="sow-text-field" style="display: none !important; visibility: hidden !important;" autocomplete="off" aria-hidden="true">
+		<?php endif; ?>
 
 		<?php if ( $recaptcha ) : ?>
 			<div class="sow-recaptcha"
@@ -54,6 +58,9 @@ else {
 			}
 		}
 		?>
+
+		<input type="hidden" name="instance_hash" value="<?php echo esc_attr( $instance_hash ) ?>" />
+		<?php wp_nonce_field( '_contact_form_submit' ) ?>
 		<div class="sow-submit-wrapper <?php if ( $instance['design']['submit']['styled'] ) echo 'sow-submit-styled'; ?>">
 
 		<button class="sow-submit<?php if ( $recaptcha && empty( $recaptcha_v2 ) ) echo ' g-recaptcha'; ?>"
