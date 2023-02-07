@@ -3,8 +3,8 @@ Tags: widget, button, slider, hero, google maps, image, carousel, lottie, featur
 Requires at least: 4.2
 Tested up to: 6.1
 Requires PHP: 5.6.20
-Stable tag: 1.44.1
-Build time: 2022-11-25T20:07:41+00:00
+Stable tag: 1.46.5
+Build time: 2023-02-03T18:40:19+02:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -105,6 +105,57 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.46.5 - 03 February 2023 =
+* Repeaters: Restored action icons.
+
+= 1.46.4 - 02 February 2023 =
+* Accordion and Tabs: Prevented unexpected scroll.
+* Blog: Removed Portfolio `Filter Category` setting requirement.
+* Lottie Player: Updated library to `1.6.0`.
+* Slider: Removed potential spacing after a slide foreground image.
+* Removed unintentional widget asset enqueue in the Classic Editor.
+* Widget Block: Resolved Customizer `ReferenceError`.
+* Autoptimize: Avoided using strpos with empty string in `include_widgets_css_in_autoptimize`.
+* Developer: Updated repeater actions to prevent naming conflicts. 
+
+= 1.46.3 - 23 January 2023 =
+* Simple Masonry: Resolved pre-WordPress 5.9 error.
+* Resolved potential `mce_external_plugins` missing `editor_id` error.
+
+= 1.46.2 - 14 January 2023 =
+* Color Form Field: Added `siteorigin_widget_color_palette` filter.
+* Lottie Player: Filtered new media uploads for application files.
+
+= 1.46.1 - 01 January 2023 =
+* Contact Form: Added `siteorigin_widgets_contact_validation` filter.
+* Widgets Block Editor: Resolve potential TinyMCE related errors.
+
+= 1.46.0 - 23 December 2022 =
+* Call To Action: Resolved potential notice.
+* Contact Form: Added `Plugins > SiteOrigin Widgets > Contact Form: Scroll Top` setting and `siteorigin_widgets_contact_scrollto_offset` filter.
+* Contact Form: Resolved potential Google reCAPTCHA notice.
+* Hero: Added Content `Automatically add paragraphs` setting.
+* PHP 8 notice fixes.
+* Customizer: New widget area `TypeError` fix.
+* Removed `@font-face` query strings.
+* Developer: Optionally allow repeater maximum number of items to be set.
+
+= 1.45.0 - 07 December 2022 =
+* Call To Action: Added `Mobile Button Align` setting.
+* PHP 8.1: Resolved form field deprecated notices.
+* Developer: Removed `edit-widgets` validation support.
+* Developer: Added min/max for number form field.
+
+= 1.44.2 - 03 December 2022 =
+* Added WP Rocket compatibility.
+* Button: Expanded Font Size, Padding, and Rounding to be more customizable.
+* Headline: Prevented a potential notice when adding `mobile_align` defaults to pre-existing instances.
+* Image Size Field: Update to display the setting description if available.
+* Simple Masonry: Resolved a potential `Undefined array key` warning.
+* Developer: Introduced widget validation via `sowbForms.validateFields` and `sow_validate_widget_data`.
+* Developer: Update to allow custom color palettes or for palettes to be completely removed on a field by field basis.
+* Developer: Pass state emitter field to custom callbacks. Allows developers to detect the field that triggered the emitter.
 
 = 1.44.1 - 25 November 2022 =
 * Icon Field: Resolved jQuery Migrate flag.

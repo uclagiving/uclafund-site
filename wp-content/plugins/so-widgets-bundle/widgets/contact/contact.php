@@ -1397,6 +1397,8 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 			}
 		}
 
+		$errors = apply_filters( 'siteorigin_widgets_contact_validation', $errors, $post_vars, $email_fields, $instance );
+
 		if ( empty( $errors ) ) {
 			// We can send the email
 			$success = $this->send_mail( $email_fields, $instance );
@@ -1458,7 +1460,7 @@ class SiteOrigin_Widgets_ContactForm_Widget extends SiteOrigin_Widget {
 				array(
 					'body' => array(
 						'secret'   => $instance['spam']['recaptcha']['use_captcha'] == 'v2' ? $instance['spam']['recaptcha']['secret_key'] : $instance['spam']['recaptcha']['secret_key_v3'],
-						'response' => $post_vars['g-recaptcha-response'],
+						'response' => isset( $post_vars['g-recaptcha-response'] ) ? $post_vars['g-recaptcha-response'] : '',
 						'remoteip' => isset( $_SERVER['REMOTE_ADDR'] ) ? $_SERVER['REMOTE_ADDR'] : null,
 					)
 				)

@@ -28,8 +28,8 @@ class SiteOrigin_Widget_Lottie_Player_Widget extends SiteOrigin_Widget {
 				array(
 					'sow-lottie-player',
 					plugin_dir_url( SOW_BUNDLE_BASE_FILE ) . 'js/lib/lottie-player' . SOW_BUNDLE_JS_SUFFIX . '.js',
-					array( 'jquery', 'dessandro-imagesLoaded', 'dessandro-packery' ),
-					'1.3.1'
+					array(),
+					'1.6.1'
 				),
 			)
 		);
@@ -48,6 +48,7 @@ class SiteOrigin_Widget_Lottie_Player_Widget extends SiteOrigin_Widget {
 			'file' => array(
 				'type' => 'media',
 				'label' => __( 'Lottie File', 'so-widgets-bundle' ),
+				'library' => 'application',
 			),
 
 			'autoplay' => array(

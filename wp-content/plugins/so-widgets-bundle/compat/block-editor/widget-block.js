@@ -8,7 +8,7 @@
 	var Toolbar = components.Toolbar;
 	var ToolbarButton = components.ToolbarButton;
 	var Placeholder = components.Placeholder;
-	var Spinner  = components.Spinner;
+	var Spinner = components.Spinner;
 	var __ = i18n.__;
 
 	var getAjaxErrorMsg = function( response ) {
@@ -94,7 +94,13 @@
 			}
 
 			function generateWidgetPreview( widgetData = false) {
-				wp.data.dispatch( 'core/editor' ).lockPostSaving();
+				if (
+					typeof wp.data.select( 'core/editor' ) == 'object' &&
+					typeof wp.data.dispatch( 'core/editor' ) == 'object'
+				) {
+					wp.data.dispatch( 'core/editor' ).lockPostSaving();
+				}
+
 				jQuery.post( {
 					url: sowbBlockEditorAdmin.restUrl + 'sowb/v1/widgets/previews',
 					beforeSend: function( xhr ) {
@@ -116,7 +122,13 @@
 						widgetHtml: widgetPreview.html,
 						widgetIcons: widgetPreview.icons
 					} );
-					wp.data.dispatch( 'core/editor' ).unlockPostSaving();
+
+					if (
+						typeof wp.data.select( 'core/editor' ) == 'object' &&
+						typeof wp.data.dispatch( 'core/editor' ) == 'object'
+					) {
+						wp.data.dispatch( 'core/editor' ).unlockPostSaving();
+					}
 				} )
 				.fail( function( response ) {
 					props.setState( { widgetFormHtml: '<div>' + getAjaxErrorMsg( response ) + '</div>', } );
@@ -133,6 +145,7 @@
 
 			function setupWidgetForm( formContainer ) {
 				var $mainForm = jQuery( formContainer ).find( '.siteorigin-widget-form-main' );
+
 				if ( $mainForm.length > 0 && ! props.formInitialized ) {
 					var $previewContainer = $mainForm.siblings('.siteorigin-widget-preview');
 					$previewContainer.find( '> a' ).on( 'click', function ( event ) {
@@ -323,3 +336,45 @@
 		}
 	} );
 } )( window.wp.editor, window.wp.blocks, window.wp.i18n, window.wp.element, window.wp.components, window.wp.compose, window.wp.blockEditor );
+
+// Setup SiteOrigin Widgets Block Validation.
+var sowbTimeoutSetup = false;
+if (
+	typeof adminpage != 'undefined' &&
+	adminpage != 'widgets-php' &&
+	typeof wp.data.select == 'function'
+) {
+	wp.data.subscribe( function() {
+		if (
+			! sowbTimeoutSetup &&
+			typeof wp.data.select( 'core/editor' ) == 'object' &&
+			wp.data.select( 'core/editor' ).isSavingPost()
+		) {
+			sowbTimeoutSetup = true;
+			var saveCheck = setInterval( function() {
+
+				if (
+					! wp.data.select( 'core/editor' ).isSavingPost() &&
+					! wp.data.select( 'core/editor' ).isAutosavingPost() &&
+					wp.data.select( 'core/editor' ).didPostSaveRequestSucceed()
+				) {
+					clearInterval( saveCheck );
+					var showPrompt = true;
+					var sowbCurrentBlocks = wp.data.select( 'core/block-editor' ).getBlocks();
+					for ( var i = 0; i < sowbCurrentBlocks.length; i++ ) {
+						if ( sowbCurrentBlocks[ i ].name == 'sowb/widget-block' && sowbCurrentBlocks[ i ].isValid ) {
+							$form = jQuery( '#block-' + sowbCurrentBlocks[ i ].clientId ).find( '.so-widget-placeholder ');
+							if ( ! sowbForms.validateFields( $form, showPrompt) ) {
+							 	showPrompt = false;
+							}
+							$form.find( '.siteorigin-widget-field-is-required input' ).on( 'change', function() {
+								sowbForms.validateFields( $form );
+							} );
+						}
+					}
+					sowbTimeoutSetup = false;
+				}
+			}, 250 );
+		}
+	} );
+}
