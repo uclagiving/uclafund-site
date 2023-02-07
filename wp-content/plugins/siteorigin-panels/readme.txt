@@ -3,8 +3,8 @@ Tags: page builder, responsive, parallax, widgets, blocks, gallery, layout, grid
 Requires at least: 4.7
 Tested up to: 6.1
 Requires PHP: 5.6.20
-Stable tag: 2.19.0
-Build time: 2022-11-22T21:19:44+00:00
+Stable tag: 2.20.4
+Build time: 2023-01-16T14:52:52+00:00
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: https://siteorigin.com/downloads/premium/
@@ -106,6 +106,31 @@ We've tried to ensure that Page Builder is compatible with most plugin widgets. 
 SiteOrigin Premium includes access to our professional email support service, perfect for those times when you need fast and effective technical support. We're standing by to assist you in any way we can.
 
 == Changelog ==
+
+= 2.20.4 - 16 January 2023 =
+* Prevented potential "Are you sure you want to navigate away." notice.
+* Customizer Widgets Block Editor: Fixed Layout Block styling.
+* Layouts Directory: Allowed layouts to be named "0".
+* Modern Parallax Sliders: Prevented a potential mobile display issue.
+* Developer: Prevented `$layout_data` loading if already set.
+
+= 2.20.3 - 29 December 2022 =
+* Reverted: Prevented `$layout_data` loading if already set.
+
+= 2.20.2 - 29 December 2022 =
+* Styles: Improved `Background Image Display` and `Size` settings conditional display behavior.
+* Classic Editor: Prevented potential notice when opening a saved widget.
+* Developer: Prevented `$layout_data` loading if already set.
+* Developer: Added custom style field type support via `siteorigin_panels_style_field_*`, and `siteorigin_panels_style_field_sanitize_*`.
+
+= 2.20.1 - 09 December 2022 =
+* Darkened default cell admin background color.
+* Removed `@font-face` query string.
+* Altered `siteorigin_panels_url` to better allow different directory names.
+
+= 2.20.0 - 02 December 2022 =
+* Styles: Added a row, cell, and widget `Border Thickness` setting.
+* Parallax: Resolved `Disable Parallax On Mobile` setting bug.
 
 = 2.19.0 - 22 November 2022 =
 * Styles: Added a row, cell, and widget `Background Image Size` setting.

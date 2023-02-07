@@ -4164,6 +4164,7 @@ module.exports = Backbone.View.extend( {
 	dataField: false,
 	currentData: '',
 	contentPreview: '',
+	initialContentPreviewSetup: false,
 
 	attachedToEditor: false,
 	attachedVisible: false,
@@ -4938,12 +4939,17 @@ module.exports = Backbone.View.extend( {
 					},
 					function ( content ) {
 						// Post content doesn't need to be generated on load while contentPreview does.
-						if ( this.contentPreview && content.post_content !== '' ) {
+						if (
+							this.contentPreview &&
+							content.post_content !== '' &&
+							this.initialContentPreviewSetup
+						) {
 							this.updateEditorContent( content.post_content );
 						}
 
 						if ( content.preview !== '' ) {
 							this.contentPreview = content.preview;
+							this.initialContentPreviewSetup = true;
 						}
 					}.bind( this )
 				);
@@ -7263,6 +7269,14 @@ module.exports = Backbone.View.extend( {
 					return el;
 				} );
 			}
+
+			// Trigger a change event when user selects a color.
+			panelsOptions.wpColorPickerOptions.change = function( e, ui ) {
+				setTimeout( function() {
+					$( e.target ).trigger( 'change' );
+				}, 100 );
+			};
+
 			this.$( '.so-wp-color-field' ).wpColorPicker( panelsOptions.wpColorPickerOptions );
 		}
 
@@ -7461,6 +7475,7 @@ module.exports = Backbone.View.extend( {
 		} );
 		this.$( '.style-field-toggle .so-toggle-switch-input' ).trigger( 'change' );
 
+		// Conditionally show Background related settings.
 		var $background_image = this.$( '.so-field-background_image_attachment' ),
 			$background_image_display = this.$( '.so-field-background_display' ),
 			$background_image_size = this.$( '.so-field-background_image_size' );
@@ -7489,6 +7504,26 @@ module.exports = Backbone.View.extend( {
 			}
 			soBackgroundImageVisibility();
 			$background_image.find( '[name="style[background_image_attachment]"], [name="style[background_image_attachment_fallback]"]' ).on( 'change', soBackgroundImageVisibility );
+			$background_image.find( '.remove-image' ).on( 'click', soBackgroundImageVisibility );
+		}
+
+		// Conditionally show Border related settings.
+		var $border_color = this.$( '.so-field-border_color' ),
+			$border_thickness = this.$( '.so-field-border_thickness' );
+
+		if ( $border_color.length && $border_thickness.length ) {
+			var soBorderVisibility = function() {
+				if ( $border_color.find( '.so-wp-color-field' ).val() ) {
+					$border_thickness.show();
+					$border_thickness.show();
+				} else {
+					$border_thickness.hide();
+					$border_thickness.hide();
+				}
+			}
+			soBorderVisibility();
+			$border_color.find( '.so-wp-color-field' ).on( 'change', soBorderVisibility );
+			$border_color.find( '.wp-picker-clear' ).on( 'click', soBorderVisibility );
 		}
 
 		// Allow other plugins to setup custom fields.
