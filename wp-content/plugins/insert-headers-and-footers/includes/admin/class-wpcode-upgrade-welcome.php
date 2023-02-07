@@ -263,9 +263,21 @@ class WPCode_Upgrade_Welcome {
 			<div class="wpcode-welcome-box">
 				<div class="wpcode-welcome-highlight">
 					<div class="wpcode-welcome-highlight-column">
-						<h3><?php esc_html_e( 'Store Snippets in Cloud (Coming Soon)', 'insert-headers-and-footers' ); ?></h3>
+						<h3><?php esc_html_e( 'Store Snippets in Cloud', 'insert-headers-and-footers' ); ?></h3>
 						<p><?php esc_html_e( 'A lot of you requested the ability to save and re-use snippets on multiple websites.', 'insert-headers-and-footers' ); ?></p>
-						<p><?php esc_html_e( 'We\'re working on this feature to help you save time when managing multiple projects.', 'insert-headers-and-footers' ); ?></p>
+						<p>
+							<?php
+							printf(
+							// Translators: Placeholders add a link to the suggestions page.
+								esc_html__(
+									'This feature is now available in the %1$sPRO version of the plugin%2$s along with other powerful features.',
+									'insert-headers-and-footers'
+								),
+								'<a href="' . esc_url( wpcode_utm_url( 'https://wpcode.com/lite/', 'upgrade-welcome', 'cloud-snippets' ) ) . '" target="_blank">',
+								'</a>'
+							);
+							?>
+						</p>
 						<p>
 							<?php
 							printf(

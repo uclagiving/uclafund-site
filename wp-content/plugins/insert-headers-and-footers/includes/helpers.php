@@ -11,18 +11,23 @@
  * @param string $url The URL to add the params to.
  * @param string $medium The marketing medium.
  * @param string $campaign The campaign.
- * @param string $content The Ad content.
+ * @param string $ad_content The utm_content param.
  *
  * @return string
  */
 function wpcode_utm_url( $url, $medium = '', $campaign = '', $ad_content = '' ) {
+	$args = array(
+		'utm_source'   => class_exists( 'WPCode_License' ) ? 'proplugin' : 'liteplugin',
+		'utm_medium'   => sanitize_key( $medium ),
+		'utm_campaign' => sanitize_key( $campaign )
+	);
+
+	if ( ! empty( $ad_content ) ) {
+		$args['utm_content'] = sanitize_key( $ad_content );
+	}
+
 	return add_query_arg(
-		array(
-			'utm_source'   => class_exists( 'WPCode_License' ) ? 'proplugin' : 'liteplugin',
-			'utm_medium'   => sanitize_key( $medium ),
-			'utm_campaign' => sanitize_key( $campaign ),
-			'utm_content'  => sanitize_key( $ad_content ),
-		),
+		$args,
 		$url
 	);
 }
@@ -117,15 +122,19 @@ function wpcode_find_location_label( $location_slug ) {
  * @param string     $name The name for the input.
  * @param string     $description Field description (optional).
  * @param string|int $value Field value (optional).
+ * @param string     $label Field label (optional).
  *
  * @return string
  */
-function wpcode_get_checkbox_toggle( $checked, $name, $description = '', $value = '' ) {
+function wpcode_get_checkbox_toggle( $checked, $name, $description = '', $value = '', $label = '' ) {
 	$markup = '<label class="wpcode-checkbox-toggle">';
 
 	$markup .= '<input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $name ) . '" id="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '" />';
 	$markup .= '<span class="wpcode-checkbox-toggle-slider"></span>';
 	$markup .= '</label>';
+	if ( ! empty( $label ) ) {
+		$markup .= '<label class="wpcode-checkbox-toggle-label" for="' . esc_attr( $name ) . '">' . esc_html( $label ) . '</label>';
+	}
 
 	if ( ! empty( $description ) ) {
 		$markup .= '<p class="description">' . wp_kses_post( $description ) . '</p>';
@@ -190,4 +199,21 @@ function wpcode_get_auto_insert_locations_with_number() {
  */
 function wpcode_get_site_domain() {
 	return wp_parse_url( home_url(), PHP_URL_HOST );
+}
+
+/**
+ * Check WP version and include the compatible upgrader skin.
+ */
+function wpcode_require_upgrader() {
+
+	global $wp_version;
+
+	require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+
+	// WP 5.3 changes the upgrader skin.
+	if ( version_compare( $wp_version, '5.3', '<' ) ) {
+		require_once WPCODE_PLUGIN_PATH . 'includes/admin/class-wpcode-skin-legacy.php';
+	} else {
+		require_once WPCODE_PLUGIN_PATH . 'includes/admin/class-wpcode-skin.php';
+	}
 }

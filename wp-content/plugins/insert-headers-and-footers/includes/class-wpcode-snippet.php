@@ -177,6 +177,12 @@ class WPCode_Snippet {
 	 * @var array
 	 */
 	private $generator_data;
+	/**
+	 * The type of device to load this snippet on.
+	 *
+	 * @var string
+	 */
+	public $device_type;
 
 	/**
 	 * Constructor. If the post passed is not the correct post type
@@ -503,6 +509,9 @@ class WPCode_Snippet {
 				update_post_meta( $this->id, '_wpcode_custom_shortcode', $this->custom_shortcode );
 			}
 		}
+		if ( isset( $this->device_type ) ) {
+			update_post_meta( $this->id, '_wpcode_device_type', $this->device_type );
+		}
 
 		/**
 		 * Run extra logic after the snippet is saved.
@@ -797,5 +806,49 @@ class WPCode_Snippet {
 		}
 
 		return $this->custom_shortcode;
+	}
+
+	/**
+	 * Get the device type for this snippet.
+	 *
+	 * @return string
+	 */
+	public function get_device_type() {
+		if ( ! isset( $this->device_type ) ) {
+			$this->device_type = get_post_meta( $this->get_id(), '_wpcode_device_type', true );
+			if ( empty( $this->device_type ) ) {
+				$this->device_type = 'any';
+			}
+		}
+
+		return $this->device_type;
+	}
+
+	/**
+	 * @return array|false
+	 */
+	public function get_generator_data() {
+		if ( ! isset( $this->generator_data ) ) {
+			$generator_data       = get_post_meta( $this->get_id(), '_wpcode_generator_data', true );
+			$this->generator_data = empty( $generator_data ) ? false : $generator_data;
+		}
+
+		return $this->generator_data;
+	}
+
+	/**
+	 * @return array|false
+	 */
+	public function get_generator() {
+		if ( ! isset( $this->generator ) ) {
+			$generator_name  = get_post_meta( $this->get_id(), '_wpcode_generator', true );
+			$this->generator = empty( $generator_name ) ? false : $generator_name;
+		}
+
+		return $this->generator;
+	}
+
+	public function is_generated() {
+		return ! empty( $this->get_generator() );
 	}
 }

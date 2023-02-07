@@ -72,7 +72,7 @@ abstract class WPCode_Conditional_Type {
 	 *
 	 * @return void
 	 */
-	abstract protected function load_type_options();
+	abstract public function load_type_options();
 
 	/**
 	 * Get the label.

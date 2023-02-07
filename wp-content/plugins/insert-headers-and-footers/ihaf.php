@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WPCode Lite
  * Plugin URI: https://www.wpcode.com/
- * Version: 2.0.4.4
+ * Version: 2.0.7
  * Requires at least: 4.6
  * Requires PHP: 5.5
  * Tested up to: 6.1
@@ -395,7 +395,7 @@ class WPCode {
 			$this->generator         = new WPCode_Generator();
 			$this->importers         = new WPCode_Importers();
 			$this->notifications     = new WPCode_Notifications();
-			$this->admin_page_loader = new WPCode_Admin_Page_Loader();
+			$this->admin_page_loader = new WPCode_Admin_Page_Loader_Lite();
 			$this->notice            = new WPCode_Notice();
 
 			new WPCode_Metabox_Snippets_Lite();

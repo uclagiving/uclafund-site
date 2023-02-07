@@ -135,6 +135,7 @@ class WPCode_Admin_Page_Library extends WPCode_Admin_Page {
 
 		$this->get_library_markup( $categories, $snippets );
 		$this->library_preview_modal_content();
+		$this->library_connect_banner_template();
 	}
 
 	/**
@@ -261,7 +262,7 @@ class WPCode_Admin_Page_Library extends WPCode_Admin_Page {
 	 */
 	public function get_placeholder_library_items() {
 		$categories = array(
-			'*'     => 'Most Popular',
+			'*'           => 'Most Popular',
 			'admin'       => 'Admin',
 			'archive'     => 'Archive',
 			'attachments' => 'Attachments',

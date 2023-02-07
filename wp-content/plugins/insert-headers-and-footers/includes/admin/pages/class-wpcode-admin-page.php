@@ -79,6 +79,13 @@ abstract class WPCode_Admin_Page {
 	public $views = array();
 
 	/**
+	 * If the submenu for the page should be hidden, set this to true.
+	 *
+	 * @var bool
+	 */
+	public $hide_menu = false;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -107,6 +114,7 @@ abstract class WPCode_Admin_Page {
 		add_action( 'admin_enqueue_scripts', array( $this, 'page_scripts' ) );
 		add_filter( 'admin_body_class', array( $this, 'page_specific_body_class' ) );
 		add_filter( 'wpcode_admin_js_data', array( $this, 'maybe_add_library_data' ) );
+		add_action( 'admin_init', array( $this, 'maybe_redirect_to_click' ) );
 
 		$this->setup_views();
 		$this->set_current_view();
@@ -649,11 +657,13 @@ abstract class WPCode_Admin_Page {
 	 * @param bool   $checked Is it checked or not.
 	 * @param string $name The name for the input.
 	 * @param string $description Field description (optional).
+	 * @param string|int $value Field value (optional).
+	 * @param string $label Field label (optional).
 	 *
 	 * @return string
 	 */
-	public function get_checkbox_toggle( $checked, $name, $description = '' ) {
-		return wpcode_get_checkbox_toggle( $checked, $name, $description );
+	public function get_checkbox_toggle( $checked, $name, $description = '', $value = '', $label = '' ) {
+		return wpcode_get_checkbox_toggle( $checked, $name, $description, $value, $label );
 	}
 
 	/**
@@ -870,9 +880,18 @@ abstract class WPCode_Admin_Page {
 	 */
 	public function get_library_markup( $categories, $snippets, $item_method = 'get_library_snippet_item' ) {
 		$selected_category = isset( $categories[0]['slug'] ) ? $categories[0]['slug'] : '*';
+		$count             = 0;
+		foreach ( $snippets as $snippet ) {
+			if ( isset( $snippet['needs_auth'] ) ) {
+				$count ++;
+			}
+		}
+		$categories = $this->add_item_counts( $categories, $snippets );
+		$categories = $this->add_available_category_label( $categories, $snippets, $count );
+		$snippets   = $this->add_available_category_to_snippets( $snippets );
 		?>
 		<div class="wpcode-items-metabox wpcode-metabox">
-			<?php $this->get_items_list_sidebar( $categories, __( 'All Snippets', 'insert-headers-and-footers' ), __( 'Search Snippets', 'insert-headers-and-footers' ), $selected_category ); ?>
+			<?php $this->get_items_list_sidebar( $categories, __( 'All Snippets', 'insert-headers-and-footers' ), __( 'Search Snippets', 'insert-headers-and-footers' ), $selected_category, $count ); ?>
 			<div class="wpcode-items-list">
 				<?php
 				if ( empty( $snippets ) ) {
@@ -896,16 +915,103 @@ abstract class WPCode_Admin_Page {
 	}
 
 	/**
+	 * Goes through snippets and adds the item count to the categories.
+	 *
+	 * @param array $categories The categories to add the item count to.
+	 * @param array $snippets The snippets to count.
+	 *
+	 * @return array
+	 */
+	public function add_item_counts( $categories, $snippets ) {
+		$category_counts = array();
+		foreach ( $snippets as $snippet ) {
+			if ( ! isset( $snippet['categories'] ) ) {
+				continue;
+			}
+			if ( empty( $snippet['code'] ) && empty( $snippet['needs_auth'] ) ) {
+				continue;
+			}
+			foreach ( $snippet['categories'] as $category ) {
+				if ( ! isset( $category_counts[ $category ] ) ) {
+					$category_counts[ $category ] = 0;
+				}
+				$category_counts[ $category ] ++;
+			}
+		}
+
+		// Add counts to the categories array.
+		foreach ( $categories as $category_id => $category ) {
+			if ( ! isset( $category['slug'] ) ) {
+				continue;
+			}
+			$categories[ $category_id ]['count'] = isset( $category_counts[ $category['slug'] ] ) ? $category_counts[ $category['slug'] ] : 0;
+		}
+
+		return $categories;
+	}
+
+	/**
+	 * Create a dynamic category for the available snippets. This goes through all the snippets
+	 * and counts how many of them need auth to be used, if there are any, it adds the category that shows
+	 * how many are available.
+	 *
+	 * @param array $categories The categories to add the available category to.
+	 * @param array $snippets The snippets to count.
+	 *
+	 * @return array
+	 */
+	public function add_available_category_label( $categories, $snippets, $total ) {
+		if ( wpcode()->library_auth->has_auth() ) {
+			return $categories;
+		}
+		$need_auth_count = 0;
+		foreach ( $snippets as $snippet ) {
+			if ( ! empty( $snippet['needs_auth'] ) ) {
+				$need_auth_count ++;
+			}
+		}
+		if ( $need_auth_count > 0 ) {
+			$categories = array_merge( array(
+				array(
+					'name'  => __( 'Available Snippets', 'insert-headers-and-footers' ),
+					'slug'  => 'available',
+					'count' => $total - $need_auth_count,
+				)
+			), $categories );
+		}
+
+		return $categories;
+	}
+
+	/**
+	 * For snippets that don't need auth, add an extra category "available" to allow easy filtering.
+	 *
+	 * @param array $snippets The snippets to add the category to.
+	 *
+	 * @return array
+	 */
+	public function add_available_category_to_snippets( $snippets ) {
+		foreach ( $snippets as $key => $snippet ) {
+			if ( empty( $snippet['needs_auth'] ) ) {
+				$snippets[ $key ]['categories'][] = 'available';
+			}
+		}
+
+		return $snippets;
+	}
+
+	/**
 	 * Get the items list sidebar with optional search form.
 	 *
 	 * @param array  $categories The array of categories to display as filters - each item needs to have the "slug" and "name" keys.
 	 * @param string $all_text Text to display on the all items button in the categories list.
 	 * @param string $search_label The search label, if left empty the search form is hidden.
 	 * @param string $selected_category Slug of the category selected by default.
+	 * @param int    $all_count (optional) The number of items in the all category.
 	 *
 	 * @return void
 	 */
-	public function get_items_list_sidebar( $categories, $all_text = '', $search_label = '', $selected_category = '' ) {
+	public function get_items_list_sidebar( $categories, $all_text = '', $search_label = '', $selected_category = '', $all_count = 0 ) {
 		?>
 		<div class="wpcode-items-sidebar">
 			<?php if ( ! empty( $search_label ) ) { ?>
@@ -919,7 +1025,12 @@ abstract class WPCode_Admin_Page {
 			<?php } ?>
 			<ul class="wpcode-items-categories-list wpcode-items-filters">
 				<li>
-					<button type="button" data-category="*" class="<?php echo empty( $selected_category ) ? 'wpcode-active' : ''; ?>"><?php echo esc_html( $all_text ); ?></button>
+					<button type="button" data-category="*" class="<?php echo empty( $selected_category ) ? 'wpcode-active' : ''; ?>">
+						<?php echo esc_html( $all_text ); ?>
+						<?php if ( $all_count ) { ?>
+							<span class="wpcode-items-count"><?php echo esc_html( $all_count ); ?></span>
+						<?php } ?>
+					</button>
 				</li>
 				<?php
 				foreach ( $categories as $category ) {
@@ -927,7 +1038,12 @@ abstract class WPCode_Admin_Page {
 					$class = $category['slug'] === $selected_category ? 'wpcode-active' : '';
 					?>
 					<li>
-						<button type="button" class="<?php echo esc_attr( $class ); ?>" data-category="<?php echo esc_attr( $category['slug'] ); ?>"><?php echo esc_html( $category['name'] ); ?></button>
+						<button type="button" class="<?php echo esc_attr( $class ); ?>" data-category="<?php echo esc_attr( $category['slug'] ); ?>">
+							<?php echo esc_html( $category['name'] ); ?>
+							<?php if ( isset( $category['count'] ) ) { ?>
+								<span class="wpcode-items-count"><?php echo esc_html( $category['count'] ); ?></span>
+							<?php } ?>
+						</button>
 					</li>
 				<?php } ?>
 			</ul>
@@ -1022,6 +1138,8 @@ abstract class WPCode_Admin_Page {
 			esc_attr( implode( ' ', $container_class ) )
 		);
 
+		$html .= '<div class="wpcode-upsell-text-content">';
+
 		$html .= sprintf(
 			'<h2>%s</h2>',
 			wp_kses_post( $title )
@@ -1069,6 +1187,9 @@ abstract class WPCode_Admin_Page {
 			)
 		);
 
+		$html .= '</div>'; // .wpcode-upsell-text-content
+		$html .= '<div class="wpcode-upsell-buttons">';
+
 		if ( ! empty( $button_1['text'] ) ) {
 			$html .= self::get_list_item_button( $button_1, false );
 		}
@@ -1078,9 +1199,68 @@ abstract class WPCode_Admin_Page {
 			$html .= self::get_list_item_button( $button_2, false );
 		}
 
+		$html .= '</div>'; // .wpcode-upsell-buttons
+
 		$html .= '</div>';
 
 		return $html;
 
+	}
+
+	/**
+	 * Banner to highlight that connecting to the library gives you access to more snippets.
+	 *
+	 * @return void
+	 */
+	public function library_connect_banner_template() {
+
+		if ( wpcode()->library_auth->has_auth() ) {
+			return;
+		}
+
+		$data  = wpcode()->library->get_data();
+		$count = 0;
+		if ( ! empty( $data['snippets'] ) ) {
+			$count = count( $data['snippets'] );
+		}
+		?>
+		<script type="text/html" id="tmpl-wpcode-library-connect-banner">
+			<div id="wpcode-library-connect-banner">
+				<div class="wpcode-template-content">
+					<h3>
+						<?php
+						/* translators: %d - snippets count. */
+						printf( esc_html__( 'Get Access to Our Library of %d FREE Snippets', 'insert-headers-and-footers' ), $count );
+						?>
+					</h3>
+
+					<p>
+						<?php esc_html_e( 'Connect your website with WPCode Library and get instant access to FREE code snippets written by our experts. Snippets can be installed with just 1-click from inside the plugin and come automatically-configured to save you time.', 'insert-headers-and-footers' ); ?>
+					</p>
+				</div>
+				<div class="wpcode-template-upgrade-button">
+					<button class="wpcode-button wpcode-start-auth"><?php esc_html_e( 'Connect to Library', 'insert-headers-and-footers' ); ?></button>
+				</div>
+			</div>
+		</script>
+		<?php
+	}
+
+	/**
+	 * On any of the plugin pages, if the user installed the plugin from the
+	 * deploy a snippet flow, redirect to the 1-click page to allow them to continue that process.
+	 *
+	 * @return void
+	 */
+	public function maybe_redirect_to_click() {
+		if ( 'wpcode-click' === $this->page_slug ) {
+			// Don't redirect this page to avoid an infinite loop.
+			return;
+		}
+		if ( false !== get_transient( 'wpcode_deploy_snippet_id' ) ) {
+			// Don't delete the transient here, it will be deleted in the 1-click page.
+			wp_safe_redirect( admin_url( 'admin.php?page=wpcode-click' ) );
+			exit;
+		}
 	}
 }

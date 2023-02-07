@@ -78,10 +78,19 @@ class WPCode_Install {
 
 		// Let's run an upgrade routine.
 		if ( empty( $activated['version'] ) ) {
-			$activated['version'] = WPCODE_VERSION;
-			update_option( 'ihaf_activated', $activated );
 			$this->update_2_1_0();
 		}
+
+		if ( isset( $activated['version'] ) && version_compare( $activated['version'], WPCODE_VERSION, '=' ) ) {
+			// If the version is identical just skip.
+			return;
+		}
+
+		// Give other plugins a chance to run an upgrade routine.
+		do_action( 'wpcode_before_version_update', $activated );
+
+		$activated['version'] = WPCODE_VERSION;
+		update_option( 'ihaf_activated', $activated );
 	}
 
 	/**

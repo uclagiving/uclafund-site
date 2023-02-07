@@ -74,6 +74,13 @@ class WPCode_Library {
 	protected $snippet_library_id_meta_key = '_wpcode_library_id';
 
 	/**
+	 * Total number of snippets in the library atm.
+	 *
+	 * @var int
+	 */
+	protected $snippets_count;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -89,7 +96,19 @@ class WPCode_Library {
 		add_action( 'trash_wpcode', array( $this, 'clear_used_snippets' ) );
 		add_action( 'transition_post_status', array( $this, 'clear_used_snippets_untrash' ), 10, 3 );
 		add_action( 'wpcode_library_api_auth_connected', array( $this, 'delete_cache' ) );
+		add_action( 'wpcode_library_api_auth_connected', array( $this, 'get_data_delayed' ), 15 );
 		add_action( 'wpcode_library_api_auth_deleted', array( $this, 'delete_cache' ) );
+	}
+
+	/**
+	 * Wait for the file cache to be cleared before loading the data.
+	 *
+	 * @return void
+	 */
+	public function get_data_delayed() {
+
+		// Wait for the cache to be cleared.
+		add_action( 'shutdown', array( $this, 'get_data' ) );
 	}
 
 	/**
@@ -105,6 +124,22 @@ class WPCode_Library {
 		return $this->data;
 	}
 
+	/**
+	 * Get the number of snippets in the library.
+	 *
+	 * @return int
+	 */
+	public function get_snippets_count() {
+		if ( ! isset( $this->snippets_count ) ) {
+			$this->snippets_count = 0;
+			$data                 = $this->get_data();
+			if ( ! empty( $data['snippets'] ) ) {
+				$this->snippets_count = count( $data['snippets'] );
+			}
+		}
+
+		return $this->snippets_count;
+	}
 
 	/**
 	 * Grab data from the cache.
@@ -176,7 +211,7 @@ class WPCode_Library {
 	 */
 	public function make_request( $endpoint = '', $method = 'GET', $data = array() ) {
 		$args = array(
-			'method' => $method,
+			'method'    => $method,
 		);
 		if ( wpcode()->library_auth->has_auth() ) {
 			$args['headers'] = $this->get_authenticated_headers();
@@ -427,5 +462,33 @@ class WPCode_Library {
 	 */
 	public function delete_cache() {
 		wpcode()->file_cache->delete( $this->cache_folder . '/' . $this->cache_key );
+		if ( isset( $this->data ) ) {
+			unset( $this->data );
+		}
+	}
+
+	/**
+	 * Makes a request to the snippet library API to grab a public snippet by its hash.
+	 *
+	 * @param string $hash The hash used to identify the snippet on the library server.
+	 * @param string $auth The unique user hash used to authenticate the request on the library.
+	 *
+	 * @return array
+	 */
+	public function get_public_snippet( $hash, $auth ) {
+		// Let's use transients for hashes to avoid unnecessary requests.
+		$transient_key = 'wpcode_public_snippet_' . $hash . '_' . $auth;
+		$snippet_data  = get_transient( $transient_key );
+		if ( false === $snippet_data ) {
+			$snippet_request = $this->make_request( 'public/' . $hash, 'POST', array(
+				'auth' => $auth,
+			) );
+			$snippet_data    = json_decode( $snippet_request, true );
+			// Transient for 1 minute if error otherwise 30 minutes.
+			$timeout = ! isset( $snippet_data['status'] ) || 'error' === $snippet_data['status'] ? 60 : 30 * 60;
+			set_transient( $transient_key, $snippet_data, $timeout );
+		}
+
+		return $snippet_data;
 	}
 }

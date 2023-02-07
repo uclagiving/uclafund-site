@@ -37,6 +37,13 @@ class WPCode_Notice {
 	public $notices = array();
 
 	/**
+	 * Top notices, displayed separately.
+	 *
+	 * @var array
+	 */
+	public $notices_top = array();
+
+	/**
 	 * Init.
 	 *
 	 */
@@ -54,6 +61,9 @@ class WPCode_Notice {
 		// Hook for our specific pages where we hide all other admin notices.
 		add_action( 'wpcode_admin_notices', array( $this, 'display' ), 10 );
 		add_action( 'wp_ajax_wpcode_notice_dismiss', array( $this, 'dismiss_ajax' ) );
+
+		// Display notices above the header.
+		add_action( 'wpcode_admin_page', array( $this, 'display_top' ), 5 );
 	}
 
 	/**
@@ -105,6 +115,34 @@ class WPCode_Notice {
 	}
 
 	/**
+	 * Display the notices at the top of the WPC pages.
+	 */
+	public function display_top() {
+		$dismissed_notices = get_user_meta( get_current_user_id(), 'wpcode_admin_notices', true );
+		$dismissed_notices = is_array( $dismissed_notices ) ? $dismissed_notices : array();
+		$dismissed_notices = array_merge( $dismissed_notices, (array) get_option( 'wpcode_admin_notices', array() ) );
+
+		foreach ( $this->notices_top as $slug => $notice ) {
+			if ( isset( $dismissed_notices[ $slug ] ) && ! empty( $dismissed_notices[ $slug ]['dismissed'] ) ) {
+				unset( $this->notices_top[ $slug ] );
+			}
+		}
+
+		$output = implode( '', $this->notices_top );
+
+		if ( ! empty( $output ) ) {
+			echo '<div class="wpcode-notice-top-area">';
+			echo $output; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo '</div>';
+		}
+
+		// Enqueue script only when it's needed.
+		if ( strpos( $output, 'is-dismissible' ) !== false ) {
+			$this->enqueues();
+		}
+	}
+
+	/**
 	 * Add notice to the registry.
 	 *
 	 *
@@ -144,16 +182,26 @@ class WPCode_Notice {
 
 		$id .= empty( $slug ) ? $uniq_id : $slug;
 
-		$type    = ! empty( $type ) ? 'notice-' . esc_attr( sanitize_key( $type ) ) : '';
-		$class   = empty( $args['class'] ) ? $class : $class . ' ' . esc_attr( sanitize_key( $args['class'] ) );
-		$message = $args['autop'] ? wpautop( $message ) : $message;
-		$notice  = sprintf(
+		$type_class = ! empty( $type ) ? 'notice-' . esc_attr( sanitize_key( $type ) ) : '';
+		$class      = empty( $args['class'] ) ? $class : $class . ' ' . esc_attr( sanitize_key( $args['class'] ) );
+		$message    = $args['autop'] ? wpautop( $message ) : $message;
+		$notice     = sprintf(
 			'<div class="notice wpcode-notice %s%s" id="%s">%s</div>',
-			esc_attr( $type ),
+			esc_attr( $type_class ),
 			esc_attr( $class ),
 			esc_attr( $id ),
 			$message
 		);
+
+		if ( 'top' === $type ) {
+			if ( empty( $slug ) ) {
+				wpcode()->notice->notices_top[] = $notice;
+			} else {
+				wpcode()->notice->notices_top[ $slug ] = $notice;
+			}
+
+			return; // Don't mix top notices.
+		}
 
 		if ( empty( $slug ) ) {
 			wpcode()->notice->notices[] = $notice;
@@ -172,6 +220,18 @@ class WPCode_Notice {
 	public static function info( $message, $args = [] ) {
 
 		self::add( $message, 'info', $args );
+	}
+
+	/**
+	 * Add top notice (displayed before the header on wpcode pages only).
+	 *
+	 *
+	 * @param string $message Message to display.
+	 * @param array  $args Array of additional arguments. Details in the self::add() method.
+	 */
+	public static function top( $message, $args = [] ) {
+
+		self::add( $message, 'top', $args );
 	}
 
 	/**

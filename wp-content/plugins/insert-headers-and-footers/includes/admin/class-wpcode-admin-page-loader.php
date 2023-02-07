@@ -19,6 +19,13 @@ class WPCode_Admin_Page_Loader {
 	public $pages = array();
 
 	/**
+	 * Slugs of pages that should not be visible in the submenu.
+	 *
+	 * @var array
+	 */
+	public $hidden_pages = array();
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -35,6 +42,9 @@ class WPCode_Admin_Page_Loader {
 	public function hooks() {
 		add_action( 'admin_menu', array( $this, 'register_admin_menu' ), 9 );
 		add_filter( 'plugin_action_links_' . WPCODE_PLUGIN_BASENAME, array( $this, 'add_plugin_action_links' ) );
+
+		// Hide submenus.
+		add_filter( 'parent_file', array( $this, 'hide_menus' ), 1020 );
 	}
 
 	/**
@@ -51,6 +61,8 @@ class WPCode_Admin_Page_Loader {
 		require_once WPCODE_PLUGIN_PATH . 'includes/admin/pages/class-wpcode-admin-page-generator.php';
 		require_once WPCODE_PLUGIN_PATH . 'includes/admin/pages/class-wpcode-admin-page-tools.php';
 		require_once WPCODE_PLUGIN_PATH . 'includes/admin/pages/class-wpcode-admin-page-settings.php';
+		require_once WPCODE_PLUGIN_PATH . 'includes/admin/pages/class-wpcode-admin-page-click.php';
+		require_once WPCODE_PLUGIN_PATH . 'includes/admin/pages/class-wpcode-admin-page-pixel.php';
 	}
 
 	/**
@@ -69,10 +81,12 @@ class WPCode_Admin_Page_Loader {
 		$this->pages['code_snippets']   = 'WPCode_Admin_Page_Code_Snippets';
 		$this->pages['snippet_manager'] = 'WPCode_Admin_Page_Snippet_Manager';
 		$this->pages['headers_footers'] = 'WPCode_Admin_Page_Headers_Footers';
+		$this->pages['pixel']           = 'WPCode_Admin_Page_Pixel';
 		$this->pages['library']         = 'WPCode_Admin_Page_Library';
 		$this->pages['generator']       = 'WPCode_Admin_Page_Generator';
 		$this->pages['tools']           = 'WPCode_Admin_Page_Tools';
 		$this->pages['settings']        = 'WPCode_Admin_Page_Settings';
+		$this->pages['click']           = 'WPCode_Admin_Page_Click';
 	}
 
 	/**
@@ -84,11 +98,19 @@ class WPCode_Admin_Page_Loader {
 
 		$this->prepare_pages();
 
+		do_action( 'wpcode_before_admin_pages_loaded', $this->pages );
+
 		foreach ( $this->pages as $page_class ) {
 			if ( ! class_exists( $page_class ) ) {
 				continue;
 			}
-			new $page_class();
+			/**
+			 * @var WPCode_Admin_Page $new_page
+			 */
+			$new_page = new $page_class();
+			if ( $new_page->hide_menu ) {
+				$this->hidden_pages[] = $new_page->page_slug;
+			}
 		}
 	}
 
@@ -194,5 +216,22 @@ class WPCode_Admin_Page_Loader {
 		);
 
 		return array_merge( $custom, $links );
+	}
+
+	/**
+	 * Hide menu items for pages that should be hidden.
+	 * We're using the parent_file filter to improve compatibility with admin-menu-editor.
+	 *
+	 * @param string $parent_file The parent file.
+	 *
+	 * @return string
+	 */
+	public function hide_menus( $parent_file ) {
+
+		foreach ( $this->hidden_pages as $page ) {
+			remove_submenu_page( 'wpcode', $page );
+		}
+
+		return $parent_file;
 	}
 }

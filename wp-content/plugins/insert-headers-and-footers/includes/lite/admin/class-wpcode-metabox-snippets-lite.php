@@ -139,7 +139,7 @@ class WPCode_Metabox_Snippets_Lite extends WPCode_Metabox_Snippets {
 			__( 'Page Scripts is a Pro Feature', 'insert-headers-and-footers' ),
 			sprintf(
 				'<p>%s</p>',
-				esc_html__( 'Upgrade to WPCode Pro and easily add page-specific scripts and snippets directly from the post edit screen.', 'insert-headers-and-footers' )
+				esc_html__( 'While you can always use global snippets, in the PRO version you can easily add page-specific scripts and snippets directly from the post edit screen.', 'insert-headers-and-footers' )
 			),
 			array(
 				'text' => esc_html__( 'Upgrade to Pro and Unlock Page Scripts', 'insert-headers-and-footers' ),
@@ -220,7 +220,7 @@ class WPCode_Metabox_Snippets_Lite extends WPCode_Metabox_Snippets {
 										<div class="CodeMirror-measure"></div>
 										<div style="position: relative; z-index: 1;"></div>
 										<div class="CodeMirror-cursors"></div>
-										<div class="CodeMirror-code" role="presentation" tabindex="0" style="">
+										<div class="" role="presentation" tabindex="0" style="">
 											<div class="CodeMirror-activeline" style="position: relative;">
 												<div class="CodeMirror-activeline-background CodeMirror-linebackground"></div>
 												<div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: -46px; width: 46px;"></div>
@@ -282,7 +282,7 @@ class WPCode_Metabox_Snippets_Lite extends WPCode_Metabox_Snippets {
 			__( 'Page Scripts is a Pro Feature', 'insert-headers-and-footers' ),
 			sprintf(
 				'<p>%s</p>',
-				esc_html__( 'Upgrade to WPCode Pro and easily add page-specific scripts and snippets directly from the post edit screen.', 'insert-headers-and-footers' )
+				esc_html__( 'While you can always use global snippets, in the PRO version you can easily add page-specific scripts and snippets directly from the post edit screen.', 'insert-headers-and-footers' )
 			),
 			array(
 				'text' => esc_html__( 'Upgrade to Pro and Unlock Page Scripts', 'insert-headers-and-footers' ),

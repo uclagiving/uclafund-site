@@ -31,7 +31,7 @@ class WPCode_Conditional_WooCommerce_Lite extends WPCode_Conditional_Type {
 	 *
 	 * @return void
 	 */
-	protected function load_type_options() {
+	public function load_type_options() {
 		$this->options = array(
 			'wc_page' => array(
 				'label'   => __( 'WooCommerce Page', 'insert-headers-and-footers' ),

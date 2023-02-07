@@ -55,6 +55,7 @@ class WPCode_Conditional_Logic {
 	public function get_all_admin_options() {
 		$options = array();
 		foreach ( $this->types as $type ) {
+			$type->load_type_options(); // Reload the options in case a global snippet made them get loaded before some post types were registered, for example.
 			$options[ $type->get_name() ] = array(
 				'label'   => $type->get_label(),
 				'name'    => $type->get_name(),

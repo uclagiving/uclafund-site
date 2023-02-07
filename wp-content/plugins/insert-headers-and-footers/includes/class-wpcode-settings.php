@@ -51,7 +51,35 @@ class WPCode_Settings {
 	 */
 	public function get_options() {
 		if ( ! isset( $this->options ) ) {
-			$this->options = get_option( $this->settings_key, array() );
+			$this->options = get_option( $this->settings_key, array(
+				'facebook_pixel_events'  => array(
+					'page_view'      => 1,
+					'add_to_cart'    => 1,
+					'view_content'   => 1,
+					'begin_checkout' => 1,
+					'purchase'       => 1,
+				),
+				'google_pixel_events'    => array(
+					'page_view'      => 1,
+					'add_to_cart'    => 1,
+					'view_item'      => 1,
+					'begin_checkout' => 1,
+					'purchase'       => 1,
+					'conversion'     => 1,
+				),
+				'pinterest_pixel_events' => array(
+					'pagevisit_product' => 1,
+					'begin_checkout'    => 1,
+					'add_to_cart'       => 1,
+					'purchase'          => 1,
+				),
+				'tiktok_pixel_events'    => array(
+					'view_content'   => 1,
+					'add_to_cart'    => 1,
+					'begin_checkout' => 1,
+					'purchase'       => 1,
+				),
+			) );
 		}
 
 		return $this->options;

@@ -94,6 +94,12 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 			$this->get_library_connection_input()
 		);
 
+		$this->metabox_row(
+			__( 'Editor Height', 'insert-headers-and-footers' ),
+			$this->get_editor_height_input(),
+			'wpcode-editor-height'
+		);
+
 		wp_nonce_field( $this->action, $this->nonce_name );
 	}
 
@@ -152,6 +158,8 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 
 		$settings = array(
 			'headers_footers_mode' => isset( $_POST['headers_footers_mode'] ),
+			'editor_height_auto'   => isset( $_POST['editor_height_auto'] ),
+			'editor_height'        => isset( $_POST['editor_height'] ) ? absint( $_POST['editor_height'] ) : 300,
 		);
 
 		wpcode()->settings->bulk_update_options( $settings );
@@ -170,5 +178,31 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 		}
 
 		$this->set_success_message( __( 'Settings Saved.', 'insert-headers-and-footers' ) );
+	}
+
+	/**
+	 * Allow users to change the code editor height.
+	 *
+	 * @return string
+	 */
+	public function get_editor_height_input() {
+		$editor_auto_height = boolval( wpcode()->settings->get_option( 'editor_height_auto' ) );
+		$editor_height      = wpcode()->settings->get_option( 'editor_height', 300 );
+
+		$html = sprintf( '<input type="number" min="100" value="%1$d" id="wpcode-editor-height" name="editor_height" %2$s />',
+			absint( $editor_height ),
+			disabled( $editor_auto_height, true, false )
+		);
+		$html .= $this->get_checkbox_toggle(
+			$editor_auto_height,
+			'editor_height_auto'
+		);
+		$html .= '<label for="editor_height_auto">' . __( 'Auto height', 'insert-headers-and-footers' ) . '</label>';
+
+		$html .= '<p class="description">';
+		$html .= esc_html__( 'Set the editor height in pixels or enable auto-grow so the code editor automatically grows in height with the code.', 'insert-headers-and-footers' );
+		$html .= '</p>';
+
+		return $html;
 	}
 }

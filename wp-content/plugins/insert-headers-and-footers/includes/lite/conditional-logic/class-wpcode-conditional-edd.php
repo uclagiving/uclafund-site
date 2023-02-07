@@ -31,7 +31,7 @@ class WPCode_Conditional_EDD_Lite extends WPCode_Conditional_Type {
 	 *
 	 * @return void
 	 */
-	protected function load_type_options() {
+	public function load_type_options() {
 		$this->options = array(
 			'edd_page' => array(
 				'label'   => __( 'EDD Page', 'insert-headers-and-footers' ),
