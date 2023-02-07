@@ -24,6 +24,7 @@ use  MediaCloud\Plugin\Tools\Storage\Driver\S3\S3StorageSettings ;
 use  MediaCloud\Plugin\Tools\Storage\Tasks\CleanUploadsTask ;
 use  MediaCloud\Plugin\Tools\Storage\Tasks\DeleteUploadsTask ;
 use  MediaCloud\Plugin\Tools\Storage\Tasks\FixMetadataTask ;
+use  MediaCloud\Plugin\Tools\Storage\Tasks\GenerateEwwwWebPTask ;
 use  MediaCloud\Plugin\Tools\Storage\Tasks\MigrateFromOtherTask ;
 use  MediaCloud\Plugin\Tools\Storage\Tasks\MigrateTask ;
 use  MediaCloud\Plugin\Tools\Storage\Tasks\RegenerateThumbnailTask ;
@@ -2094,9 +2095,16 @@ class StorageTool extends Tool
                     $new_url = $this->importOffloadMetadata( $post_id, $meta, $offloadS3Info );
                 } else {
                     $statelessInfo = get_post_meta( $post_id, 'sm_cloud', true );
+                    
                     if ( !empty($statelessInfo) ) {
                         $new_url = $this->importStatelessMetadata( $post_id, $meta, $statelessInfo );
+                    } else {
+                        $leopardInfo = get_post_meta( $post_id, '_nou_leopard_wom_amazonS3_info', true );
+                        if ( !empty($leopardInfo) ) {
+                            $new_url = $this->importLeopardMetadata( $post_id, $meta, $leopardInfo );
+                        }
                     }
+                
                 }
             
             }
@@ -2138,6 +2146,15 @@ class StorageTool extends Tool
         }
         $cdn = apply_filters( 'media-cloud/storage/override-cdn', StorageToolSettings::cdn() );
         $docCdn = apply_filters( 'media-cloud/storage/override-doc-cdn', StorageToolSettings::docCdn() );
+        $hasWebP = false;
+        $oldKey = $key = arrayPath( $meta, 's3/key', null );
+        
+        if ( !empty($this->settings->forceWebP) && !empty(arrayPath( $meta, 's3/formats/webp', null )) ) {
+            $hasWebP = true;
+            $oldKey = $key;
+            $key = arrayPath( $meta, 's3/formats/webp', null );
+        }
+        
         $type = typeFromMeta( $meta );
         $privacy = arrayPath( $meta, 's3/privacy', 'private' );
         $doSign = $this->client->usesSignedURLs( $type ) && $privacy != 'public-read' || $privacy !== 'public-read' && is_admin();
@@ -2147,9 +2164,9 @@ class StorageTool extends Tool
         if ( $doSign ) {
             
             if ( $privacy !== 'public-read' && is_admin() ) {
-                $url = $this->client->presignedUrl( $meta['s3']['key'], $this->client->signedURLExpirationForType( $type ) );
+                $url = $this->client->presignedUrl( $key, $this->client->signedURLExpirationForType( $type ) );
             } else {
-                $url = $this->client->url( $meta['s3']['key'], $type );
+                $url = $this->client->url( $key, $type );
             }
             
             
@@ -2172,7 +2189,7 @@ class StorageTool extends Tool
         } else {
             
             if ( !empty($cdn) && empty($ignoreCDN) ) {
-                return $cdn . '/' . $meta['s3']['key'];
+                return $cdn . '/' . $key;
             } else {
                 
                 if ( isset( $meta['s3']['url'] ) ) {
@@ -2187,11 +2204,14 @@ class StorageTool extends Tool
                             'png'
                         );
                         if ( !in_array( $ext, $image_exts ) ) {
-                            return trim( $docCdn, '/' ) . '/' . $meta['s3']['key'];
+                            return trim( $docCdn, '/' ) . '/' . $key;
                         }
                     }
                     
                     $new_url = $meta['s3']['url'];
+                    if ( $hasWebP && $this->settings->forceWebP ) {
+                        $new_url = str_replace( $oldKey, $key, $new_url );
+                    }
                     if ( !empty($new_url) ) {
                         if ( strpos( $new_url, '//s3-.amazonaws' ) !== false ) {
                             $new_url = str_replace( '//s3-.amazonaws', '//s3.amazonaws', $new_url );
@@ -2203,10 +2223,10 @@ class StorageTool extends Tool
             }
             
             try {
-                return $this->client->url( $meta['s3']['key'] );
+                return $this->client->url( $key );
             } catch ( \Exception $ex ) {
                 Logger::error(
-                    "Error trying to generate url for {$meta['s3']['key']}.  Message:" . $ex->getMessage(),
+                    "Error trying to generate url for {$key}.  Message:" . $ex->getMessage(),
                     [],
                     __METHOD__,
                     __LINE__
@@ -4902,7 +4922,7 @@ MIGRATED;
             if ( empty($region) ) {
                 return "https://s3.amazonaws.com/{$bucket}/{$key}";
             }
-            return "https://s3-{$region}.amazonaws.com/{$bucket}/{$key}";
+            return "https://s3.{$region}.amazonaws.com/{$bucket}/{$key}";
         }
         
         if ( $provider === 'do' ) {
@@ -4912,6 +4932,127 @@ MIGRATED;
             return "https://storage.googleapis.com/{$bucket}/{$key}";
         }
         return null;
+    }
+    
+    /**
+     * Generates a URL from Leopard Offload
+     *
+     * @param $provider
+     * @param $region
+     * @param $bucket
+     * @param $key
+     *
+     * @return string|null
+     *
+     * @throws StorageException
+     */
+    private function getLeopardURL(
+        string $provider,
+        $region,
+        $bucket,
+        $key
+    )
+    {
+        $prefixFix = Environment::Option( 'mcloud-leopard-prefix-fix', null, false );
+        if ( !empty($prefixFix) ) {
+            $key = $prefixFix . '/' . $key;
+        }
+        if ( $provider === StorageToolSettings::driver() && $bucket === $this->client->bucket() ) {
+            return $this->client->url( $key );
+        }
+        
+        if ( $provider === 's3' ) {
+            if ( empty($region) ) {
+                return "https://s3.amazonaws.com/{$bucket}/{$key}";
+            }
+            return "https://s3.{$region}.amazonaws.com/{$bucket}/{$key}";
+        }
+        
+        if ( $provider === 'do' ) {
+            return "https://{$region}.digitaloceanspaces.com/{$bucket}/{$key}";
+        }
+        if ( $provider === 'google' ) {
+            return "https://storage.googleapis.com/{$bucket}/{$key}";
+        }
+        return null;
+    }
+    
+    private function importLeopardMetadata( $postId, $meta, $leopardMetadata )
+    {
+        $provider = arrayPath( $leopardMetadata, 'provider', 'aws' );
+        $bucket = arrayPath( $leopardMetadata, 'bucket', null );
+        $region = arrayPath( $leopardMetadata, 'region', null );
+        $key = arrayPath( $leopardMetadata, 'key', null );
+        $prefix = Environment::Option( 'mcloud-leopard-prefix-fix', null, false );
+        if ( empty($provider) || empty($bucket) || empty($key) || !in_array( $provider, [
+            's3',
+            'aws',
+            'do',
+            'gcp'
+        ] ) ) {
+            return null;
+        }
+        $providerMap = [
+            'aws' => 's3',
+            's3'  => 's3',
+            'do'  => 'do',
+            'gcp' => 'google',
+        ];
+        $provider = $providerMap[$provider];
+        $mime = get_post_mime_type( $postId );
+        $hasMeta = !empty($meta);
+        if ( empty($meta) ) {
+            $meta = [];
+        }
+        $s3Info = [
+            'url'       => $this->getLeopardURL(
+            $provider,
+            $region,
+            $bucket,
+            $key
+        ),
+            'provider'  => $provider,
+            'bucket'    => $bucket,
+            'key'       => ( !empty($prefix) ? $prefix . '/' . $key : $key ),
+            'privacy'   => 'public-read',
+            'v'         => MEDIA_CLOUD_INFO_VERSION,
+            'mime-type' => $mime,
+        ];
+        if ( $provider !== 'google' ) {
+            $s3Info['region'] = $region;
+        }
+        $meta['s3'] = $s3Info;
+        
+        if ( isset( $meta['sizes'] ) ) {
+            $baseKey = ltrim( pathinfo( '/' . $key, PATHINFO_DIRNAME ), '/' );
+            $newSizes = [];
+            foreach ( $meta['sizes'] as $size => $sizeData ) {
+                $sizeKey = trailingslashit( $baseKey ) . $sizeData['file'];
+                $sizeS3Info = $s3Info;
+                $sizeS3Info['url'] = $this->getLeopardURL(
+                    $provider,
+                    $region,
+                    $bucket,
+                    $sizeKey
+                );
+                $sizeS3Info['key'] = ( !empty($prefix) ? $prefix . '/' . $sizeKey : $sizeKey );
+                $sizeS3Info['mime-type'] = $sizeData['mime-type'];
+                $sizeData['s3'] = $sizeS3Info;
+                $newSizes[$size] = $sizeData;
+            }
+            $meta['sizes'] = $newSizes;
+        }
+        
+        
+        if ( $hasMeta ) {
+            update_post_meta( $postId, '_wp_attachment_metadata', $meta );
+        } else {
+            update_post_meta( $postId, 'ilab_s3_info', [
+                's3' => $s3Info,
+            ] );
+        }
+        
+        return $s3Info['url'];
     }
     
     /**
@@ -5148,9 +5289,16 @@ MIGRATED;
             $new_url = $this->importOffloadMetadata( $postId, $meta, $offloadS3Info );
         } else {
             $statelessInfo = get_post_meta( $postId, 'sm_cloud', true );
+            
             if ( !empty($statelessInfo) ) {
                 $new_url = $this->importStatelessMetadata( $postId, $meta, $statelessInfo );
+            } else {
+                $leopardInfo = get_post_meta( $postId, '_nou_leopard_wom_amazonS3_info', true );
+                if ( !empty($leopardInfo) ) {
+                    $new_url = $this->importLeopardMetadata( $postId, $meta, $leopardInfo );
+                }
             }
+        
         }
         
         return !empty($new_url);

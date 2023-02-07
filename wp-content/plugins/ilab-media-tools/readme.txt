@@ -5,7 +5,7 @@ Requires at least: 4.9
 Tested up to: 6.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 4.5.11
+Stable tag: 4.5.19
 Requires PHP: 7.4
 
 Automatically store media on Amazon S3, Cloudflare R2, Google Cloud Storage, DigitalOcean Spaces + others. Serve CSS/JS assets through CDNs.  Integrate with Imgix.
@@ -104,6 +104,51 @@ Imgix is a content delivery network with a twist.  In addition to distributing y
 
 
 == Changelog ==
+
+= 4.5.19 - 12/9/2022 =
+
+* Added `--skip-processed` flag to `mediacloud:storage makewebp` command to skip any attachments that already have webp
+  metadata associated with them. (Premium)
+* Added a setting to *Cloud Storage* settings called *Force WebP* that forces Media Cloud to return .webp urls for images
+  that have webp metadata associated with them.  Note this does not do any sort of content negotiation or browser
+  sniffing, it simply returns the webp url for the image.  Consider that only IE 11 and much older versions of Safari
+  do not support webp.
+
+= 4.5.17 - 12/8/2022 =
+
+* Added `wp mediacloud:storage syncAllLocal` command to download all cloud storage files to your local server.
+* Added integration for WPForms to automatically upload files to the cloud. (Premium)
+* Added task to migrate existing WPForms entries to cloud storage. (Premium)
+* Added new **Generate EWW WebP** task to generate webp files from images on cloud storage.  EWWW Image Optimization
+  plugin must be installed and activated and working in local mode (NOT cloud mode).  (Premium)
+* Added `wp mediacloud:storage makewebp` command to generate webp files using EWWW (see above).  (Premium)
+* Updated Freemius to latest version.
+
+= 4.5.16 - 12/4/2022 =
+
+* Added integration for Gravity Forms to automatically upload files to the cloud.  (Premium)
+* Added task to migrate existing Gravity Forms entries to cloud storage.  (Premium)
+
+= 4.5.15 - 12/1/2022 =
+
+* Fix for edge case when migrating Offload Media and Leopard Offload links.
+
+= 4.5.14 - 11/30/2022 =
+
+* Media Cloud will now import setting from Leopard Offload if you are upgrading.  This only works for S3 and S3
+  compatible cloud storage.  If you are using Google, you will have to set that up manually.
+* When upgrading from Leopard Offload, your links will be migrated as needed, but you can manually run a background
+  task to do them all in one go.
+* If using Leopard Offload with WooCommerce, after migrating to Media Cloud you must run the command line
+  tool `wp mediacloud:integrations fixLeopardWooLinks` to replace the weird link shortcode that Leopard Offload uses.
+  This tool is only in the premium version.  (Premium)
+
+= 4.5.12 - 11/25/2022 =
+
+* Workaround for a bug in Fluent Forms when Fluent Support is integrated with Fluent Forms, for example when you are
+  creating tickets in Fluent Support via a Fluent Form.  (Premium)
+* Give a different error message if PHP_MAJOR_VERSION is not defined.
+* Updated to latest Freemius version.
 
 = 4.5.11 - 11/09/2022 =
 
