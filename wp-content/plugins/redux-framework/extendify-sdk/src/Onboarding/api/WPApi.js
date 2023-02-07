@@ -23,6 +23,9 @@ export const trashPost = (postId, postType) =>
 export const getPost = (postSlug, type = 'post') =>
     api.get(`${window.extOnbData.wpRoot}wp/v2/${type}s?slug=${postSlug}`)
 
+export const getPageById = (pageId) =>
+    api.get(`${window.extOnbData.wpRoot}wp/v2/pages/${pageId}`)
+
 export const installPlugin = async (plugin) => {
     // Fail silently if no slug is provided
     if (!plugin?.wordpressSlug) return
@@ -67,6 +70,7 @@ export const updateTemplatePart = (part, content) =>
         type: 'wp_template_part',
         status: 'publish',
         description: sprintf(
+            // translators: %s is the name of the product, Extendify Launch
             __('Added by %s', 'extendify'),
             'Extendify Launch',
         ),
@@ -112,14 +116,25 @@ export const addLaunchPagesToNav = (
         replace =
             '<!-- wp:page-list {"isNavigationChild":true,"showSubmenuIcon":true,"openSubmenusOnClick":false} /-->'
     const pageListItems = pages
-        .map(
-            (page) =>
-                `<!-- wp:navigation-link {"label":"${
-                    page.title
-                }","type":"page","id":${pageIds[page.slug].id},"url":"/${
-                    page.slug
-                }","kind":"post-type","isTopLevelLink":true} /-->`,
-        )
+        .map((page) => {
+            return pageIds[page.slug]?.id || page.id
+                ? `<!-- wp:navigation-link {
+                        "label":"${page.title}",
+                        "type":"page",
+                        "id":${pageIds?.[page.slug]?.id ?? page.id},
+                        "url":"/${page.slug}",
+                        "kind":"post-type",
+                        "isTopLevelLink":true
+                    } /-->`
+                : `<!-- wp:navigation-link {
+                        "label":"${page.title}",
+                        "url":"/${page.slug}",
+                        "kind":"custom",
+                        "isTopLevelLink":true
+                    } /-->`
+        })
         .join('')
     return rawCode.replace(replace, pageListItems)
 }
+
+export const getActivePlugins = () => api.get('onboarding/active-plugins')

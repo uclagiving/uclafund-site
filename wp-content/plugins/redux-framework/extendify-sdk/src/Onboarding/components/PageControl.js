@@ -1,3 +1,4 @@
+import { useEffect, useState } from '@wordpress/element'
 import { __ } from '@wordpress/i18n'
 import classNames from 'classnames'
 import { useGlobalStore } from '@onboarding/state/Global'
@@ -20,7 +21,8 @@ export const PageControl = () => {
                         type="button"
                         title={__('Exit Launch', 'extendify')}
                         onMouseEnter={setExitButtonHovered}
-                        onClick={openExitModal}>
+                        onClick={openExitModal}
+                        data-test="exit-launch">
                         <span className="dashicons dashicons-no-alt text-white md:text-black"></span>
                     </button>
                 </div>
@@ -34,7 +36,8 @@ export const PageControl = () => {
                     <button
                         className="flex items-center px-4 py-3 font-medium button-focus text-gray-900 bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 bg-transparent"
                         type="button"
-                        onClick={previousPage}>
+                        onClick={previousPage}
+                        data-test="back-button">
                         <RightArrowIcon className="h-5 w-5" />
                         {__('Back', 'extendify')}
                     </button>
@@ -44,7 +47,8 @@ export const PageControl = () => {
                         className="flex items-center px-4 py-3 font-medium button-focus text-gray-900 bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 bg-transparent"
                         type="button"
                         onMouseEnter={setExitButtonHovered}
-                        onClick={openExitModal}>
+                        onClick={openExitModal}
+                        data-test="exit-button">
                         <RightArrowIcon className="h-5 w-5" />
                         {__('Exit Launch', 'extendify')}
                     </button>
@@ -61,17 +65,29 @@ const NextButton = () => {
     const canLaunch = useUserSelectionStore((state) => state.canLaunch())
     const onLastPage = currentPageIndex === totalPages - 1
     const currentPageKey = Array.from(pages.keys())[currentPageIndex]
-    const pageState = pages.get(currentPageKey).state.getState()
+    const pageState = pages.get(currentPageKey).state
+    const [canProgress, setCanProgress] = useState(false)
+    const showNextButton = () =>
+        window.extOnbData?.activeTests?.['launch-site-vs-next'] === 'A'
+
+    useEffect(() => {
+        setCanProgress(pageState?.getState()?.ready)
+        return pageState.subscribe(({ ready }) => setCanProgress(ready))
+    }, [pageState, currentPageIndex])
 
     if (canLaunch && onLastPage) {
         return (
             <button
-                className="px-4 py-3 font-bold bg-partner-primary-bg text-partner-primary-text button-focus"
+                className="flex items-center px-4 py-3 font-bold bg-partner-primary-bg text-partner-primary-text button-focus"
                 onClick={() => {
                     useGlobalStore.setState({ generating: true })
                 }}
-                type="button">
-                {__('Launch site', 'extendify')}
+                type="button"
+                data-test="next-button">
+                {showNextButton
+                    ? __('Next', 'extendify')
+                    : __('Launch site', 'extendify')}
+                {showNextButton ? <LeftArrowIcon className="h-5 w-5" /> : null}
             </button>
         )
     }
@@ -80,8 +96,9 @@ const NextButton = () => {
         <button
             className="flex items-center px-4 py-3 font-bold bg-partner-primary-bg text-partner-primary-text button-focus"
             onClick={nextPage}
-            disabled={!pageState.ready}
-            type="button">
+            disabled={!canProgress}
+            type="button"
+            data-test="next-button">
             {__('Next', 'extendify')}
             <LeftArrowIcon className="h-5 w-5" />
         </button>

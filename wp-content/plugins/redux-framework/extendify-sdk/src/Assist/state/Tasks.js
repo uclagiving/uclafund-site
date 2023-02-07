@@ -6,6 +6,7 @@ import { getTaskData, saveTaskData } from '../api/Data'
 const state = (set, get) => ({
     // These are tests the user is in progress of completing.
     // Not to be confused with tasks that are in progress.
+    // ! This should have probably been in Global or elsewhere?
     activeTests: [],
     // These are tasks that the user has seen. When added,
     // they will look like [{ key, firstSeenAt }]
@@ -15,6 +16,11 @@ const state = (set, get) => ({
     // so use ?.completedAt to check if it's completed with the (.?)
     completedTasks: [],
     inProgressTasks: [],
+    // Available tasks that are actually shown to the user
+    // Each tasks is responsible for checking if it's available
+    // Use this for keeping a total count of available tasks,
+    // and not for showing the task itself
+    availableTasks: [],
     isCompleted(taskId) {
         return get().completedTasks.some((task) => task?.id === taskId)
     },
@@ -31,6 +37,20 @@ const state = (set, get) => ({
                 },
             ],
         }))
+    },
+    // Marks the task as dismissed: true
+    dismissTask(taskId) {
+        get().completeTask(taskId)
+        set((state) => {
+            const { completedTasks } = state
+            const task = completedTasks.find((task) => task.id === taskId)
+            return {
+                completedTasks: [
+                    ...completedTasks,
+                    { ...task, dismissed: true },
+                ],
+            }
+        })
     },
     isSeen(taskId) {
         return get().seenTasks.some((task) => task?.id === taskId)
@@ -61,6 +81,15 @@ const state = (set, get) => ({
         }
         get().completeTask(taskId)
     },
+    setAvailable(taskId) {
+        if (get().isAvailable(taskId)) return
+        set((state) => ({
+            availableTasks: [...state.availableTasks, taskId],
+        }))
+    },
+    isAvailable(taskId) {
+        return get().availableTasks.some((task) => task === taskId)
+    },
 })
 
 const storage = {
@@ -73,6 +102,12 @@ export const useTasksStore = create(
     persist(devtools(state, { name: 'Extendify Assist Tasks' }), {
         name: 'extendify-assist-tasks',
         getStorage: () => storage,
+        partialize: (state) => {
+            // return without availableTasks
+            // eslint-disable-next-line no-unused-vars
+            const { availableTasks, ...newState } = state
+            return newState
+        },
     }),
     state,
 )

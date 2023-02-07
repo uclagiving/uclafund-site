@@ -31,6 +31,20 @@ class DataController
     }
 
     /**
+     * Get Site type information.
+     *
+     * @return \WP_REST_Response
+     */
+    public static function getStylesList()
+    {
+        $response = Http::get('/styles-list');
+        return new \WP_REST_Response(
+            $response,
+            wp_remote_retrieve_response_code($response)
+        );
+    }
+
+    /**
      * Get styles with code template.
      *
      * @param \WP_REST_Request $request - The request.
@@ -112,20 +126,6 @@ class DataController
     }
 
     /**
-     * Create an order.
-     *
-     * @return \WP_REST_Response
-     */
-    public static function createOrder()
-    {
-        $response = Http::post('/create-order');
-        return new \WP_REST_Response(
-            $response,
-            wp_remote_retrieve_response_code($response)
-        );
-    }
-
-    /**
      * Fetch exit questions
      *
      * @return \WP_REST_Response
@@ -137,5 +137,15 @@ class DataController
             $response,
             wp_remote_retrieve_response_code($response)
         );
+    }
+
+    /**
+     * Just here to check for 200 (vs server rate limting)
+     *
+     * @return \WP_REST_Response
+     */
+    public static function ping()
+    {
+        return new \WP_REST_Response(true, 200);
     }
 }

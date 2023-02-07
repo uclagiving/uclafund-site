@@ -2,6 +2,7 @@ import { getHeadersAndFooters } from './WPApi'
 import { Axios as api } from './axios'
 
 export const getSiteTypes = () => api.get('onboarding/site-types')
+export const getStylesList = () => api.get('onboarding/styles-list')
 
 export const getStyles = async (data) => {
     // First get the header and footer code
@@ -36,8 +37,9 @@ export const getLayoutTypes = () => api.get('onboarding/layout-types')
 export const getTemplate = (data) =>
     api.get('onboarding/template', { params: data })
 
-export const createOrder = () => api.post('onboarding/create-order')
 export const getExitQuestions = () =>
     api.get('onboarding/exit-questions', {
         timeout: 1500,
     })
+
+export const pingServer = () => api.get('onboarding/ping')
