@@ -46,6 +46,7 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 	 */
 	public function page_hooks() {
 		add_action( 'admin_init', array( $this, 'submit_listener' ) );
+		add_filter( 'wpcode_admin_js_data', array( $this, 'add_connect_strings' ) );
 	}
 
 	/**
@@ -80,6 +81,11 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 		);
 
 		$this->metabox_row(
+			__( 'License Key', 'insert-headers-and-footers' ),
+			$this->get_license_key_input()
+		);
+
+		$this->metabox_row(
 			__( 'Headers & Footers mode', 'insert-headers-and-footers' ),
 			$this->get_checkbox_toggle(
 				$header_and_footers,
@@ -89,6 +95,17 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 			'headers_footers_mode'
 		);
 
+		$this->common_settings();
+
+		wp_nonce_field( $this->action, $this->nonce_name );
+	}
+
+	/**
+	 * Move common settings to a separate method so we can use it in other versions of this page.
+	 *
+	 * @return void
+	 */
+	public function common_settings() {
 		$this->metabox_row(
 			__( 'WPCode Library Connection', 'insert-headers-and-footers' ),
 			$this->get_library_connection_input()
@@ -100,7 +117,21 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 			'wpcode-editor-height'
 		);
 
-		wp_nonce_field( $this->action, $this->nonce_name );
+		$this->metabox_row(
+			__( 'Error Logging', 'insert-headers-and-footers' ),
+			$this->get_checkbox_toggle(
+				wpcode()->settings->get_option( 'error_logging' ),
+				'wpcode-error-logging',
+				sprintf(
+				// Translators: %1$s: opening anchor tag, %2$s: closing anchor tag.
+					esc_html__( 'Log errors thrown by snippets? %1$sView Logs%2$s', 'insert-headers-and-footers' ),
+					'<a href="' . esc_url( admin_url( 'admin.php?page=wpcode-tools&view=logs' ) ) . '">',
+					'</a>'
+				),
+				1
+			),
+			'wpcode-error-logging'
+		);
 	}
 
 	/**
@@ -160,6 +191,7 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 			'headers_footers_mode' => isset( $_POST['headers_footers_mode'] ),
 			'editor_height_auto'   => isset( $_POST['editor_height_auto'] ),
 			'editor_height'        => isset( $_POST['editor_height'] ) ? absint( $_POST['editor_height'] ) : 300,
+			'error_logging'        => isset( $_POST['wpcode-error-logging'] ),
 		);
 
 		wpcode()->settings->bulk_update_options( $settings );
@@ -189,10 +221,12 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 		$editor_auto_height = boolval( wpcode()->settings->get_option( 'editor_height_auto' ) );
 		$editor_height      = wpcode()->settings->get_option( 'editor_height', 300 );
 
-		$html = sprintf( '<input type="number" min="100" value="%1$d" id="wpcode-editor-height" name="editor_height" %2$s />',
+		$html = sprintf(
+			'<input type="number" min="100" value="%1$d" id="wpcode-editor-height" name="editor_height" %2$s />',
 			absint( $editor_height ),
 			disabled( $editor_auto_height, true, false )
 		);
+
 		$html .= $this->get_checkbox_toggle(
 			$editor_auto_height,
 			'editor_height_auto'
@@ -204,5 +238,58 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 		$html .= '</p>';
 
 		return $html;
+	}
+
+	/**
+	 * Get the license key input.
+	 *
+	 * @return string
+	 */
+	public function get_license_key_input() {
+		ob_start();
+		?>
+		<div class="wpcode-metabox-form">
+			<p><?php esc_html_e( 'You\'re using WPCode Lite - no license needed. Enjoy!', 'insert-headers-and-footers' ); ?>
+				<img draggable="false" role="img" class="emoji" alt="🙂" src="https://s.w.org/images/core/emoji/14.0.0/svg/1f642.svg">
+			</p>
+			<p>
+				<?php
+				printf(
+				// Translators: %1$s - Opening anchor tag, do not translate. %2$s - Closing anchor tag, do not translate.
+					esc_html__( 'To unlock more features consider %1$supgrading to PRO%2$s.', 'insert-headers-and-footers' ),
+					'<strong><a href="' . esc_url( wpcode_utm_url( 'https://wpcode.com/lite/', 'settings-license', 'upgrading-to-pro' ) ) . '" target="_blank" rel="noopener noreferrer">',
+					'</a></strong>'
+				)
+				?>
+			</p>
+			<hr>
+			<p><?php esc_html_e( 'Already purchased? Simply enter your license key below to enable WPCode PRO!', 'insert-headers-and-footers' ); ?></p>
+			<p>
+				<input type="password" class="wpcode-input-text" id="wpcode-settings-upgrade-license-key" placeholder="<?php esc_attr_e( 'Paste license key here', 'insert-headers-and-footers' ); ?>" value="">
+				<button type="button" class="wpcode-button" id="wpcode-settings-connect-btn">
+					<?php esc_html_e( 'Verify Key', 'insert-headers-and-footers' ); ?>
+				</button>
+			</p>
+		</div>
+		<?php
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Add the strings for the connect page to the JS object.
+	 *
+	 * @param array $data The localized data we already have.
+	 *
+	 * @return array
+	 */
+	public function add_connect_strings( $data ) {
+		$data['oops']                = esc_html__( 'Oops!', 'insert-headers-and-footers' );
+		$data['ok']                  = esc_html__( 'OK', 'insert-headers-and-footers' );
+		$data['almost_done']         = esc_html__( 'Almost Done', 'insert-headers-and-footers' );
+		$data['plugin_activate_btn'] = esc_html__( 'Activate', 'insert-headers-and-footers' );
+		$data['server_error']        = esc_html__( 'Unfortunately there was a server connection error.', 'insert-headers-and-footers' );
+
+		return $data;
 	}
 }

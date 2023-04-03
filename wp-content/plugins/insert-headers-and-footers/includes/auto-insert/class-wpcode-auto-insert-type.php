@@ -92,6 +92,13 @@ abstract class WPCode_Auto_Insert_Type {
 	public $upgrade_button = '';
 
 	/**
+	 * Category used for displaying this type in the admin.
+	 *
+	 * @var string
+	 */
+	public $category = '';
+
+	/**
 	 * Start the auto insertion.
 	 */
 	public function __construct() {

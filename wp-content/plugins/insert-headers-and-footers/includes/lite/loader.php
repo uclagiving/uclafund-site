@@ -14,6 +14,8 @@ if ( is_admin() || defined( 'DOING_CRON' ) && DOING_CRON ) {
 	require_once WPCODE_PLUGIN_PATH . 'includes/lite/admin/notices.php';
 	// Lite-specific admin page loader.
 	require_once WPCODE_PLUGIN_PATH . 'includes/lite/admin/class-wpcode-admin-page-loader-lite.php';
+	// Connect to upgrade.
+	require_once WPCODE_PLUGIN_PATH . 'includes/lite/admin/class-wpcode-connect.php';
 }
 
 add_action( 'plugins_loaded', 'wpcode_plugins_loaded_load_lite_files', 2 );
@@ -28,10 +30,14 @@ function wpcode_plugins_loaded_load_lite_files() {
 	require_once WPCODE_PLUGIN_PATH . 'includes/lite/auto-insert/class-wpcode-auto-insert-woocommerce.php';
 	// Load EDD auto-insert locations.
 	require_once WPCODE_PLUGIN_PATH . 'includes/lite/auto-insert/class-wpcode-auto-insert-edd.php';
+	// Load the insert-anywhere class.
+	require_once WPCODE_PLUGIN_PATH . 'includes/lite/auto-insert/class-wpcode-auto-insert-anywhere.php';
 	// Load Device type conditional logic.
 	require_once WPCODE_PLUGIN_PATH . 'includes/lite/conditional-logic/class-wpcode-conditional-device.php';
 	// Load WooCommerce conditional logic.
 	require_once WPCODE_PLUGIN_PATH . 'includes/lite/conditional-logic/class-wpcode-conditional-woocommerce.php';
 	// Load EDD conditional logic.
 	require_once WPCODE_PLUGIN_PATH . 'includes/lite/conditional-logic/class-wpcode-conditional-edd.php';
+	// Load Schedule conditional logic.
+	require_once WPCODE_PLUGIN_PATH . 'includes/lite/conditional-logic/class-wpcode-conditional-schedule.php';
 }
