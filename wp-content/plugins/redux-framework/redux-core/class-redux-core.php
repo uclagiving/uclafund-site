@@ -135,12 +135,13 @@ if ( ! class_exists( 'Redux_Core', false ) ) {
 		 */
 		public static $welcome = null;
 
+		// TODO: Delete when stable.
 		/**
 		 * Flag for Extendify Template enabled status.
 		 *
 		 * @var bool
 		 */
-		public static $extendify_templates_enabled = true;
+		// public static $extendify_templates_enabled = true;
 
 		/**
 		 * Creates instance of class.
@@ -278,6 +279,8 @@ if ( ! class_exists( 'Redux_Core', false ) ) {
 
 			Redux_Functions_Ex::register_class_path( 'Redux', dirname( __FILE__ ) . '/inc/classes' );
 			Redux_Functions_Ex::register_class_path( 'Redux', dirname( __FILE__ ) . '/inc/welcome' );
+			Redux_Functions_Ex::load_extendify_css();
+
 			spl_autoload_register( array( $this, 'register_classes' ) );
 
 			self::$welcome = new Redux_Welcome();

@@ -551,7 +551,9 @@ if ( ! class_exists( 'Redux_Enqueue', false ) ) {
 			$this->build_local_array( $core, 'sanitize' );
 
 			if ( empty( $core->transients['notices'] ) ) {
-				unset( $core->transients['notices'] );
+				if ( isset( $core->transients['notices'] ) ) {
+					unset( $core->transients['notices'] );
+				}
 			}
 		}
 
@@ -564,9 +566,6 @@ if ( ! class_exists( 'Redux_Enqueue', false ) ) {
 			if ( ! empty( $core->args['last_tab'] ) ) {
 				$this->localize_data['last_tab'] = $core->args['last_tab'];
 			}
-
-			$this->localize_data['core_instance'] = $core->core_instance;
-			$this->localize_data['core_thread']   = $core->core_thread;
 
 			$this->localize_data['font_weights'] = $this->args['font_weights'];
 
