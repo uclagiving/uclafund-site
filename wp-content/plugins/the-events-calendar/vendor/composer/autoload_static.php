@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitee763548c3ded9df455701a520e048bb
+class ComposerStaticInit0410029534bae8a1081a31f900b325ea
 {
     public static $prefixLengthsPsr4 = array (
         'T' => 
@@ -28,6 +28,8 @@ class ComposerStaticInitee763548c3ded9df455701a520e048bb
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'TEC\\Events\\Custom_Tables\\V1\\Activation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Activation.php',
+        'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Event_Cleaner' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Event_Cleaner.php',
+        'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Provider.php',
         'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence.php',
         'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence_Provider.php',
         'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Occurrences_Generator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Occurrences_Generator.php',
@@ -145,7 +147,10 @@ class ComposerStaticInitee763548c3ded9df455701a520e048bb
         'TEC\\Events\\Editor\\Full_Site\\Templates' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Templates.php',
         'TEC\\Events\\Installer\\Provider' => __DIR__ . '/../..' . '/src/Events/Installer/Provider.php',
         'TEC\\Events\\Integrations\\Integration_Abstract' => __DIR__ . '/../..' . '/src/Events/Integrations/Integration_Abstract.php',
+        'TEC\\Events\\Integrations\\Plugins\\Colbri_Page_Builder\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Colbri_Page_Builder/Provider.php',
+        'TEC\\Events\\Integrations\\Plugins\\Elementor\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Provider.php',
         'TEC\\Events\\Integrations\\Plugins\\Plugin_Integration' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Plugin_Integration.php',
+        'TEC\\Events\\Integrations\\Plugins\\Rank_Math\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Rank_Math/Provider.php',
         'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Events_Schema' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Events_Schema.php',
         'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Provider.php',
         'TEC\\Events\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Provider.php',
@@ -284,9 +289,9 @@ class ComposerStaticInitee763548c3ded9df455701a520e048bb
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitee763548c3ded9df455701a520e048bb::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitee763548c3ded9df455701a520e048bb::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitee763548c3ded9df455701a520e048bb::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit0410029534bae8a1081a31f900b325ea::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit0410029534bae8a1081a31f900b325ea::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit0410029534bae8a1081a31f900b325ea::$classMap;
 
         }, null, ClassLoader::class);
     }
