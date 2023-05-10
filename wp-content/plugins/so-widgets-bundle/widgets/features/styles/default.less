@@ -19,6 +19,7 @@
 @more_text_size: default;
 @more_text_color: default;
 @per_row: 3;
+@feature_space: 25px;
 
 @container_size: 84px;
 @icon_size: 24px;
@@ -29,16 +30,15 @@
 @responsive_breakpoint: 520px;
 
 .sow-features-list {
-	.clearfix();
+	display: flex;
+	flex-wrap: wrap;
 	& when ( @more_text_bottom_align = true ) {
 		align-items: stretch;
-		display: flex;
-		flex-wrap: wrap;
 	}
 
 	.sow-features-feature {
 		.box-sizing(border-box);
-		padding: 0 25px;
+		padding: 0 @feature_space;
 		position: relative;
 		& when ( @more_text_bottom_align = true ) {
 			display: flex;
@@ -49,17 +49,10 @@
 		@media (min-width: @responsive_breakpoint) {
 			&:nth-of-type(@{per_row}n+1) {
 				padding-left: 0;
-				clear: left;
 			}
 
 			&:nth-of-type(@{per_row}n) {
 				padding-right: 0;
-			}
-		}
-
-		& when ( @more_text_bottom_align = true ) {
-			.sow-icon-container {
-				margin: auto;
 			}
 		}
 		&.sow-icon-container-position-top {
@@ -67,6 +60,10 @@
 
 			.sow-icon-container {
 				margin-bottom: 10px;
+
+				& when not ( @per_row = 1 ) and not ( @more_text_bottom_align = true ) {
+					margin: 0 auto 10px;
+				}
 			}
 		}
 
@@ -94,11 +91,11 @@
 			}
 		}
 
-		& when ( @per_row = 1 ) {
-			&.sow-icon-container-position-top, &.sow-icon-container-position-bottom {
-				.sow-icon-container {
+		&.sow-icon-container-position-top, &.sow-icon-container-position-bottom {
+			.sow-icon-container {
+				& when ( @per_row = 1 ) {
 					& when ( @more_text_bottom_align = true ) {
-						margin: 0 auto;
+						margin: auto;
 					}
 					& when not ( @more_text_bottom_align = true ) {
 						margin: auto;
@@ -116,6 +113,10 @@
 
 			& when not ( @per_row = 1 ) {
 				margin: auto;
+			}
+
+			& when ( @more_text_bottom_align = true ) {
+					margin: auto;
 			}
 
 			&:not(.sow-container-none) [class^="sow-icon-"],
@@ -187,10 +188,6 @@
 				height: 100%;
 			}
 
-			& when not ( @more_text_bottom_align = true ) {
-				margin: auto;
-			}
-
 			> @{title_tag} {
 				.font(@title_font, @title_font_weight);
 				color: @title_color;
@@ -249,17 +246,17 @@
 		}
 	}
 
-	.sow-features-clear {
-		clear: both;
-	}
-
 	@media (max-width: @responsive_breakpoint) {
 		&.sow-features-responsive {
 			margin: 0;
 
-			.sow-features-feature {
+			.sow-features-feature,
+			.sow-features-feature .textwidget {
 				display: block !important;
-				float: none !important;
+
+			}
+
+			.sow-features-feature {
 				margin-bottom: 40px;
 				width: 100% !important;
 
@@ -268,8 +265,9 @@
 				}
 			}
 
-			.sow-features-clear {
-				clear: none;
+			.textwidget,
+			.textwidget > @{title_tag} {
+				text-align: center;
 			}
 
 			.sow-icon-container-position-left .sow-icon-container,

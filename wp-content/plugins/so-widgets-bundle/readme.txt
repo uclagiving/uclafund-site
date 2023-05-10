@@ -3,8 +3,8 @@ Tags: widget, button, slider, hero, google maps, image, carousel, lottie, featur
 Requires at least: 4.2
 Tested up to: 6.2
 Requires PHP: 5.6.20
-Stable tag: 1.47.0
-Build time: 2023-03-30T23:35:10+01:00
+Stable tag: 1.49.2
+Build time: 2023-05-03T22:12:59+01:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -105,6 +105,44 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.49.2 - 03 May 2023 =
+* Features: Various adjustments to improve desktop and mobile alignment.
+* Image: Update to allow automatic resizing for Custom Size when one value is added.
+* Videos: Internally convert short YouTube URLs to full URLs.
+* Multiple Media: Resolved issues related to removing items when multiple instances are present.
+
+= 1.49.1 - 26 April 2023 =
+* Contact Form: Added a check to ensure PHP GD is enabled before allowing Really Simple CAPTCHA.
+* Removed duplicate widget text area.
+* Resolved a Parallax Sliders - Legacy Parallax display issue.
+
+= 1.49.0 - 23 April 2023 =
+* Features: Updated CSS to Flexbox.
+* Features: Added `Space Between Each Feature` setting.
+* Features: Ensured all icon alignment states center align on mobile.
+* Features: Increased the responsive breakpoint` to 768px.
+* Price Table: Added color settings default values.
+* Slider: Improved slide background removal.
+* Social Media Buttons: Fixed potential `Undefined variable` error.
+* Video: Resolved an issue with YouTube video looping.
+* Widget Block: Added `siteorigin_widgets_block_exclude_widget`. Developers can exclude widgets from SiteOrigin Widgets Block cache.
+
+= 1.48.0 - 12 April 2023 =
+* Slider: Added Height and Responsive Height settings regardless of whether a Foreground Image is present.
+* Social Media Buttons: Added Wire Border Color settings.
+
+= 1.47.1 - 04 April 2023 =
+* Blog: Fixed Alternate Template featured image mobile collapse.
+* Post Carousel: Improved `Thumbnail Overlay` migration.
+* Post Carousel: Added `siteorigin_post_carousel_item_template` filter.
+* Sliders: Default enabled `Show slide background videos on mobile.`
+* Tabs: Addeded `siteorigin_widgets_tabs_always_scroll` filter.
+* Font Field: Resolved PHP 8 deprecated notice.
+* Textarea Form Field: Resolved PHP 8 deprecated notice.
+* Media Field: Minor styling improvement.
+* Improved missing widget detection.
+* PHP coding standards update.
 
 = 1.47.0 - 30 March 2023 =
 * Blog: Added a `Post Title HTML Tag` setting.
