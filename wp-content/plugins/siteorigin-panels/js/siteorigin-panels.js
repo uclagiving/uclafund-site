@@ -2283,6 +2283,15 @@ module.exports = {
 			serial.thingType = 'widget-model';
 		}
 
+		// Can Page Builder cross domain copy paste?
+		if (
+			typeof SiteOriginPremium == 'object' &&
+			typeof SiteOriginPremium.CrossDomainCopyPasteAddon == 'function' &&
+			typeof SiteOriginPremium.CrossDomainCopyPasteAddon.allowed == 'boolean'
+		) {
+			SiteOriginPremium.CrossDomainCopyPasteAddon().copy( serial );
+		}
+
 		// Store this in local storage
 		localStorage[ 'panels_clipboard_' + panelsOptions.user ] = JSON.stringify( serial );
 		return true;
@@ -4231,9 +4240,9 @@ module.exports = Backbone.View.extend( {
 
 		
 		// Check if we have preview markup available.
-		$panelsMetabox = $( '#siteorigin-panels-metabox' );
-		if ( $panelsMetabox.length ) {
-			this.contentPreview = $.parseHTML( $panelsMetabox.data( 'preview-markup' ) );
+		$previewContent = $( '.siteorigin-panels-preview-content' );
+		if ( $previewContent.length ) {
+			this.contentPreview = $previewContent.val();
 		}
 
 		// Set the builder for each dialog and render it.
@@ -7269,15 +7278,25 @@ module.exports = Backbone.View.extend( {
 					return el;
 				} );
 			}
+			var alphaImage = '';
+			$.fn.handleAlphaDefault = function() {
+				$colorResult = $( this ).parents( '.wp-picker-container' ).find( '.wp-color-result' );
+				$colorResult.css( 'background-image', $( this ).val() == '' ? 'none' : alphaImage );
+			}
 
 			// Trigger a change event when user selects a color.
 			panelsOptions.wpColorPickerOptions.change = function( e, ui ) {
 				setTimeout( function() {
+					$( e.target ).handleAlphaDefault();
 					$( e.target ).trigger( 'change' );
 				}, 100 );
 			};
 
 			this.$( '.so-wp-color-field' ).wpColorPicker( panelsOptions.wpColorPickerOptions );
+			alphaImage = this.$( '.wp-color-picker[data-alpha-enabled]' ).parents( '.wp-picker-container' ).find( '.wp-color-result' ).css( 'background-image' );
+			this.$( '.wp-color-picker[data-alpha-enabled]' ).on( 'change', function() {
+				$( this ).handleAlphaDefault();
+			} ).trigger( 'change' );
 		}
 
 		// Set up the image select fields

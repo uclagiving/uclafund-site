@@ -3,8 +3,8 @@ Tags: page builder, responsive, parallax, widgets, blocks, gallery, layout, grid
 Requires at least: 4.7
 Tested up to: 6.2
 Requires PHP: 5.6.20
-Stable tag: 2.20.6
-Build time: 2023-03-30T23:16:08+01:00
+Stable tag: 2.22.1
+Build time: 2023-05-06T21:16:32+01:00
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: https://siteorigin.com/downloads/premium/
@@ -106,6 +106,25 @@ We've tried to ensure that Page Builder is compatible with most plugin widgets. 
 SiteOrigin Premium includes access to our professional email support service, perfect for those times when you need fast and effective technical support. We're standing by to assist you in any way we can.
 
 == Changelog ==
+
+= 2.22.1 - 06 May 2023 =
+* Inline Styles: Restored tablet and mobile padding.
+
+= 2.22.0 - 05 May 2023 =
+* Color Settings: Added alpha channel support which specifies the opacity for a color.
+* Styles: Prevented `!important` from being added to tablet and mobile padding.
+* Classic Editor: Further SEO plugin compatibility changes on load.
+
+= 2.21.1 - 25 April 2023 =
+* Prevented potential new page JavaScript error.
+
+= 2.21.0 - 22 April 2023 =
+* Added an Inline Styles setting at `Settings > Page Builder > Layout`. Supports margin, border, and padding.
+* Classic Editor: Improved preview markup handling.
+* Rank Math: Removed `wp_targeted_link_rel` from sitemap compatibility.
+* SEO: Removed widget class requirement.
+* Added Cross Domain Copy Paste support.
+* PHP coding standards update.
 
 = 2.20.6 - 30 March 2023 =
 * Updated Tested up to tag.
