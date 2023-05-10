@@ -227,3 +227,116 @@ function wpcode_require_upgrader() {
 		require_once WPCODE_PLUGIN_PATH . 'includes/admin/class-wpcode-skin.php';
 	}
 }
+
+/**
+ * Get timezone string if the function doesn't exist. (WP < 5.3).
+ *
+ * @return string
+ * @since 2.0.10
+ */
+function wpcode_wp_timezone_string() {
+	if ( function_exists( 'wp_timezone_string' ) ) {
+		return wp_timezone_string();
+	}
+	$timezone_string = get_option( 'timezone_string' );
+
+	if ( $timezone_string ) {
+		return $timezone_string;
+	}
+
+	$offset  = (float) get_option( 'gmt_offset' );
+	$hours   = (int) $offset;
+	$minutes = ( $offset - $hours );
+
+	$sign      = ( $offset < 0 ) ? '-' : '+';
+	$abs_hour  = abs( $hours );
+	$abs_mins  = abs( $minutes * 60 );
+	$tz_offset = sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
+
+	return $tz_offset;
+}
+
+/**
+ * Add a new library username to be loaded in the WPCode Library.
+ *
+ * @param string $slug The username to load snippets for from the WPCode Library.
+ * @param string $label The label to display for the username in the library.
+ * @param string $version The version of the plugin/theme. Used to filter snippets that should not be loaded for newer versions.
+ *
+ * @return void
+ */
+function wpcode_register_library_username( $slug, $label = '', $version = '' ) {
+	if ( ! is_admin() || ! isset( wpcode()->library ) ) {
+		return;
+	}
+	wpcode()->library->register_library_username( $slug, $label, $version );
+}
+
+
+/**
+ * Load snippets from the library by a specific username.
+ * This function also loads the library if it hasn't been loaded yet so that it can be used in API endpoints.
+ * It also adds links to install snippets and checks for permissions.
+ *
+ * @param string $username The username to load snippets for from the WPCode Library.
+ *
+ * @return array
+ */
+function wpcode_get_library_snippets_by_username( $username ) {
+
+	wpcode_maybe_load_library();
+
+	$snippets = wpcode()->library->get_snippets_by_username( $username );
+	// Let's prepare this a bit for easier output.
+
+	// If there are no snippets just return an empty array.
+	if ( empty( $snippets['snippets'] ) ) {
+		return array();
+	}
+
+	$can_install           = current_user_can( 'wpcode_edit_snippets' );
+	$prepared              = array();
+	$used_library_snippets = wpcode()->library->get_used_library_snippets();
+	foreach ( $snippets['snippets'] as $snippet ) {
+		$snippet['installed'] = false;
+		// If the user can't install snippets, don't provide an install link.
+		if ( ! $can_install ) {
+			$url = '';
+		} elseif ( ! empty( $used_library_snippets[ $snippet['library_id'] ] ) ) {
+			// If the snippet is already installed link to the snippet so they can edit it.
+			$snippet['installed'] = true;
+			$url                  = wpcode()->library->get_edit_snippet_url( $used_library_snippets[ $snippet['library_id'] ] );
+		} else {
+			// If the snippet is not yet installed, add a link to install it.
+			$url = wpcode()->library->get_install_snippet_url( $snippet['library_id'] );
+		}
+		$snippet['install'] = $url;
+		$prepared[]         = $snippet;
+	}
+
+	return $prepared;
+}
+
+/**
+ * Make sure the WPCode library is loaded, along with the components it needs to run.
+ *
+ * @return void
+ */
+function wpcode_maybe_load_library() {
+	if ( ! isset( wpcode()->library ) ) {
+		// Snippet Library.
+		require_once WPCODE_PLUGIN_PATH . 'includes/class-wpcode-library.php';
+		// Load components needed for the library, if not loaded.
+		if ( ! isset( wpcode()->file_cache ) ) {
+			// File cache.
+			require_once WPCODE_PLUGIN_PATH . 'includes/class-wpcode-file-cache.php';
+			wpcode()->file_cache = new WPCode_File_Cache();
+		}
+		if ( ! isset( wpcode()->library_auth ) ) {
+			// Authentication for the library site.
+			require_once WPCODE_PLUGIN_PATH . 'includes/class-wpcode-library-auth.php';
+			wpcode()->library_auth = new WPCode_Library_Auth();
+		}
+		wpcode()->library = new WPCode_Library();
+	}
+}

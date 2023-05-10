@@ -443,6 +443,8 @@ class WPCode_Snippet {
 			$post_args['post_status'] = $this->active ? 'publish' : 'draft';
 		}
 
+		do_action( 'wpcode_before_snippet_save', $this );
+
 		if ( isset( $post_args['ID'] ) ) {
 			$insert_result = wp_update_post( $post_args );
 		} else {
@@ -456,6 +458,9 @@ class WPCode_Snippet {
 			return false;
 		}
 		$this->id = $insert_result;
+
+		// Remove recently deactivated snippet meta.
+		$this->reset_recently_deactivated();
 
 		if ( isset( $this->code_type ) ) {
 			wp_set_post_terms( $this->id, $this->code_type, $this->code_type_taxonomy );
@@ -671,7 +676,37 @@ class WPCode_Snippet {
 
 			// Rebuild cache to avoid the snippet being loaded again.
 			wpcode()->cache->cache_all_loaded_snippets();
+
+			// Finally, if all went well, let's mark the snippet as recently deactivated and keep a log of the time when this happened.
+			$this->set_recently_deactivated();
 		}
+	}
+
+	/**
+	 * Add a meta to mark the snippet as recently deactivated + keep a timestamp of when the snippet was deactivated.
+	 *
+	 * @return void
+	 */
+	public function set_recently_deactivated() {
+		update_post_meta( $this->get_id(), '_wpcode_recently_deactivated', time() );
+	}
+
+	/**
+	 * Remove the meta that marks the snippet as recently deactivated.
+	 *
+	 * @return void
+	 */
+	public function reset_recently_deactivated() {
+		delete_post_meta( $this->get_id(), '_wpcode_recently_deactivated' );
+	}
+
+	/**
+	 * Remove the meta that marks the snippet as recently deactivated.
+	 *
+	 * @return mixed
+	 */
+	public function get_recently_deactivated_time() {
+		return get_post_meta( $this->get_id(), '_wpcode_recently_deactivated', time() );
 	}
 
 	/**

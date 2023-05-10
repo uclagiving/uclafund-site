@@ -69,6 +69,7 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 	 */
 	public function output_content() {
 		$header_and_footers = wpcode()->settings->get_option( 'headers_footers_mode' );
+		$usage_tracking     = wpcode()->settings->get_option( 'usage_tracking' );
 
 		$description = __( 'This allows you to disable all Code Snippets functionality and have a single "Headers & Footers" item under the settings menu.', 'insert-headers-and-footers' );
 
@@ -96,6 +97,16 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 		);
 
 		$this->common_settings();
+
+		$this->metabox_row(
+			__( 'Allow Usage Tracking', 'insert-headers-and-footers' ),
+			$this->get_checkbox_toggle(
+				$usage_tracking,
+				'usage_tracking',
+				esc_html__( 'By allowing us to track usage data, we can better help you, as we will know which WordPress configurations, themes, and plugins we should test.', 'insert-headers-and-footers' )
+			),
+			'usage_tracking'
+		);
 
 		wp_nonce_field( $this->action, $this->nonce_name );
 	}
@@ -192,6 +203,7 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 			'editor_height_auto'   => isset( $_POST['editor_height_auto'] ),
 			'editor_height'        => isset( $_POST['editor_height'] ) ? absint( $_POST['editor_height'] ) : 300,
 			'error_logging'        => isset( $_POST['wpcode-error-logging'] ),
+			'usage_tracking'       => isset( $_POST['usage_tracking'] ),
 		);
 
 		wpcode()->settings->bulk_update_options( $settings );

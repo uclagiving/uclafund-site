@@ -381,7 +381,7 @@ abstract class WPCode_Auto_Insert_Type {
 	}
 
 	/**
-	 * Get the snippets for a location end echo them executed.
+	 * Get the snippets for a location and echo them executed.
 	 *
 	 * @param string $location_name The location to grab snippets for.
 	 *
@@ -392,5 +392,22 @@ abstract class WPCode_Auto_Insert_Type {
 		foreach ( $snippets as $snippet ) {
 			echo wpcode()->execute->get_snippet_output( $snippet );
 		}
+	}
+
+	/**
+	 * Get the snippets for a location and return them executed.
+	 *
+	 * @param string $location_name The location to grab snippets for.
+	 *
+	 * @return string
+	 */
+	public function get_location( $location_name ) {
+		$content  = '';
+		$snippets = $this->get_snippets_for_location( $location_name );
+		foreach ( $snippets as $snippet ) {
+			$content .= wpcode()->execute->get_snippet_output( $snippet );
+		}
+
+		return $content;
 	}
 }

@@ -59,7 +59,7 @@ class WPCode_Connect {
 		check_ajax_referer( 'wpcode_admin' );
 
 		// Check for permissions.
-		if ( ! \current_user_can( 'install_plugins' ) ) {
+		if ( ! current_user_can( 'install_plugins' ) ) {
 			wp_send_json_error( array( 'message' => esc_html__( 'You are not allowed to install plugins.', 'insert-headers-and-footers' ) ) );
 		}
 
@@ -87,7 +87,7 @@ class WPCode_Connect {
 
 			wp_send_json_success(
 				array(
-					'message' => \esc_html__( 'WPCode Pro is installed but not activated.', 'insert-headers-and-footers' ),
+					'message' => esc_html__( 'WPCode Pro is installed but not activated.', 'insert-headers-and-footers' ),
 					'reload'  => true,
 				)
 			);
@@ -108,8 +108,8 @@ class WPCode_Connect {
 				'oth'      => $oth,
 				'endpoint' => $endpoint,
 				'version'  => $version,
-				'siteurl'  => \admin_url(),
-				'homeurl'  => \home_url(),
+				'siteurl'  => admin_url(),
+				'homeurl'  => home_url(),
 				'redirect' => rawurldecode( base64_encode( $redirect ) ), // phpcs:ignore
 				'v'        => 2,
 				'php'      => phpversion(),

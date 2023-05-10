@@ -105,9 +105,10 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		add_action( 'admin_init', array( $this, 'submit_listener' ) );
 		add_action( 'admin_init', array( $this, 'set_code_type' ) );
 		add_filter( 'wpcode_admin_js_data', array( $this, 'add_conditional_rules_to_script' ) );
-		add_filter( 'admin_body_class', array( $this, 'maybe_show_tinymce' ) );
+		add_filter( 'admin_body_class', array( $this, 'body_class_code_type' ) );
 		add_filter( 'admin_body_class', array( $this, 'maybe_editor_height_auto' ) );
 		add_filter( 'admin_head', array( $this, 'maybe_editor_height' ) );
+		add_action( 'wpcode_admin_notices', array( $this, 'maybe_show_deactivated_notice' ) );
 	}
 
 	/**
@@ -323,7 +324,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 					<?php $this->field_code_type(); ?>
 				</div>
 			</div>
-			<textarea name="wpcode_snippet_code" id="wpcode_snippet_code" class="widefat" rows="8" <?php disabled( ! current_user_can( 'unfiltered_html' ) ); ?>><?php echo esc_textarea( $value ); ?></textarea>
+			<textarea name="wpcode_snippet_code" id="wpcode_snippet_code" class="widefat" rows="8" <?php disabled( ! current_user_can( 'unfiltered_html' ) ); ?> style="display:none;"><?php echo esc_textarea( $value ); ?></textarea>
 			<?php
 			wp_editor(
 				$value,
@@ -352,8 +353,11 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		<div class="wpcode-input-select">
 			<label for="wpcode_snippet_type"><?php esc_html_e( 'Code Type', 'insert-headers-and-footers' ); ?></label>
 			<select name="wpcode_snippet_type" id="wpcode_snippet_type">
-				<?php foreach ( $snippet_types as $key => $label ) { ?>
-					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $this->code_type, $key ); ?>>
+				<?php
+				foreach ( $snippet_types as $key => $label ) {
+					$class = wpcode()->execute->is_type_pro( $key ) ? 'wpcode-pro' : '';
+					?>
+					<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $this->code_type, $key ); ?> class="<?php echo esc_attr( $class ); ?>">
 						<?php echo esc_html( $label ); ?>
 					</option>
 				<?php } ?>
@@ -918,7 +922,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 				type="button">
 			<?php
 			wpcode_icon( 'cloud', 16, 12 );
-			esc_html_e( 'Save to Library', 'wpcode-premium' );
+			esc_html_e( 'Save to Library', 'insert-headers-and-footers' );
 			?>
 		</button>
 		<?php
@@ -1009,18 +1013,28 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		}
 
 		if ( $id ) {
-			wp_safe_redirect(
-				add_query_arg(
-					array(
-						'snippet_id' => $id,
-						'message'    => $message_number,
-						'error'      => wpcode()->error->get_last_error_message(),
-					),
-					$this->get_page_action_url()
-				)
-			);
+			wp_safe_redirect( $this->get_after_save_redirect_url( $id, $message_number ) );
 			exit;
 		}
+	}
+
+	/**
+	 * Get the URL to redirect to after a snippet is saved.
+	 *
+	 * @param int $snippet_id The snippet id that was just saved.
+	 * @param int $message_number The message number to display.
+	 *
+	 * @return string
+	 */
+	protected function get_after_save_redirect_url( $snippet_id, $message_number = 1 ) {
+		return add_query_arg(
+			array(
+				'snippet_id' => $snippet_id,
+				'message'    => $message_number,
+				'error'      => wpcode()->error->get_last_error_message(),
+			),
+			$this->get_page_action_url()
+		);
 	}
 
 	/**
@@ -1320,6 +1334,10 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		$data['datetime_title']         = __( 'Scheduling snippets is a Pro Feature', 'insert-headers-and-footers' );
 		$data['datetime_text']          = __( 'Upgrade to PRO today and unlock powerful scheduling options to limit when your snippet is active on the site.', 'insert-headers-and-footers' );
 		$data['datetime_url']           = wpcode_utm_url( 'https://wpcode.com/lite/', 'snippet-editor', 'schedule', 'modal' );
+		$data['blocks_title']           = __( 'Blocks snippets is a Pro Feature', 'insert-headers-and-footers' );
+		$data['blocks_text']            = __( 'Upgrade to PRO today and unlock building snippets using the Gutenberg Block Editor. Create templates using blocks and use the full power of WPCode to insert them in your site.', 'insert-headers-and-footers' );
+		$data['blocks_url']             = wpcode_utm_url( 'https://wpcode.com/lite/', 'snippet-editor', 'blocks', 'modal' );
+		$data['blocks_button']          = $data['save_to_library_button'];
 		$data['php_cl_location_notice'] = sprintf(
 		// Translators: %1$s Opening anchor tag. %2$s Closing anchor tag.
 			__( 'For better results using conditional logic with PHP snippets we automatically switched the auto-insert location to "Frontend Conditional Logic" that runs later. If you want to run the snippet earlier please switch back to "Run Everywhere" but note not all conditional logic options will be available. %1$sRead more%2$s', 'insert-headers-and-footers' ),
@@ -1331,16 +1349,14 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	}
 
 	/**
-	 * If we're showing a "text" code type let's display TinyMCE by default.
+	 * Add a body class specific to the code type of the current snippet.
 	 *
 	 * @param string $body_class The body class.
 	 *
 	 * @return string
 	 */
-	public function maybe_show_tinymce( $body_class ) {
-		if ( 'text' === $this->code_type ) {
-			$body_class .= ' wpcode-show-tinymce';
-		}
+	public function body_class_code_type( $body_class ) {
+		$body_class .= ' wpcode-code-type-' . $this->code_type;
 
 		return $body_class;
 	}
@@ -1532,7 +1548,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	public function field_code_revisions() {
 		$html = sprintf(
 			'<p>%s</p><hr />',
-			esc_html__( 'As you make changes to your snippet and save, you will get a list of previous versions with all the changes made in each revision. You can compare revisions to the current version or see changes as they have been saved by going through each revision. Any of the revisions can then be restored as needed.', 'wpcode-premium' )
+			esc_html__( 'As you make changes to your snippet and save, you will get a list of previous versions with all the changes made in each revision. You can compare revisions to the current version or see changes as they have been saved by going through each revision. Any of the revisions can then be restored as needed.', 'insert-headers-and-footers' )
 		);
 
 		$html .= $this->code_revisions_list();
@@ -1551,7 +1567,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	public function field_device_type() {
 		$html = sprintf(
 			'<p>%s</p>',
-			esc_html__( 'Limit where you want this snippet to be loaded by device type. By default, snippets are loaded on all devices.', 'wpcode-premium' )
+			esc_html__( 'Limit where you want this snippet to be loaded by device type. By default, snippets are loaded on all devices.', 'insert-headers-and-footers' )
 		);
 
 		$html .= '<div class="wpcode-separator"></div>';
@@ -1635,7 +1651,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 
 		$compare = sprintf(
 			'<span>%s</span>',
-			esc_html__( 'Compare', 'wpcode-premium' )
+			esc_html__( 'Compare', 'insert-headers-and-footers' )
 		);
 		$view    = sprintf(
 			'<span>%s</a>',
@@ -1645,7 +1661,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		foreach ( $revisions_data as $revisions_date ) {
 			$updated = sprintf(
 			// Translators: time since the revision has been updated.
-				esc_html__( 'Updated %s ago', 'wpcode-premium' ),
+				esc_html__( 'Updated %s ago', 'insert-headers-and-footers' ),
 				human_time_diff( $revisions_date )
 			);
 
@@ -1668,7 +1684,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 
 		$button_text = sprintf(
 		// Translators: The placeholder gets replaced with the extra number of revisions available.
-			esc_html__( '%d Other Revisions', 'wpcode-premium' ),
+			esc_html__( '%d Other Revisions', 'insert-headers-and-footers' ),
 			3
 		);
 
@@ -1761,5 +1777,77 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		$list_item .= '</li>';
 
 		return $list_item;
+	}
+
+	/**
+	 * Display a notice if the snippet loaded for editing has been recently deactivated.
+	 *
+	 * @return void
+	 */
+	public function maybe_show_deactivated_notice() {
+		if ( ! isset( $this->snippet ) ) {
+			return;
+		}
+		$recently_deactivated = $this->snippet->get_recently_deactivated_time();
+		if ( empty( $recently_deactivated ) ) {
+			return;
+		}
+
+		// Let's see if error logging is enabled.
+		$logging_enabled = wpcode()->settings->get_option( 'error_logging' );
+		if ( $logging_enabled ) {
+			$button_text = esc_html__( 'View Error Logs', 'insert-headers-and-footers' );
+			$button_url  = add_query_arg(
+				array(
+					'page' => 'wpcode-tools',
+					'view' => 'logs',
+				),
+				admin_url( 'admin.php' )
+			);
+		} else {
+			$button_text = esc_html__( 'Enable Error Logging', 'insert-headers-and-footers' );
+			$button_url  = add_query_arg(
+				array(
+					'page' => 'wpcode-settings',
+				),
+				admin_url( 'admin.php' )
+			);
+		}
+
+		?>
+		<div class="info fade notice is-dismissible">
+			<p>
+				<?php
+				printf(
+				// Translators: The placeholder gets replaced with the time passed since the snippet was deactivated.
+					esc_html__( 'This snippet was automatically deactivated due to an error at %1$s on %2$s (%3$s ago).', 'insert-headers-and-footers' ),
+					gmdate( 'H:i:s', $recently_deactivated ),
+					gmdate( 'Y-m-d', $recently_deactivated ),
+					human_time_diff( $recently_deactivated )
+				);
+				?>
+			</p>
+			<p>
+				<?php
+				if ( $logging_enabled ) {
+					esc_html_e( 'You can view the error log to get more details about the error that caused this.', 'insert-headers-and-footers' );
+				} else {
+					esc_html_e( 'You can enable error logging to get more details about the error that caused this.', 'insert-headers-and-footers' );
+				}
+				?>
+			</p>
+			<p>
+				<?php esc_html_e( 'This message will disappear when the snippet is updated.', 'insert-headers-and-footers' ); ?>
+			</p>
+			<p>
+				<a href="<?php echo esc_url( $button_url ); ?>" class="button button-primary">
+					<?php echo esc_html( $button_text ); ?>
+				</a>
+				<a href="<?php echo esc_url( wpcode_utm_url( 'https://wpcode.com/docs/php-error-handling-safe-mode/', 'snippet-deactivated-notice', 'edit-snippet' ) ); ?>" class="button button-secondary" target="_blank" rel="noopener noreferrer">
+					<?php esc_html_e( 'Learn More', 'insert-headers-and-footers' ); ?>
+				</a>
+			</p>
+		</div>
+		<?php
 	}
 }
