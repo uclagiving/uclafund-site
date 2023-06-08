@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WPCode Lite
  * Plugin URI: https://www.wpcode.com/
- * Version: 2.0.11
+ * Version: 2.0.12
  * Requires at least: 4.6
  * Requires PHP: 5.5
  * Tested up to: 6.1
@@ -267,6 +267,13 @@ class WPCode {
 	public $logger;
 
 	/**
+	 * Load the smart tags.
+	 *
+	 * @var WPCode_Smart_Tags
+	 */
+	public $smart_tags;
+
+	/**
 	 * Main instance of WPCode.
 	 *
 	 * @return WPCode
@@ -350,6 +357,8 @@ class WPCode {
 		require_once WPCODE_PLUGIN_PATH . 'includes/class-wpcode-install.php';
 		// Logging class.
 		require_once WPCODE_PLUGIN_PATH . 'includes/class-wpcode-file-logger.php';
+		// Smart tags class.
+		require_once WPCODE_PLUGIN_PATH . 'includes/class-wpcode-smart-tags.php';
 
 		if ( is_admin() || ( defined( 'DOING_CRON' ) && DOING_CRON ) ) {
 			require_once WPCODE_PLUGIN_PATH . 'includes/icons.php'; // This is not needed in the frontend atm.
@@ -409,6 +418,7 @@ class WPCode {
 			$this->notifications     = new WPCode_Notifications();
 			$this->admin_page_loader = new WPCode_Admin_Page_Loader_Lite();
 			$this->notice            = new WPCode_Notice();
+			$this->smart_tags        = new WPCode_Smart_Tags_Lite();
 
 			// Metabox class.
 			new WPCode_Metabox_Snippets_Lite();

@@ -82,13 +82,21 @@ abstract class WPCode_Metabox_Snippets {
 		if ( ! isset( $screen->id ) ) {
 			return;
 		}
-		add_filter( 'get_user_option_closedpostboxes_' . $screen->id, array( $this, 'add_metabox_to_user_closed' ) );
+		if ( apply_filters( 'wpcode_metabox_scripts_force_collapse', true, $screen ) ) {
+			add_filter(
+				'get_user_option_closedpostboxes_' . $screen->id,
+				array(
+					$this,
+					'add_metabox_to_user_closed',
+				)
+			);
+		}
 	}
 
 	/**
 	 * Add our metabox id to the array of closed metaboxes when the page loads.
 	 *
-	 * @param mixed $closed
+	 * @param mixed $closed The array of closed metaboxes.
 	 *
 	 * @return array
 	 */

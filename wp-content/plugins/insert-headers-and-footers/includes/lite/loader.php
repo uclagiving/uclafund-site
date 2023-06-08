@@ -20,6 +20,8 @@ if ( is_admin() || defined( 'DOING_CRON' ) && DOING_CRON ) {
 	require_once WPCODE_PLUGIN_PATH . 'includes/admin/class-wpcode-usage-tracking.php';
 	// Usage tracking lite.
 	require_once WPCODE_PLUGIN_PATH . 'includes/lite/admin/class-wpcode-usage-tracking-lite.php';
+	// Load smart tags class.
+	require_once WPCODE_PLUGIN_PATH . 'includes/lite/class-wpcode-smart-tags-lite.php';
 }
 
 add_action( 'plugins_loaded', 'wpcode_plugins_loaded_load_lite_files', 2 );

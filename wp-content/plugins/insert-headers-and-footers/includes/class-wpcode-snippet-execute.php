@@ -269,6 +269,10 @@ class WPCode_Snippet_Execute {
 
 		$error = false;
 
+		if ( ! empty( $snippet->attributes ) ) {
+			extract( $snippet->attributes, EXTR_SKIP ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
+		}
+
 		try {
 			eval( $code ); // phpcs:ignore Squiz.PHP.Eval.Discouraged
 		} catch ( Error $e ) {

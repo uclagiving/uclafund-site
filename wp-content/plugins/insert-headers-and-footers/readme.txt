@@ -4,7 +4,7 @@ Tags: code, css, php, footer, functions, content, facebook pixel, footer code, f
 Requires at least: 4.6
 Tested up to: 6.2
 Requires PHP: 5.5
-Stable tag: 2.0.11
+Stable tag: 2.0.12
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -307,6 +307,12 @@ Thank you
 Syed Balkhi
 
 == Changelog ==
+
+= 2.0.12 =
+* New: You can now add shortcode attributes and use them in snippets. Any attribute you define becomes available as a variable in PHP & Universal code snippets.
+* Tweak: We improved the way the editor is loaded when users enable the “Disable syntax highlighting when editing code” in their profile.
+* Tweak: We adjusted the way the editor gets refreshed when changing a snippet code type.
+* Fix: The Auto-Insert location was getting reset with every code type change.
 
 = 2.0.11 =
 * New: Automatically disabled snippets due to errors will now be highlighted in the list for easier debugging.
