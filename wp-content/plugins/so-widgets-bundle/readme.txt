@@ -3,8 +3,8 @@ Tags: widget, button, slider, hero, google maps, image, carousel, lottie, featur
 Requires at least: 4.2
 Tested up to: 6.2
 Requires PHP: 5.6.20
-Stable tag: 1.49.2
-Build time: 2023-05-03T22:12:59+01:00
+Stable tag: 1.50.0
+Build time: 2023-05-16T22:03:06+01:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -105,6 +105,14 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.50.0 - 16 May 2023 =
+* Button: Update to only apply Hover Text Color if Use Hover Effects enabled.
+* Blog: Corrected Portfolio Hover Overlay Opacity migration.
+* Carousel: Added compatibility for Virtue Premium home slider.
+* Contact: Update to apply `Fields` design settings to `select` field.
+* Image: Added `Custom Size > Enforce Dimensions` checkbox.
+* Color Fields: Added alpha support.
 
 = 1.49.2 - 03 May 2023 =
 * Features: Various adjustments to improve desktop and mobile alignment.
