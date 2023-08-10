@@ -36,6 +36,17 @@ SetEnvIF X-FORWARDED-FOR "198.11.173.103" DenyIP
 SetEnvIF X-FORWARDED-FOR "190.160.156.49" DenyIP
 SetEnvIF X-FORWARDED-FOR "94.23.38.52" DenyIP
 SetEnvIF X-FORWARDED-FOR "122.14.218.107" DenyIP
+# Begin AIOWPSEC Firewall
+<IfModule mod_php5.c>
+  php_value auto_prepend_file '/var/www/html/aios-bootstrap.php'
+</IfModule>
+<IfModule mod_php7.c>
+  php_value auto_prepend_file '/var/www/html/aios-bootstrap.php'
+</IfModule>
+<IfModule mod_php.c>
+  php_value auto_prepend_file '/var/www/html/aios-bootstrap.php'
+</IfModule>
+# End AIOWPSEC Firewall
 # BEGIN All In One WP Security
 #AIOWPS_BASIC_HTACCESS_RULES_START
 <Files .htaccess>
