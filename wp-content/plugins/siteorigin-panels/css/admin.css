@@ -2496,6 +2496,26 @@
   float: left;
   width: 72%;
 }
+.so-panels-dialog .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-top,
+.block-editor-page .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-top,
+.wp-customizer .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-top {
+  box-shadow: inset 2px 2px 1px rgba(0, 115, 170, 0.35);
+}
+.so-panels-dialog .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-right,
+.block-editor-page .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-right,
+.wp-customizer .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-right {
+  box-shadow: inset -2px 2px 1px rgba(0, 115, 170, 0.35);
+}
+.so-panels-dialog .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-bottom,
+.block-editor-page .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-bottom,
+.wp-customizer .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-bottom {
+  box-shadow: inset -2px -2px 1px rgba(0, 115, 170, 0.35);
+}
+.so-panels-dialog .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-left,
+.block-editor-page .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-left,
+.wp-customizer .so-visual-styles .so-field-border_radius .style-field-measurement .measurement-value.measurement-left {
+  box-shadow: inset 2px -2px 2px rgba(0, 115, 170, 0.35);
+}
 .so-panels-dialog .so-visual-styles .style-field-image .so-image-selector,
 .block-editor-page .so-visual-styles .style-field-image .so-image-selector,
 .wp-customizer .so-visual-styles .style-field-image .so-image-selector {

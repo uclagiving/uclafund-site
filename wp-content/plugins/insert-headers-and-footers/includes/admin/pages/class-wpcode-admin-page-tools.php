@@ -635,7 +635,7 @@ class WPCode_Admin_Page_Tools extends WPCode_Admin_Page {
 		}
 
 		wp_safe_redirect(
-			add_query_arg( 'message', 1 )
+			add_query_arg( 'message', 1, $this->get_page_action_url() )
 		);
 		exit;
 	}

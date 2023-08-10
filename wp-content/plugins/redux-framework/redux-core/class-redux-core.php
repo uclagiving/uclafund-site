@@ -101,7 +101,7 @@ if ( ! class_exists( 'Redux_Core', false ) ) {
 		public static $pro_loaded = false;
 
 		/**
-		 * Pointer to updated google fonts array.
+		 * Pointer to an updated Google fonts array.
 		 *
 		 * @var array
 		 */
@@ -158,15 +158,12 @@ if ( ! class_exists( 'Redux_Core', false ) ) {
 		/**
 		 * Things to run after pluggable.php had loaded.
 		 */
-		public static function plugins_loaded() {
-			Redux_Functions_Ex::pro_to_ext();
-		}
+		public static function plugins_loaded() {}
 
 		/**
 		 * Class init.
 		 */
 		private function init() {
-
 			self::$server = array(
 				'SERVER_SOFTWARE' => '',
 				'REMOTE_ADDR'     => Redux_Helpers::is_local_host() ? '127.0.0.1' : '',
@@ -243,7 +240,7 @@ if ( ! class_exists( 'Redux_Core', false ) ) {
 		}
 
 		/**
-		 * Code to execute on framework __construct.
+		 * Code to execute on a framework __construct.
 		 *
 		 * @param object $parent Pointer to ReduxFramework object.
 		 */
@@ -289,7 +286,6 @@ if ( ! class_exists( 'Redux_Core', false ) ) {
 		 * @param array $debug_info Debug data.
 		 *
 		 * @return array
-		 * @noinspection PhpIncludeInspection
 		 * @throws ReflectionException Exception.
 		 */
 		public function add_debug_info( array $debug_info ): array {

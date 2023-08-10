@@ -133,6 +133,17 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 				'label' => __( 'Always show navigation on mobile', 'so-widgets-bundle' ),
 			),
 
+			'nav_align' => array(
+				'type' => 'select',
+				'label' => __( 'Pagination alignment', 'so-widgets-bundle' ),
+				'default' => 'right',
+				'options' => array(
+					'left' => __( 'Left', 'so-widgets-bundle' ),
+					'center' => __( 'Center', 'so-widgets-bundle' ),
+					'right' => __( 'Right', 'so-widgets-bundle' ),
+				),
+			),
+
 			'swipe' => array(
 				'type' => 'checkbox',
 				'label' => __( 'Swipe control', 'so-widgets-bundle' ),
@@ -143,7 +154,7 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 			'unmute' => array(
 				'type' => 'checkbox',
 				'label' => __( 'Unmute icon', 'so-widgets-bundle' ),
-				'description' => __( 'Slide background videos are muted. Enable to display an unmute/mute icon. Only applies to self-hosted videos.', 'so-widgets-bundle' ),
+				'description' => __( 'Slide background videos are muted. Enable to display an unmute/mute icon.', 'so-widgets-bundle' ),
 				'default' => false,
 				'state_emitter' => array(
 					'callback' => 'conditional',
@@ -168,6 +179,13 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 					'unmute_slider[show]' => array( 'show' ),
 					'unmute_slider[hide]' => array( 'hide' ),
 				),
+			),
+
+			'fitvids' => array(
+				'type' => 'checkbox',
+				'default' => true,
+				'label' => __( 'Use FitVids', 'so-widgets-bundle' ),
+				'description' => __( 'FitVids will scale background videos to fill the width of the slide while maintaining aspect ratio.', 'so-widgets-bundle' ),
 			),
 
 			'background_video_mobile' => array(
@@ -361,6 +379,10 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 			}
 		}
 
+		if ( ! isset( $instance['controls']['fitvids'] ) ) {
+			$instance['controls']['fitvids'] = true;
+		}
+
 		return $instance;
 	}
 
@@ -537,6 +559,10 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 					$controls['opacity'] = $frame['background']['background_video_opacity'];
 				}
 
+				if ( ! empty( $controls['fitvids'] ) && ! wp_script_is( 'jquery-fitvids' ) ) {
+					wp_enqueue_script( 'jquery-fitvids' );
+				}
+
 				$this->video_code( $background['videos'], $classes, $controls );
 			}
 
@@ -657,7 +683,7 @@ abstract class SiteOrigin_Widget_Base_Slider extends SiteOrigin_Widget {
 
 		// Pass the Widgets Bundle directory path to allow us to include the volume controls font.
 		$sow_plugin_dir_url = str_replace( site_url(), '', plugin_dir_url( SOW_BUNDLE_BASE_FILE ) );
-		$less_variables['volume_controls_font'] = "'${sow_plugin_dir_url}css/slider/fonts/volume-controls'";
+		$less_variables['volume_controls_font'] = "'{$sow_plugin_dir_url}css/slider/fonts/volume-controls'";
 
 		return $less_variables;
 	}

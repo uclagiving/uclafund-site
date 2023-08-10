@@ -28,12 +28,57 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 		 */
 		public static $args;
 
+		/**
+		 * Enqueue Font Awesome.
+		 *
+		 * @return void
+		 */
+		public static function enqueue_font_awesome() {
+			wp_enqueue_style(
+				'font-awesome',
+				Redux_Core::$url . 'assets/font-awesome/css/all' . Redux_Functions::is_min() . '.css',
+				array(),
+				'6.4.0'
+			);
+
+			wp_enqueue_style(
+				'font-awesome-4-shims',
+				Redux_Core::$url . 'assets/font-awesome/css/v4-shims' . Redux_Functions::is_min() . '.css',
+				array(),
+				'6.4.0'
+			);
+		}
+
+		/**
+		 * Enqueue Elusive Font.
+		 *
+		 * @return void
+		 */
+		public static function enqueue_elusive_font() {
+			wp_enqueue_style(
+				'redux-elusive-icon',
+				Redux_Core::$url . 'assets/css/vendor/elusive-icons' . Redux_Functions::is_min() . '.css',
+				array(),
+				'2.0.0'
+			);
+		}
+
+		/**
+		 * Shim to load Extendify for backward compatibility.
+		 *
+		 * @return void
+		 */
 		public static function load_extendify_css() {
 			add_action( 'enqueue_block_editor_assets', array( __CLASS__, 'block_editor_styles' ), 99 );
 			add_action( 'wp_enqueue_scripts', array( __CLASS__, 'frontend_init' ), 10 );
 		}
 
-		public static function block_editor_styles(){
+		/**
+		 * Shim to enqueue Extendify CSS in the block editor.
+		 *
+		 * @return void
+		 */
+		public static function block_editor_styles() {
 			wp_enqueue_style(
 				'redux-editor-styles',
 				Redux_Core::$url . 'assets/css/extendify-utilities.css',
@@ -226,7 +271,7 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 			$protocol = ! empty( $_SERVER['HTTPS'] ) && 'off' !== $_SERVER['HTTPS'] || ( ! empty( $_SERVER['SERVER_PORT'] ) && 443 === $_SERVER['SERVER_PORT'] ) ? 'https://' : 'http://';
 
-			if ( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) && ! empty( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+			if ( ! empty( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 				$new_protocol = sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) ) . '://'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 				if ( 'http://' === $protocol && $new_protocol !== $protocol && false === strpos( $url, $new_protocol ) ) {
 					$url = str_replace( $protocol, $new_protocol, $url );
@@ -275,7 +320,7 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 		}
 
 		/**
-		 * Is Redux embedded inside a plugin.
+		 * Is Redux embedded inside a plugin?
 		 *
 		 * @param string $file File to check.
 		 *
@@ -306,7 +351,7 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 		}
 
 		/**
-		 * Is Redux embedded in a theme.
+		 * Is Redux embedded in a theme?
 		 *
 		 * @param string $file File to check.
 		 *
@@ -518,91 +563,6 @@ if ( ! class_exists( 'Redux_Functions_Ex', false ) ) {
 			}
 
 			return substr( $haystack, - $length ) === $needle;
-		}
-
-		/**
-		 * Get the url where the Admin Columns website is hosted
-		 *
-		 * @param string $path Path to add to url.
-		 *
-		 * @return string
-		 */
-		private static function get_site_url( string $path = '' ): string {
-			$url = 'https://redux.io';
-
-			if ( ! empty( $path ) ) {
-				$url .= '/' . trim( $path, '/' ) . '/';
-			}
-
-			return $url;
-		}
-
-		/**
-		 * Url with utm tags
-		 *
-		 * @param string      $path         Path on site.
-		 * @param string      $utm_medium   Medium var.
-		 * @param string|null $utm_content  Content var.
-		 * @param bool        $utm_campaign Campaign var.
-		 *
-		 * @return string
-		 */
-		public static function get_site_utm_url( string $path, string $utm_medium, string $utm_content = null, bool $utm_campaign = false ): string {
-			$url = self::get_site_url( $path );
-
-			if ( ! $utm_campaign ) {
-				$utm_campaign = 'plugin-installation';
-			}
-
-			$args = array(
-				// Referrer: plugin.
-				'utm_source'   => 'plugin-installation',
-
-				// Specific promotions or sales.
-				'utm_campaign' => $utm_campaign,
-
-				// Marketing medium: banner, documentation or email.
-				'utm_medium'   => $utm_medium,
-
-				// Used for differentiation of medium.
-				'utm_content'  => $utm_content,
-			);
-
-			$args = array_map( 'sanitize_key', array_filter( $args ) );
-
-			return add_query_arg( $args, $url );
-		}
-
-		/**
-		 * Conversion.
-		 */
-		public static function pro_to_ext() {
-
-			// If they are a pro user, convert their key to use with Extendify.
-			$redux_pro_key = get_option( 'redux_pro_license_key' );
-
-			if ( $redux_pro_key && ! get_user_option( 'extendifysdk_redux_key_moved' ) ) {
-				try {
-					$extendify_user_state = get_user_meta( get_current_user_id(), 'extendifysdk_user_data' );
-					if ( false === $extendify_user_state ) {
-						$extendify_user_state = array();
-					}
-
-					if ( ! isset( $extendify_user_state[0] ) ) {
-						$extendify_user_state[0] = wp_json_encode( array() ); // '{}';
-					}
-
-					$extendify_user_data                    = json_decode( $extendify_user_state[0], true );
-					$extendify_user_data['state']['apiKey'] = $redux_pro_key;
-
-					update_user_meta( get_current_user_id(), 'extendifysdk_user_data', wp_json_encode( $extendify_user_data ) );
-				} catch ( Exception $e ) {
-					// Just have it fail gracefully.
-				}
-				// Run this regardless. If the try/catch failed, better not to keep trying as something else is wrong.
-				// In that case we can expect them to come to support, and we can give them a fresh key.
-				update_user_option( get_current_user_id(), 'extendifysdk_redux_key_moved', true );
-			}
 		}
 
 		/**

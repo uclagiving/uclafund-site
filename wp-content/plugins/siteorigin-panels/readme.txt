@@ -1,10 +1,10 @@
 === Page Builder by SiteOrigin ===
 Tags: page builder, responsive, parallax, widgets, blocks, gallery, layout, grid, cms, builder, widget
 Requires at least: 4.7
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 5.6.20
-Stable tag: 2.23.0
-Build time: 2023-05-21T21:35:02+01:00
+Stable tag: 2.25.1
+Build time: 2023-08-09T17:26:21+02:00
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: https://siteorigin.com/downloads/premium/
@@ -113,13 +113,33 @@ Page Builder can be activated for all post types from Settings > Page Builder > 
 
 = Does Page Builder Work With Third-Party Plugins and Widgets? =
 
-Page Builder is compatible with the vast majority of third-party plugins and widgets. If you encounter a compatibility issue, please, let us know via our [free support forum](https://siteorigin.com/thread/) or if you have an active SiteOrigin Premium license; directly via email.
+Page Builder is compatible with the vast majority of third-party plugins and widgets. If you encounter a compatibility issue, please, let us know via our [free support forum](https://siteorigin.com/thread/) or if you have an active SiteOrigin Premium license, directly via email.
 
 = Does Page Builder Have a Pro Version? =
 
 SiteOrigin offers a single premium plugin that enhances and extends Page Builder, the Widgets Bundle, SiteOrigin CSS and all of our free themes. Find out more about [SiteOrigin Premium](https://siteorigin.com/downloads/premium/) and the powerful addons it offers.
 
 == Changelog ==
+
+= 2.25.1 - 09 August 2023 =
+* Advanced Custom Fields: Added support for multiple options.
+* Inline Styles: Resolved an issue with unexpected widget margins when custom margins are set.
+* Fixed an issue with saving settings in the SiteOrigin Installer.
+* Updated the "Tested up to" version in the readme.txt file from 6.2 to 6.3.
+
+= 2.25.0 - 13 July 2023 =
+* Added "Block Editor Layout Block Quick Add Button" setting to display the "Add SiteOrigin Layout Block" quick add button in the Block Editor.
+* Added "Enable SiteOrigin Installer" setting to display the SiteOrigin Installer admin menu item.
+* Updated SiteOrigin Installer.
+* Resolved sizing issues in row layouts.
+* Improved handling of padding in row layouts to prevent potential offset.
+* Triggered resize event on load to avoid a situation where the `body` width is incorrect.
+
+= 2.24.0 - 20 June 2023 =
+* Row Styles: Improved Border Radius field user interface.
+* Resolved `Creation of dynamic property` deprecated notice.
+* Minor styling update to SiteOrigin Page Builder News dashboard widget.
+* Added SiteOrigin Installer.
 
 = 2.23.0 - 21 May 2023 =
 * Row Styles: Added a Full Height setting to the Design section.

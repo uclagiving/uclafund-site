@@ -13,6 +13,12 @@ include plugin_dir_path( __FILE__ ) . 'inc/actions.php';
 include plugin_dir_path( __FILE__ ) . 'inc/shortcode.php';
 include plugin_dir_path( __FILE__ ) . 'inc/video.php';
 include plugin_dir_path( __FILE__ ) . 'inc/routes/sowb-rest-routes.php';
+include plugin_dir_path( __FILE__ ) . 'inc/shapes/shapes.php';
+
+// Load the Installer if it's not already active.
+if ( is_admin() && ! class_exists( 'SiteOrigin_Installer' ) ) {
+	include plugin_dir_path( __FILE__ ) . 'inc/installer/siteorigin-installer.php';
+}
 
 function siteorigin_widget_add_inline_css( $css ) {
 	global $siteorigin_widgets_inline_styles;
@@ -89,7 +95,7 @@ function siteorigin_widget_get_icon( $icon_value, $icon_styles = false, $title =
 	$style = empty( $value_parts['style'] ) ? null : $value_parts['style'];
 	$icon = $value_parts['icon'];
 
-	if ( empty( $family ) || empty( $icon ) ) {
+	if ( empty( $family ) || ! isset( $icon ) ) {
 		return false;
 	}
 
@@ -176,7 +182,16 @@ function siteorigin_widget_get_font( $font_value ) {
 			global $sow_registered_fonts;
 
 			$font_weight_styles = array_keys( $sow_registered_fonts[ $font['family'] ] );
-			$wp_styles->registered[ $style_name ]->src = esc_url( apply_filters( 'siteorigin_web_font_url', 'https://fonts.googleapis.com/css' ) . '?family=' . urlencode( $font['family'] . ':' . implode( ',', $font_weight_styles ) ) );
+			$wp_styles->registered[ $style_name ]->src = esc_url(
+				apply_filters(
+					'siteorigin_web_font_url_processed',
+					apply_filters(
+						'siteorigin_web_font_url',
+						'https://fonts.googleapis.com/css' ) . '?family=' . urlencode(
+						$font['family'] . ':' . implode( ',', $font_weight_styles )
+					)
+				)
+			);
 		}
 	} else {
 		$font['family'] = $font_value;
@@ -333,4 +348,32 @@ function siteorigin_widgets_get_measurements_list() {
  */
 function siteorigin_widgets_url( $path = '' ) {
 	return plugins_url( 'so-widgets-bundle/' . $path );
+}
+
+function siteorigin_loading_optimization_attributes( $attr, $widget, $instance, $class ) {
+	// Allow other plugins to override whether this widget is lazy loaded or not.
+	if (
+		! empty( apply_filters(
+			'siteorigin_widgets_' . $widget . '_lazy_load',
+			'lazy',
+			$instance,
+			$class
+		) )
+	) {
+		if ( function_exists( 'wp_get_loading_optimization_attributes' ) ) {
+			// WP 6.3.
+			$attr['loading'] = 'lazy';
+			$attr = array_merge(
+				$attr,
+				wp_get_loading_optimization_attributes( 'img', $attr, 'wp_get_attachment_image' )
+			);
+		} elseif (
+			function_exists( 'wp_lazy_loading_enabled' ) &&
+			wp_lazy_loading_enabled( 'img', 'sow-image' )
+		) {
+			// < WP 6.3.
+			$attr['loading'] = function_exists( 'wp_get_loading_attr_default' ) ? wp_get_loading_attr_default( 'the_content' ) : 'lazy';
+		}
+	}
+	return $attr;
 }

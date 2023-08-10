@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WPCode Lite
  * Plugin URI: https://www.wpcode.com/
- * Version: 2.0.12
+ * Version: 2.1.0
  * Requires at least: 4.6
  * Requires PHP: 5.5
  * Tested up to: 6.1
@@ -359,6 +359,8 @@ class WPCode {
 		require_once WPCODE_PLUGIN_PATH . 'includes/class-wpcode-file-logger.php';
 		// Smart tags class.
 		require_once WPCODE_PLUGIN_PATH . 'includes/class-wpcode-smart-tags.php';
+		// Admin bar info class.
+		require_once WPCODE_PLUGIN_PATH . 'includes/class-wpcode-admin-bar-info.php';
 
 		if ( is_admin() || ( defined( 'DOING_CRON' ) && DOING_CRON ) ) {
 			require_once WPCODE_PLUGIN_PATH . 'includes/icons.php'; // This is not needed in the frontend atm.
@@ -425,6 +427,8 @@ class WPCode {
 			// Usage tracking class.
 			new WPCode_Usage_Tracking_Lite();
 		}
+
+		new WPCode_Admin_Bar_Info_Lite();
 
 		do_action( 'wpcode_loaded' );
 	}

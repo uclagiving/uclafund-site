@@ -107,7 +107,7 @@ if ( ! class_exists( 'Redux_Text', false ) ) {
 					$attributes['id']   = esc_attr( $this->field['id'] . $k );
 
 					$attributes_string = $this->render_attributes( $attributes );
-					echo '<div class="input_wrapper"><label for="' . $attributes['name'] . '">' . $v . '</label><input placeholder="' . $v . '" ' . $attributes_string . '></div>'; // phpcs:ignore WordPress.Security.EscapeOutput
+					echo '<div class="input_wrapper"><label for="' . $attributes['id'] . '">' . $v . '</label><input placeholder="' . $v . '" ' . $attributes_string . '></div>'; // phpcs:ignore WordPress.Security.EscapeOutput
 
 				}
 			} else {
@@ -129,7 +129,7 @@ if ( ! class_exists( 'Redux_Text', false ) ) {
 		public function enqueue() {
 			if ( $this->parent->args['dev_mode'] ) {
 				wp_enqueue_style(
-					'redux-field-text-css',
+					'redux-field-text',
 					Redux_Core::$url . 'inc/fields/text/redux-text.css',
 					array(),
 					$this->timestamp

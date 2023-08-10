@@ -45,8 +45,20 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 	 * @return void
 	 */
 	public function page_hooks() {
+		$this->process_message();
 		add_action( 'admin_init', array( $this, 'submit_listener' ) );
 		add_filter( 'wpcode_admin_js_data', array( $this, 'add_connect_strings' ) );
+	}
+
+	/**
+	 * Handle the message after the settings are saved with a redirect.
+	 *
+	 * @return void
+	 */
+	public function process_message() {
+		if ( isset( $_GET['message'] ) && 1 === absint( $_GET['message'] ) ) {
+			$this->set_success_message( __( 'Settings Saved.', 'insert-headers-and-footers' ) );
+		}
 	}
 
 	/**
@@ -143,6 +155,17 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 			),
 			'wpcode-error-logging'
 		);
+
+		$this->metabox_row(
+			__( 'Admin Bar Info', 'insert-headers-and-footers' ),
+			$this->get_checkbox_toggle(
+				wpcode()->settings->get_option( 'admin_bar_info', true ),
+				'wpcode-admin-bar-info',
+				esc_html__( 'Enable the admin bar menu that shows info about which snippets & scripts are loaded on the current page.', 'insert-headers-and-footers' ),
+				1
+			),
+			'wpcode-admin-bar-info'
+		);
 	}
 
 	/**
@@ -204,6 +227,7 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 			'editor_height'        => isset( $_POST['editor_height'] ) ? absint( $_POST['editor_height'] ) : 300,
 			'error_logging'        => isset( $_POST['wpcode-error-logging'] ),
 			'usage_tracking'       => isset( $_POST['usage_tracking'] ),
+			'admin_bar_info'       => isset( $_POST['wpcode-admin-bar-info'] ),
 		);
 
 		wpcode()->settings->bulk_update_options( $settings );
@@ -221,7 +245,15 @@ class WPCode_Admin_Page_Settings extends WPCode_Admin_Page {
 			exit;
 		}
 
-		$this->set_success_message( __( 'Settings Saved.', 'insert-headers-and-footers' ) );
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'message' => 1,
+				),
+				$this->get_page_action_url()
+			)
+		);
+		exit;
 	}
 
 	/**

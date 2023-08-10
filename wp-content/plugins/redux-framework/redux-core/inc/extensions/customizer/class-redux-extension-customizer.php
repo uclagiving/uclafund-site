@@ -5,7 +5,7 @@
  *
  * @package ReduxFramework/Extentions
  * @class Redux_Extension_Customizer
- * @version 4.0.0
+ * @version 4.4.2
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -25,7 +25,7 @@ if ( ! class_exists( 'Redux_Extension_Customizer', false ) ) {
 		 *
 		 * @var string
 		 */
-		public static $version = '4.3.11';
+		public static $version = '4.4.2';
 
 		/**
 		 * Set the name of the field.  Ideally, this will also be your extension's name.
@@ -705,32 +705,6 @@ if ( ! class_exists( 'Redux_Extension_Customizer', false ) ) {
 		}
 
 		/**
-		 * Enqueue CSS/JS for preview pane
-		 *
-		 * @since       1.0.0
-		 * @access      public
-		 * @global      $wp_styles
-		 * @return      void
-		 */
-		public function enqueue_previewer() {
-			wp_enqueue_script( 'redux-extension-previewer-js', $this->extension_url . 'assets/js/preview.js', array(), self::$version, true );
-
-			$localize = array(
-				'save_pending'   => esc_html__( 'You have changes that are not saved. Would you like to save them now?', 'redux-framework' ),
-				'reset_confirm'  => esc_html__( 'Are you sure? Resetting will lose all custom values.', 'redux-framework' ),
-				'preset_confirm' => esc_html__( 'Your current options will be replaced with the values of this preset. Would you like to proceed?', 'redux-framework' ),
-				'opt_name'       => $this->parent->args['opt_name'],
-				'options'        => $this->parent->options,
-				'defaults'       => $this->parent->options_defaults,
-
-				// phpcs:ignore Squiz.PHP.CommentedOutCode
-				// 'folds'             => $this->folds,
-			);
-
-			wp_localize_script( 'redux-extension-previewer-js', 'reduxPost', $localize );
-		}
-
-		/**
 		 * Enqueue CSS/JS for the customizer controls
 		 *
 		 * @since       1.0.0
@@ -810,17 +784,6 @@ if ( ! class_exists( 'Redux_Extension_Customizer', false ) ) {
 
 			return $value;
 		}
-
-		/**
-		 * HTML OUTPUT.
-		 *
-		 * @since       1.0.0
-		 * @access      public
-		 * @return      void
-		 */
-		public function customizer_html_output() {
-
-		}
 	}
 
 	if ( ! function_exists( 'redux_customizer_custom_validation' ) ) {
@@ -836,3 +799,8 @@ if ( ! class_exists( 'Redux_Extension_Customizer', false ) ) {
 		}
 	}
 }
+
+if ( ! class_exists( 'ReduxFramework_extension_customizer' ) ) {
+	class_alias( 'Redux_Extension_Customizer', 'ReduxFramework_extension_customizer' );
+}
+

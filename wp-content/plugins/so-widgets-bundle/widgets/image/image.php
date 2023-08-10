@@ -149,6 +149,71 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 				'type' => 'text',
 				'label' => __( 'Rel', 'so-widgets-bundle' ),
 			),
+
+			'image_shape' => array(
+				'type' => 'section',
+				'label' => __( 'Image Shape', 'so-widgets-bundle' ),
+				'state' => 'closed',
+				'fields' => array(
+					'enable' => array(
+						'type' => 'checkbox',
+						'label' => __( 'Enable', 'so-widgets-bundle' ),
+						'default' => false,
+						'state_emitter' => array(
+							'callback' => 'conditional',
+							'args' => array(
+								'image_shape[enabled]: val',
+								'image_shape[disabled]: ! val',
+							),
+						),
+					),
+					'shape' => array(
+						'type' => 'image_shape',
+						'label' => __( 'Image Shape', 'so-widgets-bundle' ),
+						'state_handler' => array(
+							'image_shape[enabled]' => array( 'show' ),
+							'image_shape[disabled]' => array( 'hide' ),
+						),
+					),
+					'repeat' => array(
+						'type' => 'select',
+						'label' => __( 'Repeat', 'so-widgets-bundle' ),
+						'options' => array(
+							'no-repeat' => __( 'No Repeat', 'so-widgets-bundle' ),
+							'repeat' => __( 'Repeat', 'so-widgets-bundle' ),
+							'space' => __( 'Repeat (No Clipping)', 'so-widgets-bundle' ),
+							'repeat-x' => __( 'Repeat Horizontally', 'so-widgets-bundle' ),
+							'repeat-y' => __( 'Repeat Vertically', 'so-widgets-bundle' ),
+						),
+						'state_handler' => array(
+							'image_shape[enabled]' => array( 'show' ),
+							'image_shape[disabled]' => array( 'hide' ),
+						),
+					),
+					'size' => array(
+						'type' => 'measurement',
+						'label' => __( 'Size', 'so-widgets-bundle' ),
+						'state_handler' => array(
+							'image_shape[enabled]' => array( 'show' ),
+							'image_shape[disabled]' => array( 'hide' ),
+						),
+					),
+					'alignment' => array(
+						'type' => 'select',
+						'label' => __( 'Alignment ', 'so-widgets-bundle' ),
+						'default' => 'center',
+						'options' => array(
+							'left' => __( 'Left', 'so-widgets-bundle' ),
+							'center' => __( 'Center', 'so-widgets-bundle' ),
+							'right' => __( 'Right', 'so-widgets-bundle' ),
+						),
+						'state_handler' => array(
+							'image_shape[enabled]' => array( 'show' ),
+							'image_shape[disabled]' => array( 'hide' ),
+						),
+					),
+				),
+			),
 		);
 	}
 
@@ -228,16 +293,12 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 
 		$attr['rel'] = ! empty( $instance['rel'] ) ? $instance['rel'] : '';
 
-		if ( function_exists( 'wp_lazy_loading_enabled' ) && wp_lazy_loading_enabled( 'img', 'sow-image' ) ) {
-			// Allow other plugins to override whether this widget is lazy loaded or not.
-			$attr['loading'] = apply_filters(
-				'siteorigin_widgets_image_lazy_load',
-				// If WordPress 5.9 or higher is being used, let WordPress control if Lazy Load is enabled.
-				function_exists( 'wp_get_loading_attr_default' ) ? wp_get_loading_attr_default( 'the_content' ) : 'lazy',
-				$instance,
-				$this
-			);
-		}
+		$attr = siteorigin_loading_optimization_attributes(
+			$attr,
+			'image',
+			$instance,
+			$this
+		);
 
 		$link_atts = array();
 
@@ -295,7 +356,7 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 			return array();
 		}
 
-		return array(
+		$less_variables = array(
 			'title_alignment' => ! empty( $instance['title_align'] ) ? $instance['title_align'] : '',
 			'image_alignment' => $instance['align'],
 			'image_max_width' => ! empty( $instance['bound'] ) ? '100%' : '',
@@ -304,6 +365,20 @@ class SiteOrigin_Widget_Image_Widget extends SiteOrigin_Widget {
 			'size_enforce' => $instance['size'] == 'custom_size' && ! empty( $instance['size_enforce'] ),
 			'responsive_breakpoint' => $this->get_global_settings( 'responsive_breakpoint' ),
 		);
+
+		if (
+			! empty( $instance['image_shape'] ) &&
+			! empty( $instance['image_shape']['enable'] ) &&
+			SiteOrigin_Widget_Image_Shapes::single()->is_valid_shape( $instance['image_shape']['shape'] )
+		) {
+
+			$less_variables['image_shape_size'] = ! empty( $instance['image_shape']['size'] ) ? $instance['image_shape']['size'] : 'contain';
+			$less_variables['image_shape_repeat'] = ! empty( $instance['image_shape']['repeat'] ) ? $instance['image_shape']['repeat'] : 'no-repeat';
+			$less_variables['image_shape_position'] = ! empty( $instance['image_shape']['alignment'] ) ? $instance['image_shape']['alignment'] : 'center';
+			$less_variables['image_shape'] = 'url( "' . esc_url( SiteOrigin_Widget_Image_Shapes::single()->get_image_shape( $instance['image_shape']['shape'] ) ) . '" )';
+		}
+
+		return $less_variables;
 	}
 
 	public function generate_anchor_open( $url, $link_attributes ) {

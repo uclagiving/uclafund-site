@@ -8,6 +8,7 @@
 
 namespace Tribe\Events\Views\V2;
 
+use TEC\Common\Configuration\Configuration;
 use Tribe\Events\Models\Post_Types\Event;
 use Tribe\Events\Views\V2\Template\Settings\Advanced_Display;
 use Tribe\Events\Views\V2\Template\Title;
@@ -19,6 +20,8 @@ use Tribe\Events\Views\V2\Views\Traits\HTML_Cache;
 use Tribe\Events\Views\V2\Views\Traits\iCal_Data;
 use Tribe\Events\Views\V2\Views\Traits\Json_Ld_Data;
 use Tribe\Utils\Taxonomy;
+use Tribe__Cache;
+use Tribe__Cache_Listener;
 use Tribe__Container as Container;
 use Tribe__Context as Context;
 use Tribe__Date_Utils as Dates;
@@ -250,6 +253,15 @@ class View implements View_Interface {
 	protected static $label = 'View';
 
 	/**
+	 * Configuration instance.
+	 *
+	 * @since 6.1.3
+	 *
+	 * @var Configuration
+	 */
+	protected Configuration $config;
+
+	/**
 	 * View constructor.
 	 *
 	 * @since 4.9.11
@@ -260,7 +272,7 @@ class View implements View_Interface {
 		$this->messages = $messages ?: new Messages();
 		$this->rewrite  = TEC_Rewrite::instance();
 		$this->slug     = static::$view_slug; // @todo Kept for back-compat, remove when we finally remove the non-static prop.
-
+		$this->config   = tribe( Configuration::class );
 
 		// For plain permalinks, the pagination variable is "page".
 		if ( $this->rewrite->is_plain_permalink() ) {
@@ -642,6 +654,10 @@ class View implements View_Interface {
 
 		$repository_args = $this->filter_repository_args( $this->setup_repository_args() );
 
+		// Need our nonces for AJAX requests.
+		$nonces     = Rest_Endpoint::get_rest_nonces();
+		$nonce_html = "<script data-js='tribe-events-view-nonce-data' type='application/json'>" . wp_json_encode( $nonces ) . "</script>";
+
 		/*
 		 * Some Views might need to access this out of this method, let's make the filtered repository arguments
 		 * available.
@@ -654,12 +670,13 @@ class View implements View_Interface {
 			&& $cached_html = $this->maybe_get_cached_html()
 		) {
 			remove_filter( 'tec_events_get_current_view', [ $this, 'filter_set_current_view' ] );
-			return $cached_html;
+			return $cached_html . $nonce_html;
 		}
 
 		if ( ! tribe_events_view_v2_use_period_repository() ) {
 			$this->setup_the_loop( $repository_args );
 		}
+
 
 		/**
 		 * Fire new action on the views.
@@ -669,13 +686,10 @@ class View implements View_Interface {
 		 * @param View $this A reference to the View instance that is currently setting up the loop.
 		 */
 		do_action( 'tribe_views_v2_after_setup_loop', $this );
-
 		$template_vars = $this->filter_template_vars( $this->setup_template_vars() );
-
 		$this->template->set_values( $template_vars, false );
 
 		$html = $this->template->render();
-
 		$this->restore_the_loop();
 
 		// If HTML_Cache is a class trait, perhaps the markup should be cached.
@@ -686,7 +700,7 @@ class View implements View_Interface {
 		remove_filter( 'tribe_repository_query_arg_offset_override', [ $this, 'filter_repository_query_arg_offset_override' ], 10, 2 );
 		remove_filter( 'tec_events_get_current_view', [ $this, 'filter_set_current_view' ] );
 
-		return $html;
+		return $html . $nonce_html;
 	}
 
 	/**
@@ -1224,7 +1238,6 @@ class View implements View_Interface {
 	protected function filter_template_vars( array $template_vars ) {
 		$events                        = $template_vars['events'] ?: [];
 
-
 		/*
 		 * Add the JSON-LD data here as all Views will pass from this code, but not all Views will call the
 		 * `View::setup_template_vars` method.
@@ -1232,7 +1245,6 @@ class View implements View_Interface {
 		 * Filters to control the data are available in the `Tribe__JSON_LD__Abstract` object and its extending classes.
 		 */
 		$template_vars['json_ld_data'] = $this->build_json_ld_data( $events );
-
 		$this->setup_additional_views( (array) $events, $template_vars );
 
 		/**
@@ -1245,8 +1257,7 @@ class View implements View_Interface {
 		 *                                      template.
 		 * @param View_Interface $view          The current view whose template variables are being set.
 		 */
-		$template_vars = apply_filters( 'tribe_events_views_v2_view_template_vars', $template_vars, $this );
-
+		$template_vars = apply_filters( 'tribe_events_views_v2_view_template_vars', $template_vars, $this ); // @todo ~.5s
 		$view_slug = static::$view_slug;
 
 		/**
@@ -1554,6 +1565,13 @@ class View implements View_Interface {
 			$this->repository->by_args( $this->repository_args );
 		}
 
+		// Check if we memoized these vars and if memoize is enabled.
+		$memoize_key = 'setup_template_vars_' . md5( __METHOD__ . json_encode( $this->repository_args ) );
+		$vars        = tribe_cache()->get( $memoize_key, Tribe__Cache_Listener::TRIGGER_SAVE_POST, null, Tribe__Cache::NON_PERSISTENT );
+		if ( ! empty( $vars ) ) {
+			return $vars;
+		}
+
 		$events = (array) $this->repository->all();
 		$events = array_filter( $events, static function ( $event ) {
 			return $event instanceof \WP_Post;
@@ -1628,25 +1646,12 @@ class View implements View_Interface {
 		);
 
 		$today_label = tec_events_get_today_button_label( $this );
-
 		$event_date = $this->context->get( 'event_date', false );
 
 		// Set the URL event date only if it's not empty or "now": both are implicit, default, date selections.
 		$url_event_date = ( ! empty( $event_date ) && 'now' !== $event_date )
 			? Dates::build_date_object( $event_date )->format( Dates::DBDATEFORMAT )
 			: false;
-
-		/*
-		 * Some plugins, like WooCommerce, will modify the UID of logged out users; avoid that filtering here.
-		 *
-		 * @see TEC-3579
-		 */
-		$rest_nonce = tribe_without_filters(
-			[ 'nonce_user_logged_out' ],
-			static function () {
-				return wp_create_nonce( 'wp_rest' );
-			}
-		);
 
 		/** @var Rest_Endpoint $endpoint */
 		$endpoint = tribe( Rest_Endpoint::class );
@@ -1667,7 +1672,7 @@ class View implements View_Interface {
 			'request_date'         => Dates::build_date_object( $this->context->get( 'event_date', $today ) ),
 			'rest_url'             => $endpoint->get_url(),
 			'rest_method'          => $endpoint->get_method(),
-			'rest_nonce'           => $rest_nonce,
+			'rest_nonce'           => '', // For backwards compatibility in views. No longer used.
 			'should_manage_url'    => $this->should_manage_url,
 			'today_url'            => $today_url,
 			'today_title'          => $today_title,
@@ -1704,6 +1709,10 @@ class View implements View_Interface {
 			'public_views'         => $this->get_public_views( $url_event_date ),
 			'show_latest_past'     => $this->should_show_latest_past_events_view(),
 		];
+
+		if ( ! $this->config->get( 'TEC_NO_MEMOIZE_VIEW_VARS' ) ) {
+			tribe_cache()->set( $memoize_key, $template_vars, Tribe__Cache::NON_PERSISTENT, Tribe__Cache_Listener::TRIGGER_SAVE_POST );
+		}
 
 		return $template_vars;
 	}

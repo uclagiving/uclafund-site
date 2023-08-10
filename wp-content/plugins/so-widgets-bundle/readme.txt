@@ -1,10 +1,10 @@
 === SiteOrigin Widgets Bundle ===
 Tags: widget, button, slider, hero, google maps, image, carousel, lottie, features, icons, price table, tinymce, social icons
 Requires at least: 4.2
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 5.6.20
-Stable tag: 1.50.0
-Build time: 2023-05-16T22:03:06+01:00
+Stable tag: 1.53.0
+Build time: 2023-08-09T16:44:55+02:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -105,6 +105,44 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.53.0 - 09 August 2023 =
+* Added multi-measurement support for the field margin in the Contact widget.
+* Resolved issue with the "Use FitVids" option being locked to enabled in the Slider widget.
+* Updated the Simple Masonry, Image, and Image Grid widgets to use the `siteorigin_loading_optimization_attributes` function for better control over lazy loading of images.
+* Improved logic in the `siteorigin_loading_optimization_attributes` filter check to avoid potential errors.
+* Updated the "Tested up to" version in the readme.txt file to 6.3.
+* Reverted changes to the Blog widget that attempted to show correct terms for selected post types due to implementation issues.
+
+= 1.52.0 - 16 July 2023 =
+* Added a new setting for Sliders, allowing users to choose the alignment of the pagination dots (left, center, or right).
+* Introduced a new field called "Image Shape" to a widget, including necessary CSS styles, PHP class for rendering, and JavaScript for handling behavior.
+* Updated the Image Widget to use the new "Image Shape" field.
+* Fixed an issue with image shapes being enabled when they shouldn't be.
+* Prevented the installer setting from showing if SiteOrigin Premium is active.
+* Renamed the `Navigation alignment` setting in the `base-slider.class.php` file to `Pagination alignment` for clarity.
+* Updated Build submodule.
+
+= 1.51.0 - 15 July 2023 =
+* Added `Google Material Icons / Material Symbols` support.
+* Blog: Updated Portfolio to use Image Size for column sizing.
+* Blog: Updated Portfolio column width to account for column gutter.
+* Hero: Enabled alpha support for frame background color.
+* Hero: Update to hide `Background Image` settings if no background image is set.
+* Image: Added Image Shapes!
+* Slider: Added a `Use FitVids` setting for responsive videos.
+* Slider: Added unmute support for YouTube videos.
+* Added a check to confirm the ID is valid for widget activation or deactivation.
+* Developer: Added `siteorigin_widgets_button_attributes` to Button.
+
+= 1.50.1 - 12 June 2023 =
+* Slider: Resolved deprecated warning and improved link alignment.
+* Blog: Updated template defaults to include colors with alpha.
+* Added Tabs Form Field for improved widget organization.
+* Updated Google Fonts with new fonts and weights.
+* Updated Font Awesome from version 6.2.0 to 6.4.0, adding new icons.
+* Added `siteorigin_widgets_load_cache_compatibility` filter for optional cache compatibility control.
+* Various improvements to form fields and code formatting.
 
 = 1.50.0 - 16 May 2023 =
 * Button: Update to only apply Hover Text Color if Use Hover Effects enabled.

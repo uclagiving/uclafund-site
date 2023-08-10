@@ -51,9 +51,13 @@ class AIOWPSecurity_Audit_Event_Handler {
 			return;
 		}
 
+		$record_event = apply_filters('aios_audit_log_record_event', true, $event_type, $details, $event_level, $username);
+
+		if (!$record_event) return;
+
 		$user = wp_get_current_user();
 		$username = (is_a($user, 'WP_User') && 0 !== $user->ID) ? $user->user_login : $username;
-		$ip = AIOWPSecurity_Utility_IP::get_user_ip_address();
+		$ip = apply_filters('aios_audit_log_event_user_ip', AIOWPSecurity_Utility_IP::get_user_ip_address());
 		$stacktrace = maybe_serialize(AIOWPSecurity_Utility::normalise_call_stack_args(debug_backtrace(false)));
 		$network_id = get_current_network_id();
 		$site_id = get_current_blog_id();

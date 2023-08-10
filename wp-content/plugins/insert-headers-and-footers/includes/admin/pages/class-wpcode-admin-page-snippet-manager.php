@@ -1387,6 +1387,9 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			'</a>'
 		);
 
+		$data['cl_labels']        = wpcode_get_conditions_relation_labels();
+		$data['cl_labels_custom'] = $this->get_conditional_logic_operators_custom_labels();
+
 		return $data;
 	}
 
@@ -1429,7 +1432,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	public function maybe_syntax_highlighting_disabled( $body_class ) {
 		$user = wp_get_current_user();
 
-		if ( 'false' === $user->syntax_highlighting ) {
+		if ( ! isset( $user->syntax_highlighting ) || 'false' === $user->syntax_highlighting || ! function_exists( 'wp_enqueue_code_editor' ) ) {
 			$body_class .= ' wpcode-syntax-highlighting-disabled ';
 		}
 
@@ -1989,5 +1992,32 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			</p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Get a list of custom conditional logic operators for the conditional logic builder.
+	 *
+	 * @return array
+	 */
+	public function get_conditional_logic_operators_custom_labels() {
+		$options = wpcode()->conditional_logic->get_all_admin_options();
+
+		$labels = array();
+
+		foreach ( $options as $option ) {
+			foreach ( $option['options'] as $key => $opt_group ) {
+				if ( ! empty( $opt_group['operator_labels'] ) ) {
+					$labels[ $key ] = $opt_group['operator_labels'];
+				}
+				if ( ! empty( $opt_group['placeholder'] ) ) {
+					if ( ! isset( $labels[ $key ] ) ) {
+						$labels[ $key ] = array();
+					}
+					$labels[ $key ]['placeholder'] = $opt_group['placeholder'];
+				}
+			}
+		}
+
+		return $labels;
 	}
 }
