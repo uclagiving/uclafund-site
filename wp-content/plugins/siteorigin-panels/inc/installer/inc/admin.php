@@ -30,10 +30,11 @@ if ( ! class_exists( 'SiteOrigin_Installer_Admin' ) ) {
 			
 			if (
 				! get_option( 'siteorigin_installer_admin_dismissed' ) &&
+				current_user_can( 'install_plugins' ) &&
 				(
 					$pagenow != 'admin.php' ||
 					$_GET['page'] != 'siteorigin-installer'
-				) 
+				)
 			) {
 				$dismiss_url = wp_nonce_url( add_query_arg( array( 'action' => 'so_installer_dismiss' ), admin_url( 'admin-ajax.php' ) ), 'so_installer_dismiss' );
 				?>
@@ -73,7 +74,10 @@ if ( ! class_exists( 'SiteOrigin_Installer_Admin' ) ) {
 		public function admin_menu() {
 			global $menu;
 
-			if ( empty( $GLOBALS['admin_page_hooks']['siteorigin'] ) ) {
+			if (
+				! defined( 'SITEORIGIN_INSTALLER_THEME_MODE' ) &&
+				empty( $GLOBALS['admin_page_hooks']['siteorigin'] )
+			) {
 				add_menu_page(
 					__( 'SiteOrigin', 'siteorigin-installer' ),
 					__( 'SiteOrigin', 'siteorigin-installer' ),
@@ -209,11 +213,13 @@ if ( ! class_exists( 'SiteOrigin_Installer_Admin' ) ) {
 						// Work out the status of the theme.
 						if ( is_object( $theme->errors() ) ) {
 							$status = 'install';
-						} elseif ( $theme->get_stylesheet() != $current_theme->get_stylesheet() ) {
-							$status = 'activate';
+						} else {
+							$products[ $slug ]['update'] = version_compare( $theme->get( 'Version' ), $api->version, '<' );
+							if ( $theme->get_stylesheet() != $current_theme->get_stylesheet() ) {
+								$status = 'activate';
+							}
 						}
 
-						$products[ $slug ]['update'] = version_compare( $theme->get( 'Version' ), $api->version, '<' );
 						// Theme descriptions are too long so we need to shorten them.
 						$description = explode( '.' , $api->sections['description'] );
 						$description = $description[0] . '. ' . $description[1];

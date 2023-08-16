@@ -3,8 +3,8 @@ Tags: widget, button, slider, hero, google maps, image, carousel, lottie, featur
 Requires at least: 4.2
 Tested up to: 6.3
 Requires PHP: 5.6.20
-Stable tag: 1.53.0
-Build time: 2023-08-09T16:44:55+02:00
+Stable tag: 1.54.0
+Build time: 2023-08-16T21:57:39+02:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -105,6 +105,11 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.54.0 - 16 August 2023 =
+* Added a new setting called "Center Items" to the Features widget. This setting allows users to center the items if there are fewer features on a line than the maximum.
+* Added a new setting called "Skip Post if No Featured Image" to the Blog Portfolio widget. This setting allows users to skip posts without a featured image when the active template is set to "Portfolio".
+* Updated the SiteOrigin Installer.
 
 = 1.53.0 - 09 August 2023 =
 * Added multi-measurement support for the field margin in the Contact widget.
