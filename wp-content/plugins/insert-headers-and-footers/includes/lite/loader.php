@@ -5,6 +5,10 @@
  * @package WPCode
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( is_admin() || defined( 'DOING_CRON' ) && DOING_CRON ) {
 	// Class used for loading the scripts metabox.
 	require_once WPCODE_PLUGIN_PATH . 'includes/lite/admin/class-wpcode-metabox-snippets-lite.php';

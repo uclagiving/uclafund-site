@@ -75,9 +75,8 @@ abstract class WPCode_Admin_Bar_Info {
 	 * Add hooks needed to track the way WPCode loads scripts and snippets.
 	 */
 	public function hooks() {
-		// Each time this filter is used we will track the snippet id and location.
-		// This makes sure the snippet also passed the conditional logic rules.
-		add_filter( 'wpcode_get_snippets_for_location', array( $this, 'track_used_snippets' ), 999, 2 );
+		// Use the snippet output to more accurately track the snippets loaded.
+		add_filter( 'wpcode_snippet_output', array( $this, 'track_snippet_output' ), 999, 2 );
 
 		// Add an admin menu item to display the results.
 		add_action( 'admin_bar_menu', array( $this, 'add_admin_bar_info' ), 999 );
@@ -88,8 +87,9 @@ abstract class WPCode_Admin_Bar_Info {
 		add_action( 'wp_footer', array( $this, 'add_footer_info' ), 15 );
 		add_action( 'admin_footer', array( $this, 'add_footer_info' ), 999999 );
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 105 );
+		add_action( 'admin_init', array( $this, 'enqueue_scripts' ), - 5 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 15 );
+		add_action( 'template_redirect', array( $this, 'enqueue_scripts' ), - 5 );
 	}
 
 	/**
@@ -112,7 +112,7 @@ abstract class WPCode_Admin_Bar_Info {
 			return;
 		}
 
-		$asset = include_once $admin_asset_file;
+		$asset = require $admin_asset_file;
 
 		wp_enqueue_style( 'wpcode-admin-bar-css', WPCODE_PLUGIN_URL . 'build/admin-bar.css', null, $asset['version'] );
 
@@ -250,31 +250,25 @@ abstract class WPCode_Admin_Bar_Info {
 
 			$location_label = wpcode()->auto_insert->get_location_label( $location );
 			if ( 'shortcode' === $location ) {
-				$location_label = __( 'Shortcode', 'insert-headers-and-footers' );
+				$location_label = esc_html__( 'Shortcode', 'insert-headers-and-footers' );
+			}
+			if ( 'block' === $location ) {
+				$location_label = esc_html__( 'Gutenberg Block', 'insert-headers-and-footers' );
 			}
 			if ( 0 === strpos( $location, 'shortcode-' ) ) {
-				$location_label = __( 'Custom Shortcode', 'insert-headers-and-footers' );
+				$location_label = esc_html__( 'Custom Shortcode', 'insert-headers-and-footers' );
 			}
 			$location_info = array(
 				'label'       => $location_label . ' (' . count( $snippets ) . ')',
 				'location_id' => $location,
 				'snippets'    => array(),
-				'href'        => esc_url(
-					add_query_arg(
-						array(
-							'page'          => 'wpcode',
-							'location'      => $location,
-							'filter_action' => 'filter',
-						),
-						admin_url( 'admin.php' )
-					)
-				),
+				'href'        => $this->get_location_filter_link( $location ),
 			);
 			foreach ( $snippets as $snippet ) {
 				$location_info['snippets'][] = array(
 					'id'        => $snippet->get_id(),
 					'title'     => esc_html( $snippet->get_title() ),
-					'edit_link' => admin_url( 'admin.php?page=wpcode-snippet-manager&snippet_id=' . $snippet->get_id() ),
+					'edit_link' => $this->get_snippet_edit_link( $snippet->get_id() )
 				);
 			}
 			$location_info['count'] = count( $snippets );
@@ -294,6 +288,17 @@ abstract class WPCode_Admin_Bar_Info {
 			var wpcode_admin_bar_info_count = <?php echo absint( $total_count ); ?>;
 		</script>
 		<?php
+	}
+
+	/**
+	 * Get the snippet edit link based on the snippet id.
+	 *
+	 * @param int|string $snippet_id The snippet id.
+	 *
+	 * @return string
+	 */
+	public function get_snippet_edit_link( $snippet_id ) {
+		return admin_url( 'admin.php?page=wpcode-snippet-manager&snippet_id=' . $snippet_id );
 	}
 
 	/**
@@ -411,6 +416,52 @@ abstract class WPCode_Admin_Bar_Info {
 					'target' => '_blank',
 					'rel'    => 'noopener noreferrer',
 				),
+			)
+		);
+	}
+
+	/**
+	 * Track a snippet output for the admin bar.
+	 *
+	 * @param string         $output The snippet output (we don't use this).
+	 * @param WPCode_Snippet $snippet The snippet object.
+	 *
+	 * @return string
+	 */
+	public function track_snippet_output( $output, $snippet ) {
+
+		$location = $snippet->get_location();
+
+		if ( ! isset( $this->loaded_snippets[ $location ] ) ) {
+			$this->loaded_snippets[ $location ] = array();
+		}
+		$this->loaded_snippets[ $location ][] = $snippet;
+
+		return $output;
+	}
+
+	/**
+	 * Method for the location link.
+	 *
+	 * @param string $location The location slug.
+	 *
+	 * @return string
+	 */
+	public function get_location_filter_link( $location ) {
+
+		if ( in_array( $location, array( 'shortcode', 'block' ), true ) ) {
+			// If this is for a shortcode or a block let's try to link to the edit page of the currently loaded post.
+			return get_edit_post_link();
+		}
+
+		return esc_url(
+			add_query_arg(
+				array(
+					'page'          => 'wpcode',
+					'location'      => $location,
+					'filter_action' => 'filter',
+				),
+				admin_url( 'admin.php' )
 			)
 		);
 	}

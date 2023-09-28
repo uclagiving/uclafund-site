@@ -76,7 +76,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	 * @return void
 	 */
 	public function page_hooks() {
-		$this->can_edit = current_user_can( 'wpcode_edit_snippets' ) && current_user_can( 'unfiltered_html' );
+		$this->can_edit = current_user_can( 'wpcode_edit_snippets' );
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['snippet_id'] ) ) {
 			$snippet_post = get_post( absint( $_GET['snippet_id'] ) );
@@ -135,7 +135,8 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	public function process_message() {
 		// phpcs:disable WordPress.Security.NonceVerification
 		if ( ! isset( $_GET['message'] ) ) {
-			if ( ! current_user_can( 'unfiltered_html' ) ) {
+			$snippet_types = array_keys( wpcode()->execute->get_options() );
+			if ( in_array( 'html', $snippet_types, true ) && ! current_user_can( 'unfiltered_html', 'wpcode-editor' ) ) {
 				$this->set_error_message( __( 'Sorry, you only have read-only access to this page. Ask your administrator for assistance editing.', 'insert-headers-and-footers' ) );
 			}
 
@@ -351,7 +352,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 					<?php $this->field_code_type(); ?>
 				</div>
 			</div>
-			<textarea name="wpcode_snippet_code" id="wpcode_snippet_code" class="widefat" rows="8" <?php disabled( ! current_user_can( 'unfiltered_html' ) ); ?>><?php echo esc_textarea( $value ); ?></textarea>
+			<textarea name="wpcode_snippet_code" id="wpcode_snippet_code" class="widefat" rows="8"><?php echo esc_textarea( $value ); ?></textarea>
 			<?php
 			wp_editor(
 				$value,
@@ -1107,6 +1108,11 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			$this->code_type = $this->snippet->get_code_type();
 		} else {
 			$this->code_type = apply_filters( 'wpcode_default_code_type', $this->code_type );
+			$snippet_types   = wpcode()->execute->get_options();
+			// If the selected code type is not in the available types, change the selected type to the first available type.
+			if ( ! isset( $snippet_types[ $this->code_type ] ) ) {
+				$this->code_type = key( $snippet_types );
+			}
 		}
 	}
 
@@ -1387,8 +1393,10 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			'</a>'
 		);
 
-		$data['cl_labels']        = wpcode_get_conditions_relation_labels();
-		$data['cl_labels_custom'] = $this->get_conditional_logic_operators_custom_labels();
+		$data['cl_labels']          = wpcode_get_conditions_relation_labels();
+		$data['cl_labels_custom']   = $this->get_conditional_logic_operators_custom_labels();
+		$data['error_line']         = isset( $this->snippet ) ? $this->snippet->get_recently_deactivated_error_line() : 0;
+		$data['error_line_message'] = esc_html__( 'The snippet has been recently deactivated due to an error on this line', 'insert-headers-and-footers' );
 
 		return $data;
 	}
@@ -1493,14 +1501,14 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		);
 		$input  = sprintf(
 			'<div class="wpcode-input-with-button"><input type="text" id="wpcode-shortcode-attribute-name" placeholder="%1$s" class="wpcode-input-text" />%2$s</div>',
-			__( 'Attribute name', 'wpcode-premium' ),
+			__( 'Attribute name', 'insert-headers-and-footers' ),
 			$button
 		);
 
 		$input .= $this->help_icon(
 			sprintf(
 			// Translators: %1$s is the opening <code> tag, %2$s is the closing </code> tag.
-				__( 'Use this field to define the attribute name for your shortcode and click Add Attribute. Attributes added here will be available to use as smart tags and as variables inside snippets. E.g. an attribute named "keyword" will be available in a PHP snippet as %1$s$keyword%2$s. %3$sLearn more%4$s.', 'wpcode-premium' ),
+				__( 'Use this field to define the attribute name for your shortcode and click Add Attribute. Attributes added here will be available to use as smart tags and as variables inside snippets. E.g. an attribute named "keyword" will be available in a PHP snippet as %1$s$keyword%2$s. %3$sLearn more%4$s.', 'insert-headers-and-footers' ),
 				'<code>',
 				'</code>',
 				'<a href="' . wpcode_utm_url( 'https://wpcode.com/docs/shortcode-attributes/', 'snippet-editor', 'shortcode-attributes' ) . '" target="_blank">',
@@ -1515,7 +1523,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		$input .= '</div>';
 
 		$this->metabox_row(
-			__( 'Shortcode Attributes', 'wpcode-premium' ),
+			__( 'Shortcode Attributes', 'insert-headers-and-footers' ),
 			$input,
 			'wpcode-shortcode-attribute-name',
 			'',
@@ -1936,6 +1944,8 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			return;
 		}
 
+		$error_line = $this->snippet->get_recently_deactivated_error_line();
+
 		// Let's see if error logging is enabled.
 		$logging_enabled = wpcode()->settings->get_option( 'error_logging' );
 		if ( $logging_enabled ) {
@@ -1970,10 +1980,28 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 				);
 				?>
 			</p>
+			<?php if ( $error_line ) { ?>
+				<p>
+					<?php
+					printf(
+					// Translators: The placeholders make the text bold and add the line number.
+						esc_html__( 'The error occurred on %1$sline %3$d%2$s of the code.', 'insert-headers-and-footers' ),
+						'<strong>',
+						'</strong>',
+						absint( $error_line )
+					);
+					?>
+				</p>
+			<?php } ?>
 			<p>
 				<?php
 				if ( $logging_enabled ) {
-					esc_html_e( 'You can view the error log to get more details about the error that caused this.', 'insert-headers-and-footers' );
+					printf(
+							// Translators: The placeholders are for the link to the error logs.
+						esc_html__( 'You can %1$sview the error log%2$s to get more details about the error that caused this.', 'insert-headers-and-footers' ),
+						'<a href="' . esc_url( $button_url ) . '">',
+						'</a>'
+					);
 				} else {
 					esc_html_e( 'You can enable error logging to get more details about the error that caused this.', 'insert-headers-and-footers' );
 				}

@@ -7,6 +7,7 @@
 @button_width: '';
 @button_color: #41a9d5;
 @text_color: #FFFFFF;
+@icon_size: 1.3em;
 
 @hover_background_color: #41a9d5;
 @hover_text_color:  #FFFFFF;
@@ -64,12 +65,33 @@
 		& when not ( @has_text = true ) {
 			.sow-icon-image,
 			[class^="sow-icon-"] {
-					margin: 0;
+				margin: 0;
 			}
 		}
 
-		&:active,
-		&:hover{
+		& > span {
+			display: flex;
+			justify-content: center;
+
+			[class^="sow-icon-"] {
+				font-size: @icon_size;
+			}
+		}
+		
+		&.ow-icon-placement-top > span {
+			flex-direction: column;
+		}
+
+		&.ow-icon-placement-right > span {
+			flex-direction: row-reverse;
+		}
+		
+		&.ow-icon-placement-bottom > span {
+			flex-direction: column-reverse;
+		}
+
+		&.ow-icon-placement-left > span {
+			align-items: start;
 		}
 
 		&.ow-button-hover:active,

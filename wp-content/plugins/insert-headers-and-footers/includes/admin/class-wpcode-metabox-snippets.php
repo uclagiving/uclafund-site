@@ -126,7 +126,7 @@ abstract class WPCode_Metabox_Snippets {
 	 */
 	public function register_metabox( $post_type ) {
 		// Don't show the metabox to users who aren't allowed to manage snippets.
-		if ( ! current_user_can( 'wpcode_activate_snippets' ) ) {
+		if ( ! current_user_can( 'wpcode_edit_html_snippets' ) ) {
 			return;
 		}
 
@@ -248,8 +248,8 @@ abstract class WPCode_Metabox_Snippets {
 	 */
 	public function get_active_tab() {
 		$active_tab = 'header';
-		if ( isset( $_GET['wpcode-show'] ) && array_key_exists( $_GET['wpcode-show'], $this->tabs ) ) {
-			$active_tab             = sanitize_text_field( wp_unslash( $_GET['wpcode-show'] ) );
+		if ( isset( $_GET['wpcode-show'] ) && array_key_exists( sanitize_key( $_GET['wpcode-show'] ), $this->tabs ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$active_tab             = sanitize_key( $_GET['wpcode-show'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$this->scroll_into_view = true;
 		}
 

@@ -54,7 +54,9 @@ abstract class WPCode_Snippet_Execute_Type {
 
 		$code = $this->prepare_snippet_output();
 
-		return apply_filters( "wpcode_snippet_output_{$this->type}", $code, $this->snippet );
+		$output = apply_filters( "wpcode_snippet_output_{$this->type}", $code, $this->snippet );
+
+		return apply_filters( 'wpcode_snippet_output', $output, $this->snippet );
 	}
 
 	/**

@@ -39,6 +39,13 @@ class WPCode_Snippet_Execute {
 	private $snippet_types = array();
 
 	/**
+	 * Store the line reference for each snippet.
+	 *
+	 * @var array
+	 */
+	private $line_reference = array();
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -178,7 +185,7 @@ class WPCode_Snippet_Execute {
 			$options[ $type_key ] = $type_values['label'];
 		}
 
-		return $options;
+		return apply_filters( 'wpcode_code_type_options', $options );
 	}
 
 	/**
@@ -255,10 +262,11 @@ class WPCode_Snippet_Execute {
 	 *
 	 * @param string         $code The code to execute.
 	 * @param WPCode_Snippet $snippet The snippet object (optional) so we deactivate it to prevent the same error.
+	 * @param array          $line_reference The line reference for the error.
 	 *
 	 * @return false|string
 	 */
-	public function safe_execute_php( $code, $snippet = null ) {
+	public function safe_execute_php( $code, $snippet = null, $line_reference = array() ) {
 
 		if ( isset( $snippet ) ) {
 			$this->snippet_executed = $snippet;
@@ -273,20 +281,32 @@ class WPCode_Snippet_Execute {
 			extract( $snippet->attributes, EXTR_SKIP ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 		}
 
+		$this->line_reference = $line_reference;
+
 		try {
 			eval( $code ); // phpcs:ignore Squiz.PHP.Eval.Discouraged
 		} catch ( Error $e ) {
 			$error = array(
 				'message' => $e->getMessage(),
+				'line'    => $e->getLine(),
 			);
 			if ( $this->log_activation_errors() ) {
 				$error['snippet'] = $snippet->get_id();
 			}
 			wpcode()->error->add_error( $error );
-			$error = true;
 		}
 
 		if ( $error ) {
+			if ( ! empty( $error['line'] ) ) {
+				$snippet_data = $this->find_snippet_from_line( $error['line'] );
+				if ( ! empty( $snippet_data ) ) {
+					$snippet    = $snippet_data['snippet'];
+					$error_line = $snippet_data['line'];
+					$snippet->force_deactivate( $error_line );
+
+					return ob_get_clean();
+				}
+			}
 			$this->deactivate_last_snippet();
 		}
 
@@ -299,15 +319,7 @@ class WPCode_Snippet_Execute {
 	 * @return void
 	 */
 	public function deactivate_last_snippet() {
-		// Use this filter to add locations where the snippet should be auto disabled or disable auto-disable.
-		$locations_to_auto_disable = apply_filters(
-			'wpcode_error_locations_auto_disable',
-			array(
-				'everywhere',
-				'admin_only',
-			)
-		);
-		if ( isset( $this->snippet_executed ) && in_array( $this->snippet_executed->get_location(), $locations_to_auto_disable, true ) ) {
+		if ( isset( $this->snippet_executed ) && in_array( $this->snippet_executed->get_location(), $this->get_locations_to_auto_disable(), true ) ) {
 			$this->snippet_executed->force_deactivate();
 		}
 	}
@@ -328,9 +340,49 @@ class WPCode_Snippet_Execute {
 				$error['snippet'] = $this->snippet_executed->get_id();
 			}
 			wpcode()->error->add_error( $error );
+			// Let's see if we have a line reference stored and the error has a line number.
+			if ( ! empty( $error['line'] ) ) {
+				$snippet_data = $this->find_snippet_from_line( $error['line'] );
+				if ( ! empty( $snippet_data ) ) {
+					$snippet    = $snippet_data['snippet'];
+					$error_line = $snippet_data['line'];
+					if ( in_array( $snippet->get_location(), $this->get_locations_to_auto_disable(), true ) ) {
+						$snippet->force_deactivate( $error_line );
+
+						return;
+					}
+				}
+			}
 			// Deactivate the last ran snippet.
 			$this->deactivate_last_snippet();
 		}
+	}
+
+	/**
+	 * Find the snippet that caused the error based on the line number of the error.
+	 *
+	 * @param int $line The line number of the error.
+	 *
+	 * @return array|false
+	 */
+	public function find_snippet_from_line( $line ) {
+		if ( empty( $this->line_reference ) ) {
+			return false;
+		}
+		foreach ( $this->line_reference as $snippet_id => $lines ) {
+			if ( $lines['start'] <= $line && $lines['end'] >= $line ) {
+				// If we have a match, let's deactivate that snippet.
+				$snippet    = new WPCode_Snippet( $snippet_id );
+				$error_line = $line - $lines['start'] + 1;
+
+				return array(
+					'snippet' => $snippet,
+					'line'    => $error_line,
+				);
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -392,15 +444,15 @@ class WPCode_Snippet_Execute {
 		if ( ! $doing_ajax ) {
 			$message .= '<p>';
 			if ( ! empty( $this->snippet_executed ) ) {
-				$snippet_edit_link = add_query_arg(
+				$deactivated_snippets_link = add_query_arg(
 					array(
-						'page'       => 'wpcode-snippet-manager',
-						'snippet_id' => $this->snippet_executed->get_id(),
+						'page' => 'wpcode',
+						'view' => 'deactivated',
 					),
 					admin_url( 'admin.php' )
 				);
 
-				$message .= '<a href="' . esc_url( $snippet_edit_link ) . '" class="button button-primary">' . __( 'Edit Deactivated Snippet', 'insert-headers-and-footers' ) . '</a>&nbsp;';
+				$message .= '<a href="' . esc_url( $deactivated_snippets_link ) . '" class="button button-primary">' . __( 'View Deactivated Snippets', 'insert-headers-and-footers' ) . '</a>&nbsp;';
 			}
 
 			if ( ! $this->is_doing_activation() ) {
@@ -491,5 +543,21 @@ class WPCode_Snippet_Execute {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get the list of locations where snippets can be automatically disabled.
+	 *
+	 * @return array
+	 */
+	public function get_locations_to_auto_disable() {
+		// Use this filter to add locations where the snippet should be auto disabled or disable auto-disable.
+		return apply_filters(
+			'wpcode_error_locations_auto_disable',
+			array(
+				'everywhere',
+				'admin_only',
+			)
+		);
 	}
 }

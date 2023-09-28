@@ -3,8 +3,8 @@ Tags: widget, button, slider, hero, google maps, image, carousel, lottie, featur
 Requires at least: 4.2
 Tested up to: 6.3
 Requires PHP: 5.6.20
-Stable tag: 1.54.0
-Build time: 2023-08-16T21:57:39+02:00
+Stable tag: 1.55.1
+Build time: 2023-09-23T11:02:56-07:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -105,6 +105,29 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.55.1 - 23 September 2023 =
+* Resolved right positioned icon overflow and slight vertical misalignment in the Button widget.
+* Prevented icon right aligned overlap in the Button widget.
+* Restored icon vertical alignment in the Button widget.
+
+= 1.55.0 - 16 September 2023 =
+* Blog: Updated the Portfolio template to improve term display for selected post type.
+* Blog: Account for possible offset after the first page load.
+* Button: Added Icon Size setting.
+* Contact: Added multi-measurement support for the Field Margin setting.
+* Contact: Added Select2 support to the Dropdown Select field.
+* Features: Resolved mobile misalignment with `Align Bottom More`.
+* Sliders: Added frame keyboard navigation.
+* Video: Update to resolve a YouTube short URL display issue.
+* Destination URL Field: Update to fetch post title if using `Post: ID` format.
+* Post Query: Update to account for `offset` in the total post count.
+* Updated the Google Fonts list.
+* Font Awesome: Updated from `6.4.0` to `6.4.2`.
+* Added Select2 support.
+* Measurement Field: Prevented `Deprecated: strlen()` notice.
+* Developer: Added additional hooks to the Contact Form Widget.
+* Developer: Added an optional measurement unit parameter to the Number field.
 
 = 1.54.0 - 16 August 2023 =
 * Added a new setting called "Center Items" to the Features widget. This setting allows users to center the items if there are fewer features on a line than the maximum.

@@ -441,7 +441,7 @@ class WPCode_Snippet {
 		}
 
 		// If the user is not allowed to activate/deactivate snippets, prevent it and show error.
-		if ( ! current_user_can( 'wpcode_activate_snippets' ) ) {
+		if ( ! current_user_can( 'wpcode_activate_snippets', $this ) ) {
 			wpcode()->error->add_error(
 				array(
 					'message' => __( 'You are not allowed to change snippet status, please contact your webmaster.', 'insert-headers-and-footers' ),
@@ -663,9 +663,11 @@ class WPCode_Snippet {
 	 * This deactivates the snippet without regardless of user permissions.
 	 * Should only be used for unattended auto-deactivation when a snippet throws a potentially blocking error.
 	 *
+	 * @param int $error_line_number The line number where the error occurred.
+	 *
 	 * @return void
 	 */
-	public function force_deactivate() {
+	public function force_deactivate( $error_line_number = 0 ) {
 		global $wpdb;
 
 		// We need to make a direct call as using wp_update_post will load the post content and if the current user
@@ -695,17 +697,23 @@ class WPCode_Snippet {
 			wpcode()->cache->cache_all_loaded_snippets();
 
 			// Finally, if all went well, let's mark the snippet as recently deactivated and keep a log of the time when this happened.
-			$this->set_recently_deactivated();
+			$this->set_recently_deactivated( $error_line_number );
 		}
 	}
 
 	/**
 	 * Add a meta to mark the snippet as recently deactivated + keep a timestamp of when the snippet was deactivated.
 	 *
+	 * @param int $error_line_number The line number where the error occurred.
+	 *
 	 * @return void
 	 */
-	public function set_recently_deactivated() {
+	public function set_recently_deactivated( $error_line_number = 0 ) {
 		update_post_meta( $this->get_id(), '_wpcode_recently_deactivated', time() );
+
+		if ( $error_line_number > 0 ) {
+			update_post_meta( $this->get_id(), '_wpcode_recently_deactivated_error_line', absint( $error_line_number ) );
+		}
 	}
 
 	/**
@@ -715,6 +723,7 @@ class WPCode_Snippet {
 	 */
 	public function reset_recently_deactivated() {
 		delete_post_meta( $this->get_id(), '_wpcode_recently_deactivated' );
+		delete_post_meta( $this->get_id(), '_wpcode_recently_deactivated_error_line' );
 	}
 
 	/**
@@ -723,7 +732,16 @@ class WPCode_Snippet {
 	 * @return mixed
 	 */
 	public function get_recently_deactivated_time() {
-		return get_post_meta( $this->get_id(), '_wpcode_recently_deactivated', time() );
+		return get_post_meta( $this->get_id(), '_wpcode_recently_deactivated', true );
+	}
+
+	/**
+	 * Remove the meta that marks the snippet as recently deactivated.
+	 *
+	 * @return int
+	 */
+	public function get_recently_deactivated_error_line() {
+		return absint( get_post_meta( $this->get_id(), '_wpcode_recently_deactivated_error_line', true ) );
 	}
 
 	/**

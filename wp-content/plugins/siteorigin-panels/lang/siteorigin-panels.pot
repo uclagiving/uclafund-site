@@ -36,15 +36,15 @@ msgstr ""
 msgid "https://siteorigin.com"
 msgstr ""
 
-#: siteorigin-panels.php:402
+#: siteorigin-panels.php:405
 msgid "Read More"
 msgstr ""
 
-#: siteorigin-panels.php:585
+#: siteorigin-panels.php:588
 msgid "Edit Home Page"
 msgstr ""
 
-#: siteorigin-panels.php:605, tpl/js-templates.php:39, tpl/js-templates.php:41
+#: siteorigin-panels.php:608, tpl/js-templates.php:39, tpl/js-templates.php:41
 msgid "Live Editor"
 msgstr ""
 
@@ -153,523 +153,527 @@ msgstr ""
 msgid "Installing %s"
 msgstr ""
 
-#: inc/admin.php:171
+#: inc/admin.php:175
 msgid "Settings"
 msgstr ""
 
-#: inc/admin.php:172
+#: inc/admin.php:176
 msgid "Support"
 msgstr ""
 
-#: inc/admin.php:175, tpl/js-templates.php:49
+#: inc/admin.php:179, tpl/js-templates.php:49
 msgid "Addons"
 msgstr ""
 
-#: inc/admin.php:188, inc/admin.php:687, inc/admin.php:1435, inc/admin.php:1439, inc/settings.php:229, tpl/js-templates.php:217
+#: inc/admin.php:192, inc/admin.php:693, inc/admin.php:1459, inc/admin.php:1463, inc/settings.php:229, tpl/js-templates.php:217
 msgid "Page Builder"
 msgstr ""
 
-#: inc/admin.php:373
+#: inc/admin.php:378
 msgid "All Widgets"
 msgstr ""
 
-#: inc/admin.php:385
+#: inc/admin.php:390
 msgid "Choose Media"
 msgstr ""
 
-#: inc/admin.php:409
+#: inc/admin.php:391, tpl/js-templates.php:226, tpl/js-templates.php:292, tpl/js-templates.php:361
+msgid "Done"
+msgstr ""
+
+#: inc/admin.php:415
 msgid "Missing Widget"
 msgstr ""
 
-#: inc/admin.php:410
+#: inc/admin.php:416
 msgid "Page Builder doesn't know about this widget."
 msgstr ""
 
 #. translators: Number of seconds since.
-#: inc/admin.php:414
+#: inc/admin.php:420
 msgid "%d seconds"
 msgstr ""
 
 #. translators: Number of minutes since.
-#: inc/admin.php:416
+#: inc/admin.php:422
 msgid "%d minutes"
 msgstr ""
 
 #. translators: Number of hours since.
-#: inc/admin.php:418
+#: inc/admin.php:424
 msgid "%d hours"
 msgstr ""
 
 #. translators: A single second since.
-#: inc/admin.php:421
+#: inc/admin.php:427
 msgid "%d second"
 msgstr ""
 
 #. translators: A single minute since.
-#: inc/admin.php:423
+#: inc/admin.php:429
 msgid "%d minute"
 msgstr ""
 
 #. translators: A single hour since.
-#: inc/admin.php:425
+#: inc/admin.php:431
 msgid "%d hour"
 msgstr ""
 
 #. translators: Time ago - eg. "1 minute before".
-#: inc/admin.php:428
+#: inc/admin.php:434
 msgid "%s before"
 msgstr ""
 
-#: inc/admin.php:429
+#: inc/admin.php:435
 msgid "Now"
 msgstr ""
 
-#: inc/admin.php:433
+#: inc/admin.php:439
 msgid "Current"
 msgstr ""
 
-#: inc/admin.php:434
+#: inc/admin.php:440
 msgid "Original"
 msgstr ""
 
-#: inc/admin.php:435
+#: inc/admin.php:441
 msgid "Version restored"
 msgstr ""
 
-#: inc/admin.php:436
+#: inc/admin.php:442
 msgid "Converted to editor"
 msgstr ""
 
 #. translators: Message displayed in the history when a widget is deleted.
-#: inc/admin.php:440
+#: inc/admin.php:446
 msgid "Widget deleted"
 msgstr ""
 
 #. translators: Message displayed in the history when a widget is added.
-#: inc/admin.php:442
+#: inc/admin.php:448
 msgid "Widget added"
 msgstr ""
 
 #. translators: Message displayed in the history when a widget is edited.
-#: inc/admin.php:444
+#: inc/admin.php:450
 msgid "Widget edited"
 msgstr ""
 
 #. translators: Message displayed in the history when a widget is duplicated.
-#: inc/admin.php:446
+#: inc/admin.php:452
 msgid "Widget duplicated"
 msgstr ""
 
 #. translators: Message displayed in the history when a widget position is changed.
-#: inc/admin.php:448
+#: inc/admin.php:454
 msgid "Widget moved"
 msgstr ""
 
 #. translators: Message displayed in the history when a row is deleted.
-#: inc/admin.php:452
+#: inc/admin.php:458
 msgid "Row deleted"
 msgstr ""
 
 #. translators: Message displayed in the history when a row is added.
-#: inc/admin.php:454
+#: inc/admin.php:460
 msgid "Row added"
 msgstr ""
 
 #. translators: Message displayed in the history when a row is edited.
-#: inc/admin.php:456
+#: inc/admin.php:462
 msgid "Row edited"
 msgstr ""
 
 #. translators: Message displayed in the history when a row position is changed.
-#: inc/admin.php:458
+#: inc/admin.php:464
 msgid "Row moved"
 msgstr ""
 
 #. translators: Message displayed in the history when a row is duplicated.
-#: inc/admin.php:460
+#: inc/admin.php:466
 msgid "Row duplicated"
 msgstr ""
 
 #. translators: Message displayed in the history when a row is pasted.
-#: inc/admin.php:462
+#: inc/admin.php:468
 msgid "Row pasted"
 msgstr ""
 
-#: inc/admin.php:465
+#: inc/admin.php:471
 msgid "Cell resized"
 msgstr ""
 
-#: inc/admin.php:468
+#: inc/admin.php:474
 msgid "Prebuilt layout loaded"
 msgstr ""
 
-#: inc/admin.php:472
+#: inc/admin.php:478
 msgid "Loading prebuilt layout"
 msgstr ""
 
-#: inc/admin.php:473
+#: inc/admin.php:479
 msgid "Would you like to copy this editor's existing content to Page Builder?"
 msgstr ""
 
-#: inc/admin.php:474
+#: inc/admin.php:480
 msgid "Would you like to clear your Page Builder content and revert to using the standard visual editor?"
 msgstr ""
 
 #. translators: This is the title for a widget called "Layout Builder".
-#: inc/admin.php:476
+#: inc/admin.php:482
 msgid "Layout Builder Widget"
 msgstr ""
 
 #. translators: A standard confirmation message
-#: inc/admin.php:478, tpl/js-templates.php:102, tpl/js-templates.php:453
+#: inc/admin.php:484, tpl/js-templates.php:102, tpl/js-templates.php:442
 msgid "Are you sure?"
 msgstr ""
 
 #. translators: When a layout file is ready to be inserted. %s is the filename.
-#: inc/admin.php:480
+#: inc/admin.php:486
 msgid "%s is ready to insert."
 msgstr ""
 
-#: inc/admin.php:484
+#: inc/admin.php:490
 msgid "Add Widget Below"
 msgstr ""
 
-#: inc/admin.php:485
+#: inc/admin.php:491
 msgid "Add Widget to Cell"
 msgstr ""
 
-#: inc/admin.php:486, tpl/js-templates.php:244
+#: inc/admin.php:492, tpl/js-templates.php:244
 msgid "Search Widgets"
 msgstr ""
 
-#: inc/admin.php:488, tpl/js-templates.php:17, tpl/js-templates.php:19
+#: inc/admin.php:494, tpl/js-templates.php:17, tpl/js-templates.php:19
 msgid "Add Row"
 msgstr ""
 
-#: inc/admin.php:489
+#: inc/admin.php:495
 msgid "Column"
 msgstr ""
 
-#: inc/admin.php:491
+#: inc/admin.php:497
 msgid "Cell Actions"
 msgstr ""
 
-#: inc/admin.php:492
+#: inc/admin.php:498
 msgid "Paste Widget"
 msgstr ""
 
-#: inc/admin.php:494
+#: inc/admin.php:500
 msgid "Widget Actions"
 msgstr ""
 
-#: inc/admin.php:495
+#: inc/admin.php:501
 msgid "Edit Widget"
 msgstr ""
 
-#: inc/admin.php:496
+#: inc/admin.php:502
 msgid "Duplicate Widget"
 msgstr ""
 
-#: inc/admin.php:497
+#: inc/admin.php:503
 msgid "Delete Widget"
 msgstr ""
 
-#: inc/admin.php:498
+#: inc/admin.php:504
 msgid "Copy Widget"
 msgstr ""
 
-#: inc/admin.php:499
+#: inc/admin.php:505
 msgid "Paste Widget Below"
 msgstr ""
 
-#: inc/admin.php:501
+#: inc/admin.php:507
 msgid "Row Actions"
 msgstr ""
 
-#: inc/admin.php:502, tpl/js-templates.php:100
+#: inc/admin.php:508, tpl/js-templates.php:100
 msgid "Edit Row"
 msgstr ""
 
-#: inc/admin.php:503, tpl/js-templates.php:101
+#: inc/admin.php:509, tpl/js-templates.php:101
 msgid "Duplicate Row"
 msgstr ""
 
-#: inc/admin.php:504, tpl/js-templates.php:102
+#: inc/admin.php:510, tpl/js-templates.php:102
 msgid "Delete Row"
 msgstr ""
 
-#: inc/admin.php:505
+#: inc/admin.php:511
 msgid "Copy Row"
 msgstr ""
 
-#: inc/admin.php:506
+#: inc/admin.php:512
 msgid "Paste Row"
 msgstr ""
 
-#: inc/admin.php:508
+#: inc/admin.php:514
 msgid "Draft"
 msgstr ""
 
-#: inc/admin.php:509
+#: inc/admin.php:515
 msgid "Untitled"
 msgstr ""
 
-#: inc/admin.php:511
+#: inc/admin.php:517
 msgid "New Row"
 msgstr ""
 
-#: inc/admin.php:512, inc/admin.php:520, inc/styles.php:364, tpl/js-templates.php:67
+#: inc/admin.php:518, inc/admin.php:526, inc/styles.php:376, tpl/js-templates.php:67
 msgid "Row"
 msgstr ""
 
-#: inc/admin.php:515
+#: inc/admin.php:521
 msgid "Hmmm... Adding layout elements is not enabled. Please check if Page Builder has been configured to allow adding elements."
 msgstr ""
 
-#: inc/admin.php:516
+#: inc/admin.php:522
 msgid "Add a {{%= items[0] %}} to get started."
 msgstr ""
 
-#: inc/admin.php:517
+#: inc/admin.php:523
 msgid "Add a {{%= items[0] %}} or {{%= items[1] %}} to get started."
 msgstr ""
 
-#: inc/admin.php:518
+#: inc/admin.php:524
 msgid "Add a {{%= items[0] %}}, {{%= items[1] %}} or {{%= items[2] %}} to get started."
 msgstr ""
 
-#: inc/admin.php:519, inc/styles.php:525, tpl/js-templates.php:66
+#: inc/admin.php:525, inc/styles.php:537, tpl/js-templates.php:66
 msgid "Widget"
 msgstr ""
 
-#: inc/admin.php:521, tpl/js-templates.php:68
+#: inc/admin.php:527, tpl/js-templates.php:68
 msgid "Prebuilt Layout"
 msgstr ""
 
-#: inc/admin.php:523
+#: inc/admin.php:529
 msgid "Read our %s if you need help."
 msgstr ""
 
-#: inc/admin.php:524, tpl/js-templates.php:69
+#: inc/admin.php:530, tpl/js-templates.php:69
 msgid "documentation"
 msgstr ""
 
-#: inc/admin.php:533
+#: inc/admin.php:539
 msgid "Page Builder layouts"
 msgstr ""
 
-#: inc/admin.php:534
+#: inc/admin.php:540
 msgid "Error uploading or importing file."
 msgstr ""
 
-#: inc/admin.php:541
+#: inc/admin.php:547
 msgid "Unknown error. Failed to load the form. Please check your internet connection, contact your web site administrator, or try again later."
 msgstr ""
 
-#: inc/admin.php:545, inc/admin.php:551
+#: inc/admin.php:551, inc/admin.php:557
 msgid "soft-blue"
 msgstr ""
 
-#: inc/admin.php:546
+#: inc/admin.php:552
 msgid "soft-red"
 msgstr ""
 
-#: inc/admin.php:547
+#: inc/admin.php:553
 msgid "grayish-violet"
 msgstr ""
 
-#: inc/admin.php:548
+#: inc/admin.php:554
 msgid "lime-green"
 msgstr ""
 
-#: inc/admin.php:549
+#: inc/admin.php:555
 msgid "desaturated-yellow"
 msgstr ""
 
 #. translators: This is the default name given to a user's home page.
-#: inc/admin.php:775, inc/home.php:26
+#: inc/admin.php:781, inc/home.php:26
 msgid "Home Page"
 msgstr ""
 
-#: inc/admin.php:880
+#: inc/admin.php:886
 msgid "Untitled Widget"
 msgstr ""
 
-#: inc/admin.php:1031
+#: inc/admin.php:1055
 msgid "Soft Blue"
 msgstr ""
 
-#: inc/admin.php:1038
+#: inc/admin.php:1062
 msgid "Soft Red"
 msgstr ""
 
-#: inc/admin.php:1045
+#: inc/admin.php:1069
 msgid "Grayish Violet"
 msgstr ""
 
-#: inc/admin.php:1052
+#: inc/admin.php:1076
 msgid "Lime Green"
 msgstr ""
 
-#: inc/admin.php:1059
+#: inc/admin.php:1083
 msgid "Desaturated Yellow"
 msgstr ""
 
-#: inc/admin.php:1128
+#: inc/admin.php:1152
 msgid "You need to install 1{%1$s} to use the widget 2{%2$s}."
 msgstr ""
 
-#: inc/admin.php:1134
+#: inc/admin.php:1158
 msgid "Save and reload this page to start using the widget after you've installed it."
 msgstr ""
 
-#: inc/admin.php:1150
+#: inc/admin.php:1174
 msgid "The widget 1{%1$s} is not available. Please try locate and install the missing plugin. Post on the 2{support forums} if you need help."
 msgstr ""
 
-#: inc/admin.php:1340, inc/styles-admin.php:25
+#: inc/admin.php:1364, inc/styles-admin.php:25
 msgid "The supplied nonce is invalid."
 msgstr ""
 
-#: inc/admin.php:1341, inc/styles-admin.php:26
+#: inc/admin.php:1365, inc/admin.php:1844, inc/styles-admin.php:26
 msgid "Invalid nonce."
 msgstr ""
 
-#: inc/admin.php:1348
+#: inc/admin.php:1372
 msgid "Please specify the type of widget form to be rendered."
 msgstr ""
 
-#: inc/admin.php:1349
+#: inc/admin.php:1373
 msgid "Missing widget type."
 msgstr ""
 
-#: inc/admin.php:1455
+#: inc/admin.php:1479
 msgid "%s Widget"
 msgid_plural "%s Widgets"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/admin.php:1494
+#: inc/admin.php:1518
 msgid "Get the row, cell, and widget %link%."
 msgstr ""
 
-#: inc/admin.php:1496
+#: inc/admin.php:1520
 msgid "Animations Addon"
 msgstr ""
 
-#: inc/admin.php:1499
+#: inc/admin.php:1523
 msgid "Get the %link%. Build custom post types with reusable Page Builder layouts."
 msgstr ""
 
-#: inc/admin.php:1501
+#: inc/admin.php:1525
 msgid "CPT Builder Addon"
 msgstr ""
 
-#: inc/admin.php:1504
+#: inc/admin.php:1528
 msgid "Get the %link%. Add beautiful and customizable text overlays with animations to your images."
 msgstr ""
 
-#: inc/admin.php:1506
+#: inc/admin.php:1530
 msgid "Image Overlay Addon"
 msgstr ""
 
-#: inc/admin.php:1509
+#: inc/admin.php:1533
 msgid "Get a %link% for the SiteOrigin Image, Masonry, and Slider Widgets."
 msgstr ""
 
-#: inc/admin.php:1511
+#: inc/admin.php:1535
 msgid "Lightbox Addon"
 msgstr ""
 
-#: inc/admin.php:1514
+#: inc/admin.php:1538
 msgid "Link an entire Page Builder row, cell, or widget with the %link%."
 msgstr ""
 
-#: inc/admin.php:1516
+#: inc/admin.php:1540
 msgid "Link Overlay Addon"
 msgstr ""
 
-#: inc/admin.php:1519
+#: inc/admin.php:1543
 msgid "Get the %link%. Create a widget once, use it everywhere. Update it and the changes reflect in all instances of the widget."
 msgstr ""
 
-#: inc/admin.php:1521
+#: inc/admin.php:1545
 msgid "Mirror Widgets Addon"
 msgstr ""
 
-#: inc/admin.php:1524
+#: inc/admin.php:1548
 msgid "Upload multiple image frames at once to Widgets Bundle Slider and Image Grid type widgets with %link%."
 msgstr ""
 
-#: inc/admin.php:1526, inc/admin.php:1531, inc/admin.php:1561, inc/admin.php:1566, inc/admin.php:1571
+#: inc/admin.php:1550, inc/admin.php:1555, inc/admin.php:1585, inc/admin.php:1590, inc/admin.php:1595
 msgid "SiteOrigin Premium"
 msgstr ""
 
-#: inc/admin.php:1529
+#: inc/admin.php:1553
 msgid "Add parallax background images to your slider type widgets with %link%."
 msgstr ""
 
-#: inc/admin.php:1534
+#: inc/admin.php:1558
 msgid "Hide rows and widgets based for logged-in or logged-out users with the %link%."
 msgstr ""
 
-#: inc/admin.php:1536, inc/admin.php:1541, inc/admin.php:1546
+#: inc/admin.php:1560, inc/admin.php:1565, inc/admin.php:1570
 msgid "Toggle Visibility Addon"
 msgstr ""
 
-#: inc/admin.php:1539
+#: inc/admin.php:1563
 msgid "Show or hide rows and widgets between a selected date range with the %link%."
 msgstr ""
 
-#: inc/admin.php:1544
+#: inc/admin.php:1568
 msgid "Hide rows and widgets on specific devices with the %link%."
 msgstr ""
 
-#: inc/admin.php:1549
+#: inc/admin.php:1573
 msgid "Get a %link% with SiteOrigin Premium."
 msgstr ""
 
-#: inc/admin.php:1551
+#: inc/admin.php:1575
 msgid "Tooltip Addon"
 msgstr ""
 
-#: inc/admin.php:1554
+#: inc/admin.php:1578
 msgid "Use Google Fonts in SiteOrigin Widgets with the %link%."
 msgstr ""
 
-#: inc/admin.php:1556
+#: inc/admin.php:1580
 msgid "Webfont Selector Addon"
 msgstr ""
 
-#: inc/admin.php:1559
+#: inc/admin.php:1583
 msgid "Get fast email support for Page Builder with %link%."
 msgstr ""
 
-#: inc/admin.php:1564
+#: inc/admin.php:1588
 msgid "Organize your Page Builder rows with custom background colors using %link%."
 msgstr ""
 
-#: inc/admin.php:1569
+#: inc/admin.php:1593
 msgid "Add widget, cell, and row Retina background images for high-pixel-density displays with %link%."
 msgstr ""
 
-#: inc/admin.php:1577
+#: inc/admin.php:1601
 msgid "Get the %link%. Create custom templates for the Product, Archives, Shop, Cart, and Checkout pages."
 msgstr ""
 
-#: inc/admin.php:1579
+#: inc/admin.php:1603
 msgid "WooCommerce Templates Addon"
 msgstr ""
 
-#: inc/admin.php:1786
+#: inc/admin.php:1810
 msgid "Toggle editor selection menu"
 msgstr ""
 
-#: inc/admin.php:1787, inc/admin.php:1835, inc/settings.php:229, settings/tpl/settings.php:9
+#: inc/admin.php:1811, inc/admin.php:1875, inc/settings.php:229, settings/tpl/settings.php:9
 msgid "SiteOrigin Page Builder"
 msgstr ""
 
-#: inc/admin.php:1788
+#: inc/admin.php:1812
 msgid "Block Editor"
 msgstr ""
 
@@ -677,7 +681,7 @@ msgstr ""
 msgid "Custom Home Page Builder"
 msgstr ""
 
-#: inc/renderer.php:430
+#: inc/renderer.php:457
 msgid "Prevented SiteOrigin layout from repeated rendering."
 msgstr ""
 
@@ -965,7 +969,7 @@ msgstr ""
 msgid "Allow margin below the last row."
 msgstr ""
 
-#: inc/settings.php:502, inc/styles.php:463
+#: inc/settings.php:502, inc/styles.php:475
 msgid "Mobile Cell Bottom Margin"
 msgstr ""
 
@@ -1045,7 +1049,7 @@ msgstr ""
 msgid "Include styles into your Post Content. This keeps page layouts, even when Page Builder is deactivated."
 msgstr ""
 
-#: inc/settings.php:611, inc/styles-admin.php:325
+#: inc/settings.php:611, inc/styles-admin.php:344
 msgid "Enabled"
 msgstr ""
 
@@ -1089,7 +1093,7 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: inc/styles-admin.php:210, inc/styles.php:433, inc/styles.php:488
+#: inc/styles-admin.php:210, inc/styles.php:445, inc/styles.php:500
 msgid "Top"
 msgstr ""
 
@@ -1097,7 +1101,7 @@ msgstr ""
 msgid "Right"
 msgstr ""
 
-#: inc/styles-admin.php:218, inc/styles.php:435, inc/styles.php:490
+#: inc/styles-admin.php:218, inc/styles.php:447, inc/styles.php:502
 msgid "Bottom"
 msgstr ""
 
@@ -1105,323 +1109,327 @@ msgstr ""
 msgid "Left"
 msgstr ""
 
-#: inc/styles-admin.php:276
+#: inc/styles-admin.php:295
 msgid "Select Image"
 msgstr ""
 
-#: inc/styles-admin.php:283
+#: inc/styles-admin.php:302
 msgid "Remove"
 msgstr ""
 
-#: inc/styles-admin.php:286
+#: inc/styles-admin.php:305
 msgid "External URL"
 msgstr ""
 
-#: inc/styles-admin.php:370, tpl/admin-home-page.php:21
+#: inc/styles-admin.php:389, tpl/admin-home-page.php:21
 msgid "On"
 msgstr ""
 
-#: inc/styles-admin.php:370, tpl/admin-home-page.php:21
+#: inc/styles-admin.php:389, tpl/admin-home-page.php:21
 msgid "Off"
 msgstr ""
 
-#: inc/styles-admin.php:698, widgets/widgets.php:815
+#: inc/styles-admin.php:717, widgets/widgets.php:855
 msgid "Full"
 msgstr ""
 
-#: inc/styles-admin.php:699
+#: inc/styles-admin.php:718
 msgid "Thumbnail (Theme-defined)"
 msgstr ""
 
-#: inc/styles.php:114
+#: inc/styles.php:119
 msgid "%s ID"
 msgstr ""
 
-#: inc/styles.php:117
+#: inc/styles.php:122
 msgid "A custom ID used for this %s."
 msgstr ""
 
-#: inc/styles.php:122
+#: inc/styles.php:127
 msgid "%s Class"
 msgstr ""
 
-#: inc/styles.php:125
+#: inc/styles.php:130
 msgid "A custom class used for this %s."
 msgstr ""
 
-#: inc/styles.php:130
+#: inc/styles.php:135
 msgid "CSS Declarations"
 msgstr ""
 
-#: inc/styles.php:133
+#: inc/styles.php:138
 msgid "One declaration per line."
 msgstr ""
 
-#: inc/styles.php:138
+#: inc/styles.php:143
 msgid "Mobile CSS Declarations"
 msgstr ""
 
-#: inc/styles.php:141
+#: inc/styles.php:146
 msgid "CSS declarations applied when in mobile view."
 msgstr ""
 
-#: inc/styles.php:147
+#: inc/styles.php:152
 msgid "Padding"
 msgstr ""
 
-#: inc/styles.php:150
+#: inc/styles.php:155
 msgid "Padding around the entire %s."
 msgstr ""
 
-#: inc/styles.php:158
+#: inc/styles.php:163
 msgid "Tablet Padding"
 msgstr ""
 
-#: inc/styles.php:161
+#: inc/styles.php:166
 msgid "Padding when on tablet devices."
 msgstr ""
 
-#: inc/styles.php:170
+#: inc/styles.php:175
 msgid "Mobile Margin"
 msgstr ""
 
-#: inc/styles.php:173
+#: inc/styles.php:178
 msgid "Margins around the widget when on mobile devices."
 msgstr ""
 
-#: inc/styles.php:180
+#: inc/styles.php:185
 msgid "Mobile Padding"
 msgstr ""
 
-#: inc/styles.php:183
+#: inc/styles.php:188
 msgid "Padding when on mobile devices."
 msgstr ""
 
-#: inc/styles.php:191
+#: inc/styles.php:196
 msgid "Background Color"
 msgstr ""
 
-#: inc/styles.php:199
+#: inc/styles.php:204
 msgid "Background Image"
 msgstr ""
 
-#: inc/styles.php:206
+#: inc/styles.php:211
 msgid "Background Image Display"
 msgstr ""
 
-#: inc/styles.php:210
+#: inc/styles.php:215
 msgid "Tiled Image"
 msgstr ""
 
-#: inc/styles.php:211
+#: inc/styles.php:216
 msgid "Cover"
 msgstr ""
 
-#: inc/styles.php:212
+#: inc/styles.php:217
 msgid "Centered, with original size"
 msgstr ""
 
-#: inc/styles.php:213
+#: inc/styles.php:218
 msgid "Contain"
 msgstr ""
 
-#: inc/styles.php:214
+#: inc/styles.php:219
 msgid "Fixed"
 msgstr ""
 
-#: inc/styles.php:215
+#: inc/styles.php:220
 msgid "Parallax"
 msgstr ""
 
-#: inc/styles.php:221
+#: inc/styles.php:226
 msgid "Background Image Size"
 msgstr ""
 
-#: inc/styles.php:228
+#: inc/styles.php:233
+msgid "Background Image Opacity"
+msgstr ""
+
+#: inc/styles.php:240
 msgid "Border Color"
 msgstr ""
 
-#: inc/styles.php:235
+#: inc/styles.php:247
 msgid "Border Thickness"
 msgstr ""
 
-#: inc/styles.php:243
+#: inc/styles.php:255
 msgid "Border Radius"
 msgstr ""
 
-#: inc/styles.php:251
+#: inc/styles.php:263
 msgid "Box Shadow"
 msgstr ""
 
-#: inc/styles.php:257, inc/styles.php:304
+#: inc/styles.php:269, inc/styles.php:316
 msgid "Color"
 msgstr ""
 
-#: inc/styles.php:265, inc/styles.php:311
+#: inc/styles.php:277, inc/styles.php:323
 msgid "Inset"
 msgstr ""
 
-#: inc/styles.php:269, inc/styles.php:315
+#: inc/styles.php:281, inc/styles.php:327
 msgid "Inset box shadows appear inside the %s."
 msgstr ""
 
-#: inc/styles.php:272, inc/styles.php:318
+#: inc/styles.php:284, inc/styles.php:330
 msgid "Horizontal Offset"
 msgstr ""
 
-#: inc/styles.php:278, inc/styles.php:324
+#: inc/styles.php:290, inc/styles.php:336
 msgid "Vertical Offset"
 msgstr ""
 
-#: inc/styles.php:284, inc/styles.php:330
+#: inc/styles.php:296, inc/styles.php:342
 msgid "Blur"
 msgstr ""
 
-#: inc/styles.php:290, inc/styles.php:336
+#: inc/styles.php:302, inc/styles.php:348
 msgid "Spread"
 msgstr ""
 
-#: inc/styles.php:298
+#: inc/styles.php:310
 msgid "Box Shadow Hover"
 msgstr ""
 
-#: inc/styles.php:345
+#: inc/styles.php:357
 msgid "Full Height"
 msgstr ""
 
-#: inc/styles.php:350
+#: inc/styles.php:362
 msgid "Set the minimum height of the row to the full height of the browser."
 msgstr ""
 
-#: inc/styles.php:367
+#: inc/styles.php:379
 msgid "Cell Class"
 msgstr ""
 
-#: inc/styles.php:370
+#: inc/styles.php:382
 msgid "Class added to all cells in this row."
 msgstr ""
 
-#: inc/styles.php:376
+#: inc/styles.php:388
 msgid "Bottom Margin"
 msgstr ""
 
-#: inc/styles.php:379
+#: inc/styles.php:391
 msgid "Space below the row. Default is %spx."
 msgstr ""
 
-#: inc/styles.php:384
+#: inc/styles.php:396
 msgid "Gutter"
 msgstr ""
 
-#: inc/styles.php:387
+#: inc/styles.php:399
 msgid "Amount of space between cells. Default is %spx."
 msgstr ""
 
-#: inc/styles.php:392
+#: inc/styles.php:404
 msgid "Row Layout"
 msgstr ""
 
-#: inc/styles.php:396, inc/styles.php:409
+#: inc/styles.php:408, inc/styles.php:421
 msgid "Standard"
 msgstr ""
 
-#: inc/styles.php:397
+#: inc/styles.php:409
 msgid "Full Width"
 msgstr ""
 
-#: inc/styles.php:398
+#: inc/styles.php:410
 msgid "Full Width Stretched"
 msgstr ""
 
-#: inc/styles.php:399
+#: inc/styles.php:411
 msgid "Full Width Stretched Padded"
 msgstr ""
 
-#: inc/styles.php:405
+#: inc/styles.php:417
 msgid "Collapse Behaviour"
 msgstr ""
 
-#: inc/styles.php:410
+#: inc/styles.php:422
 msgid "No Collapse"
 msgstr ""
 
-#: inc/styles.php:416
+#: inc/styles.php:428
 msgid "Collapse Order"
 msgstr ""
 
-#: inc/styles.php:420, widgets/widgets.php:685, widgets/widgets.php:811, inc/widgets/post-loop.php:383
+#: inc/styles.php:432, widgets/widgets.php:725, widgets/widgets.php:851, inc/widgets/post-loop.php:383
 msgid "Default"
 msgstr ""
 
-#: inc/styles.php:421
+#: inc/styles.php:433
 msgid "Left on Top"
 msgstr ""
 
-#: inc/styles.php:422
+#: inc/styles.php:434
 msgid "Right on Top"
 msgstr ""
 
-#: inc/styles.php:429
+#: inc/styles.php:441
 msgid "Cell Vertical Alignment"
 msgstr ""
 
-#: inc/styles.php:434, inc/styles.php:489, widgets/widgets/button/button.php:31
+#: inc/styles.php:446, inc/styles.php:501, widgets/widgets/button/button.php:31
 msgid "Center"
 msgstr ""
 
-#: inc/styles.php:436, inc/styles.php:491
+#: inc/styles.php:448, inc/styles.php:503
 msgid "Stretch"
 msgstr ""
 
-#: inc/styles.php:445
+#: inc/styles.php:457
 msgid "Tablet Bottom Margin"
 msgstr ""
 
-#: inc/styles.php:448
+#: inc/styles.php:460
 msgid "Space below the row on tablet devices. Default is %spx."
 msgstr ""
 
-#: inc/styles.php:455
+#: inc/styles.php:467
 msgid "Mobile Bottom Margin"
 msgstr ""
 
-#: inc/styles.php:458
+#: inc/styles.php:470
 msgid "Space below the row on mobile devices. Default is %spx."
 msgstr ""
 
-#: inc/styles.php:466
+#: inc/styles.php:478
 msgid "Vertical space between cells in a collapsed mobile row. Default is %spx."
 msgstr ""
 
-#: inc/styles.php:480
+#: inc/styles.php:492
 msgid "Cell"
 msgstr ""
 
-#: inc/styles.php:483
+#: inc/styles.php:495
 msgid "Vertical Alignment"
 msgstr ""
 
-#: inc/styles.php:487
+#: inc/styles.php:499
 msgid "Use row setting"
 msgstr ""
 
-#: inc/styles.php:497, inc/styles.php:539
+#: inc/styles.php:509, inc/styles.php:551
 msgid "Font Color"
 msgstr ""
 
-#: inc/styles.php:504, inc/styles.php:546
+#: inc/styles.php:516, inc/styles.php:558
 msgid "Link Color"
 msgstr ""
 
-#: inc/styles.php:511, inc/styles.php:553
+#: inc/styles.php:523, inc/styles.php:565
 msgid "Link Hover Color"
 msgstr ""
 
-#: inc/styles.php:528
+#: inc/styles.php:540
 msgid "Margin"
 msgstr ""
 
-#: inc/styles.php:531
+#: inc/styles.php:543
 msgid "Margins around the widget."
 msgstr ""
 
@@ -1457,7 +1465,7 @@ msgstr ""
 msgid "Add Widget"
 msgstr ""
 
-#: tpl/js-templates.php:22, tpl/js-templates.php:409
+#: tpl/js-templates.php:22, tpl/js-templates.php:398
 msgid "Prebuilt Layouts"
 msgstr ""
 
@@ -1489,143 +1497,147 @@ msgstr ""
 msgid "Pro Tip"
 msgstr ""
 
-#: tpl/js-templates.php:155, tpl/js-templates.php:288, tpl/js-templates.php:374
+#: tpl/js-templates.php:155, tpl/js-templates.php:288, tpl/js-templates.php:353
 msgid "Duplicate"
 msgstr ""
 
-#: tpl/js-templates.php:161, tpl/js-templates.php:287, tpl/js-templates.php:373
+#: tpl/js-templates.php:161, tpl/js-templates.php:287, tpl/js-templates.php:352
 msgid "Delete"
-msgstr ""
-
-#: tpl/js-templates.php:226, tpl/js-templates.php:291, tpl/js-templates.php:381
-msgid "Done"
 msgstr ""
 
 #: tpl/js-templates.php:240
 msgid "Add New Widget %s"
 msgstr ""
 
-#: tpl/js-templates.php:256, tpl/js-templates.php:587
+#: tpl/js-templates.php:256, tpl/js-templates.php:576
 msgid "Close"
 msgstr ""
 
-#: tpl/js-templates.php:342
-msgid "Left to Right"
+#: tpl/js-templates.php:291, tpl/js-templates.php:360
+msgid "Save"
 msgstr ""
 
-#: tpl/js-templates.php:343
-msgid "Right to Left"
+#: tpl/js-templates.php:293, tpl/js-templates.php:362
+msgid ":"
 msgstr ""
 
-#: tpl/js-templates.php:354
-msgid "1{Set row layout}: %1$s columns with a ratio of %2$s going from %3$s"
+#: tpl/js-templates.php:296, tpl/js-templates.php:365
+msgid "Save Now"
 msgstr ""
 
-#: tpl/js-templates.php:360
-msgid "Set"
+#: tpl/js-templates.php:299, tpl/js-templates.php:368
+msgid "Save With Page Save"
 msgstr ""
 
-#: tpl/js-templates.php:379, tpl/js-templates.php:447
+#: tpl/js-templates.php:330
+msgid "Set Row Layout"
+msgstr ""
+
+#: tpl/js-templates.php:337
+msgid "Resize Columns: "
+msgstr ""
+
+#: tpl/js-templates.php:358, tpl/js-templates.php:436
 msgid "Insert"
 msgstr ""
 
-#: tpl/js-templates.php:399
+#: tpl/js-templates.php:388
 msgid "Page Builder Layouts"
 msgstr ""
 
-#: tpl/js-templates.php:403
+#: tpl/js-templates.php:392
 msgid "Search"
 msgstr ""
 
-#: tpl/js-templates.php:417
+#: tpl/js-templates.php:406
 msgid "Import/Export"
 msgstr ""
 
-#: tpl/js-templates.php:426
+#: tpl/js-templates.php:415
 msgid "Clone: %s"
 msgstr ""
 
-#: tpl/js-templates.php:451
+#: tpl/js-templates.php:440
 msgid "Insert after"
 msgstr ""
 
-#: tpl/js-templates.php:452
+#: tpl/js-templates.php:441
 msgid "Insert before"
 msgstr ""
 
-#: tpl/js-templates.php:453
+#: tpl/js-templates.php:442
 msgid "Replace current"
 msgstr ""
 
-#: tpl/js-templates.php:464
+#: tpl/js-templates.php:453
 msgid "Do you want to browse the Prebuilt Layouts directory?"
 msgstr ""
 
-#: tpl/js-templates.php:465
+#: tpl/js-templates.php:454
 msgid "Enable"
 msgstr ""
 
-#: tpl/js-templates.php:478
+#: tpl/js-templates.php:467
 msgid "Your search didn't return any results"
 msgstr ""
 
-#: tpl/js-templates.php:506
+#: tpl/js-templates.php:495
 msgid "Previous"
 msgstr ""
 
-#: tpl/js-templates.php:507
+#: tpl/js-templates.php:496
 msgid "Next"
 msgstr ""
 
-#: tpl/js-templates.php:517
+#: tpl/js-templates.php:506
 msgid "Drop import file here"
 msgstr ""
 
-#: tpl/js-templates.php:518
+#: tpl/js-templates.php:507
 msgid "Or"
 msgstr ""
 
-#: tpl/js-templates.php:521
+#: tpl/js-templates.php:510
 msgid "Select Import File"
 msgstr ""
 
-#: tpl/js-templates.php:535
+#: tpl/js-templates.php:524
 msgid "Download Layout"
 msgstr ""
 
-#: tpl/js-templates.php:546
+#: tpl/js-templates.php:535
 msgid "Page Builder Change History"
 msgstr ""
 
-#: tpl/js-templates.php:561
+#: tpl/js-templates.php:550
 msgid "Restore Version"
 msgstr ""
 
-#: tpl/js-templates.php:584
+#: tpl/js-templates.php:573
 msgid "Save Draft"
 msgstr ""
 
-#: tpl/js-templates.php:585, tpl/js-templates.php:586
+#: tpl/js-templates.php:574, tpl/js-templates.php:575
 msgid "Update"
 msgstr ""
 
-#: tpl/js-templates.php:589
+#: tpl/js-templates.php:578
 msgid "Toggle desktop mode"
 msgstr ""
 
-#: tpl/js-templates.php:592
+#: tpl/js-templates.php:581
 msgid "Toggle tablet mode"
 msgstr ""
 
-#: tpl/js-templates.php:595
+#: tpl/js-templates.php:584
 msgid "Toggle mobile mode"
 msgstr ""
 
-#: tpl/js-templates.php:634
+#: tpl/js-templates.php:623
 msgid "No Results"
 msgstr ""
 
-#: tpl/js-templates.php:644
+#: tpl/js-templates.php:633
 msgid "Add SiteOrigin Layout Block"
 msgstr ""
 
@@ -1633,207 +1645,207 @@ msgstr ""
 msgid "This is a legacy Page Builder widget. Please move to use widgets from the %sSiteOrigin Widgets Bundle%s plugin when able."
 msgstr ""
 
-#: widgets/widgets.php:253
+#: widgets/widgets.php:293
 msgid "Style"
 msgstr ""
 
-#: widgets/widgets.php:283
+#: widgets/widgets.php:323
 msgid "%s Style"
 msgstr ""
 
-#: widgets/widgets.php:644, inc/widgets/post-loop.php:341
+#: widgets/widgets.php:684, inc/widgets/post-loop.php:341
 msgid "Post Type"
 msgstr ""
 
-#: widgets/widgets.php:651, inc/widgets/post-loop.php:350
+#: widgets/widgets.php:691, inc/widgets/post-loop.php:350
 msgid "Posts Per Page"
 msgstr ""
 
-#: widgets/widgets.php:656, inc/widgets/post-loop.php:355
+#: widgets/widgets.php:696, inc/widgets/post-loop.php:355
 msgid "Order By"
 msgstr ""
 
-#: widgets/widgets.php:658, widgets/widgets.php:839, inc/widgets/post-content.php:70, inc/widgets/post-loop.php:357
+#: widgets/widgets.php:698, widgets/widgets.php:879, inc/widgets/post-content.php:70, inc/widgets/post-loop.php:357
 msgid "None"
 msgstr ""
 
-#: widgets/widgets.php:659, inc/widgets/post-loop.php:358
+#: widgets/widgets.php:699, inc/widgets/post-loop.php:358
 msgid "Post ID"
 msgstr ""
 
-#: widgets/widgets.php:660, inc/widgets/post-loop.php:359
+#: widgets/widgets.php:700, inc/widgets/post-loop.php:359
 msgid "Author"
 msgstr ""
 
-#: widgets/widgets.php:661, widgets/widgets.php:662, inc/widgets/post-loop.php:360, inc/widgets/post-loop.php:361, widgets/widgets/testimonial/testimonial.php:15
+#: widgets/widgets.php:701, widgets/widgets.php:702, inc/widgets/post-loop.php:360, inc/widgets/post-loop.php:361, widgets/widgets/testimonial/testimonial.php:15
 msgid "Name"
 msgstr ""
 
-#: widgets/widgets.php:663, inc/widgets/post-loop.php:362
+#: widgets/widgets.php:703, inc/widgets/post-loop.php:362
 msgid "Date"
 msgstr ""
 
-#: widgets/widgets.php:664, inc/widgets/post-loop.php:363
+#: widgets/widgets.php:704, inc/widgets/post-loop.php:363
 msgid "Modified"
 msgstr ""
 
-#: widgets/widgets.php:665, inc/widgets/post-loop.php:364
+#: widgets/widgets.php:705, inc/widgets/post-loop.php:364
 msgid "Parent"
 msgstr ""
 
-#: widgets/widgets.php:666, inc/widgets/post-loop.php:365
+#: widgets/widgets.php:706, inc/widgets/post-loop.php:365
 msgid "Random"
 msgstr ""
 
-#: widgets/widgets.php:667, inc/widgets/post-loop.php:366
+#: widgets/widgets.php:707, inc/widgets/post-loop.php:366
 msgid "Comment Count"
 msgstr ""
 
-#: widgets/widgets.php:668, inc/widgets/post-loop.php:367
+#: widgets/widgets.php:708, inc/widgets/post-loop.php:367
 msgid "Menu Order"
 msgstr ""
 
-#: widgets/widgets.php:674, inc/widgets/post-loop.php:373
+#: widgets/widgets.php:714, inc/widgets/post-loop.php:373
 msgid "Order"
 msgstr ""
 
-#: widgets/widgets.php:676, inc/widgets/post-loop.php:376
+#: widgets/widgets.php:716, inc/widgets/post-loop.php:376
 msgid "Ascending"
 msgstr ""
 
-#: widgets/widgets.php:677, inc/widgets/post-loop.php:375
+#: widgets/widgets.php:717, inc/widgets/post-loop.php:375
 msgid "Descending"
 msgstr ""
 
-#: widgets/widgets.php:683, inc/widgets/post-loop.php:381
+#: widgets/widgets.php:723, inc/widgets/post-loop.php:381
 msgid "Sticky Posts"
 msgstr ""
 
-#: widgets/widgets.php:686, inc/widgets/post-loop.php:384
+#: widgets/widgets.php:726, inc/widgets/post-loop.php:384
 msgid "Ignore Sticky"
 msgstr ""
 
-#: widgets/widgets.php:687, inc/widgets/post-loop.php:385
+#: widgets/widgets.php:727, inc/widgets/post-loop.php:385
 msgid "Exclude Sticky"
 msgstr ""
 
-#: widgets/widgets.php:688, inc/widgets/post-loop.php:386
+#: widgets/widgets.php:728, inc/widgets/post-loop.php:386
 msgid "Only Sticky"
 msgstr ""
 
-#: widgets/widgets.php:694
+#: widgets/widgets.php:734
 msgid "Additional Arguments"
 msgstr ""
 
-#: widgets/widgets.php:698, inc/widgets/post-loop.php:398
+#: widgets/widgets.php:738, inc/widgets/post-loop.php:398
 msgid "Additional query arguments. See 1{query_posts}."
 msgstr ""
 
-#: widgets/widgets.php:757
+#: widgets/widgets.php:797
 msgid "Gallery (PB)"
 msgstr ""
 
-#: widgets/widgets.php:759
+#: widgets/widgets.php:799
 msgid "Displays a gallery."
 msgstr ""
 
-#: widgets/widgets.php:800
+#: widgets/widgets.php:840
 msgid "Gallery Images"
 msgstr ""
 
-#: widgets/widgets.php:801
+#: widgets/widgets.php:841
 msgid "edit gallery"
 msgstr ""
 
-#: widgets/widgets.php:805
+#: widgets/widgets.php:845
 msgid "Comma separated attachment IDs. Defaults to all current page's attachments."
 msgstr ""
 
-#: widgets/widgets.php:809
+#: widgets/widgets.php:849
 msgid "Image Size"
 msgstr ""
 
-#: widgets/widgets.php:812
+#: widgets/widgets.php:852
 msgid "Large"
 msgstr ""
 
-#: widgets/widgets.php:813
+#: widgets/widgets.php:853
 msgid "Medium"
 msgstr ""
 
-#: widgets/widgets.php:814
+#: widgets/widgets.php:854
 msgid "Thumbnail"
 msgstr ""
 
-#: widgets/widgets.php:825
+#: widgets/widgets.php:865
 msgid "Gallery Type"
 msgstr ""
 
-#: widgets/widgets.php:830
+#: widgets/widgets.php:870
 msgid "Columns"
 msgstr ""
 
-#: widgets/widgets.php:835
+#: widgets/widgets.php:875
 msgid "Link To"
 msgstr ""
 
-#: widgets/widgets.php:837
+#: widgets/widgets.php:877
 msgid "Attachment Page"
 msgstr ""
 
-#: widgets/widgets.php:838
+#: widgets/widgets.php:878
 msgid "File"
 msgstr ""
 
-#: widgets/widgets.php:856
+#: widgets/widgets.php:896
 msgid "Image (PB)"
 msgstr ""
 
-#: widgets/widgets.php:858
+#: widgets/widgets.php:898
 msgid "Displays a simple image."
 msgstr ""
 
-#: widgets/widgets.php:898, widgets/widgets/animated-image/animated-image.php:15
+#: widgets/widgets.php:938, widgets/widgets/animated-image/animated-image.php:15
 msgid "Image URL"
 msgstr ""
 
-#: widgets/widgets.php:902, widgets/widgets/button/button.php:19
+#: widgets/widgets.php:942, widgets/widgets/button/button.php:19
 msgid "Destination URL"
 msgstr ""
 
-#: widgets/widgets.php:916
+#: widgets/widgets.php:956
 msgid "Embedded Video (PB)"
 msgstr ""
 
-#: widgets/widgets.php:918
+#: widgets/widgets.php:958
 msgid "Embeds a video."
 msgstr ""
 
-#: widgets/widgets.php:959
+#: widgets/widgets.php:995
 msgid "Video"
 msgstr ""
 
-#: widgets/widgets.php:976
+#: widgets/widgets.php:1012
 msgid "Self Hosted Video (PB)"
 msgstr ""
 
-#: widgets/widgets.php:978
+#: widgets/widgets.php:1014
 msgid "A self hosted video player."
 msgstr ""
 
-#: widgets/widgets.php:1026
+#: widgets/widgets.php:1062
 msgid "Video URL"
 msgstr ""
 
-#: widgets/widgets.php:1030
+#: widgets/widgets.php:1066
 msgid "Poster URL"
 msgstr ""
 
-#: widgets/widgets.php:1032
+#: widgets/widgets.php:1068
 msgid "An image that displays before the video starts playing."
 msgstr ""
 
-#: widgets/widgets.php:1037
+#: widgets/widgets.php:1073
 msgid "Auto Play Video"
 msgstr ""
 

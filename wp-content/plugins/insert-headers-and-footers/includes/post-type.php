@@ -5,6 +5,10 @@
  * @package wpcode
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 add_action( 'init', 'wpcode_register_post_type', - 5 );
 add_action( 'init', 'wpcode_register_taxonomies', - 5 );
 add_filter( 'update_post_term_count_statuses', 'wpcode_taxonomies_count_drafts', 10, 2 );

@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * WPCode Connect.
  *
@@ -43,7 +47,7 @@ class WPCode_Connect {
 			return;
 		}
 
-		$asset = include_once $admin_asset_file;
+		$asset = require $admin_asset_file;
 
 		wp_enqueue_script( 'wpcode-connect-js', WPCODE_PLUGIN_URL . 'build/connect.js', $asset['dependencies'], $asset['version'], true );
 	}

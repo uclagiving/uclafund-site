@@ -143,3 +143,26 @@ if ( ! function_exists( '_sanitize_text_fields' ) ) {
 		return $filtered;
 	}
 }
+
+add_filter( 'pto/posts_orderby/ignore', 'wpcode_exclude_post_types_order', 15, 3 );
+
+/**
+ * Exclude the wpcode post type from the Post Types Order plugin.
+ *
+ * @param bool     $ignore Whether to ignore the post type.
+ * @param string   $order_by The order by param.
+ * @param WP_Query $query The WP_Query instance.
+ *
+ * @return bool
+ */
+function wpcode_exclude_post_types_order( $ignore, $order_by, $query ) {
+	if ( ! method_exists( $query, 'get' ) ) {
+		return $ignore;
+	}
+
+	if ( 'wpcode' === $query->get( 'post_type' ) ) {
+		$ignore = true;
+	}
+
+	return $ignore;
+}

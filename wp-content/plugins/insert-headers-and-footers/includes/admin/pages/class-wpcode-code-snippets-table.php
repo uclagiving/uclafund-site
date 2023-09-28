@@ -186,7 +186,7 @@ class WPCode_Code_Snippets_Table extends WP_List_Table {
 			if ( ! empty( $recently_deactivated ) ) {
 				$tooltip_text = sprintf(
 				// Translators: %1$s is the time since the snippet was deactivated, %2$s is the date and time of deactivation.
-					__( 'This snippet was automatically deactivated because of a fatal erorr at %2$s on %3$s (%1$s ago)', 'insert-headers-and-footers' ),
+					__( 'This snippet was automatically deactivated because of a fatal error at %2$s on %3$s (%1$s ago)', 'insert-headers-and-footers' ),
 					human_time_diff( $recently_deactivated, time() ),
 					gmdate( 'H:i:s', $recently_deactivated ),
 					gmdate( 'Y-m-d', $recently_deactivated )

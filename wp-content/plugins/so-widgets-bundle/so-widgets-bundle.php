@@ -2,7 +2,7 @@
 /*
 Plugin Name: SiteOrigin Widgets Bundle
 Description: A highly customizable collection of widgets, ready to be used anywhere, neatly bundled into a single plugin.
-Version: 1.54.0
+Version: 1.55.1
 Text Domain: so-widgets-bundle
 Domain Path: /lang
 Author: SiteOrigin
@@ -12,7 +12,7 @@ License: GPL3
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 */
 
-define( 'SOW_BUNDLE_VERSION', '1.54.0' );
+define( 'SOW_BUNDLE_VERSION', '1.55.1' );
 define( 'SOW_BUNDLE_BASE_FILE', __FILE__ );
 
 // Allow JS suffix to be pre-set.
@@ -390,12 +390,25 @@ class SiteOrigin_Widgets_Bundle {
 		wp_register_script(
 			'sowb-pikaday',
 			plugin_dir_url( SOW_BUNDLE_BASE_FILE ) . 'js/lib/pikaday' . SOW_BUNDLE_JS_SUFFIX . '.js',
-			array( ),
+			array(),
 			'1.5.1'
 		);
+
 		wp_register_style(
 			'sowb-pikaday',
 			plugin_dir_url( __FILE__ ) . 'js/lib/pikaday.css'
+		);
+
+		wp_register_script(
+			'select2',
+			plugin_dir_url( SOW_BUNDLE_BASE_FILE ) . 'js/lib/select2' . SOW_BUNDLE_JS_SUFFIX . '.js',
+			array( 'jquery' ),
+			'4.1.0-rc.0'
+		);
+
+		wp_register_style(
+			'select2',
+			plugin_dir_url( __FILE__ ) . 'css/lib/select2.css'
 		);
 	}
 
@@ -880,6 +893,18 @@ class SiteOrigin_Widgets_Bundle {
 			plugin_dir_url( SOW_BUNDLE_BASE_FILE ) . 'js/lib/jquery.fitvids' . SOW_BUNDLE_JS_SUFFIX . '.js',
 			array( 'jquery' ),
 			1.1
+		);
+
+		wp_register_script(
+			'select2',
+			plugin_dir_url( SOW_BUNDLE_BASE_FILE ) . 'js/lib/select2' . SOW_BUNDLE_JS_SUFFIX . '.js',
+			array( 'jquery' ),
+			'4.1.0-rc.0'
+		);
+
+		wp_register_style(
+			'select2',
+			plugin_dir_url( __FILE__ ) . 'css/lib/select2.css'
 		);
 	}
 

@@ -91,6 +91,14 @@ class SiteOrigin_Panels_Renderer {
 			$panels_margin_bottom = apply_filters( 'siteorigin_panels_css_row_margin_bottom', $settings['margin-bottom'] . 'px', $row, $ri, $panels_data, $post_id );
 			$panels_mobile_margin_bottom = apply_filters( 'siteorigin_panels_css_row_mobile_margin_bottom', $settings['row-mobile-margin-bottom'] . 'px', $row, $ri, $panels_data, $post_id );
 
+			if ( self::has_background_overlay( $row ) ) {
+				$css->add_row_css( $post_id, $ri, array(
+					'.panel-has-style > .panel-row-style',
+				), array(
+					'position' => 'relative',
+				) );
+			}
+
 			if ( empty( $row['cells'] ) ) {
 				continue;
 			}
@@ -135,6 +143,12 @@ class SiteOrigin_Panels_Renderer {
 						str_replace( ',', '.', (int) $gutter ? $calc_width : '' ), // Exclude if there's a zero gutter
 					),
 				), $css_container_cutoff );
+
+				if ( self::has_background_overlay( $cell ) ) {
+					$css->add_cell_css( $post_id, $ri, $ci, '', array(
+						'position' => 'relative',
+					) );
+				}
 
 				// Add in any widget specific CSS
 				foreach ( $cell['widgets'] as $wi => $widget ) {
@@ -189,6 +203,19 @@ class SiteOrigin_Panels_Renderer {
 							),
 							$panels_mobile_width,
 							true
+						);
+					}
+
+					if ( self::has_background_overlay( $widget['panels_info'] ) ) {
+						$css->add_widget_css(
+							$post_id,
+							$ri,
+							$ci,
+							$wi,
+							'',
+							array(
+							'position' => 'relative',
+							)
 						);
 					}
 				}
@@ -711,12 +738,13 @@ class SiteOrigin_Panels_Renderer {
 		if ( siteorigin_panels_setting( 'inline-styles' ) && ! $is_last ) {
 			$widget_bottom_margin = apply_filters(
 				'siteorigin_panels_css_cell_margin_bottom',
-				( empty( $widget_info['style']['margin'] ) ? siteorigin_panels_setting('margin-bottom') : 0 ) . 'px',
+				( empty( $widget_info['style']['margin'] ) ? siteorigin_panels_setting( 'margin-bottom' ) : 0 ) . 'px',
 				false,
 				false,
 				array(),
 				$post_id
 			);
+
 			if ( ! empty( $widget_bottom_margin ) ) {
 				$attributes['style'] = 'margin-bottom: ' . $widget_bottom_margin;
 			}
@@ -953,7 +981,7 @@ class SiteOrigin_Panels_Renderer {
 		if ( siteorigin_panels_setting( 'inline-styles' ) ) {
 			$panels_margin_bottom = apply_filters( 'siteorigin_panels_css_row_margin_bottom', siteorigin_panels_setting( 'margin-bottom' ) . 'px', $row, $ri, $panels_data, $post_id );
 
-			if  (
+			if (
 				! empty( $row['style']['bottom_margin'] ) ||
 				$ri != count( $panels_data['grids'] ) - 1 ||
 				! empty( siteorigin_panels_setting( 'margin-bottom-last-row' ) )
@@ -1126,5 +1154,19 @@ class SiteOrigin_Panels_Renderer {
 
 	public function front_css_url() {
 		return siteorigin_panels_url( 'css/front-flex' . SITEORIGIN_PANELS_CSS_SUFFIX . '.css' );
+	}
+
+	private static function has_background_overlay( $context ) {
+		return (
+			(
+				! empty( $context['style']['background_image_attachment'] ) ||
+				! empty( $context['style']['background_image_attachment_fallback'] )
+			) &&
+			(
+				isset( $context['style']['background_image_opacity'] ) &&
+				$context['style']['background_image_opacity'] != 100
+			)
+		) ||
+		apply_filters( 'siteorigin_panels_overlay', false, $context );
 	}
 }

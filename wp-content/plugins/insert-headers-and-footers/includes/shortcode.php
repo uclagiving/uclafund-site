@@ -5,6 +5,10 @@
  * @package WPCode
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 add_shortcode( 'wpcode', 'wpcode_shortcode_handler' );
 add_action( 'wpcode_shortcode_before_output', 'wpcode_pass_shortcode_attributes_to_snippet', 10, 4 );
 
@@ -23,7 +27,8 @@ function wpcode_shortcode_handler( $args, $content, $tag ) {
 	$atts = wp_parse_args(
 		$args,
 		array(
-			'id' => 0,
+			'id'            => 0,
+			'wpcode_source' => 'shortcode',
 		)
 	);
 
@@ -47,6 +52,8 @@ function wpcode_shortcode_handler( $args, $content, $tag ) {
 	if ( empty( $shortcode_location ) ) {
 		return '';
 	}
+
+	$snippet->location = $atts['wpcode_source'];
 
 	do_action( 'wpcode_shortcode_before_output', $snippet, $atts, $content, $tag );
 

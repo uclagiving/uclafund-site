@@ -3,7 +3,7 @@
 Plugin Name: Page Builder by SiteOrigin
 Plugin URI: https://siteorigin.com/page-builder/
 Description: A drag and drop, responsive page builder that simplifies building your website.
-Version: 2.25.2
+Version: 2.26.1
 Author: SiteOrigin
 Author URI: https://siteorigin.com
 License: GPL3
@@ -11,7 +11,7 @@ License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: http://siteorigin.com/page-builder/#donate
 */
 
-define( 'SITEORIGIN_PANELS_VERSION', '2.25.2' );
+define( 'SITEORIGIN_PANELS_VERSION', '2.26.1' );
 
 if ( ! defined( 'SITEORIGIN_PANELS_JS_SUFFIX' ) ) {
 	define( 'SITEORIGIN_PANELS_JS_SUFFIX', '.min' );
@@ -21,7 +21,8 @@ define( 'SITEORIGIN_PANELS_CSS_SUFFIX', '.min' );
 require_once plugin_dir_path( __FILE__ ) . 'inc/functions.php';
 
 class SiteOrigin_Panels {
-	var $container = array();
+	public $container = array();
+
 	public function __construct() {
 		register_activation_hook( __FILE__, array( 'SiteOrigin_Panels', 'activate' ) );
 
@@ -32,6 +33,8 @@ class SiteOrigin_Panels {
 		add_action( 'plugins_loaded', array( $this, 'init' ) );
 		add_action( 'plugins_loaded', array( $this, 'init_compat' ), 100 );
 		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 100 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_general_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'register_general_scripts' ) );
 
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 
@@ -613,6 +616,17 @@ class SiteOrigin_Panels {
 		}
 
 		return $admin_bar;
+	}
+
+	public function register_general_scripts() {
+		if ( ! wp_script_is( 'fitvids', 'registered' ) ) {
+			wp_register_script(
+				'fitvids',
+				siteorigin_panels_url( 'js/lib/jquery.fitvids' . SITEORIGIN_PANELS_JS_SUFFIX . '.js' ),
+				array( 'jquery' ),
+				SITEORIGIN_PANELS_VERSION
+			);
+		}
 	}
 
 	public function widgets_init() {

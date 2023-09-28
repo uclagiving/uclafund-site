@@ -4,7 +4,7 @@ Tags: code, css, php, footer, functions, content, facebook pixel, footer code, f
 Requires at least: 4.6
 Tested up to: 6.3
 Requires PHP: 5.5
-Stable tag: 2.1.1
+Stable tag: 2.1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -307,6 +307,19 @@ Thank you
 Syed Balkhi
 
 == Changelog ==
+
+= 2.1.3.1 =
+* Fix: Shortcode attributes were not being correctly parsed in some scenarios.
+
+= 2.1.3 =
+* New: We improved how we manage automatic snippet disabling when errors occur. You'll now get detailed insights into which snippet is responsible for the error and the exact line where the problem occurred.
+* Tweak: We adjusted the way snippets are preloaded to improve compatibility with object cache.
+* Fix: The snippets added as shortcodes were not correctly displayed in the admin bar.
+
+= 2.1.2 =
+* Tweak: We adjusted the way snippets are tracked in the Admin Bar Code Spotter to avoid wrong numbers in certain locations.
+* Tweak: We improved the way the Admin Bar Code Spotter menu is loaded for better compatibility with other plugins and older themes.
+* Tweak: Changed the way assets used by the admin bar are loaded to avoid errors if the head is loaded multiple times.
 
 = 2.1.1 =
 * New: Easily duplicate a snippet with all of its settings with the new Duplicate link in the list of snippets.
