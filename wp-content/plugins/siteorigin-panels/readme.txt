@@ -1,10 +1,10 @@
 === Page Builder by SiteOrigin ===
 Tags: page builder, responsive, parallax, widgets, blocks, gallery, layout, grid, cms, builder, widget
 Requires at least: 4.7
-Tested up to: 6.3
+Tested up to: 6.4
 Requires PHP: 5.6.20
-Stable tag: 2.26.1
-Build time: 2023-09-20T09:33:56-07:00
+Stable tag: 2.28.0
+Build time: 2023-11-12T21:22:47+00:00
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: https://siteorigin.com/downloads/premium/
@@ -120,6 +120,29 @@ Page Builder is compatible with the vast majority of third-party plugins and wid
 SiteOrigin offers a single premium plugin that enhances and extends Page Builder, the Widgets Bundle, SiteOrigin CSS and all of our free themes. Find out more about [SiteOrigin Premium](https://siteorigin.com/downloads/premium/) and the powerful addons it offers.
 
 == Changelog ==
+
+= 2.28.0 - 12 November 2023 =
+* Column Preset Sizes: Added `Golden Ratio` for two columns.
+* Rounded column sizes to two decimal places to prevent display issues.
+* Row update to allow for custom overlays.
+
+= 2.27.1 - 09 November 2023 =
+* Renamed "Cell" to "Column" throughout the codebase for improved clarity and consistency.
+* Updated the "Tested up to" version in the readme.txt file from 6.3 to 6.4.
+* Rewrote the usage of Lodash functions in the `siteorigin-panels-layout-block.js` file for better performance and code readability.
+* Updated the Installer by changing the subproject commit.
+
+= 2.27.0 - 02 November 2023 =
+* Improved user experience of cell resizers in the admin interface with visual enhancements and interaction adjustments.
+* Adjusted the spacing in the Color Style Field to improve field consistency.
+* Improved the design of the Save Mode Button by aligning them to the right and adding a new visual style for the save mode list.
+* Renamed the "Full Width Stretched Padded" setting to "Full Width Stretched With Padding Support" for better description.
+* Resolved a jQuery Migrate flag related to the color picker by updating the code to use Array.isArray instead of the deprecated $.isArray function.
+* Made adjustments to the styles filter in the admin panel by adding a new parameter current_styles to the apply_filters function call.
+
+= 2.26.2 - 25 October 2023 =
+* Added compatibility with SEOPress Content Analysis.
+* Developer: Made adjustments to the styles filter in the admin panel. Added a new parameter `current_styles` to the `apply_filters` function call. Also, introduced a new filter `siteorigin_panels_style_field_sanitize_all_` that allows a field to modify other values.
 
 = 2.26.1 - 20 September 2023 =
 * Improved handling of a greater number of sizes in the Row Cell Ratio feature.

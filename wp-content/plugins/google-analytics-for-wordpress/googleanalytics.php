@@ -7,9 +7,9 @@
  * Author:              MonsterInsights
  * Author URI:          https://www.monsterinsights.com/lite/?utm_source=liteplugin&utm_medium=pluginheader&utm_campaign=authoruri&utm_content=7%2E0%2E0
  *
- * Version:             8.19
- * Requires at least:   4.8.0
- * Requires PHP:        5.6
+ * Version:             8.21.0
+ * Requires at least:   5.6.0
+ * Requires PHP:        7.2
  *
  * License:             GPL v3
  *
@@ -71,7 +71,7 @@ final class MonsterInsights_Lite
 	 * @access public
 	 * @var string $version Plugin version.
 	 */
-	public $version = '8.19';
+	public $version = '8.21.0';
 
 	/**
 	 * Plugin file.
@@ -181,6 +181,13 @@ final class MonsterInsights_Lite
 	 * @deprecated Since 8.3 with the removal of ga compatibility
 	 */
 	public $tracking_mode;
+
+	/**
+	 * Setup checklist class property.
+	 *
+	 * @var MonsterInsights_Setup_Checklist
+	 */
+	public $setup_checklist;
 
 	/**
 	 * Primary class constructor.
@@ -856,3 +863,13 @@ if (!function_exists('MonsterInsights')) {
 
 	add_action('plugins_loaded', 'MonsterInsights');
 }
+
+/**
+ * Remove scheduled cron hooks during deactivation.
+ */
+function monsterinsights_lite_deactivation_hook() {
+	wp_clear_scheduled_hook( 'monsterinsights_usage_tracking_cron' );
+	wp_clear_scheduled_hook( 'monsterinsights_email_summaries_cron' );
+}
+
+register_deactivation_hook( __FILE__, 'monsterinsights_lite_deactivation_hook' );

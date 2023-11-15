@@ -3,8 +3,8 @@ Tags: widget, button, slider, hero, google maps, image, carousel, lottie, featur
 Requires at least: 4.2
 Tested up to: 6.3
 Requires PHP: 5.6.20
-Stable tag: 1.55.1
-Build time: 2023-09-23T11:02:56-07:00
+Stable tag: 1.56.0
+Build time: 2023-11-06T16:41:07+00:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
@@ -105,6 +105,25 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.56.0 - 06 November 2023 =
+* Anything Carousel: Prevented an autoplay conflict caused by `click` trigger.
+* Blog: Added Scroll Top functionality and global setting at `Plugins > SiteOrigin Widgets > Blog`.
+* Call To Action: Added new hooks and padding.
+* Contact Form: Added RGBA support for `Container Background Color`.
+* Contact Form: Resolved warnings related to PHP 8.2.
+* Features: Ensured the feature contents is centered rather than aligned to the Container Icon Position.
+* Features: Resolved a mobile misalignment when using `Bottom Align More Link Text`.
+* Sliders: Added Lazy Load support.
+* Video Player: Addd a `Hide Player Controls` setting.
+* Beaver Builder: Resolved `Uncaught TypeError: sowbForms.getWidgetIdBase`.
+* Admin Metabox: Reset cursor for active tabs.
+* Updated SiteOrigin Installer.
+
+= 1.55.2 - 28 October 2023 =
+* Improved the sizing of number fields in the admin interface.
+* Modified the button widget to only apply flex styling if an icon is set.
+* Developer: Added a central method of handling post content in the Blog widget.
 
 = 1.55.1 - 23 September 2023 =
 * Resolved right positioned icon overflow and slight vertical misalignment in the Button widget.

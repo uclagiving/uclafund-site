@@ -39,7 +39,6 @@ class MonsterInsights_Rest_Routes {
 			'update_popular_posts_theme_setting'
 		) );
 
-		// TODO: remove function from Google Optimize Addon.
 		add_action( 'wp_ajax_monsterinsights_get_posts', array( $this, 'get_posts' ) );
 
 		// Search for taxonomies.
@@ -283,10 +282,10 @@ class MonsterInsights_Rest_Routes {
 	 * Return the state of the addons ( installed, activated )
 	 */
 	public function get_addons() {
-
+		global $current_user;
 		check_ajax_referer( 'mi-admin-nonce', 'nonce' );
 
-		if ( ! current_user_can( 'monsterinsights_save_settings' ) ) {
+		if ( ! current_user_can( 'monsterinsights_view_dashboard' ) ) {
 			return;
 		}
 
@@ -354,6 +353,14 @@ class MonsterInsights_Rest_Routes {
 		$parsed_addons['givewp'] = array(
 			'active' => function_exists( 'Give' ),
 		);
+		// Charitable WP.
+		$parsed_addons['charitable'] = array(
+			'active' => class_exists( 'Charitable' ),
+		);
+		// WishList Member.
+		$parsed_addons['wishlist_member'] = array(
+			'active' => function_exists( 'wishlistmember_instance' ),
+		);
 		// GiveWP Analytics.
 		$parsed_addons['givewp_google_analytics'] = array(
 			'active' => function_exists( 'Give_Google_Analytics' ),
@@ -401,7 +408,7 @@ class MonsterInsights_Rest_Routes {
 			'slug'      => 'wpforms-lite',
 			'settings'  => admin_url( 'admin.php?page=wpforms-overview' ),
 		);
-		
+
 		// UserFeedback.
 		$parsed_addons['userfeedback-lite'] = array(
 			'active'    => function_exists( 'userfeedback' ),
@@ -756,7 +763,7 @@ class MonsterInsights_Rest_Routes {
 
 
 	/**
-	 *
+	 * Import exported JSON file.
 	 */
 	public function handle_settings_import() {
 
@@ -770,7 +777,9 @@ class MonsterInsights_Rest_Routes {
 			return;
 		}
 
-		$extension = explode( '.', sanitize_text_field( wp_unslash( $_FILES['import_file']['name'] ) ) ); // phpcs:ignore
+		$import_file = $_FILES['import_file']; // phpcs:ignore
+
+		$extension = explode( '.', sanitize_text_field( wp_unslash( $import_file['name'] ) ) ); // phpcs:ignore
 		$extension = end( $extension );
 
 		if ( 'json' !== $extension ) {
@@ -779,9 +788,8 @@ class MonsterInsights_Rest_Routes {
 			) );
 		}
 
-		$import_file = sanitize_text_field( wp_unslash( $_FILES['import_file']['tmp_name'] ) ); // phpcs:ignore
+		$file = file_get_contents( $import_file['tmp_name'] );
 
-		$file = file_get_contents( $import_file );
 		if ( empty( $file ) ) {
 			wp_send_json_error( array(
 				'message' => esc_html__( 'Please select a valid file to upload.', 'google-analytics-for-wordpress' ),
@@ -799,6 +807,9 @@ class MonsterInsights_Rest_Routes {
 			'cron_last_run',
 			'monsterinsights_oauth_status',
 		);
+
+		$this->import_site_notes( $new_settings['site_notes'] );
+		unset( $new_settings['site_notes'] );
 
 		foreach ( $exclude as $e ) {
 			if ( ! empty( $new_settings[ $e ] ) ) {
@@ -1108,11 +1119,23 @@ class MonsterInsights_Rest_Routes {
 
 		$post_type = isset( $_POST['post_type'] ) ? sanitize_text_field( wp_unslash( $_POST['post_type'] ) ) : 'any';
 
+		$already_added = monsterinsights_get_option('popular_posts_inline_curated', []);
+		$exclude = array();
+		if( is_array( $already_added ) && !empty( $already_added ) ){
+			foreach ( $already_added as $key => $value ) {
+				$exclude[$value['id']] = $value['id'];
+			}
+		}
+
+		$exclude = array_unique(array_values($exclude));
+
 		$args = array(
 			's'              => isset( $_POST['keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['keyword'] ) ) : '',
 			'post_type'      => $post_type,
-			'posts_per_page' => isset( $_POST['numberposts'] ) ? sanitize_text_field( wp_unslash( $_POST['numberposts'] ) ) : 10,
-			'orderby'        => 'relevance',
+			'posts_per_page' => isset( $_POST['numberposts'] ) ? sanitize_text_field( wp_unslash( $_POST['numberposts'] ) ) : 25,
+			'orderby'        => 'post_title',
+			'order'          => 'ASC',
+			'post__not_in'   => $exclude,
 		);
 
 		$array = array();
@@ -1385,5 +1408,31 @@ class MonsterInsights_Rest_Routes {
 
 		wp_send_json_error();
 
+	}
+
+	/**
+	 * Import site notes from exported file.
+	 */
+	private function import_site_notes( $site_notes ) {
+		$notes_db = new MonsterInsights_Site_Notes_DB_Base();
+
+		// Import site-notes category.
+		foreach ( $site_notes['categories'] as $category ) {
+			$notes_db->create_category( array(
+				'name'             => $category['name'],
+				'background_color' => $category['color'],
+			) );
+		}
+
+		foreach ( $site_notes['notes'] as $notes ) {
+			$category = get_term_by( 'name', $notes['category_name'], 'monsterinsights_note_category' );
+
+			$notes_db->create( array(
+				'note'      => $notes['note_title'],
+				'date'      => $notes['note_date'],
+				'important' => $notes['important'],
+				'category'  => intval( ( ! empty( $category ) && ! empty( $category->term_id ) ) ? $category->term_id : 0 ),
+			) );
+		}
 	}
 }
