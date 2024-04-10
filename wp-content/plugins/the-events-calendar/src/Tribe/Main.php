@@ -40,15 +40,14 @@ if ( ! class_exists( 'Tribe__Events__Main' ) ) {
 		const POSTTYPE            = 'tribe_events';
 		const VENUE_POST_TYPE     = 'tribe_venue';
 		const ORGANIZER_POST_TYPE = 'tribe_organizer';
-
-		const VERSION             = '6.2.8.2';
+		const VERSION             = '6.3.6';
 
 		/**
 		 * Min Pro Addon
 		 *
 		 * @deprecated 4.8
 		 */
-		const MIN_ADDON_VERSION   = '6.1.0-dev';
+		const MIN_ADDON_VERSION   = '6.2.9-dev';
 
 		/**
 		 * Min Common
@@ -78,7 +77,7 @@ if ( ! class_exists( 'Tribe__Events__Main' ) ) {
 		 *
 		 * @since 4.8
 		 */
-		protected $min_et_version = '5.7.0-dev';
+		protected $min_et_version = '5.8.0-dev';
 
 		/**
 		 * Maybe display data wrapper
@@ -684,7 +683,7 @@ if ( ! class_exists( 'Tribe__Events__Main' ) ) {
 			tribe_register_provider( TEC\Events\Blocks\Controller::class );
 
 			// Site Editor
-			tribe_register_provider( TEC\Events\Editor\Full_Site\Controller::class );
+			tribe_register_provider( TEC\Events\Block_Templates\Controller::class );
 
 			// Load the new third-party integration system.
 			tribe_register_provider( TEC\Events\Integrations\Provider::class );
@@ -2979,19 +2978,12 @@ if ( ! class_exists( 'Tribe__Events__Main' ) ) {
 				return;
 			}
 
-			$avoid_recursion = true;
-
-			$original_post     = wp_is_post_revision( $post );
-			$is_event_revision = $original_post && tribe_is_event( $original_post );
-
-			if ( $is_event_revision ) {
-				$revision = Tribe__Events__Revisions__Post::new_from_post( $post );
-				$revision->save();
-
-				$avoid_recursion = false;
-
+			if ( wp_is_post_revision( $postId ) ) {
+				// Do not save meta for revisions: it would be saved to the original post anyway.
 				return;
 			}
+
+			$avoid_recursion = true;
 
 			// When not an instance of Post we bail to avoid revision problems.
 			if ( ! $post instanceof WP_Post ) {

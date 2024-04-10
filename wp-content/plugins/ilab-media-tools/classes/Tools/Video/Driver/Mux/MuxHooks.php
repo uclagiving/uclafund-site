@@ -606,7 +606,20 @@ class MuxHooks
         if ( ToolsManager::instance()->toolEnabled( 'storage' ) ) {
             /** @var StorageTool $storageTool */
             $storageTool = ToolsManager::instance()->tools['storage'];
-            $url = $storageTool->client()->presignedUrl( $meta['s3']['key'], 30 );
+            
+            if ( isset( $meta['s3'] ) ) {
+                $url = $storageTool->client()->presignedUrl( $meta['s3']['key'], 30 );
+            } else {
+                $otherMeta = wp_get_attachment_metadata( $attachmentId, true );
+                
+                if ( isset( $otherMeta['s3'] ) ) {
+                    $url = $storageTool->client()->presignedUrl( $otherMeta['s3']['key'], 30 );
+                } else {
+                    $url = wp_get_attachment_url( $attachmentId );
+                }
+            
+            }
+        
         } else {
             $url = wp_get_attachment_url( $attachmentId );
             if ( defined( 'MEDIACLOUD_DEV_MODE' ) && defined( 'MEDIACLOUD_VIDEO_SERVER' ) && !empty(constant( 'MEDIACLOUD_VIDEO_SERVER' )) ) {

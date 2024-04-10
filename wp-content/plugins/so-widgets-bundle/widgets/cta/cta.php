@@ -275,8 +275,14 @@ class SiteOrigin_Widget_Cta_Widget extends SiteOrigin_Widget {
 			'title' => ! empty( $instance['title'] ) ? $instance['title'] : '',
 			'sub_title' => ! empty( $instance['sub_title'] ) ? $instance['sub_title'] : '',
 			'button' => $instance['button'],
-			'title_tag' => ! empty( $instance['design']['fonts']['title_tag'] ) ? $instance['design']['fonts']['title_tag'] : 'h4',
-			'sub_title_tag' => ! empty( $instance['design']['fonts']['title_tag'] ) ? $instance['design']['fonts']['sub_title_tag'] : 'h5',
+			'title_tag' => siteorigin_widget_valid_tag(
+				! empty( $instance['design']['fonts']['title_tag'] ) ? $instance['design']['fonts']['title_tag'] : 'h4',
+				'h4'
+			),
+			'sub_title_tag' => siteorigin_widget_valid_tag(
+				! empty( $instance['design']['fonts']['sub_title_tag'] ) ? $instance['design']['fonts']['sub_title_tag'] : 'h5',
+				'h5'
+			),
 		);
 
 		return $template_vars;

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitf1826f72bdc3508f80565dff22e569cb
+class ComposerStaticInit50298795addec7e328ecc086aec86c51
 {
     public static $prefixLengthsPsr4 = array (
         'T' => 
@@ -27,7 +27,13 @@ class ComposerStaticInitf1826f72bdc3508f80565dff22e569cb
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'TEC\\Events\\Block_Templates\\Archive_Events\\Archive_Block_Template' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Archive_Events/Archive_Block_Template.php',
+        'TEC\\Events\\Block_Templates\\Block_Template_Contract' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Block_Template_Contract.php',
+        'TEC\\Events\\Block_Templates\\Controller' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Controller.php',
+        'TEC\\Events\\Block_Templates\\Single_Event\\Single_Block_Template' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Single_Event/Single_Block_Template.php',
+        'TEC\\Events\\Blocks\\Archive_Events\\Block' => __DIR__ . '/../..' . '/src/Events/Blocks/Archive_Events/Block.php',
         'TEC\\Events\\Blocks\\Controller' => __DIR__ . '/../..' . '/src/Events/Blocks/Controller.php',
+        'TEC\\Events\\Blocks\\Single_Event\\Block' => __DIR__ . '/../..' . '/src/Events/Blocks/Single_Event/Block.php',
         'TEC\\Events\\Configuration\\Provider' => __DIR__ . '/../..' . '/src/Events/Configuration/Provider.php',
         'TEC\\Events\\Custom_Tables\\V1\\Activation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Activation.php',
         'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Event_Cleaner' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Event_Cleaner.php',
@@ -160,6 +166,8 @@ class ComposerStaticInitf1826f72bdc3508f80565dff22e569cb
         'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Provider.php',
         'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Template' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Template.php',
         'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Provider.php',
+        'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Site_Health\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Site_Health/Controller.php',
+        'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Site_Health\\Subsection' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Site_Health/Subsection.php',
         'TEC\\Events\\Integrations\\Plugins\\Rank_Math\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Rank_Math/Provider.php',
         'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Controller.php',
         'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Passes\\Apple_Wallet\\Event_Modifier' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Passes/Apple_Wallet/Event_Modifier.php',
@@ -306,9 +314,9 @@ class ComposerStaticInitf1826f72bdc3508f80565dff22e569cb
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitf1826f72bdc3508f80565dff22e569cb::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitf1826f72bdc3508f80565dff22e569cb::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitf1826f72bdc3508f80565dff22e569cb::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit50298795addec7e328ecc086aec86c51::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit50298795addec7e328ecc086aec86c51::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit50298795addec7e328ecc086aec86c51::$classMap;
 
         }, null, ClassLoader::class);
     }

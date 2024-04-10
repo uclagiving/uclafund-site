@@ -11,6 +11,7 @@
 class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 
 	use WPCode_Revisions_Display_Lite;
+
 	/**
 	 * The page slug to be used when adding the submenu.
 	 *
@@ -62,6 +63,20 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	protected $snippet;
 
 	/**
+	 * Whether the snippet is currently edited by someone else.
+	 *
+	 * @var bool
+	 */
+	protected $is_locked = false;
+
+	/**
+	 * The name of user who locked the snippet.
+	 *
+	 * @var string
+	 */
+	protected $locked_by;
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -69,6 +84,33 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		$this->page_title = sprintf( __( 'Add %s Snippet', 'insert-headers-and-footers' ), 'WPCode' );
 		$this->menu_title = sprintf( '+ %s', __( 'Add Snippet', 'insert-headers-and-footers' ) );
 		parent::__construct();
+	}
+
+	/**
+	 * Load the snippet if we're editing one.
+	 *
+	 * @return void
+	 */
+	public function load_snippet() {
+		if ( isset( $_GET['snippet_id'] ) ) {
+			$snippet_post = get_post( absint( $_GET['snippet_id'] ) );
+			if ( ! is_null( $snippet_post ) && $this->get_post_type() === $snippet_post->post_type ) {
+				$this->snippet_id = $snippet_post->ID;
+				$this->snippet    = wpcode_get_snippet( $snippet_post );
+
+				// Let's check if it's not already being edited by someone else.
+				$snippet_locked = wp_check_post_lock( $this->snippet_id );
+				if ( $snippet_locked ) {
+					$locked_by = get_user_by( 'id', $snippet_locked );
+					if ( $locked_by ) {
+						$this->locked_by = $locked_by->display_name;
+						$this->is_locked = true;
+					}
+				} else {
+					wp_set_post_lock( $this->snippet_id );
+				}
+			}
+		}
 	}
 
 	/**
@@ -80,11 +122,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		$this->can_edit = current_user_can( 'wpcode_edit_snippets' );
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		if ( isset( $_GET['snippet_id'] ) ) {
-			$snippet_post = get_post( absint( $_GET['snippet_id'] ) );
-			if ( ! is_null( $snippet_post ) && 'wpcode' === $snippet_post->post_type ) {
-				$this->snippet_id = $snippet_post->ID;
-				$this->snippet    = new WPCode_Snippet( $snippet_post );
-			}
+			$this->load_snippet();
 			// If the post type does not match the page will act as an add new snippet page, the id will be ignored.
 		} elseif ( ! isset( $_GET['custom'] ) ) {
 			$this->show_library = apply_filters( 'wpcode_add_snippet_show_library', true );
@@ -424,6 +462,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		</div>
 		<?php $this->get_input_auto_insert_options(); ?>
 		<div class="wpcode-metabox-form">
+			<?php $this->get_input_row_as_file(); ?>
 			<?php $this->get_input_row_schedule(); ?>
 		</div>
 		<?php
@@ -447,6 +486,8 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			'after_paragraph'     => __( 'after paragraph number', 'insert-headers-and-footers' ),
 			'archive_before_post' => __( 'before post number', 'insert-headers-and-footers' ),
 			'archive_after_post'  => __( 'after post number', 'insert-headers-and-footers' ),
+			'after_words'         => __( 'minimum number of words', 'insert-headers-and-footers' ),
+			'every_words'         => __( 'number of words', 'insert-headers-and-footers' ),
 		);
 		$markup       = '';
 		foreach ( $descriptions as $value => $description ) {
@@ -880,7 +921,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			return;
 		}
 		?>
-		<form action="<?php echo esc_url( $this->get_page_action_url() ); ?>" method="post" id="wpcode-snippet-manager-form">
+		<form action="<?php echo esc_url( $this->get_page_action_url() ); ?>" method="post" id="wpcode-snippet-manager-form" autocomplete="off">
 			<?php parent::output(); ?>
 		</form>
 		<?php
@@ -1010,8 +1051,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			$attributes = array();
 		}
 
-
-		$snippet = new WPCode_Snippet(
+		$snippet = wpcode_get_snippet(
 			array(
 				'id'                   => empty( $_REQUEST['id'] ) ? 0 : absint( $_REQUEST['id'] ),
 				'title'                => isset( $_POST['wpcode_snippet_title'] ) ? sanitize_text_field( wp_unslash( $_POST['wpcode_snippet_title'] ) ) : '',
@@ -1241,8 +1281,9 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 				$markup = sprintf( '<input type="text" class="wpcode-input-text wpcode-input-datetime" value="%s" />', esc_attr( $value ) );
 				break;
 			case 'ajax':
-				$options = isset( $data['labels_callback'] ) ? $data['labels_callback']( $value ) : array();
-				$markup  = '<select class="wpcode-select2-ajax" data-action="' . esc_attr( $data['options'] ) . '" multiple>';
+				$options  = isset( $data['labels_callback'] ) ? $data['labels_callback']( $value ) : array();
+				$multiple = isset( $data['multiple'] ) && $data['multiple'] ? 'multiple' : '';
+				$markup   = '<select class="wpcode-select2-ajax" data-action="' . esc_attr( $data['options'] ) . '" ' . $multiple . '>';
 				foreach ( $options as $option ) {
 					$markup .= '<option value="' . esc_attr( $option['value'] ) . '" ' . selected( true, true, false ) . '>' . esc_html( $option['label'] ) . '</option>';
 				}
@@ -1370,6 +1411,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			$data['conditions'] = wpcode()->conditional_logic->get_all_admin_options();
 		}
 
+		$data['snippet_id']             = isset( $this->snippet_id ) ? $this->snippet_id : 0;
 		$data['save_to_library_url']    = wpcode_utm_url( 'https://wpcode.com/lite/', 'snippet-editor', 'save-to-library', 'upgrade-to-pro' );
 		$data['save_to_library_title']  = __( 'Save to Library is a Pro Feature', 'insert-headers-and-footers' );
 		$data['save_to_library_text']   = __( 'Upgrade to PRO today and save your private snippets to the WPCode library for easy access. You can also share your snippets with other users or load them on other sites.', 'insert-headers-and-footers' );
@@ -1388,6 +1430,9 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		$data['blocks_url']             = wpcode_utm_url( 'https://wpcode.com/lite/', 'snippet-editor', 'blocks', 'modal' );
 		$data['blocks_button']          = $data['save_to_library_button'];
 		$data['shortcode_attributes']   = __( 'Shortcode Attributes', 'insert-headers-and-footers' );
+		$data['laf_title']              = __( 'Load as file is a Pro Feature', 'insert-headers-and-footers' );
+		$data['laf_text']               = __( 'Upgrade to PRO today and unlock loading your CSS and JS snippets as files for better performance and improved compatibility with caching plugins.', 'insert-headers-and-footers' );
+		$data['laf_url']                = wpcode_utm_url( 'https://wpcode.com/lite/', 'snippet-editor', 'laf', 'modal' );
 		$data['php_cl_location_notice'] = sprintf(
 		// Translators: %1$s Opening anchor tag. %2$s Closing anchor tag.
 			__( 'For better results using conditional logic with PHP snippets we automatically switched the auto-insert location to "Frontend Conditional Logic" that runs later. If you want to run the snippet earlier please switch back to "Run Everywhere" but note not all conditional logic options will be available. %1$sRead more%2$s', 'insert-headers-and-footers' ),
@@ -1407,6 +1452,10 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		$data['cl_labels_custom']   = $this->get_conditional_logic_operators_custom_labels();
 		$data['error_line']         = $error_line;
 		$data['error_line_message'] = esc_html__( 'The snippet has been recently deactivated due to an error on this line', 'insert-headers-and-footers' );
+		$data['is_locked']          = $this->is_locked;
+		$data['locked_by']          = $this->locked_by;
+		// Translators: The name of the user that is currently editing the snippet is appended at the end.
+		$data['edited'] = esc_html__( 'This snippet is currently being edited by ', 'insert-headers-and-footers' );
 
 		return $data;
 	}
@@ -1604,10 +1653,46 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	}
 
 	/**
+	 * Get the description of the load as file option.
+	 *
+	 * @return string
+	 */
+	public function get_input_row_as_file_description() {
+		return sprintf(
+			// Translators: Link to the documentation article for files as snippets. %1$s is the opening anchor tag, %2$s is the closing anchor tag.
+			esc_html__( 'If enabled, this snippet will be loaded as a physical file instead of being inserted in the source of the page. %1$sLearn more%2$s.', 'insert-headers-and-footers' ),
+			'<a target="_blank" rel="noreferrer noopener" href="' . esc_url( wpcode_utm_url( 'https://wpcode.com/docs/snippet-files', 'snippet-manager', 'load-as-file', 'learn-more' ) ) . '">',
+			'</a>'
+		);
+	}
+
+	/**
+	 * Get the markup for displaying an option to load the snippet as a file if the code type is CSS or JS.
+	 *
+	 * @return void
+	 */
+	public function get_input_row_as_file() {
+		$this->metabox_row(
+			esc_html__( 'Load as file', 'insert-headers-and-footers' ),
+			$this->get_checkbox_toggle(
+				false,
+				'wpcode_snippet_as_file'
+			),
+			'wpcode_snippet_as_file',
+			'#wpcode_snippet_type',
+			'js,css',
+			$this->get_input_row_as_file_description(),
+			true,
+			'wpcode_snippet_as_file_option'
+		);
+	}
+
+	/**
 	 * Get the markup of the schedule inputs.
 	 *
 	 * @param string $start Start date.
 	 * @param string $end End date.
+	 * @param bool   $read_only If the inputs should be read-only.
 	 *
 	 * @return string
 	 */
@@ -1824,15 +1909,25 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		if ( ! isset( $this->snippet ) ) {
 			return;
 		}
+		if ( $this->is_locked ) {
+			?>
+			<div class="notice-warning fade notice is-dismissible">
+				<p>
+					<?php
+					// Translators: The placeholder gets replaced with the display name of the user currently editing the snippet.
+					printf( esc_html__( 'Notice: %1$s is also editing this snippet. Please be aware that your changes could be overwritten.', 'insert-headers-and-footers' ), esc_html( $this->locked_by ) );
+					?>
+				</p>
+			</div>
+			<?php
+		}
 		$last_error = $this->snippet->get_last_error();
 		if ( empty( $last_error ) ) {
 			return;
 		}
-		$error_line = isset( $last_error['error_line'] ) ? $last_error['error_line'] : false;
-		$time       = $last_error['time'];
-		// Let's show just the first line in the $last_error['message'].
-		$last_error['message'] = explode( "\n", $last_error['message'] );
-		$logging_enabled       = wpcode()->settings->get_option( 'error_logging' );
+		$error_line      = isset( $last_error['error_line'] ) ? $last_error['error_line'] : false;
+		$time            = $last_error['time'];
+		$logging_enabled = wpcode()->settings->get_option( 'error_logging' );
 		if ( $logging_enabled ) {
 			$button_text = esc_html__( 'View Error Logs', 'insert-headers-and-footers' );
 			$button_url  = add_query_arg(
@@ -1847,6 +1942,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			$button_url  = add_query_arg(
 				array(
 					'page' => 'wpcode-settings',
+					'view' => 'errors',
 				),
 				admin_url( 'admin.php' )
 			);
@@ -1884,18 +1980,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 				printf( '<strong>%s</strong>', esc_html__( 'Error message:', 'insert-headers-and-footers' ) );
 				?>
 			</p>
-			<pre class="wpcode-error-preview"><?php echo esc_html( $last_error['message'][0] ); ?></pre>
-			<?php if ( ! empty( $last_error['url'] ) ) { ?>
-				<p>
-					<?php
-					printf(
-					// Translators: The placeholder is replaced with the URL where the error happened.
-						esc_html__( 'The error was triggered at the following URL: %1$s', 'insert-headers-and-footers' ),
-						'<a href=' . esc_url( $last_error['url'] ) . ' target="_blank" rel="noopener noreferrer">' . esc_url( $last_error['url'] ) . '</a>'
-					);
-					?>
-				</p>
-			<?php } ?>
+			<pre class="wpcode-error-preview"><?php echo esc_html( wpcode()->error->get_error_message_short( $last_error['message'] ) ); ?></pre>
 			<?php if ( $error_line ) { ?>
 				<p>
 					<?php
@@ -1905,6 +1990,18 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 						'<strong>',
 						'</strong>',
 						absint( $error_line )
+					);
+					?>
+				</p>
+			<?php } ?>
+
+			<?php if ( ! empty( $last_error['url'] ) ) { ?>
+				<p>
+					<?php
+					printf(
+					// Translators: The placeholder is replaced with the URL where the error happened.
+						esc_html__( 'The error was triggered at the following URL: %1$s', 'insert-headers-and-footers' ),
+						'<a href=' . esc_url( $last_error['url'] ) . ' target="_blank" rel="noopener noreferrer">' . esc_url( $last_error['url'] ) . '</a>'
 					);
 					?>
 				</p>

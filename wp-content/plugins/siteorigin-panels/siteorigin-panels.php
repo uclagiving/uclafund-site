@@ -3,15 +3,15 @@
 Plugin Name: Page Builder by SiteOrigin
 Plugin URI: https://siteorigin.com/page-builder/
 Description: A drag and drop, responsive page builder that simplifies building your website.
-Version: 2.28.0
+Version: 2.29.11
 Author: SiteOrigin
 Author URI: https://siteorigin.com
 License: GPL3
 License URI: http://www.gnu.org/licenses/gpl.html
-Donate link: http://siteorigin.com/page-builder/#donate
+Donate link: https://siteorigin.com/downloads/premium/
 */
 
-define( 'SITEORIGIN_PANELS_VERSION', '2.28.0' );
+define( 'SITEORIGIN_PANELS_VERSION', '2.29.11' );
 
 if ( ! defined( 'SITEORIGIN_PANELS_JS_SUFFIX' ) ) {
 	define( 'SITEORIGIN_PANELS_JS_SUFFIX', '.min' );
@@ -42,7 +42,9 @@ class SiteOrigin_Panels {
 		add_filter( 'siteorigin_panels_data', array( $this, 'process_panels_data' ), 5 );
 		add_filter( 'siteorigin_panels_widget_class', array( $this, 'fix_namespace_escaping' ), 5 );
 
-		add_action( 'activated_plugin', array( $this, 'activation_flag_redirect' ) );
+		add_action( 'activated_plugin', array( $this, 'activated_plugin' ) );
+		add_action( 'deactivated_plugin', array( $this, 'deactivated_plugin' ) );
+
 		add_action( 'admin_init', array( $this, 'activation_do_redirect' ) );
 
 		if (
@@ -79,9 +81,6 @@ class SiteOrigin_Panels {
 
 		// Remove the default excerpt function.
 		add_filter( 'get_the_excerpt', array( $this, 'generate_post_excerpt' ), 9 );
-
-		// Content cache has been removed. SiteOrigin_Panels_Cache_Renderer just deletes any existing caches.
-		SiteOrigin_Panels_Cache_Renderer::single();
 
 		if ( function_exists( 'register_block_type' ) ) {
 			SiteOrigin_Panels_Compat_Layout_Block::single();
@@ -230,6 +229,10 @@ class SiteOrigin_Panels {
 			require_once plugin_dir_path( __FILE__ ) . 'compat/gravity-forms.php';
 		}
 
+		if ( class_exists( 'YIKES_Custom_Product_Tabs' ) ) {
+			require_once plugin_dir_path( __FILE__ ) . 'compat/yikes.php';
+		}
+
 		$load_lazy_load_compat = false;
 		// LazyLoad by WP Rocket.
 		if ( defined( 'ROCKET_LL_VERSION' ) ) {
@@ -255,6 +258,19 @@ class SiteOrigin_Panels {
 		if ( defined( 'SEOPRESS_VERSION' ) ) {
 			require_once plugin_dir_path( __FILE__ ) . 'compat/seopress.php';
 		}
+
+		if ( class_exists( 'WP_Event_Manager' ) ) {
+			add_filter( 'display_event_description', array( $this, 'generate_post_content' ), 11 );
+		}
+
+		if ( get_template() == 'vantage' ) {
+			require_once plugin_dir_path( __FILE__ ) . 'compat/vantage.php';
+		}
+
+		if ( defined( 'PAGELAYER_VERSION' ) ) {
+			SiteOrigin_Panels_Compat_Pagelayer::single();
+		}
+
 	}
 
 	/**
@@ -454,15 +470,32 @@ class SiteOrigin_Panels {
 			$excerpt_length = apply_filters( 'excerpt_length', 55 );
 
 			foreach ( $panels_data['widgets'] as $widget ) {
-				$panels_info = $widget['panels_info'];
+				// Is the widget valid?
+				if ( empty( $widget['panels_info'] ) ) {
+					continue;
+				}
 
+				$panels_info = $widget['panels_info'];
 				if ( $panels_info['grid'] > 1 ) {
 					// Limiting search for a text type widget to the first two PB rows to avoid having excerpt content
 					// that's very far down in a post.
 					break;
 				}
 
-				if ( $panels_info['class'] == 'SiteOrigin_Widget_Editor_Widget' || $panels_info['class'] == 'WP_Widget_Text' || $panels_info['class'] == 'WP_Widget_Black_Studio_TinyMCE' ) {
+				$widgets = apply_filters( 'siteorigin_panels_excerpt_widgets', array(
+					'SiteOrigin_Widget_Editor_Widget',
+					'WP_Widget_Text',
+					'WP_Widget_Black_Studio_TinyMCE',
+				) );
+
+				if ( empty( $widgets ) ) {
+					break;
+				}
+
+				if ( in_array( $panels_info['class'], $widgets ) ) {
+					if ( empty( $widget['text'] ) ) {
+						continue;
+					}
 					$raw_excerpt .= ' ' . $widget['text'];
 					// This is all effectively default behavior for excerpts, copied from the `wp_trim_excerpt` function.
 					// We're just applying it to text type widgets content in the first two rows.
@@ -626,7 +659,7 @@ class SiteOrigin_Panels {
 		if ( ! wp_script_is( 'fitvids', 'registered' ) ) {
 			wp_register_script(
 				'fitvids',
-				siteorigin_panels_url( 'js/lib/jquery.fitvids' . SITEORIGIN_PANELS_JS_SUFFIX . '.js' ),
+				esc_url( siteorigin_panels_url( 'js/lib/jquery.fitvids' . SITEORIGIN_PANELS_JS_SUFFIX . '.js' ) ),
 				array( 'jquery' ),
 				SITEORIGIN_PANELS_VERSION
 			);
@@ -722,7 +755,7 @@ class SiteOrigin_Panels {
 	 * Script that removes the siteorigin-panels-before-js class from the body.
 	 */
 	public function strip_before_js() {
-		?><script<?php echo current_theme_supports( 'html5', 'script' ) ? '' : ' type="text/javascript"'; ?>>document.body.className = document.body.className.replace("siteorigin-panels-before-js","");</script><?php
+		?><script>document.body.className = document.body.className.replace("siteorigin-panels-before-js","");</script><?php
 	}
 
 	/**
@@ -780,10 +813,17 @@ class SiteOrigin_Panels {
 	/**
 	 * Flag redirect to welcome page after activation.
 	 */
-	public function activation_flag_redirect( $plugin ) {
+	public function activated_plugin( $plugin ) {
 		if ( $plugin == plugin_basename( __FILE__ ) ) {
 			set_transient( 'siteorigin_panels_activation_welcome', true, 30 );
 		}
+
+		$this->deactivated_plugin( $plugin );
+	}
+
+	public function deactivated_plugin( $plugin ) {
+		delete_transient( 'siteorigin_panels_widgets' );
+		delete_transient( 'siteorigin_panels_widget_dialog_tabs' );
 	}
 
 	/**

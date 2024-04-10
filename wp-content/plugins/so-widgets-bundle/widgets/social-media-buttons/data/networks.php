@@ -292,11 +292,17 @@ return array(
 		'icon_color' => '#ffffff',
 		'button_color' => '#6542a6',
 	),
-	'twitter' => array(
+	'twitter-classic' => array(
 		'label' => __( 'Twitter (Classic Logo)', 'so-widgets-bundle' ),
 		'base_url' => 'https://twitter.com/',
 		'icon_color' => '#ffffff',
 		'button_color' => '#78bdf1',
+	),
+	'viber' => array(
+		'label' => __( 'Viber', 'so-widgets-bundle' ),
+		'base_url' => 'https://www.viber.com/',
+		'icon_color' => '#ffffff',
+		'button_color' => '#574e92',
 	),
 	'vimeo-square' => array(
 		'label' => __( 'Vimeo', 'so-widgets-bundle' ),
