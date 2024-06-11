@@ -1,7 +1,7 @@
 <?php
 /*
 Widget Name: Hero Image
-Description: A big hero image with a few settings to make it your own.
+Description: Build an impressive hero image section with custom content, buttons, background image, color, and video.
 Author: SiteOrigin
 Author URI: https://siteorigin.com
 Documentation: https://siteorigin.com/widgets-bundle/hero-image-widget/
@@ -19,7 +19,7 @@ class SiteOrigin_Widget_Hero_Widget extends SiteOrigin_Widget_Base_Slider {
 			'sow-hero',
 			__( 'SiteOrigin Hero', 'so-widgets-bundle' ),
 			array(
-				'description' => __( 'A big hero image with a few settings to make it your own.', 'so-widgets-bundle' ),
+				'description' => __( 'Build an impressive hero image section with custom content, buttons, background image, color, and video.', 'so-widgets-bundle' ),
 				'help' => 'https://siteorigin.com/widgets-bundle/hero-image-widget/',
 				'panels_title' => false,
 			),
@@ -45,6 +45,9 @@ class SiteOrigin_Widget_Hero_Widget extends SiteOrigin_Widget_Base_Slider {
 	}
 
 	public function get_widget_form() {
+		$units = siteorigin_widgets_get_measurements_list();
+		unset( $units[1] ); // Remove %;
+
 		return parent::widget_form( array(
 			'frames' => array(
 				'type' => 'repeater',
@@ -211,6 +214,7 @@ class SiteOrigin_Widget_Hero_Widget extends SiteOrigin_Widget_Base_Slider {
 							'height' => array(
 								'type' => 'measurement',
 								'label' => __( 'Height', 'so-widgets-bundle' ),
+								'units' => $units,
 							),
 
 							'padding' => array(
@@ -246,6 +250,7 @@ class SiteOrigin_Widget_Hero_Widget extends SiteOrigin_Widget_Base_Slider {
 							'height_responsive' => array(
 								'type' => 'measurement',
 								'label' => __( 'Height', 'so-widgets-bundle' ),
+								'units' => $units,
 							),
 
 							'padding' => array(

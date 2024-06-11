@@ -1,7 +1,7 @@
 <?php
 /*
 Widget Name: Testimonials
-Description: Share your product or service testimonials in a variety of different ways.
+Description: Feature testimonials from satisfied customers with tailored layouts, images, text, colors, and mobile compatibility.
 Author: SiteOrigin
 Author URI: https://siteorigin.com
 Documentation: https://siteorigin.com/widgets-bundle/testimonials-widget/
@@ -13,7 +13,7 @@ class SiteOrigin_Widgets_Testimonials_Widget extends SiteOrigin_Widget {
 			'sow-testimonials',
 			__( 'SiteOrigin Testimonials', 'so-widgets-bundle' ),
 			array(
-				'description' => __( 'Share your product or service testimonials in a variety of different ways.', 'so-widgets-bundle' ),
+				'description' => __( 'Feature testimonials from satisfied customers with tailored layouts, images, text, colors, and mobile compatibility.', 'so-widgets-bundle' ),
 				'help' => 'https://siteorigin.com/widgets-bundle/testimonial-widget-documentation/',
 			),
 			array(
@@ -137,7 +137,7 @@ class SiteOrigin_Widgets_Testimonials_Widget extends SiteOrigin_Widget {
 										'label' => __( 'Resolution', 'so-widgets-bundle' ),
 										'description' => __( 'The resolution to treat as a tablet resolution.', 'so-widgets-bundle' ),
 										'default' => 800,
-										'sanitize' => 'intval',
+										'sanitize' => 'number',
 									),
 								),
 							),
@@ -166,7 +166,7 @@ class SiteOrigin_Widgets_Testimonials_Widget extends SiteOrigin_Widget {
 										'label' => __( 'Resolution', 'so-widgets-bundle' ),
 										'description' => __( 'The resolution to treat as a mobile resolution.', 'so-widgets-bundle' ),
 										'default' => 480,
-										'sanitize' => 'intval',
+										'sanitize' => 'number',
 									),
 								),
 							),
@@ -272,38 +272,6 @@ class SiteOrigin_Widgets_Testimonials_Widget extends SiteOrigin_Widget {
 				),
 			),
 		);
-	}
-
-	public function caret_svg() {
-		static $done = false;
-
-		if ( $done ) {
-			return;
-		}
-
-		?>
-		<svg style="position: absolute; width: 0; height: 0;" width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-			<defs>
-				<symbol id="icon-caret-down" viewBox="0 0 585 1024">
-					<title>caret-down</title>
-					<path class="path1" d="M585.143 402.286q0 14.857-10.857 25.714l-256 256q-10.857 10.857-25.714 10.857t-25.714-10.857l-256-256q-10.857-10.857-10.857-25.714t10.857-25.714 25.714-10.857h512q14.857 0 25.714 10.857t10.857 25.714z"></path>
-				</symbol>
-				<symbol id="icon-caret-up" viewBox="0 0 585 1024">
-					<title>caret-up</title>
-					<path class="path1" d="M585.143 694.857q0 14.857-10.857 25.714t-25.714 10.857h-512q-14.857 0-25.714-10.857t-10.857-25.714 10.857-25.714l256-256q10.857-10.857 25.714-10.857t25.714 10.857l256 256q10.857 10.857 10.857 25.714z"></path>
-				</symbol>
-				<symbol id="icon-caret-left" viewBox="0 0 366 1024">
-					<title>caret-left</title>
-					<path class="path1" d="M365.714 256v512q0 14.857-10.857 25.714t-25.714 10.857-25.714-10.857l-256-256q-10.857-10.857-10.857-25.714t10.857-25.714l256-256q10.857-10.857 25.714-10.857t25.714 10.857 10.857 25.714z"></path>
-				</symbol>
-				<symbol id="icon-caret-right" viewBox="0 0 366 1024">
-					<title>caret-right</title>
-					<path class="path1" d="M329.143 512q0 14.857-10.857 25.714l-256 256q-10.857 10.857-25.714 10.857t-25.714-10.857-10.857-25.714v-512q0-14.857 10.857-25.714t25.714-10.857 25.714 10.857l256 256q10.857 10.857 10.857 25.714z"></path>
-				</symbol>
-			</defs>
-		</svg>
-		<?php
-		$done = true;
 	}
 
 	public function get_less_variables( $instance ) {

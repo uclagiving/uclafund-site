@@ -7,60 +7,60 @@
     "file": "css/WelcomeOverlay.css",
     "src": "WelcomeOverlay.css"
   },
-  "_ReportReAuth-0fae89f6.min.js": {
-    "file": "js/chunks/ReportReAuth-0fae89f6.min.js",
+  "_ReportReAuth-799813da.min.js": {
+    "file": "js/chunks/ReportReAuth-799813da.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js",
-      "_SettingsInfoTooltip-312844d8.min.js"
+      "_vendor-abf23f8e.min.js",
+      "_SettingsInfoTooltip-8ce0e85d.min.js"
     ]
   },
-  "_SettingsInfoTooltip-312844d8.min.js": {
-    "file": "js/chunks/SettingsInfoTooltip-312844d8.min.js",
+  "_SettingsInfoTooltip-8ce0e85d.min.js": {
+    "file": "js/chunks/SettingsInfoTooltip-8ce0e85d.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js"
+      "_vendor-abf23f8e.min.js"
     ]
   },
-  "_SlideDownUp-22e11cf5.min.js": {
+  "_SlideDownUp-80f4c9d9.min.js": {
     "css": [
       "css/SlideDownUp.css"
     ],
-    "file": "js/chunks/SlideDownUp-22e11cf5.min.js",
+    "file": "js/chunks/SlideDownUp-80f4c9d9.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js"
+      "_vendor-abf23f8e.min.js"
     ]
   },
-  "_WelcomeOverlay-82d42e33.min.js": {
+  "_WelcomeOverlay-5c0b57d7.min.js": {
     "css": [
       "css/WelcomeOverlay.css"
     ],
-    "file": "js/chunks/WelcomeOverlay-82d42e33.min.js",
+    "file": "js/chunks/WelcomeOverlay-5c0b57d7.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js",
-      "_index-d67d97ae.min.js",
-      "_SettingsInfoTooltip-312844d8.min.js",
-      "_SlideDownUp-22e11cf5.min.js"
+      "_vendor-abf23f8e.min.js",
+      "_index-ef6f6492.min.js",
+      "_SettingsInfoTooltip-8ce0e85d.min.js",
+      "_SlideDownUp-80f4c9d9.min.js"
     ]
   },
-  "_WidgetReportError-f14c230e.min.js": {
-    "file": "js/chunks/WidgetReportError-f14c230e.min.js",
+  "_WidgetReportError-60e8a049.min.js": {
+    "file": "js/chunks/WidgetReportError-60e8a049.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js"
+      "_vendor-abf23f8e.min.js"
     ]
   },
-  "_html2canvas-72088e50.min.js": {
-    "file": "js/chunks/html2canvas-72088e50.min.js",
+  "_html2canvas-9e5302fc.min.js": {
+    "file": "js/chunks/html2canvas-9e5302fc.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js"
+      "_vendor-abf23f8e.min.js"
     ],
     "isDynamicEntry": true
   },
-  "_index-161be635.min.js": {
-    "file": "js/chunks/index-161be635.min.js",
+  "_index-d6a6ac70.min.js": {
+    "file": "js/chunks/index-d6a6ac70.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js"
+      "_vendor-abf23f8e.min.js"
     ]
   },
-  "_index-b1c48680.min.js": {
+  "_index-e7d3fbef.min.js": {
     "assets": [
       "img/icon-info.svg",
       "img/mascot.png",
@@ -83,19 +83,19 @@
     "css": [
       "css/index.css"
     ],
-    "file": "js/chunks/index-b1c48680.min.js",
+    "file": "js/chunks/index-e7d3fbef.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js",
-      "_SlideDownUp-22e11cf5.min.js"
+      "_vendor-abf23f8e.min.js",
+      "_SlideDownUp-80f4c9d9.min.js"
     ]
   },
-  "_index-d67d97ae.min.js": {
-    "file": "js/chunks/index-d67d97ae.min.js",
+  "_index-ef6f6492.min.js": {
+    "file": "js/chunks/index-ef6f6492.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js"
+      "_vendor-abf23f8e.min.js"
     ]
   },
-  "_vendor-5edb4194.min.js": {
+  "_vendor-abf23f8e.min.js": {
     "assets": [
       "img/sucker.png"
     ],
@@ -103,11 +103,11 @@
       "css/vendor.css"
     ],
     "dynamicImports": [
-      "_html2canvas-72088e50.min.js",
+      "_html2canvas-9e5302fc.min.js",
       "node_modules/dompurify/dist/purify.es.js",
       "node_modules/canvg/lib/index.es.js"
     ],
-    "file": "js/chunks/vendor-5edb4194.min.js"
+    "file": "js/chunks/vendor-abf23f8e.min.js"
   },
   "index.css": {
     "file": "css/index.css",
@@ -118,9 +118,9 @@
     "src": "node_modules/@caohenghu/vue-colorpicker/src/img/sucker.png"
   },
   "node_modules/canvg/lib/index.es.js": {
-    "file": "js/chunks/index.es-e6e3c1f0.min.js",
+    "file": "js/chunks/index.es-02af04ac.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js"
+      "_vendor-abf23f8e.min.js"
     ],
     "isDynamicEntry": true,
     "src": "node_modules/canvg/lib/index.es.js"
@@ -422,6 +422,10 @@
     "file": "img/icon-download.png",
     "src": "src/assets/img/icon-download.png"
   },
+  "src/assets/img/icon-exception-report.svg": {
+    "file": "img/icon-exception-report.svg",
+    "src": "src/assets/img/icon-exception-report.svg"
+  },
   "src/assets/img/icon-fb-small.png": {
     "file": "img/icon-fb-small.png",
     "src": "src/assets/img/icon-fb-small.png"
@@ -441,6 +445,10 @@
   "src/assets/img/icon-scroll-tracking.png": {
     "file": "img/icon-scroll-tracking.png",
     "src": "src/assets/img/icon-scroll-tracking.png"
+  },
+  "src/assets/img/icon-site-notes-settings.svg": {
+    "file": "img/icon-site-notes-settings.svg",
+    "src": "src/assets/img/icon-site-notes-settings.svg"
   },
   "src/assets/img/icon-smile.png": {
     "file": "img/icon-smile.png",
@@ -481,6 +489,10 @@
   "src/assets/img/mi-and-pl-logo.svg": {
     "file": "img/mi-and-pl-logo.svg",
     "src": "src/assets/img/mi-and-pl-logo.svg"
+  },
+  "src/assets/img/monsterinsights-addons-upsell-logo.svg": {
+    "file": "img/monsterinsights-addons-upsell-logo.svg",
+    "src": "src/assets/img/monsterinsights-addons-upsell-logo.svg"
   },
   "src/assets/img/monsterinsights-aioseo.jpg": {
     "file": "img/monsterinsights-aioseo.jpg",
@@ -678,6 +690,10 @@
     "file": "img/ecommerce-funnel@2x.png",
     "src": "src/assets/img/reports/lite-modals/ecommerce-funnel@2x.png"
   },
+  "src/assets/img/reports/lite-modals/exceptions-report.png": {
+    "file": "img/exceptions-report.png",
+    "src": "src/assets/img/reports/lite-modals/exceptions-report.png"
+  },
   "src/assets/img/reports/lite-modals/icon-info.svg": {
     "file": "img/icon-info.svg",
     "src": "src/assets/img/reports/lite-modals/icon-info.svg"
@@ -717,6 +733,10 @@
   "src/assets/img/site-notes-category-upsell-mi.png": {
     "file": "img/site-notes-category-upsell-mi.png",
     "src": "src/assets/img/site-notes-category-upsell-mi.png"
+  },
+  "src/assets/img/site-notes-integration-upsell.png": {
+    "file": "img/site-notes-integration-upsell.png",
+    "src": "src/assets/img/site-notes-integration-upsell.png"
   },
   "src/assets/img/site-notes-trigger-icon.svg": {
     "file": "img/site-notes-trigger-icon.svg",
@@ -971,10 +991,10 @@
     ],
     "file": "js/frontend.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js",
-      "_index-161be635.min.js",
-      "_WidgetReportError-f14c230e.min.js",
-      "_index-d67d97ae.min.js"
+      "_vendor-abf23f8e.min.js",
+      "_index-d6a6ac70.min.js",
+      "_WidgetReportError-60e8a049.min.js",
+      "_index-ef6f6492.min.js"
     ],
     "isEntry": true,
     "src": "src/modules/frontend/frontend.js"
@@ -985,9 +1005,6 @@
   },
   "src/modules/reports/reports.js": {
     "assets": [
-      "img/bg-user-journey.svg",
-      "img/bullet.svg",
-      "img/icon-lock.svg",
       "img/flags.png",
       "img/yir-mi-hero.svg",
       "img/yir-icon-visitors.svg",
@@ -1033,6 +1050,9 @@
       "img/icon-bottom.svg",
       "img/icon-selected.svg",
       "img/icon-media.svg",
+      "img/bg-user-journey.svg",
+      "img/bullet.svg",
+      "img/icon-lock.svg",
       "img/report-arrow-down-red.png",
       "img/report-arrow-down-green.png",
       "img/report-arrow-up-green.png",
@@ -1055,20 +1075,21 @@
       "img/bg-ecommerce-product-sales@2x.png",
       "img/bg-ecommerce-coupons@2x.png",
       "img/bg-engagement-pages@2x.png",
-      "img/social-media-report@2x.png"
+      "img/social-media-report@2x.png",
+      "img/exceptions-report.png"
     ],
     "css": [
       "css/reports.css"
     ],
     "file": "js/reports.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js",
-      "_index-161be635.min.js",
-      "_SettingsInfoTooltip-312844d8.min.js",
-      "_ReportReAuth-0fae89f6.min.js",
-      "_index-b1c48680.min.js",
-      "_index-d67d97ae.min.js",
-      "_SlideDownUp-22e11cf5.min.js"
+      "_vendor-abf23f8e.min.js",
+      "_index-d6a6ac70.min.js",
+      "_SettingsInfoTooltip-8ce0e85d.min.js",
+      "_ReportReAuth-799813da.min.js",
+      "_index-e7d3fbef.min.js",
+      "_index-ef6f6492.min.js",
+      "_SlideDownUp-80f4c9d9.min.js"
     ],
     "isEntry": true,
     "src": "src/modules/reports/reports.js"
@@ -1080,6 +1101,7 @@
   "src/modules/settings/settings.js": {
     "assets": [
       "img/ecommerce-report.png",
+      "img/monsterinsights-addons-upsell-logo.svg",
       "img/prettylinks-ad-bg.png",
       "img/icon-download.png",
       "img/pretty-links-logo-white.svg",
@@ -1178,9 +1200,11 @@
       "img/icon-media.svg",
       "img/arrow-down.svg",
       "img/site-notes-category-upsell-mi.png",
+      "img/site-notes-integration-upsell.png",
       "img/icon-plus.svg",
       "img/icon-warning.png",
       "img/monsterinsights-setup-checklist-site-note.png",
+      "img/icon-site-notes-settings.svg",
       "img/woocommerce.png",
       "img/easy-digital-downloads.png",
       "img/memberpress.png",
@@ -1198,6 +1222,7 @@
       "img/icon-addon-performance.png",
       "img/icon-scroll-tracking.png",
       "img/icon-privacy-guard.svg",
+      "img/icon-exception-report.svg",
       "img/icon-plus.png",
       "img/icon-smile.png",
       "img/affiliates-promo-logo.png"
@@ -1207,12 +1232,12 @@
     ],
     "file": "js/settings.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js",
-      "_index-d67d97ae.min.js",
-      "_SlideDownUp-22e11cf5.min.js",
-      "_WelcomeOverlay-82d42e33.min.js",
-      "_SettingsInfoTooltip-312844d8.min.js",
-      "_index-b1c48680.min.js"
+      "_vendor-abf23f8e.min.js",
+      "_index-ef6f6492.min.js",
+      "_SlideDownUp-80f4c9d9.min.js",
+      "_WelcomeOverlay-5c0b57d7.min.js",
+      "_SettingsInfoTooltip-8ce0e85d.min.js",
+      "_index-e7d3fbef.min.js"
     ],
     "isEntry": true,
     "src": "src/modules/settings/settings.js"
@@ -1272,6 +1297,9 @@
       "img/icon-bottom.svg",
       "img/icon-selected.svg",
       "img/icon-media.svg",
+      "img/bg-user-journey.svg",
+      "img/bullet.svg",
+      "img/icon-lock.svg",
       "img/report-arrow-down-red.png",
       "img/report-arrow-down-green.png",
       "img/report-arrow-up-green.png",
@@ -1295,8 +1323,7 @@
       "img/bg-ecommerce-coupons@2x.png",
       "img/bg-engagement-pages@2x.png",
       "img/social-media-report@2x.png",
-      "img/bullet.svg",
-      "img/icon-lock.svg",
+      "img/exceptions-report.png",
       "img/mascot.png"
     ],
     "css": [
@@ -1304,12 +1331,12 @@
     ],
     "file": "js/widget.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js",
-      "_index-161be635.min.js",
-      "_ReportReAuth-0fae89f6.min.js",
-      "_SettingsInfoTooltip-312844d8.min.js",
-      "_WidgetReportError-f14c230e.min.js",
-      "_index-d67d97ae.min.js"
+      "_vendor-abf23f8e.min.js",
+      "_index-d6a6ac70.min.js",
+      "_ReportReAuth-799813da.min.js",
+      "_SettingsInfoTooltip-8ce0e85d.min.js",
+      "_WidgetReportError-60e8a049.min.js",
+      "_index-ef6f6492.min.js"
     ],
     "isEntry": true,
     "src": "src/modules/widget/widget.js"
@@ -1356,11 +1383,11 @@
     ],
     "file": "js/wizard.min.js",
     "imports": [
-      "_vendor-5edb4194.min.js",
-      "_WelcomeOverlay-82d42e33.min.js",
-      "_SettingsInfoTooltip-312844d8.min.js",
-      "_index-d67d97ae.min.js",
-      "_SlideDownUp-22e11cf5.min.js"
+      "_vendor-abf23f8e.min.js",
+      "_WelcomeOverlay-5c0b57d7.min.js",
+      "_SettingsInfoTooltip-8ce0e85d.min.js",
+      "_index-ef6f6492.min.js",
+      "_SlideDownUp-80f4c9d9.min.js"
     ],
     "isEntry": true,
     "src": "src/modules/wizard-onboarding/wizard.js"

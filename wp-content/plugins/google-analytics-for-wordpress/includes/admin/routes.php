@@ -74,6 +74,7 @@ class MonsterInsights_Rest_Routes {
 			'is_expired'  => MonsterInsights()->license->site_license_expired(),
 			'expiry_date' => MonsterInsights()->license->get_license_expiry_date(),
 			'is_invalid'  => MonsterInsights()->license->site_license_invalid(),
+			'is_agency'   => MonsterInsights()->license->site_is_agency(),
 		);
 		$network_license = array(
 			'key'         => MonsterInsights()->license->get_network_license_key(),
@@ -82,6 +83,7 @@ class MonsterInsights_Rest_Routes {
 			'is_expired'  => MonsterInsights()->license->network_license_expired(),
 			'expiry_date' => MonsterInsights()->license->get_license_expiry_date(),
 			'is_invalid'  => MonsterInsights()->license->network_license_disabled(),
+			'is_agency'   => MonsterInsights()->license->network_is_agency(),
 		);
 
 		wp_send_json( array(
@@ -663,9 +665,11 @@ class MonsterInsights_Rest_Routes {
 			'installed' => array_key_exists('uncanny-automator/uncanny-automator.php', $installed_plugins),
 			'basename'  => 'uncanny-automator/uncanny-automator.php',
 			'slug'      => 'uncanny-automator',
-			'setup_complete'      => (bool) get_option('automator_reporting', false),
+			'setup_complete' => class_exists( 'Uncanny_Automator\Api_Server' ) ? !! \Uncanny_Automator\Api_Server::is_automator_connected() : false,
+			'wizard_url'     => admin_url( 'edit.php?post_type=uo-recipe&page=uncanny-automator-setup-wizard' ),
+			'recipe_url'     => admin_url( 'post-new.php?post_type=uo-recipe' ),
 		);
-		
+
 		// Pretty Links
 		$parsed_addons['pretty-link'] = array(
 			'active'    => class_exists( 'PrliBaseController' ),
@@ -1259,6 +1263,11 @@ class MonsterInsights_Rest_Routes {
 	 * Store that the first run notice has been dismissed so it doesn't show up again.
 	 */
 	public function dismiss_first_time_notice() {
+		check_ajax_referer( 'mi-admin-nonce', 'nonce' );
+
+		if ( ! current_user_can( 'monsterinsights_save_settings' ) ) {
+			return;
+		}
 
 		monsterinsights_update_option( 'monsterinsights_first_run_notice', true );
 

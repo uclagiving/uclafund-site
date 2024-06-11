@@ -1,8 +1,7 @@
 <?php
 /*
 Widget Name: Social Media Buttons
-Description: Customizable buttons which link to all your social media profiles.
-Author: SiteOrigin
+Description: Add social media buttons to your site with personalized icons, colors, and design settings.
 Author URI: https://siteorigin.com
 Documentation: https://siteorigin.com/widgets-bundle/social-media-buttons-widget/
 */
@@ -15,7 +14,7 @@ class SiteOrigin_Widget_SocialMediaButtons_Widget extends SiteOrigin_Widget {
 			'sow-social-media-buttons',
 			__( 'SiteOrigin Social Media Buttons', 'so-widgets-bundle' ),
 			array(
-				'description' => __( 'Customizable buttons which link to all your social media profiles.', 'so-widgets-bundle' ),
+				'description' => __( 'Add social media buttons to your site with personalized icons, colors, and design settings.', 'so-widgets-bundle' ),
 				'help' => 'https://siteorigin.com/widgets-bundle/social-media-buttons-widget/',
 			),
 			array(),
@@ -361,9 +360,8 @@ class SiteOrigin_Widget_SocialMediaButtons_Widget extends SiteOrigin_Widget {
 
 				if ( $instance['design']['theme'] == 'wire' ) {
 					$call .= ! empty( $network['border_color'] ) ? ', @border_color:' . $network['border_color'] : '';
-					$border_color_hover_fallback = ! empty( $network['border_color'] ) ? ', @button_color_hover:' . $network['border_color'] : '';
-					$call .= ! empty( $network['border_hover_color'] ) ? ', @border_hover_color:' . $network['border_hover_color'] : $border_color_hover_fallback;
-
+					$border_hover_color_fallback = ! empty( $network['border_color'] ) ? ', @border_hover_color:' . $network['border_color'] : ", @border_hover_color: ''";
+					$call .= ! empty( $network['border_hover_color'] ) ? ', @border_hover_color:' . $network['border_hover_color'] : $border_hover_color_fallback;
 				}
 				$call .= ');';
 				$calls[] = $call;
