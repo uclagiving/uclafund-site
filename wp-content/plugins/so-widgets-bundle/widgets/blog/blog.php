@@ -125,7 +125,7 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 						),
 						'featured_image_size' => array(
 							'type' => 'image-size',
-							'label' => __( 'Featured Image Size', 'siteorigin-premium' ),
+							'label' => __( 'Featured Image Size', 'so-widgets-bundle' ),
 							'custom_size' => true,
 							'state_handler' => array(
 								'featured_image[show]' => array( 'show' ),
@@ -162,6 +162,15 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 							'state_handler' => array(
 								'active_template[standard,masonry,grid,offset,alternate]' => array( 'slideDown' ),
 								'_else[active_template]' => array( 'slideUp' ),
+							),
+						),
+						'trim_manual_excerpt' => array(
+							'type' => 'checkbox',
+							'label' => __( 'Trim Manual Excerpt', 'so-widgets-bundle' ),
+							'description' => __( 'Trim the excerpt length even if a manual excerpt has been added to the post.', 'so-widgets-bundle' ),
+							'state_handler' => array(
+								'content_type[excerpt]' => array( 'show' ),
+								'_else[content_type]' => array( 'hide' ),
 							),
 						),
 						'read_more' => array(
@@ -894,12 +903,12 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 			} else {
 				$terms = get_terms( 'jetpack-portfolio-type' );
 			}
-		} else {
+		} elseif ( $post_id === 0 ) {
 			// Check if a developer has set a term for this post type.
 			$post_type = wp_parse_args( siteorigin_widget_post_selector_process_query( $instance['posts'] ) )['post_type'];
 			$taxonomy = apply_filters( 'siteorigin_widgets_blog_portfolio_taxonomy', '', $instance, $post_type );
-			if ( ! empty( $taxonomy ) ) {
-				$terms = get_terms( $taxonomy );
+			if ( ! empty( $taxonomy ) && is_array( $taxonomy ) ) {
+				return $taxonomy;
 			}
 
 			if ( empty( $terms ) || is_wp_error( $terms ) ) {
@@ -1269,7 +1278,7 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 	}
 
 	public function alter_read_more_link( $link ) {
-		return '<a class="sow-more-link more-link excerpt" href="' . esc_url( get_permalink() ) . '"> ' . esc_html( get_query_var( 'siteorigin_blog_read_more' ) ) . '<span class="sow-more-link-arrow">&rarr;</span></a>';
+		return '<a class="sow-more-link" href="' . esc_url( get_permalink() ) . '"> ' . esc_html( get_query_var( 'siteorigin_blog_read_more' ) ) . '<span class="sow-more-link-arrow">&rarr;</span></a>';
 	}
 
 	public function alter_excerpt_more_indicator( $indicator ) {
@@ -1326,7 +1335,10 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 		$excerpt = get_the_excerpt();
 		$excerpt_add_read_more = count( preg_split( '~[^\p{L}\p{N}\']+~u', $excerpt ) ) >= $length;
 
-		if ( ! has_excerpt() ) {
+		if (
+			! has_excerpt() ||
+			! empty( $settings['trim_manual_excerpt'] )
+		) {
 			$excerpt = wp_trim_words(
 				$excerpt,
 				$length,
@@ -1357,6 +1369,8 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 				$show_all_prev_next = false;
 			}
 
+			wp_reset_query();
+
 			$pagination_markup = paginate_links( array(
 				'format' => '?sow-' . $instance['paged_id'] . '=%#%',
 				'total' => $posts->max_num_pages,
@@ -1365,6 +1379,8 @@ class SiteOrigin_Widget_Blog_Widget extends SiteOrigin_Widget {
 				'prev_next' => ! $show_all_prev_next,
 				'prev_text' => is_rtl() ? '&rarr;' : '&larr;',
 				'next_text' => is_rtl() ? '&larr;' : '&rarr;',
+				// Prevent multiple Blog widgets from "stacking" pagination.
+				'base' => get_the_permalink() . '%_%',
 			) );
 		}
 

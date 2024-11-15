@@ -3,8 +3,8 @@ Tags: page builder, website builder, responsive design, drag and drop, visual ed
 Requires at least: 4.7
 Tested up to: 6.6
 Requires PHP: 7.0.0
-Stable tag: 2.29.19
-Build time: 2024-07-21T15:48:11+01:00
+Stable tag: 2.30.0
+Build time: 2024-10-26T18:05:52+01:00
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 Donate link: https://siteorigin.com/downloads/premium/
@@ -120,6 +120,21 @@ Page Builder is compatible with the vast majority of third-party plugins and wid
 SiteOrigin offers a single premium plugin that enhances and extends Page Builder, the Widgets Bundle, SiteOrigin CSS and all of our free themes. Find out more about [SiteOrigin Premium](https://siteorigin.com/downloads/premium/) and the powerful addons it offers.
 
 == Changelog ==
+
+= 2.30.0 – 26 October 2024 =
+* Image Overlay: Prevent iOS fixed background display issues.
+* Styles Settings: Converted Border Thickness to a multi-measurement field.
+* Styles Settings: Ensured color picker field and clear button are on a dedicated line.
+
+= 2.29.22 – 30 September 2024 =
+* Layout Block: Removed content filter attributes from the front-end.
+
+= 2.29.21 – 17 September 2024 =
+* Prebuilt Local Layouts: Resolved a potential error.
+* Prebuilt Local Layouts: Restricted layout files to JSON.
+
+= 2.29.20 – 08 August 2024 =
+* Rank Math: Resolved content analysis issue when multiple blocks in use.
 
 = 2.29.19 – 21 July 2024 =
 * Further improvements for attribute name handling.

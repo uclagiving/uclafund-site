@@ -3,13 +3,13 @@ Tags: widgets, blocks, contact form, blog, slider
 Requires at least: 4.2
 Tested up to: 6.6
 Requires PHP: 7.0.0
-Stable tag: 1.62.3
-Build time: 2024-07-23T22:01:34+01:00
+Stable tag: 1.63.4
+Build time: 2024-10-23T19:09:00+01:00
 License: GPLv3 or later
 Contributors: gpriday, braam-genis, alexgso
 Donate link: https://siteorigin.com/downloads/premium/
 
-The SiteOrigin Widgets Bundle gives you all the elements you need to build modern, responsive, and engaging website pages. Using the Widgets Bundle, you can quickly and effortlessly add buttons, sliders, heroes, maps, images, carousels, features, icons, and so much more.
+Essential elements for modern websites. Add buttons, sliders, heroes, maps, images, carousels, features, icons, more. Create dynamic pages easily.
 
 == Description ==
 
@@ -108,6 +108,37 @@ SiteOrigin Premium includes access to our professional email support service, pe
 The Widgets Bundle global interface is available at Plugins > SiteOrigin Widgets. Widgets can be enabled or disabled as needed. If a widget offers global settings, you can access those via the Settings button next to each applicable widget.
 
 == Changelog ==
+
+= 1.63.4 - 23 October 2024 =
+* Image Grid: Ensured the image link always covers the image.
+* Simple Masonry: Removed removed transition to improve CLS.
+
+= 1.63.3 - 11 October 2024 =
+* Button: Renamed Justify alignment to Full Width.
+* Button: Update to ensure Justify full-width output in conjunction with the Atom theme.
+* Blog: Removed generic Read More CSS class to avoid conflicts.
+* Improved field error translation handling.
+
+= 1.63.2 - 23 September 2024 =
+* Blog: Output Filtered taxonomy directly.
+* Blog: Prevented multiple Blog Widgets on a page from "stacking" pagination.
+* Blog: Updated styling to prevent Read More underline from themes or plugins.
+* Carousel: Added `container_classes`.
+
+= 1.63.1 - 28 August 2024 =
+* Blog: Resolved a potential Portfolio filtering issue.
+* Post Carousel: Resolved a backtracking issue and added preloading.
+* Social Media Buttons: Added Bluesky.
+* SiteOrigin Widget Block: Added missing author description for Editor and Social Media Buttons.
+* Updated Google Fonts.
+* Updated Font Awesome from 6.5.2 to 6.6.0.
+
+= 1.63.0 - 11 August 2024 =
+* Button Grid: Update to ensure the Grid Widget doesn't override the settings of unrelated Button Widgets.
+* Blog Offset: Increased the author avatar image width.
+* Blog: Added `Trim Manual Excerpt` setting. Trim the excerpt even if a manual excerpt has been added.
+* Slider: Resolved a potential PHP 8 TypeError.
+* Video: Ensured video oEmbed is able to apply full screen.
 
 = 1.62.3 - 23 July 2024 =
 * Updated Google Fonts.
