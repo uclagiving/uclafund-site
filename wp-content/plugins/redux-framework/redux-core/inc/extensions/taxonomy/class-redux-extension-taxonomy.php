@@ -26,7 +26,7 @@ if ( ! class_exists( 'Redux_Extension_Taxonomy' ) ) {
 		 *
 		 * @var string
 		 */
-		public static $version = '4.4.19';
+		public static string $version = '4.4.19';
 
 		/**
 		 * Extension friendly name.
@@ -787,7 +787,7 @@ if ( ! class_exists( 'Redux_Extension_Taxonomy' ) ) {
 					if ( isset( $params['fields'] ) ) {
 
 						foreach ( $params['fields'] as $field ) {
-							if ( in_array( $field['id'], $this->parent->fields_hidden, true ) ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement
+							if ( in_array( $field['id'], Redux_Core::$fields_hidden, true ) ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement
 								// Not visible.
 							} elseif ( isset( $field['add_visibility'] ) && $field['add_visibility'] ) {
 								return true;
