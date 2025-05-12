@@ -36,9 +36,9 @@ if ( ! class_exists( 'Redux_Filesystem', false ) ) {
 		/**
 		 * File system credentials.
 		 *
-		 * @var array
+		 * @var array|bool|null
 		 */
-		private array $creds = array();
+		private $creds;
 
 		/**
 		 * ReduxFramework object pointer.
@@ -52,7 +52,7 @@ if ( ! class_exists( 'Redux_Filesystem', false ) ) {
 		 *
 		 * @var WP_Filesystem_Base|null
 		 */
-		private ?WP_Filesystem_Base $wp_filesystem;
+		private ?WP_Filesystem_Base $wp_filesystem = null;
 
 		/**
 		 * If DBI_Filesystem should attempt to use the WP_Filesystem class.
@@ -111,6 +111,19 @@ if ( ! class_exists( 'Redux_Filesystem', false ) ) {
 				require_once ABSPATH . '/wp-admin/includes/file.php';
 			}
 
+			// Set default permissions.
+			if ( defined( 'FS_CHMOD_DIR' ) ) {
+				$this->chmod_dir = FS_CHMOD_DIR;
+			} else {
+				$this->chmod_dir = ( fileperms( ABSPATH ) & 0777 | 0755 );
+			}
+
+			if ( defined( 'FS_CHMOD_FILE' ) ) {
+				$this->chmod_file = FS_CHMOD_FILE;
+			} else {
+				$this->chmod_file = ( fileperms( ABSPATH . 'index.php' ) & 0777 | 0644 );
+			}
+
 			if ( ! $force_no_fs && function_exists( 'request_filesystem_credentials' ) ) {
 				if ( ( defined( 'WPMDB_WP_FILESYSTEM' ) && WPMDB_WP_FILESYSTEM ) || ! defined( 'WPMDB_WP_FILESYSTEM' ) ) {
 					$this->maybe_init_wp_filesystem();
@@ -132,7 +145,7 @@ if ( ! class_exists( 'Redux_Filesystem', false ) ) {
 		 * @return    object    A single instance of this class.
 		 * @since     1.0.0
 		 */
-		public static function get_instance( ReduxFramework $me = null ): ?object {
+		public static function get_instance( ?ReduxFramework $me = null ): ?object {
 
 			// If the single instance hasn't been set, set it now.
 			if ( null === self::$instance ) {
@@ -296,20 +309,6 @@ if ( ! class_exists( 'Redux_Filesystem', false ) ) {
 		 * @return void
 		 */
 		private function generate_default_files() {
-
-			// Set default permissions.
-			if ( defined( 'FS_CHMOD_DIR' ) ) {
-				$this->chmod_dir = FS_CHMOD_DIR;
-			} else {
-				$this->chmod_dir = ( fileperms( ABSPATH ) & 0777 | 0755 );
-			}
-
-			if ( defined( 'FS_CHMOD_FILE' ) ) {
-				$this->chmod_file = FS_CHMOD_FILE;
-			} else {
-				$this->chmod_file = ( fileperms( ABSPATH . 'index.php' ) & 0777 | 0644 );
-			}
-
 			if ( ! $this->is_dir( Redux_Core::$upload_dir ) ) {
 				$this->mkdir( Redux_Core::$upload_dir );
 			}
@@ -525,7 +524,7 @@ if ( ! class_exists( 'Redux_Filesystem', false ) ) {
 		 *
 		 * @return bool
 		 */
-		public function put_contents( string $abs_path, string $contents, string $perms = null ): bool {
+		public function put_contents( string $abs_path, string $contents, ?string $perms = null ): bool {
 			$return = false;
 
 			if ( ! $this->is_dir( dirname( $abs_path ) ) ) {
@@ -664,7 +663,7 @@ if ( ! class_exists( 'Redux_Filesystem', false ) ) {
 		 *
 		 * @return bool
 		 */
-		public function chmod( string $abs_path, int $perms = null ): bool {
+		public function chmod( string $abs_path, ?int $perms = null ): bool {
 			if ( ! $this->file_exists( $abs_path ) ) {
 				return false;
 			}
@@ -774,7 +773,7 @@ if ( ! class_exists( 'Redux_Filesystem', false ) ) {
 		 *
 		 * @return bool
 		 */
-		public function mkdir( string $abs_path, int $perms = null ): bool {
+		public function mkdir( string $abs_path, ?int $perms = null ): bool {
 			if ( is_null( $perms ) ) {
 				$perms = $this->chmod_dir;
 			}
@@ -969,7 +968,7 @@ if ( ! class_exists( 'Redux_Filesystem', false ) ) {
 		 *
 		 * @return bool
 		 */
-		public function move_uploaded_file( string $file, string $destination, int $perms = null ): bool {
+		public function move_uploaded_file( string $file, string $destination, ?int $perms = null ): bool {
 			// TODO: look into replicating more functionality from wp_handle_upload().
 			// phpcs:ignore WordPress.PHP.NoSilencedErrors
 			$return = @move_uploaded_file( $file, $destination );

@@ -8,6 +8,12 @@
 class SiteOrigin_Panels_Admin_Layouts {
 	const LAYOUT_URL = 'https://layouts.siteorigin.com/';
 
+	const VALID_MIME_TYPES = array(
+		'application/json',
+		'text/plain',
+		'text/html',
+	);
+
 	public function __construct() {
 		// Filter all the available external layout directories.
 		add_filter( 'siteorigin_panels_external_layout_directories', array( $this, 'filter_directories' ), 8 );
@@ -64,6 +70,29 @@ class SiteOrigin_Panels_Admin_Layouts {
 	}
 
 	/**
+	 * Check if the file has a valid MIME type.
+	 *
+	 * This method checks if the given file has a valid MIME type. It first verifies
+	 * if the `mime_content_type` function exists. If it doesn't, it returns true
+	 * as it can't check the MIME type due to server settings.
+	 * If the function exists, it retrieves the MIME type of the file and checks
+	 * if it is in the list of valid MIME types.
+	 *
+	 * @param string $file The file path to check.
+	 *
+	 * @return bool True if the file has a valid MIME type, false otherwise.
+	 */
+	private static function check_file_mime( $file ) {
+		if ( ! function_exists( 'mime_content_type' ) ) {
+			// Can't check mime type due to server settings.
+			return true;
+		}
+
+		$mime_type = mime_content_type( $file );
+		return in_array( $mime_type, self::VALID_MIME_TYPES );
+	}
+
+	/**
 	 * Determines if file has a JSON extension.
 	 *
 	 * @param string $file File path.
@@ -103,22 +132,11 @@ class SiteOrigin_Panels_Admin_Layouts {
 				}
 
 				foreach ( $files as $file ) {
-					$valid_file_type = false;
-					if ( function_exists( 'mime_content_type' ) ) {
-						$mime_type = mime_content_type( $file );
-						$valid_file_type = strpos( $mime_type, '/json' ) !== false;
-
-						if ( ! $valid_file_type ) {
-							// It could have the wrong MIME type. Check for text/plain, and if it is, check the extension.
-							$valid_file_type = strpos( $mime_type, 'text/plain' ) !== false &&
-								self::check_file_ext( $file );
-						}
-					} else {
-						// Can't check MIME. Check extension.
-						$valid_file_type = self::check_file_ext( $file );
-					}
-
-					if ( ! $valid_file_type ) {
+					// Check the file.
+					if (
+						! self::check_file_mime( $file ) ||
+						! self::check_file_ext( $file )
+					) {
 						continue;
 					}
 
@@ -265,11 +283,17 @@ class SiteOrigin_Panels_Admin_Layouts {
 				return false;
 			}
 
-			$cache = get_transient( 'siteorigin_panels_layouts_directory_' . $directory_id .'_page_' . $page_num );
+			// If the user isn't searching, check if we have a cached
+			// version of the results.
+			if ( empty( $search ) ) {
+				$cache = get_transient( 'siteorigin_panels_layouts_directory_cache_' . $directory_id .'_page_' . $page_num );
 
-			if ( empty( $search ) && ! empty( $cache ) ) {
-				$return = $cache;
-			} else {
+				if ( ! empty( $cache ) ) {
+					$return = $cache;
+				}
+			}
+
+			if ( empty( $return['items'] ) ) {
 				$url = add_query_arg( $query, $directory[ 'url' ] . 'wp-admin/admin-ajax.php?action=query_layouts' );
 
 				if ( ! empty( $directory['args'] ) && is_array( $directory['args'] ) ) {
@@ -301,13 +325,30 @@ class SiteOrigin_Panels_Admin_Layouts {
 					}
 
 					$return['max_num_pages'] = $results['max_num_pages'];
-					set_transient( 'siteorigin_panels_layouts_directory_' . $directory_id .'_page_' . $page_num, $return, 86400 );
+
+					// If the user isn't searching, cache the results.
+					if ( empty( $search ) ) {
+						set_transient( 'siteorigin_panels_layouts_directory_cache_' . $directory_id .'_page_' . $page_num, $return, 86400 );
+					}
 				}
 			}
 		} elseif ( strpos( $type, 'clone_' ) !== false ) {
-			// Check that the user can view the given page types
-			$post_type = get_post_type_object( str_replace( 'clone_', '', $type ) );
+			$post_type = str_replace( 'clone_', '', $type );
+			$post_types_editable_by_user = SiteOrigin_Panels_Admin_Layouts::single()->post_types();
 
+			// Can the user edit posts from this post type?
+			if (
+				empty( $post_type ) ||
+				empty( $post_types_editable_by_user ) ||
+				! in_array(
+					$post_type,
+					$post_types_editable_by_user
+				)
+			) {
+				return;
+			}
+
+			$post_type = get_post_type_object( $post_type );
 			if ( empty( $post_type ) ) {
 				return;
 			}
@@ -487,7 +528,34 @@ class SiteOrigin_Panels_Admin_Layouts {
 			$panels_data['widgets'] = SiteOrigin_Panels_Admin::single()->process_raw_widgets( $panels_data['widgets'], array(), true, true );
 		}
 
+		if ( ! empty( $panels_data['widgets'] ) ) {
+			$panels_data['widgets'] = $this->close_all_containers( $panels_data['widgets'] );
+		}
+
 		wp_send_json_success( $panels_data );
+	}
+
+	/**
+	 * Recursively close all containers in the widget.
+	 *
+	 * @param array $widget The widget data.
+	 *
+	 * @return array The widget data with all fields closed.
+	 */
+	private function close_all_containers( $widget ) {
+		foreach( $widget as $key => $value ) {
+			if ( is_array( $value ) ) {
+				$widget[ $key ] = $this->close_all_containers( $value );
+				continue;
+			}
+
+			// If the key is `so_field_container_state`, set it to true.
+			if ( $key === 'so_field_container_state' ) {
+				$widget[ $key ] = 'closed';
+			}
+		}
+
+		return $widget;
 	}
 
 	/**
@@ -515,6 +583,11 @@ class SiteOrigin_Panels_Admin_Layouts {
 		header( 'content-type:application/json' );
 		$panels_data = apply_filters( 'siteorigin_panels_data', $panels_data, false );
 		$panels_data['widgets'] = SiteOrigin_Panels_Admin::single()->process_raw_widgets( $panels_data['widgets'], array(), true, true );
+
+		if ( ! empty( $panels_data['widgets'] ) ) {
+			$panels_data['widgets'] = $this->close_all_containers( $panels_data['widgets'] );
+		}
+
 		echo wp_json_encode( $panels_data );
 		wp_die();
 	}
@@ -576,5 +649,34 @@ class SiteOrigin_Panels_Admin_Layouts {
 		), $layout_data );
 
 		return $layout_data;
+	}
+
+	/**
+	 * Get the post types that the current user can edit.
+	 *
+	 * This function retrieves the post types specified in the
+	 * SiteOrigin Panels settings. It then filters out post types that the
+	 * current user does not have permission to edit.
+	 *
+	 * @return array The post types that the current user can edit.
+	 */
+	public function post_types() {
+		$post_types = siteorigin_panels_setting( 'post-types' );
+		if ( empty( $post_types ) ) {
+			return array();
+		}
+
+		foreach ( $post_types as $id => $post_type ) {
+			$post_type_object = get_post_type_object( $post_type );
+
+			if (
+				empty( $post_type_object ) ||
+				! current_user_can( $post_type_object->cap->edit_posts )
+			) {
+				unset( $post_types[ $id ] );
+			}
+		}
+
+		return $post_types;
 	}
 }

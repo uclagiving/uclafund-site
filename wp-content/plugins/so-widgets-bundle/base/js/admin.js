@@ -4,8 +4,10 @@ var sowbForms = window.sowbForms || {};
 
 (function ($) {
 
+	const isBlockEditor = $( 'body' ).hasClass( 'block-editor-page' );
+
 	let fontList = '';
-	for (const [ value, label ] of Object.entries( soWidgets.fonts ) ) {
+	for ( const [ value, label ] of Object.entries( soWidgets.fonts ) ) {
 		fontList += '<option value="' + value + '">' + label + '</option>';
 	}
 
@@ -62,7 +64,12 @@ var sowbForms = window.sowbForms || {};
 				}
 				// If we're in the legacy main widgets interface and the form isn't visible and it isn't contained in a
 				// panels dialog (when using the Layout Builder widget), don't worry about setting it up.
-				if ( $body.hasClass( 'widgets-php' ) && ! $body.hasClass( 'block-editor-page' ) && ! $el.is( ':visible' ) && $el.closest( '.panel-dialog' ).length === 0 ) {
+				if (
+					$body.hasClass( 'widgets-php' ) &&
+					! isBlockEditor &&
+					! $el.is( ':visible' ) &&
+					$el.closest( '.panel-dialog' ).length === 0
+				) {
 					return true;
 				}
 
@@ -226,7 +233,10 @@ var sowbForms = window.sowbForms || {};
 					});
 				});
 
-				if ( ! $el.data( 'backupDisabled' ) ) {
+				if (
+					soWidgets.backup.enabled &&
+					! $el.data( 'backupDisabled' )
+				) {
 					var _sow_form_id = $el.find( '> .siteorigin-widgets-form-id' ).val();
 					var $timestampField = $el.find( '> .siteorigin-widgets-form-timestamp' );
 					var _sow_form_timestamp = parseInt( $timestampField.val() || 0 );
@@ -262,11 +272,27 @@ var sowbForms = window.sowbForms || {};
 							sessionStorage.removeItem( _sow_form_id );
 						}
 					}
-					$el.on( 'change', function() {
-						$timestampField.val( new Date().getTime() );
-						var data = sowbForms.getWidgetFormValues( $el );
-						sessionStorage.setItem( _sow_form_id, JSON.stringify( data ) );
+
+					let isUserChange = false;
+					// Add user change detection to the form to prevent unintended
+					// backups of automated changes.
+					$el.on( 'keydown mouseup touchend', ( e ) => {
+						// Don't trigger a backup if the user clicked on a section.
+						if ( $( e.target ).parent().is( '.siteorigin-widget-field-type-section' ) ) {
+							return false;
+						}
+
+						isUserChange = true;
 					} );
+
+					// Debounce backups to prevent potential performance issues.
+					$el.on( 'change', _.debounce( () => {
+						if ( isUserChange ) {
+							$timestampField.val( new Date().getTime() );
+							const data = sowbForms.getWidgetFormValues( $el );
+							sessionStorage.setItem( _sow_form_id, JSON.stringify( data ) );
+						}
+					}, 500 ) );
 				}
 			}
 			else {
@@ -381,17 +407,19 @@ var sowbForms = window.sowbForms || {};
 				if ( e.type == 'keyup' && ! sowbForms.isEnter( e ) ) {
 					return;
 				}
-				$(this).toggleClass('siteorigin-widget-section-visible');
-				$(this).parent().find('> .siteorigin-widget-section, > .siteorigin-widget-widget > .siteorigin-widget-section')
-					.slideToggle('fast', function () {
-						$( window ).trigger( 'resize' );
-						$(this).find('> .siteorigin-widget-field-container-state').val($(this).is(':visible') ? 'open' : 'closed');
 
-						if ( $( this ).is( ':visible' ) ) {
-							var $fields = $( this ).find( '> .siteorigin-widget-field' );
-							$fields.trigger( 'sowsetupformfield' );
-						}
-					} );
+				const $this = $( this );
+				$this.toggleClass( 'siteorigin-widget-section-visible' );
+				const $section = $this.parent().find( '> .siteorigin-widget-section, > .siteorigin-widget-widget > .siteorigin-widget-section' );
+
+				$section.slideToggle( 'fast', function() {
+					const $thisSection = $( this );
+					$thisSection.find( '> .siteorigin-widget-field-container-state' ).val( $thisSection.is( ':visible' ) ? 'open' : 'closed' );
+
+					if ( $thisSection.is( ':visible' ) ) {
+						$thisSection.find( '> .siteorigin-widget-field' ).trigger( 'sowsetupformfield' );
+					}
+				} );
 			};
 			$fields.filter( '.siteorigin-widget-field-type-widget, .siteorigin-widget-field-type-section' ).find( '> label' )
 			.on( 'click keyup', expandContainer )
@@ -429,21 +457,23 @@ var sowbForms = window.sowbForms || {};
 			// Setup the URL fields
 
 			$fields.filter( '.siteorigin-widget-field-type-link' ).each( function () {
-				var $$ = $( this );
-				var $fieldVal = $$.find( 'input.siteorigin-widget-input' );
+				const $$ = $( this );
+				const $fieldVal = $$.find( 'input.siteorigin-widget-input' );
 
-				// Function that refreshes the list of
-				var request = null;
-				var refreshList = function () {
+				const $itemList = $$.find( 'ul.posts' );
+				const $noResults = $$.find( '.content-no-results' );
+
+				let request = null;
+				const refreshList = () => {
 					if ( request !== null ) {
 						request.abort();
 					}
 
-					var $contentSearchInput = $$.find( '.content-text-search' );
-					var query = $contentSearchInput.val();
-					var postTypes = $contentSearchInput.data( 'postTypes' );
+					const $contentSearchInput = $$.find( '.content-text-search' );
+					const query = $contentSearchInput.val();
+					const postTypes = $contentSearchInput.data( 'postTypes' );
 
-					var ajaxData = {
+					const ajaxData = {
 						action: 'so_widgets_search_posts',
 						query: query,
 						postTypes: postTypes
@@ -454,26 +484,39 @@ var sowbForms = window.sowbForms || {};
 						ajaxData.language = icl_this_lang;
 					}
 
-					var $ul = $$.find( 'ul.posts' ).empty().addClass( 'loading' );
+					// Visually prep the field.
+					$noResults.addClass( 'hidden' );
+					$itemList.empty();
+					$itemList.removeClass( 'hidden' )
+					$itemList.addClass( 'loading' );
+
 					$.get(
 						soWidgets.ajaxurl,
 						ajaxData,
-						function( data ) {
-							for ( var i = 0; i < data.length; i++ ) {
-								if (data[ i ].label === '') {
-									data[ i ].label = '&nbsp;';
+						( results ) => {
+							// If there aren't any results, show a message.
+							if ( results.length === 0 ) {
+								$noResults.removeClass( 'hidden' );
+								$itemList.addClass( 'hidden' );
+								$itemList.removeClass( 'loading' );
+								return;
+							}
+
+							for ( var i = 0; i < results.length; i++ ) {
+								if (results[ i ].label === '') {
+									results[ i ].label = '&nbsp;';
 								}
 
 								// Add all the post items
-								$ul.append(
+								$itemList.append(
 									$( '<li>' )
 										.addClass( 'post' )
-										.html( data[ i ].label + '<span>(' + data[ i ].type + ')</span>' )
-										.data( data[ i ] )
+										.html( results[ i ].label + '<span>(' + results[ i ].type + ')</span>' )
+										.data( results[ i ] )
 										.attr( 'tabindex', 0 )
 								);
 							}
-							$ul.removeClass( 'loading' );
+							$itemList.removeClass( 'loading' );
 						}
 					);
 				};
@@ -981,11 +1024,28 @@ var sowbForms = window.sowbForms || {};
 						if ( isTable ) {
 							var table = [];
 						}
+
 						if ( itemLabel.hasOwnProperty( 'selectorArray' ) ) {
 							for ( var i = 0 ; i < itemLabel.selectorArray.length ; i++ ) {
 								selectorRow = itemLabel.selectorArray[ i ];
 								functionName = ( selectorRow.hasOwnProperty( 'valueMethod' ) && selectorRow.valueMethod ) ? selectorRow.valueMethod : 'val';
-								let foundText = $el.find( selectorRow.selector )[ functionName ]();
+								let foundText = '';
+
+								// Is this a single selector or multiple?
+								if ( ! isTable || ! selectorRow.selectorArray ) {
+									foundText = $el.find( selectorRow.selector )[ functionName ]();
+								} else {
+									// This item has multiple selectors to check.
+									// Set foundText to the first valid value found.
+									for ( var j = 0 ; j < selectorRow.selectorArray.length ; j++ ) {
+										const selector = selectorRow.selectorArray[ j ];
+										foundText = $el.find( selector.selector )[ selector.valueMethod ]();
+
+										if ( foundText ) {
+											break;
+										}
+									}
+								}
 
 								if ( isTable ) {
 									// No matter what, we need to push this value for consistent spacing.
@@ -1426,12 +1486,13 @@ var sowbForms = window.sowbForms || {};
 					var selected = $$.find( 'option:selected' );
 					if ( selected.length === 1 ) {
 						fieldValue = $$.find( 'option:selected' ).val();
-					}
-					else if ( selected.length > 1 ) {
-						// This is a mutli-select field
-						fieldValue = _.map( $$.find( 'option:selected' ), function ( n, i ) {
-							return $( n ).val();
-						} );
+					} else if ( selected.length > 1 ) {
+
+						const selectedOptions = $$.find( 'option:selected' );
+						fieldValue = [];
+						for ( var i = 0; i < selectedOptions.length; i++ ) {
+							fieldValue.push( selectedOptions[ i ].value );
+						}
 					}
 				} else {
 					fieldValue = $$.val();
@@ -1687,18 +1748,39 @@ var sowbForms = window.sowbForms || {};
 				} else if ( $$.hasClass( 'sow-multi-measurement-input-values' ) ) {
 					const $inputs = $$.prev().find( '.sow-multi-measurement-input, .sow-multi-measurement-select-unit' );
 					const valuesArray = [];
-					values.value.split(' ').forEach( field => {
-						valuesArray.push( parseInt( field, 10 ) );
-						valuesArray.push( field.replace( parseInt( field, 10 ), '' ) );
-					} );
+
+					// Only process field if the current editor isn't the Block
+					// Editor, or it doesn't have a state handler/emitter.
+					if (
+						! isBlockEditor &&
+						(
+							$$.attr( 'data-state' ) ||
+							$$.attr( 'data-state-handler' )
+						)
+					) {
+						continue;
+					}
+
+					if ( values.value !== '' ) {
+						values.value.split(' ').forEach( field => {
+							valuesArray.push( parseInt( field, 10 ) );
+							valuesArray.push( field.replace( parseInt( field, 10 ), '' ) );
+						} );
+					}
 
 					$inputs.each( function( index, element ) {
 						const $input = $( element );
-						const part = valuesArray[ index ];
-						if ( typeof part !== 'number' ) {
+
+						if ( typeof valuesArray[ index ] !== 'number' ) {
 							return true;
 						}
-						$input.val( part );
+
+						const part = parseInt( valuesArray[ index ] );
+
+						$input.val(
+							isNaN( part ) ? '' : part
+						);
+
 						if ( ! updated && compareValues( $input.val(), values.value[ part ] ) ) {
 							updated = true;
 						}
@@ -1796,7 +1878,7 @@ var sowbForms = window.sowbForms || {};
 				valid,
 				form,
 				// Widget ID.
-				typeof jQuery( '.widget-content' ).data( 'id-base' ) !== 'undefined' ? form.find( '.siteorigin-widget-form' ).data( 'id-base' ) : ''
+				typeof jQuery( '.widget-content' ).data( 'id-base' ) !== undefined ? form.find( '.siteorigin-widget-form' ).data( 'id-base' ) : ''
 			]
 		);
 
@@ -1884,13 +1966,13 @@ var sowbForms = window.sowbForms || {};
 			$$.sowSetupForm();
 		}, 200);
 	});
-	var $body = $( 'body' );
+
 	// Setup new widgets when they're added in the Customizer or new widgets interface.
 	$( document ).on( 'widget-added', function( e, widget ) {
 		widget.find( '.siteorigin-widget-form' ).sowSetupForm();
 	} );
 
-	if ( $body.hasClass('block-editor-page') ) {
+	if ( isBlockEditor ) {
 		// Setup new widgets when they're previewed in the block editor.
 		$(document).on('panels_setup_preview', function () {
 			if (window.hasOwnProperty('sowb')) {

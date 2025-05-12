@@ -79,11 +79,14 @@ class SES_API {
 			'eu-north-1'     => __( 'Europe (Stockholm)', 'wp-offload-ses' ),
 			'eu-south-1'     => __( 'Europe (Milan)', 'wp-offload-ses' ),
 			'af-south-1'     => __( 'Africa (Cape Town)', 'wp-offload-ses' ),
+			'ap-southeast-3' => __( 'Asia Pacific (Jakarta)', 'wp-offload-ses' ),
 			'ap-south-1'     => __( 'Asia Pacific (Mumbai)', 'wp-offload-ses' ),
+			'ap-northeast-3' => __( 'Asia Pacific (Osaka)', 'wp-offload-ses' ),
 			'ap-northeast-2' => __( 'Asia Pacific (Seoul)', 'wp-offload-ses' ),
 			'ap-southeast-1' => __( 'Asia Pacific (Singapore)', 'wp-offload-ses' ),
 			'ap-southeast-2' => __( 'Asia Pacific (Sydney)', 'wp-offload-ses' ),
 			'ap-northeast-1' => __( 'Asia Pacific (Tokyo)', 'wp-offload-ses' ),
+			'il-central-1'   => __( 'Israel (Tel Aviv)', 'wp-offload-ses' ),
 			'me-south-1'     => __( 'Middle East (Bahrain)', 'wp-offload-ses' ),
 			'sa-east-1'      => __( 'South America (São Paulo)', 'wp-offload-ses' ),
 		);
@@ -116,6 +119,17 @@ class SES_API {
 
 	/**
 	 * Get the sending quota.
+	 *
+	 * Returns an array in the form:
+	 *
+	 * [
+	 *   'used'  => float,  // Percentage of the quota used over the last 24 hours
+	 *   'limit' => string, // The maximum number of emails that can be sent in a 24 hour period
+	 *   'sent'  => string, // The number of emails sent in the last 24 hours
+	 *   'rate'  => string, // The maximum number of emails that can be sent per second
+	 * ]
+	 *
+	 * Returns an OSES Error object if the quotas could not be retrieved.
 	 *
 	 * @return array|Error
 	 */

@@ -10,13 +10,15 @@ class SiteOrigin_Widget_ContactForm_Field_Select extends SiteOrigin_Widget_Conta
 		<select
 			name="<?php echo esc_attr( $options['field_name'] ); ?><?php echo ! empty( $options['field']['multiple_select'] ) ? '[]' : ''; ?>"
 			id="<?php echo esc_attr( $options['field_id'] ); ?>"
-			<?php self::add_custom_attrs( 'select' ); ?>
+			<?php self::add_custom_attrs( 'select', $options ); ?>
 			<?php echo ! empty( $options['field']['multiple_select'] ) ? 'multiple' : ''; ?>
 		>
 			<?php
 			if ( $options['show_placeholder'] && empty( $options['field']['multiple_select'] ) ) {
 				?>
-				<option selected disabled><?php esc_html_e( $options['field']['label'] ); ?></option>
+				<option selected disabled>
+					<?php echo esc_html__( $options['field']['label'], 'so-widgets-bundle' ); ?>
+				</option>
 				<?php
 			}
 

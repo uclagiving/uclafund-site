@@ -1,5 +1,144 @@
 == Changelog ==
 
+= 1.68.3 - 11 May 2025 =
+* Image Grid: Added gallery keyword support.
+* Simple Masonry: Fixed preloader visibility, removed incorrect type, and resolved potential TypeError.
+* Slider: Prevented empty overlay issues.
+* Widget Blocks: Fixed icon saving and keyword support.
+* General: Updated Installer submodule and performed bulk PHP CS improvements.
+
+= 1.68.2 - 03 May 2025 =
+* Icon Field: Fixed icon callback support to ensure proper rendering of custom icons.
+* Posts Selector: Resolved fatal error related to date query handling.
+* Price Table: Added `siteorigin_widgets_price_table_button_attributes` filter for enhanced button customization.
+* Video Player: Fixed self-hosted video embeds and improved FitVids integration by triggering after unblock and resize events.
+* General: Updated documentation and readme files for improved clarity and consistency.
+
+= 1.68.1 - 12 April 2025 =
+* Widgets Bundle Blocks: Resolved widget migration error by improving widget registration process and maintaining widget list integrity.
+
+= 1.68.0 - 10 April 2025 =
+* Accordion: Fixed custom sized icon output to maintain correct dimensions.
+* Blog: Added "Always Add Read More" setting and made it enabled by default.
+* Widgets Bundle Blocks: Added SiteOrigin category with custom icon.
+* Widgets Bundle Blocks: Improved block and widget registration process.
+* Widgets Bundle Blocks: Enhanced font consistency and fixed widget prefix issues.
+* Widgets Bundle Blocks: Added container query support for external media fields.
+* Widgets Bundle Blocks: Resolved map consent preview issues.
+* Widgets Bundle Blocks: Improved migration permission checks and widget existence verification.
+* Contact: Removed unused form ID field.
+* Features: Added title and content classes for settings.
+* Features: Resolved text design settings specificity issues.
+* Icon Field: Improved responsive handling.
+* Icon Field: Enhanced vertical alignment.
+* Icon Field: Maintained min-height and padding settings.
+* Media Field: Added container query support for external fields.
+* Media Field: Increased external field breakpoint.
+* Media Field: Improved external handling.
+* Post Carousel: Added posts_limit support.
+* Posts: Added "Maximum Posts to Output" field.
+* Repeater Table: Added support for SelectorArray.
+* Section Form Field: Set font size to prevent override in Twenty Twenty theme.
+* General: Added widget backup functionality with filter to disable.
+* General: Optimized widget SVG banners.
+* General: Added block editor icons.
+* General: Improved Elementor guest post type handling.
+
+= 1.67.2 - 20 March 2025 =
+* Call To Action: Cleared floats to prevent content overflow.
+* Contact: Fixed Really Simple Captcha functionality.
+* Video Player: Improved hide controls handling, prevented self-hosted videos from not autoplaying, ensured hide controls setting doesn't affect externally hosted videos, and fixed missing media elements in external videos.
+* General: Prevented JavaScript variable declaration conflict with 'sowb' identifier.
+
+= 1.67.1 - 18 March 2025 =
+* Posts Query: Added no results text for improved user feedback.
+* Posts Query: Enhanced autocomplete functionality to pass post ID.
+* Video Player: Added click-to-play functionality for self-hosted videos.
+* General: Implemented manual widget block tests.
+
+= 1.67.0 - 17 March 2025 =
+* SiteOrigin Widget Block: Transitioned from a single multi-select block to dedicated individual blocks for each widget, significantly improving the block editor experience.
+* Blog: Improved author avatar sizing and prevented false positive Web Application Firewall (WAF) flags.
+* Cards, Post Carousel: Enhanced resize handling after posts are loaded and fixed dot navigation.
+* Google Maps: Resolved type check issues.
+* Post Carousel: Implemented sizing improvements.
+* Recent Posts: Prevented WAF blocking.
+* General: Added more info link to legacy block and implemented preview check for widget blocks.
+* Developer: Updated Google Fonts and Font Awesome libraries.
+
+= 1.66.0 - 01 March 2025 =
+* Carousel: Improved resize handling by delaying events, ensuring adaptive height application and correct breakpoints, and reorganizing layout.
+* Cards Carousel, Post/Card Carousel: Maintained fixed container height after resize and fixed second dot display.
+* Contact: Resolved notice for missing name field, removed additional select margin, added aria-describedby support, and moved description inside the field container.
+* Contact Description: Added top margin setting.
+* Editor: Removed wp_targeted_link_rel from output.
+* Google Maps: Fixed MapStyles icon notice, ensured custom Map Styles JSON validation, prevented undefined Map ID issues, updated Map ID description, added Map ID setting, and restored * support for Map Styles.
+* Video, Video FitVids: Improved video JS loading and skinable host detection, removed skinable host requirement, and ensured FitVids always enqueues.
+* General: Added WP Optimize support, introduced siteorigin_sanitize_json helper, and resolved notice related to active widget area script detection.
+
+= 1.65.1 - 05 February 2025 =
+* Carousel: Fixed `Dynamic Navigation` potential to be applied when disabled.
+* Contact Form: Fixed Browser Check setting.
+
+= 1.65.0 - 03 February 2025 =
+* Blog: Added support for `siteorigin_widgets_blog_post_meta`.
+* Blog: Added a fallback for undefined `post_type` to avoid errors.
+* Blog: Reset filter categories when the template doesn't support them.
+* Carousel: Improved adaptive height so the slider adjusts based on all visible items.
+* Contact Form: Added a check to ensure the "To" and "From" email addresses aren't identical, improving deliverability.
+* Contact Form: Introduced settings for submit button hover/focus styling (background, border, and text colors).
+* Contact Form: Added design options for success messages.
+* Contact Form: Applied title case to admin labels for consistency.
+* Contact Form: Improved field handling by switching to Widgets Bundle instance storage and refining form name management to prevent conflicts.
+* Contact Form: Resolved warnings related to undefined array keys in the contact widget.
+* Contact Form: Adjustment to always set up reCAPTCHA when in use.
+* Contact Form: Improved developer email handling and layout directory email.
+* Google Maps: Replaced the deprecated `google.maps.Marker` with `AdvancedMarkerElement` to address deprecation notices.
+* Google Maps: Moved widget configuration from siteorigin-panels and updated admin texts for translation.
+* Icon Field: Improved icon caching in the Block Editor to reduce redundant icon fetch requests.
+* Image: Prevented empty `<img>` output when no image is set.
+* Post Carousel: Changed autoplay to a preset field and improved continuous scrolling handling.
+* Post Carousel: Added a filter for valid widget instances in Ajax handling and refactored the Ajax code.
+* Taxonomy: Removed the preview button since this widget relies on the loop.
+* Block Editor Select: Adjusted spacing so the text no longer touches the chevron.
+* Multi-Measurement: Fixed a potential `NaN` value issue when no value is present.
+* Multi-Measurement: Fixed value update issues when no state handler is present.
+* Onclick: Added Popup Maker support and ensured a semicolon is appended to prevent syntax errors.
+* Default Form Options: Added widget form field support so defaults are now saved correctly.
+* Section Defaults: Resolved a TypeError in widget sections.
+* Select2 Form Field: Moved editor CSS to the field stylesheet to prevent conflicts with other plugins.
+* Select Form Field Multiple: Fixed a gap issue in the Block Editor.
+* Teaser: Resolved dismiss button misalignment and improved overall structure and hover behavior.
+* Widget Form: Debounce widget change backups to improve performance during rapid edits.
+* WPML: Adjusted editor labels for compatibility with the upcoming WPML 4.7 release.
+* Admin: Prevented the aside area from becoming stuck during resize events in the Page Builder.
+* getWidgetFormValues: Improved select value performance on Apple devices.
+* Added missing i18n domains and fixed non-singular string literal text issues.
+* Corrected text domain mismatches.
+
+= 1.64.2 - 18 December 2024 =
+* Select: Fixed field name handling to prevent unintended array format in Widgets Bundle forms.
+
+= 1.64.1 - 14 December 2024 =
+* Post Carousel: Auto disabled navigation arrows when `Autoplay Continuous Scroll` enabled.
+* Simple Masonry: Resolved a potenital error.
+* Posts & Links Fields: Improved post and taxonomy search functionality; added user capability checks and no results handling.
+* Select2: Removed `multiple` requirement for Select2 usage.
+
+= 1.64.0 - 24 November 2024 =
+* Anchor ID: Improved ID handling to better support special characters and international text.
+* Author Box: Added Author Name HTML Tag setting.
+* Button Grid: Renamed setting `Buttons Per Line` to `Buttons Per Row`.
+* Carousels: Resolved minor Block Editor display issues.
+* Post Carousel: Added Post Title Font setting.
+* Simple Masonry: Improved loading.
+* Widget Block: Various admin form styling fixes and improvements.
+* Fixed `load_textdomain` notice.
+* Improved admin font field performance.
+* Updated Google Fonts list.
+* Updated Font Awesome from 6.6.0 to 6.7.0.
+* Updated Tested up to tag.
+
 = 1.63.0 - 11 August 2024 =
 * Button Grid: Update to ensure the Grid Widget doesn't override the settings of unrelated Button Widgets.
 * Blog Offset: Increased the author avatar image width.

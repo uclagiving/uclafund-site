@@ -194,7 +194,6 @@ class SiteOrigin_Widget_Simple_Masonry_Widget extends SiteOrigin_Widget {
 					),
 
 					'padding' => array(
-						'type' => 'color',
 						'label' => __( 'Title Padding', 'so-widgets-bundle' ),
 						'type' => 'multi-measurement',
 						'autofill' => true,
@@ -327,23 +326,23 @@ class SiteOrigin_Widget_Simple_Masonry_Widget extends SiteOrigin_Widget {
 	}
 
 	public function get_template_variables( $instance, $args ) {
-		$items = isset( $instance['items'] ) ? (array) $instance['items'] : array();
+		$items = ! empty( $instance['items'] ) && is_array( $instance['items'] ) ? (array) $instance['items'] : array();
 
 		foreach ( $items as &$item ) {
-			$link_atts = empty( $item['link_attributes'] ) ? array() : $item['link_attributes'];
+			$item['link_attributes'] = array();
 
 			if ( ! empty( $item['new_window'] ) ) {
-				$link_atts['target'] = '_blank';
-				$link_atts['rel'] = 'noopener noreferrer';
+				$item['link_attributes']['target'] = '_blank';
+				$item['link_attributes']['rel'] = 'noopener noreferrer';
 			}
-			$item['link_attributes'] = $link_atts;
+
 			$item['title'] = $this->get_image_title( $item );
 		}
 
 		return array(
 			'args' => $args,
 			'items' => $items,
-			'preloader_enabled' => ! empty( $instance['preloader']['enabled'] ) ? true : false,
+			'preloader_enabled' => ! empty( $instance['preloader']['enabled'] ),
 			'layout_origin_left' => ! empty( $instance['layout']['origin_left'] ) ? $instance['layout']['origin_left'] : 'true',
 			'layouts' => array(
 				'desktop' => siteorigin_widgets_underscores_to_camel_case(

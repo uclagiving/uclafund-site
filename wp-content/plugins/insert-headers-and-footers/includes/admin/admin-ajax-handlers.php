@@ -10,12 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action( 'wp_ajax_wpcode_update_snippet_status', 'wpcode_update_snippet_status' );
+add_action( 'wp_ajax_wpcode_filter_snippets_by_type', 'wpcode_filter_snippets_by_type' );
 add_action( 'wp_ajax_wpcode_search_terms', 'wpcode_search_terms' );
 add_action( 'wp_ajax_wpcode_generate_snippet', 'wpcode_generate_snippet' );
 add_action( 'wp_ajax_wpcode_save_generated_snippet', 'wpcode_save_generated_snippet' );
 add_action( 'wp_ajax_wpcode_verify_ssl', 'wpcode_verify_ssl' );
 add_filter( 'heartbeat_received', 'wpcode_heartbeat_data', 10, 3 );
 add_action( 'wp_ajax_wpcode_save_editor_height', 'wpcode_save_editor_height' );
+add_action( 'wp_ajax_wpcode_get_shortcode_locations', 'wpcode_get_shortcode_locations' );
 
 /**
  * Handles toggling a snippet status from the admin.
@@ -41,12 +43,10 @@ function wpcode_update_snippet_status() {
 			)
 		);
 		$active = false;
+	} elseif ( $active ) {
+		$snippet->activate();
 	} else {
-		if ( $active ) {
-			$snippet->activate();
-		} else {
-			$snippet->deactivate();
-		}
+		$snippet->deactivate();
 	}
 
 	if ( ! isset( $snippet->active ) || $active !== $snippet->active ) {
@@ -64,6 +64,66 @@ function wpcode_update_snippet_status() {
 		);
 	}
 	exit;
+}
+
+/**
+ * Filter snippets by type.
+ *
+ * @return void
+ */
+function wpcode_filter_snippets_by_type() {
+
+	check_ajax_referer( 'wpcode_admin' );
+
+	// If the current user can't edit snippets they should not be trying this.
+	if ( ! current_user_can( 'wpcode_edit_snippets' ) ) {
+		wp_send_json_error();
+	}
+
+	if ( ! isset( $_POST['snippet_type'] ) ) {
+		wp_send_json_error();
+	}
+
+	require_once WPCODE_PLUGIN_PATH . 'includes/admin/pages/class-wpcode-code-snippets-table.php';
+
+	$snippet_type = isset( $_POST['snippet_type'] ) ? sanitize_text_field( wp_unslash( $_POST['snippet_type'] ) ) : '';
+	$location     = isset( $_POST['location'] ) ? sanitize_text_field( wp_unslash( $_POST['location'] ) ) : '';
+	$search_term  = isset( $_POST['s'] ) ? sanitize_text_field( wp_unslash( $_POST['s'] ) ) : '';
+
+	$screen_id      = 'toplevel_page_wpcode';
+	$current_screen = convert_to_screen( $screen_id );
+	set_current_screen( $screen_id );
+
+	$snippets_table = new WPCode_Code_Snippets_Table();
+
+	// Used screen object to set up table.
+	$snippets_table->screen = $current_screen;
+
+	$_GET['type']     = $snippet_type;
+	$_GET['location'] = $location;
+	$_GET['s']        = $search_term;
+
+	$snippets_table->prepare_items();
+	$count = $snippets_table->get_total_items();
+
+	// Output table HTML.
+	ob_start();
+	?>
+	<input type="hidden" name="page" value="wpcode"/>
+	<?php
+	$snippets_table->search_box( __( 'Search Snippets', 'insert-headers-and-footers' ), 'wpcode_snippet_search' );
+	$snippets_table->views();
+	$snippets_table->display();
+
+	$table_html = ob_get_clean();
+
+	// Send success response.
+	wp_send_json_success(
+		array(
+			'html'  => $table_html,
+			'count' => $count,
+		)
+	);
 }
 
 /**
@@ -200,7 +260,6 @@ function wpcode_save_generated_snippet() {
 			),
 		)
 	);
-
 }
 
 /**
@@ -273,4 +332,138 @@ function wpcode_save_editor_height() {
 	}
 
 	wp_send_json_error();
+}
+
+/**
+ * Get the list of locations where a shortcode is used.
+ *
+ * @return void
+ */
+function wpcode_get_shortcode_locations() {
+	check_ajax_referer( 'wpcode_admin', '_wpnonce' );
+
+	if ( ! current_user_can( 'wpcode_edit_snippets' ) ) {
+		wp_send_json_error();
+	}
+
+	if ( empty( $_POST['snippet_id'] ) ) {
+		wp_send_json_error( 'No snippet ID provided' );
+	}
+
+	$snippet_id = absint( $_POST['snippet_id'] );
+	$snippet    = wpcode_get_snippet( $snippet_id );
+
+	$page     = isset( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
+	$per_page = 100;
+
+	$post_types = array_merge(
+		get_post_types( array( 'public' => true ) ),
+		array(
+			'wp_template',
+			'wp_template_part',
+			'wpcode',
+		)
+	);
+
+	// Add post types to params.
+	$params = $post_types;
+
+	global $wpdb;
+
+	$search_terms   = array();
+	$search_terms[] = '[wpcode';
+	if ( $snippet->get_custom_shortcode() ) {
+		$search_terms[] = '[' . $snippet->get_custom_shortcode();
+	}
+
+	$like_clauses = array();
+	foreach ( $search_terms as $term ) {
+		$like_clauses[] = 'post_content LIKE %s';
+		$params[]       = '%' . $wpdb->esc_like( $term ) . '%';
+	}
+	$where_like = implode( ' OR ', $like_clauses );
+
+	$offset = ( $page - 1 ) * $per_page;
+
+	$post_type_placeholders = implode( ', ', array_fill( 0, count( $post_types ), '%s' ) );
+
+	$params[] = $per_page;
+	$params[] = $offset;
+
+	$candidate_ids = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$wpdb->prepare( // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+			"SELECT ID FROM {$wpdb->posts} 
+            WHERE post_type IN ($post_type_placeholders)
+            AND post_status != 'trash'
+            AND ($where_like)
+            LIMIT %d OFFSET %d",
+			$params
+		)
+	);
+	$candidate_ids = array_unique( $candidate_ids );
+
+	$matching_posts = array();
+
+	if ( ! empty( $candidate_ids ) ) {
+		$candidate_posts = get_posts(
+			array(
+				'post_type'      => array_values( $post_types ),
+				'post_status'    => 'any',
+				'posts_per_page' => - 1,
+				'include'        => $candidate_ids,
+			)
+		);
+
+		foreach ( $candidate_posts as $post ) {
+			$content = $post->post_content;
+
+			if ( has_shortcode( $content, 'wpcode' ) && preg_match( '/\[wpcode[^\]]*id\s*=\s*["\']\s*' . preg_quote( $snippet_id, '/' ) . '\s*["\'][^\]]*\]/', $content ) ) {
+				$matching_posts[] = $post;
+				continue;
+			}
+
+			if ( $snippet->get_custom_shortcode() && has_shortcode( $content, $snippet->get_custom_shortcode() ) && preg_match( '/\[' . preg_quote( $snippet->get_custom_shortcode(), '/' ) . '[^\]]*\]/', $content ) ) {
+				$matching_posts[] = $post;
+			}
+		}
+	}
+
+	if ( empty( $matching_posts ) ) {
+		if ( 1 === $page ) {
+			$html = '<ul><li>' . esc_html__( 'This shortcode is not used in any content yet.', 'insert-headers-and-footers' ) . '</li></ul>';
+		} else {
+			$html = '';
+		}
+	} else {
+		$html = '<ul>';
+		foreach ( $matching_posts as $post ) {
+			if ( 'wpcode' === $post->post_type ) {
+				$edit_link       = esc_url( add_query_arg( 'snippet_id', $post->ID, admin_url( 'admin.php?page=wpcode-snippet-manager' ) ) );
+				$post_type_label = esc_html__( 'WPCode Snippet', 'insert-headers-and-footers' );
+			} else {
+				$edit_link       = get_edit_post_link( $post->ID );
+				$post_type_obj   = get_post_type_object( $post->post_type );
+				$post_type_label = $post_type_obj ? $post_type_obj->labels->singular_name : $post->post_type;
+			}
+
+			$html .= sprintf(
+				'<li><a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a> <span class="wpcode-post-type">(%3$s)</span></li>',
+				esc_url( $edit_link ),
+				// Translators: %d is the post id.
+				esc_html( empty( $post->post_title ) ? sprintf( esc_html__( 'Untitled (#%d)', 'insert-headers-and-footers' ), $post->ID ) : $post->post_title ),
+				esc_html( $post_type_label )
+			);
+		}
+		$html .= '</ul>';
+	}
+
+	$has_more = count( $candidate_ids ) >= $per_page;
+
+	wp_send_json_success(
+		array(
+			'html'     => $html,
+			'has_more' => $has_more,
+			'page'     => $page,
+		)
+	);
 }

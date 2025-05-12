@@ -894,6 +894,7 @@ module.exports = panels.view.dialog.extend({
 
 		// Changing the row.
 		'click .row-set-form .so-row-field': 'changeCellTotal',
+		'change .row-set-form .so-row-field': 'changeCellTotal',
 		'click .cell-resize-sizing span': 'changeCellRatio',
 		'click .cell-resize-direction ': 'changeSizeDirection',
 
@@ -1028,10 +1029,6 @@ module.exports = panels.view.dialog.extend({
 			// Set the initial value of the
 			this.$( 'input[name="cells"].so-row-field' ).val( this.model.get( 'cells' ).length );
 		}
-
-		this.$( 'input.so-row-field' ).on( 'keyup', function() {
-			$(this).trigger('change');
-		});
 
 		return this;
 	},
@@ -1903,15 +1900,26 @@ module.exports = panels.view.dialog.extend( {
 		} );
 
 		this.on( 'edit_label', function ( text ) {
-			// If text is set to default value, just clear it.
-			if ( text === panelsOptions.widgets[ this.model.get( 'class' ) ][ 'title' ] ) {
-				text = '';
-			}
-			this.model.set( 'label', text );
-			if ( _.isEmpty( text ) ) {
-				this.$( '.so-title' ).text( this.model.getWidgetField( 'title' ) );
-			}
-		}.bind( this ) );
+
+				// If text is set to default value, just clear it.
+				if ( text === panelsOptions.widgets[ this.model.get( 'class' ) ]['title']) {
+					text = '';
+				} else {
+					// Sanitize  widget label.
+					const $tempDiv = $( '<div></div>' ).text( text );
+					text = $tempDiv.text();
+				}
+
+				this.model.set( 'label', text );
+
+				if ( _.isEmpty( text ) ) {
+					this.$( '.so-title' ).text(
+						_.escape(
+							this.model.getWidgetField( 'title' )
+						)
+					);
+				}
+			}.bind( this ) );
 
 		this.on( 'open_dialog_complete', function() {
 			// The form isn't always ready when this event fires.
@@ -1934,8 +1942,9 @@ module.exports = panels.view.dialog.extend( {
 		this.renderDialog( this.parseDialogContent( $( '#siteorigin-panels-dialog-widget' ).html(), {} ) );
 		this.loadForm();
 
-		var title = this.model.getWidgetField( 'title' );
-		this.$( '.so-title .widget-name' ).html( title );
+		const rawTitle = this.model.getWidgetField( 'title' );
+		const title = _.escape( rawTitle ).replace( /&quot;/g, '"' );
+		this.$( '.so-title .widget-name' ).text( title );
 		this.$( '.so-edit-title' ).val( title );
 
 		if( ! this.builder.supports( 'addWidget' ) ) {
@@ -5426,8 +5435,8 @@ module.exports = Backbone.View.extend( {
 	 */
 	render: function () {
 		var templateArgs = {
-			weight: this.model.get( 'weight' ),
-			totalWeight: this.row.model.get('cells').totalWeight()
+			weight: _.escape( this.model.get( 'weight' ) ),
+			totalWeight: _.escape( this.row.model.get( 'cells' ).totalWeight() )
 		};
 
 		this.setElement( this.template( templateArgs ) );
@@ -6970,8 +6979,8 @@ module.exports = Backbone.View.extend( {
 		}
 
 		this.setElement( this.template( {
-			rowColorLabel: rowColorLabel,
-			rowLabel: rowLabel
+			rowColorLabel: _.escape( rowColorLabel ),
+			rowLabel: _.escape( rowLabel )
 		} ) );
 		this.$el.data( 'view', this );
 
@@ -7138,11 +7147,13 @@ module.exports = Backbone.View.extend( {
 	},
 
 	onLabelChange: function( model, text ) {
-		if ( this.$('.so-row-label').length == 0 ) {
-			this.$( '.so-row-toolbar' ).prepend( '<h3 class="so-row-label">' + text + '</h3>' );
-		} else {
-			this.$('.so-row-label').text( text );
+		if ( this.$( '.so-row-label' ).length == 0 ) {
+			this.$( '.so-row-toolbar' ).prepend(
+				'<h3 class="so-row-label"></h3>'
+			);
 		}
+
+		this.$( '.so-row-label' ).text( text );
 	},
 
 	/**
@@ -7901,9 +7912,9 @@ module.exports = Backbone.View.extend( {
 		options = _.extend( {'loadForm': false}, options );
 
 		this.setElement( this.template( {
-			title: this.model.getWidgetField( 'title' ),
+			title: _.escape( this.model.getWidgetField( 'title' ) ),
 			description: this.model.getTitle(),
-			widget_class: this.model.attributes.class
+			widget_class: _.escape( this.model.attributes.class )
 		} ) );
 
 		this.$el.data( 'view', this );

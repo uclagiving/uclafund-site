@@ -19,6 +19,13 @@ class SiteOrigin_Widget_Field_Posts extends SiteOrigin_Widget_Field_Container_Ba
 	 */
 	protected $show_count = true;
 
+	/**
+	 * Whether to add the Maximum Posts to Output field.
+	 *
+	 * @var bool
+	 */
+	protected $posts_limit = false;
+
 	public function __construct( $base_name, $element_id, $element_name, $field_options, SiteOrigin_Widget $for_widget, $parent_container = array() ) {
 		parent::__construct( $base_name, $element_id, $element_name, $field_options, $for_widget, $parent_container );
 
@@ -29,8 +36,17 @@ class SiteOrigin_Widget_Field_Posts extends SiteOrigin_Widget_Field_Container_Ba
 			$type_options['_all'] = __( 'All', 'so-widgets-bundle' );
 		}
 
+		$do_post_type_permission_check = apply_filters( 'siteorigin_widgets_post_selector_post_type_permission_check', true );
+
 		foreach ( $types as $id => $type ) {
-			if ( empty( $this->post_types ) || in_array( $id, $this->post_types ) ) {
+			if ( $do_post_type_permission_check && ! siteorigin_widget_user_can_edit_post_type( $id ) ) {
+				continue;
+			}
+
+			if (
+				empty( $this->post_types ) ||
+				in_array( $id, $this->post_types )
+			) {
 				$type_options[ $id ] = $type->labels->name;
 			}
 		}
@@ -139,6 +155,11 @@ class SiteOrigin_Widget_Field_Posts extends SiteOrigin_Widget_Field_Container_Ba
 				'label' => __( 'Posts Per Page', 'so-widgets-bundle' ),
 			),
 
+			'posts_limit' => array(
+				'type' => 'number',
+				'label' => __( 'Maximum Posts to Output', 'so-widgets-bundle' ),
+			),
+
 			'sticky' => array(
 				'type' => 'select',
 				'label' => __( 'Sticky Posts', 'so-widgets-bundle' ),
@@ -156,6 +177,10 @@ class SiteOrigin_Widget_Field_Posts extends SiteOrigin_Widget_Field_Container_Ba
 				'description' => __( 'Additional query arguments. See <a href="https://developer.wordpress.org/reference/functions/query_posts/" target="_blank" rel="noopener noreferrer">query_posts</a>.', 'so-widgets-bundle' ),
 			),
 		);
+
+		if ( empty( $this->posts_limit ) ) {
+			unset( $this->fields['posts_limit'] );
+		}
 	}
 
 	protected function render_field_label( $value, $instance ) {
@@ -167,7 +192,7 @@ class SiteOrigin_Widget_Field_Posts extends SiteOrigin_Widget_Field_Container_Ba
 
 			<?php if ( ! empty( $this->show_count ) ) { ?>
 				<span class="sow-current-count">
-					<?php echo esc_html( siteorigin_widget_post_selector_count_posts( $value ) ); ?>		
+					<?php echo esc_html( siteorigin_widget_post_selector_count_posts( $value ) ); ?>
 				</span>
 			<?php } ?>
 		</div>

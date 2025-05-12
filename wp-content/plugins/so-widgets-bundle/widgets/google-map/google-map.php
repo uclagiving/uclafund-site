@@ -105,6 +105,16 @@ class SiteOrigin_Widget_GoogleMap_Widget extends SiteOrigin_Widget {
 						),
 					),
 
+					'map_id' => array(
+						'type' => 'text',
+						'label' => __( 'Map ID', 'so-widgets-bundle' ),
+						'description' => sprintf(
+							__( 'A Map ID allows you to manage your map styles using the %sGoogle Cloud Console%s. This is only used if Map Styles are not set.', 'so-widgets-bundle' ),
+							'<a href="https://console.cloud.google.com/google/maps-apis/studio/maps" target="_blank" rel="noopener noreferrer">',
+							'</a>'
+						),
+					),
+
 					'new_window' => array(
 						'type' => 'checkbox',
 						'default' => false,
@@ -262,7 +272,7 @@ class SiteOrigin_Widget_GoogleMap_Widget extends SiteOrigin_Widget {
 						'type' => 'checkbox',
 						'label' => __( 'Allow multiple simultaneous Info Windows?', 'so-widgets-bundle' ),
 						'default' => true,
-						'description' => __( 'This setting is ignored when Info Windows are set to always display.' ),
+						'description' => __( 'This setting is ignored when Info Windows are set to always display.', 'so-widgets-bundle' ),
 					),
 				),
 			),
@@ -296,6 +306,7 @@ class SiteOrigin_Widget_GoogleMap_Widget extends SiteOrigin_Widget {
 					),
 					'raw_json_map_styles' => array(
 						'type'        => 'textarea',
+						'json'        => true,
 						'state_handler' => array(
 							'style_method[raw_json]' => array( 'show' ),
 							'_else[style_method]' => array( 'hide' ),
@@ -579,7 +590,15 @@ class SiteOrigin_Widget_GoogleMap_Widget extends SiteOrigin_Widget {
 				if ( empty( $instance['directions']['waypoints'] ) ) {
 					unset( $instance['directions']['waypoints'] );
 				}
+
 				$directions = siteorigin_widgets_underscores_to_camel_case( $instance['directions'] );
+
+				// Google Maps has strict type checks so we need to
+				// ensure boolean values are set correctly.
+				$directions['optimizeWaypoints'] = ! empty( $directions['optimizeWaypoints'] );
+				$directions['avoidHighways'] = ! empty( $directions['avoidHighways'] );
+				$directions['avoidTolls'] = ! empty( $directions['avoidTolls'] );
+				$directions['preserveViewport'] = ! empty( $directions['preserveViewport'] );
 			}
 
 			$markerpos = isset( $markers['marker_positions'] ) ? $markers['marker_positions'] : '';
@@ -608,18 +627,23 @@ class SiteOrigin_Widget_GoogleMap_Widget extends SiteOrigin_Widget {
 				'mobileZoom'        => $settings['mobile_zoom'],
 				'gestureHandling'   => isset( $settings['gesture_handling'] ) ? $settings['gesture_handling'] : 'greedy',
 				'disable_ui'        => $settings['disable_default_ui'],
-				'marker_icon'       => ! empty( $mrkr_src ) ? $mrkr_src[0] : '',
-				'markers_draggable' => isset( $markers['markers_draggable'] ) ? $markers['markers_draggable'] : '',
+				'marker_icon'       => ! empty( $mrkr_src ) ? $mrkr_src[0] : false,
+				'markers_draggable' => ! empty( $markers['markers_draggable'] ),
 				'marker_at_center'  => ! empty( $markers['marker_at_center'] ),
 				'marker_info_display' => $markers['info_display'],
 				'marker_info_multiple' => $markers['info_multiple'],
-				'marker_positions'  => ! empty( $markerpos ) ? $markerpos : '',
-				'map_name'          => ! empty( $styles['styles'] ) ? $styles['map_name'] : '',
-				'map_styles'        => ! empty( $styles['styles'] ) ? $styles['styles'] : '',
+				'marker_positions'  => ! empty( $markerpos ) ? $markerpos : false,
+				'map_name'          => ! empty( $styles['styles'] ) ? $styles['map_name'] : false,
+				'map_styles'        => ! empty( $styles['styles'] ) ? $styles['styles'] : false,
 				'directions'        => $directions,
 				'api_key'           => self::get_api_key( $instance ),
 				'breakpoint'        => $breakpoint,
 			) );
+
+			// Only set Map ID if there aren't any styles.
+			if ( empty( $styles['styles'] ) ) {
+				$map_data['id'] = ! empty( $settings['map_id'] ) ? $settings['map_id'] : substr( uniqid(), 0, 6 );
+			}
 
 			return array(
 				'map_id'   => md5( json_encode( $instance ) ),
@@ -804,6 +828,10 @@ class SiteOrigin_Widget_GoogleMap_Widget extends SiteOrigin_Widget {
 				$st_string = '&style=' . $st_string;
 				$src_url .= $st_string;
 			}
+		} elseif ( ! empty( $instance['settings']['map_id'] ) ) {
+			// As styles aren't set, check if a map id is.
+			// This will allow for Cloud Styles to work.
+			$src_url .= '&map_id=' . $instance['settings']['map_id'];
 		}
 
 		if ( ! empty( $instance['markers'] ) ) {

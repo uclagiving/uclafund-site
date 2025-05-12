@@ -3,8 +3,8 @@ Contributors: kprovance, dovyp, redux
 Tags: admin, options, theme options, plugin options, options framework
 Requires at least: 5.0
 Requires PHP: 7.4
-Tested up to: 6.7
-Stable tag: 4.5.1
+Tested up to: 6.8
+Stable tag: 4.5.7
 License: GPL-3.0+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -121,6 +121,40 @@ NOTE: Redux is not intended to be used on its own. It requires a config file pro
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Changelog ==
+
+= 4.5.7 =
+* Fixed: Bullet-proofed some global args when omitted from the config.
+* Fixed: PHP 8.4 deprecation notices.
+* Fixed: The Options constructor now filters out blank strings, causing fatal errors. Options must always be in an array.
+* Fixed: `gallery` field errors on failed demo imports not installing images into the WP gallery.
+* Release date: March 26, 2025
+
+= 4.5.6 =
+* Fixed: Setting CHMOD defaults in construct to avoid errors in certain use cases.
+* Fixed: Installed empty placeholder for old `search` extension as WP did not remove it from old versions to updates, thus causing errors.
+* Fixed: `raw` field in sample-config.php trigger WP filesystem error when `FS_METHOD` set to `FTP_EXT` and creds are not entered.
+* Fixed: Sorter not saving in customizer.
+* Fixed: `users` metabox not saving on some setups.
+* Fixed: Disable search bar on user profile and taxonomy metaboxes.
+* Updated: Font Awesome 6.7.2
+* Modified: `custom_fonts` now enqueues local font CSS with a version resource of last modified file time and not current time.
+* Modified: Will pass mandatory PCP checks.
+* Release date: January 20, 2025
+
+= 4.5.4 =
+* Fixed: Filesystem class $creds not accepting bool value.
+* Fixed: #4045: Old `search` extension throwing `class not found` error.
+* Fixed: `accordion` extension throwing `Type of Redux_Extension_Accordion::$version must be string` error.
+* Fixed: `color_scheme` typed property must not be accessed before initialization.
+* Release date: December 16, 2024
+
+= 4.5.3 =
+* Removed: Deprecation notice for $filesystem. Too many people think it's an error.  We'll have to support old Redux 3 code for the foreseeable future.
+* Release date: December 5, 2024
+
+= 4.5.2 =
+* Fixed: New global filesystem access broke old methods used on old extensions. Deprecation notice added.
+* Release date: December 5, 2024
 
 = 4.5.1 =
 * Updated: Font Awesome 6.7.1

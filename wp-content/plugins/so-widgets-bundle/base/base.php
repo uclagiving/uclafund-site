@@ -1,19 +1,19 @@
 <?php
 
-include plugin_dir_path( __FILE__ ) . 'inc/fields/siteorigin-widget-field-class-loader.class.php';
-include plugin_dir_path( __FILE__ ) . 'siteorigin-widget.class.php';
+require plugin_dir_path( __FILE__ ) . 'inc/fields/siteorigin-widget-field-class-loader.class.php';
+require plugin_dir_path( __FILE__ ) . 'siteorigin-widget.class.php';
 
-include plugin_dir_path( __FILE__ ) . 'inc/widget-manager.class.php';
-include plugin_dir_path( __FILE__ ) . 'inc/meta-box-manager.php';
-include plugin_dir_path( __FILE__ ) . 'inc/post-selector.php';
-include plugin_dir_path( __FILE__ ) . 'inc/string-utils.php';
-include plugin_dir_path( __FILE__ ) . 'inc/array-utils.php';
-include plugin_dir_path( __FILE__ ) . 'inc/attachments.php';
-include plugin_dir_path( __FILE__ ) . 'inc/actions.php';
-include plugin_dir_path( __FILE__ ) . 'inc/shortcode.php';
-include plugin_dir_path( __FILE__ ) . 'inc/video.php';
-include plugin_dir_path( __FILE__ ) . 'inc/routes/sowb-rest-routes.php';
-include plugin_dir_path( __FILE__ ) . 'inc/shapes/shapes.php';
+require plugin_dir_path( __FILE__ ) . 'inc/widget-manager.class.php';
+require plugin_dir_path( __FILE__ ) . 'inc/meta-box-manager.php';
+require plugin_dir_path( __FILE__ ) . 'inc/post-selector.php';
+require plugin_dir_path( __FILE__ ) . 'inc/string-utils.php';
+require plugin_dir_path( __FILE__ ) . 'inc/array-utils.php';
+require plugin_dir_path( __FILE__ ) . 'inc/attachments.php';
+require plugin_dir_path( __FILE__ ) . 'inc/actions.php';
+require plugin_dir_path( __FILE__ ) . 'inc/shortcode.php';
+require plugin_dir_path( __FILE__ ) . 'inc/video.php';
+require plugin_dir_path( __FILE__ ) . 'inc/routes/sowb-rest-routes.php';
+require plugin_dir_path( __FILE__ ) . 'inc/shapes/shapes.php';
 
 // Load the Installer if it's not already active.
 if ( is_admin() && ! class_exists( 'SiteOrigin_Installer' ) ) {
@@ -100,12 +100,12 @@ function siteorigin_widget_get_icon( $icon_value, $icon_styles = false, $title =
 	}
 
 	if ( empty( $widget_icon_families[ $family ] ) ||
-		 empty( $widget_icon_families[ $family ]['icons'][ $icon ] ) ) {
+		empty( $widget_icon_families[ $family ]['icons'][ $icon ] ) ) {
 		return false;
 	}
 
 	if ( empty( $widget_icons_enqueued[ $family ] ) &&
-		 ! empty( $widget_icon_families[ $family ]['style_uri'] ) ) {
+		! empty( $widget_icon_families[ $family ]['style_uri'] ) ) {
 		if ( ! wp_style_is( 'siteorigin-widget-icon-font-' . $family ) ) {
 			wp_enqueue_style( 'siteorigin-widget-icon-font-' . $family, $widget_icon_families[ $family ]['style_uri'] );
 		}
@@ -187,7 +187,8 @@ function siteorigin_widget_get_font( $font_value ) {
 					'siteorigin_web_font_url_processed',
 					apply_filters(
 						'siteorigin_web_font_url',
-						'https://fonts.googleapis.com/css' ) . '?family=' . urlencode(
+						'https://fonts.googleapis.com/css'
+					) . '?family=' . urlencode(
 						$font['family'] . ':' . implode( ',', $font_weight_styles )
 					)
 				)
@@ -350,15 +351,47 @@ function siteorigin_widgets_url( $path = '' ) {
 	return plugins_url( 'so-widgets-bundle/' . $path );
 }
 
+/**
+ * Check if the Page Builder can render.
+ *
+ * This method checks if the necessary conditions are met for Page Builder to
+ * render. It first verifies that Page Builder is active. It then checks
+ * if either:
+ * - The request is in the admin area, OR
+ * - If this is a REST request and the block editor is active.
+ *
+ * If none of these conditions are met, Page Builder can't render.
+ *
+ * @return bool True if Page Builder builder can render, false otherwise.
+ */
+function siteorigin_widgets_can_render_builder_field() {
+	if ( ! defined( 'SITEORIGIN_PANELS_VERSION' ) ) {
+		return false;
+	}
+
+	if ( is_admin() ) {
+		return true;
+	}
+
+	// Is this field being rendered inside one of our blocks?
+	if ( defined( 'REST_REQUEST' ) && function_exists( 'register_block_type' ) ) {
+		return true;
+	}
+
+	return false;
+}
+
 function siteorigin_loading_optimization_attributes( $attr, $widget, $instance, $class ) {
 	// Allow other plugins to override whether this widget is lazy loaded or not.
 	if (
-		! empty( apply_filters(
-			'siteorigin_widgets_' . $widget . '_lazy_load',
-			'lazy',
-			$instance,
-			$class
-		) )
+		! empty(
+			apply_filters(
+				'siteorigin_widgets_' . $widget . '_lazy_load',
+				'lazy',
+				$instance,
+				$class
+			)
+		)
 	) {
 		if ( function_exists( 'wp_get_loading_optimization_attributes' ) ) {
 			// WP 6.3.
@@ -381,13 +414,25 @@ function siteorigin_loading_optimization_attributes( $attr, $widget, $instance, 
  * The ajax handler for the links field using the the post: ID format without a title set.
  */
 function siteorigin_widgets_links_get_title() {
-	if ( empty( $_REQUEST['_widgets_nonce'] ) || ! wp_verify_nonce( $_REQUEST['_widgets_nonce'], 'widgets_action' ) ) {
+	if (
+		empty( $_REQUEST['_widgets_nonce'] ) ||
+		! wp_verify_nonce( $_REQUEST['_widgets_nonce'], 'widgets_action' )
+	) {
 		wp_die( __( 'Invalid request.', 'so-widgets-bundle' ), 403 );
 	}
 
-	if ( empty( $_GET['postId'] ) || ! is_numeric( $_GET['postId'] ) ) {
+	if (
+		empty( $_GET['postId'] ) ||
+		! is_numeric( $_GET['postId'] )
+	) {
 		wp_die( __( 'Invalid request.', 'so-widgets-bundle' ), 400 );
 	}
+
+	// Don't allow users to link to posts they can't view.
+	if ( ! current_user_can( 'read_post', $_GET['postId'] ) ) {
+		wp_die( __( 'Invalid request.', 'so-widgets-bundle' ), 403 );
+	}
+
 	$postTitle = get_the_title( $_GET['postId'] );
 	echo ! empty( $postTitle ) ? esc_attr( $postTitle ) : esc_html__( '(No Title)', 'so-widgets-bundle' );
 	die();
@@ -440,10 +485,18 @@ function siteorigin_widget_onclick( $onclick = null, $recursive = true ) {
 
 	if ( apply_filters( 'siteorigin_widgets_onclick_disallowlist', true ) ) {
 		// It's possible for allowed functions to contain disallowed functions, so we need to loop through and remove.
-		$disallowed_functions = array( 'alert', 'eval', 'execScript', 'setTimeout', 'setInterval', 'function', 'document', 'Object', 'window', 'innerHTML', 'outerHTML', 'onload', 'onerror', 'onclick', 'storage', 'fetch', 'XMLHttpRequest', 'jQuery', '$.', 'prototype', '__proto__', 'constructor', 'decode', 'encode', 'atob', 'btoa', 'Promise', 'setImmediate', 'unescape', 'escape', 'captureEvents', 'proxy', 'Reflect', 'Array', 'String', 'Math', 'Date', 'property', 'Properties', 'Error', 'Map', 'Set', 'Generator', 'Web', 'dataview', 'Blob', 'javascript', 'Text', 'Intl', 'JSON', 'RegExp', 'console', 'history', 'location', 'navigator', 'screen', 'worker', 'FinalizationRegistry', 'weak', 'top', 'self', 'open', 'parent', 'frame', 'import', 'fragment', 'globalThis', 'frames', 'import', 'this', 'escape', 'watch', 'element', 'file', 'db', 'worker', 'EventSource', 'join', 'upper' );
+		$disallowed_functions = array( 'alert', 'eval', 'execScript', 'setTimeout', 'setInterval', 'function', 'document', 'Object', 'window', 'innerHTML', 'outerHTML', 'onload', 'onerror', 'onclick', 'storage', 'fetch', 'XMLHttpRequest', 'jQuery', '$.', 'prototype', '__proto__', 'constructor', 'decode', 'encode', 'atob', 'btoa', 'Promise', 'setImmediate', 'unescape', 'escape', 'captureEvents', 'proxy', 'Reflect', 'Array', 'String', 'Math', 'Date', 'property', 'Properties', 'Error', 'Map', 'Set', 'Generator', 'Web', 'dataview', 'Blob', 'javascript', 'Text', 'Intl', 'JSON', 'RegExp', 'console', 'history', 'location', 'navigator', 'screen', 'worker', 'FinalizationRegistry', 'weak', 'top', 'self', 'parent', 'frame', 'import', 'fragment', 'globalThis', 'frames', 'import', 'this', 'escape', 'watch', 'element', 'file', 'db', 'worker', 'EventSource', 'join', 'upper' );
 
 		if ( preg_match( '/\b(' . implode( '|', array_map( 'preg_quote', $disallowed_functions ) ) . ')\b/i', $onclick ) ) {
 			return;
+		}
+
+		// If string contains 'open' or 'close', check if there's a
+		// preceding dot. If not, disallow.
+		if ( preg_match( '/\b(open|close)\b/i', $onclick ) ) {
+			if ( ! preg_match( '/\.\s*(open|close)\s*\(/i', $onclick ) ) {
+				return;
+			}
 		}
 
 		// Case sensitive disallow.
@@ -457,53 +510,62 @@ function siteorigin_widget_onclick( $onclick = null, $recursive = true ) {
 	}
 
 	if ( apply_filters( 'siteorigin_widgets_onclick_allowlist', true ) ) {
+		// Ensure $onclick ends with a semicolon to prevent syntax errors.
+		if ( substr( $onclick, -1 ) !== ';' ) {
+			$onclick .= ';';
+		}
+
 		$onclick_parts = explode( ');', $onclick );
 
 		$adjusted_onclick = '';
-		$allowed_functions = array_flip( apply_filters( 'siteorigin_widgets_onclick_allowlist_functions',
-			array(
-				'_km',
-				'_paq',
-				'_qevents',
-				'_vis_opt',
-				'amplitude',
-				'ce',
-				'chartbeat',
-				'clarity',
-				'clicky',
-				'crazyegg',
-				'datalayer.push',
-				'fathom',
-				'fbq',
-				'fullstory',
-				'ga',
-				'google_optimize',
-				'gosquared',
-				'gtag',
-				'heap',
-				'hj',
-				'hubspot',
-				'Intercom',
-				'linkedin_data_partner_id',
-				'logrocket',
-				'mixpanel',
-				'mouseflow',
-				'optimizely',
-				'parsely',
-				'pinterest',
-				'piwik',
-				'plausible',
-				's.omtr',
-				'snaptr',
-				'statcounter',
-				'tealium',
-				'twttr',
-				'woopra',
-				'ym',
-				'ml_account', // MailerLite.
-				'calendly.initpopupwidget', // Calendly.
+		$allowed_functions = array_flip(
+			apply_filters(
+				'siteorigin_widgets_onclick_allowlist_functions',
+				array(
+					'_km',
+					'_paq',
+					'_qevents',
+					'_vis_opt',
+					'amplitude',
+					'ce',
+					'chartbeat',
+					'clarity',
+					'clicky',
+					'crazyegg',
+					'datalayer.push',
+					'fathom',
+					'fbq',
+					'fullstory',
+					'ga',
+					'google_optimize',
+					'gosquared',
+					'gtag',
+					'heap',
+					'hj',
+					'hubspot',
+					'Intercom',
+					'linkedin_data_partner_id',
+					'logrocket',
+					'mixpanel',
+					'mouseflow',
+					'optimizely',
+					'parsely',
+					'pinterest',
+					'piwik',
+					'plausible',
+					's.omtr',
+					'snaptr',
+					'statcounter',
+					'tealium',
+					'twttr',
+					'woopra',
+					'ym',
+					'ml_account', // MailerLite.
+					'calendly.initpopupwidget', // Calendly.
+					'pum.open', // Popup Maker.
+				)
 			)
-		) );
+		);
 
 		// Remove anything not inside of an allowed function.
 		foreach ( $onclick_parts as $part ) {
@@ -572,7 +634,6 @@ function siteorigin_widget_valid_tag( $tag, $fallback = null, $valid_tags = arra
  * running it through sanitize_key, and then specifically rejecting any
  * attribute name that starts with "on".
  *
- *
  * @param string $attr The attribute name to be sanitized.
  * @return string Sanitized attribute name or 'invalid-attribute' if it starts with "on".
  */
@@ -585,7 +646,65 @@ function siteorigin_sanitize_attribute_key( $attr ) {
 		strpos( $attr, 'on' ) === 0
 	) {
 		return 'invalid-attribute';
-	};
+	}
 
 	return $attr;
+}
+
+/**
+ * Sanitize a JSON string by validating structure and cleaning values.
+ *
+ * Decodes JSON, validates the structure, and sanitizes all string values.
+ * Removes any values with disallowed types. Allowed types are:
+ * - string.
+ * - integer.
+ * - double.
+ * - boolean.
+ * - NULL.
+ *
+ * @param string $value     The JSON string to sanitize.
+ * @param int    $max_depth Maximum recursion depth when decoding.
+ *
+ * @return string Sanitized JSON string, or '[]' if invalid.
+ */
+function siteorigin_sanitize_json( $value, $max_depth = 10 ) {
+	if ( empty( $value ) ) {
+		return '[]';
+	}
+
+	// Decode the JSON to ensure it's valid.
+	$decoded = json_decode( $value, true, $max_depth, JSON_BIGINT_AS_STRING );
+	if (
+		$decoded === null ||
+		! is_array( $decoded ) ||
+		json_last_error() !== JSON_ERROR_NONE
+	) {
+		return '[]';
+	}
+
+	$allowed_types = array(
+		'string',
+		'integer',
+		'double',
+		'boolean',
+		'NULL',
+	);
+
+	// Sanitize the JSON values.
+	array_walk_recursive(
+		$decoded,
+		function ( &$item ) use ( $allowed_types ) {
+			if ( ! in_array( gettype( $item ), $allowed_types, true ) ) {
+				$item = '';
+				return;
+			}
+
+			if ( is_string( $item ) ) {
+				$item = sanitize_text_field( $item );
+			}
+		}
+	);
+
+	$json = wp_json_encode( $decoded, JSON_UNESCAPED_SLASHES );
+	return $json ? $json : '[]';
 }

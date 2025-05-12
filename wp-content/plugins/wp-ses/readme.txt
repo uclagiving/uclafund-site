@@ -2,9 +2,10 @@
 Contributors: wpengine, deliciousbrains, ianmjones, eriktorsner, kevinwhoffman, mattshaw, bradt, SylvainDeaure
 Tags: amazon ses,smtp,email delivery,gmail smtp,newsletter
 Requires at least: 5.3
-Tested up to: 6.6
+Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.7.0
+Stable tag: 1.7.2
+License: GPLv2
 
 Fix your email delivery problems by sending your WordPress emails through Amazon SES's powerful email sending infrastructure.
 
@@ -183,6 +184,17 @@ Please double check the credentials match up with the credentials you received w
 4. Activity tab
 
 == Changelog ==
+
+= 1.7.2 - 2025-05-08 =
+* Bug fix: Detecting whether running as a must-use plugin is now more robust
+* Bug fix: Clash with WP Offload SES (Pro) avoided if both are installed as must-use plugins
+* Bug fix: AWS SES account rate limit exceeded failures no longer occur for high volume bulk sends
+
+= 1.7.1 - 2024-10-04 =
+* Security: The plugin can now serve updates from WP Engine servers, however this update mechanism is not included when installed directly from WordPress.org
+* New: Amazon SES regions Asia Pacific (Jakarta), Asia Pacific (Osaka), and Israel (Tel Aviv) are now selectable
+* New: AWS PHP SDK has been updated to v3.319.4
+* New: PHP and JS dependencies have been updated
 
 = 1.7.0 - 2024-07-01 =
 * New: Logs of successfully sent emails can now be instantly removed

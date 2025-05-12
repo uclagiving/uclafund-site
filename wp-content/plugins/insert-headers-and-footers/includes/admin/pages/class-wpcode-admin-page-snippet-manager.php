@@ -93,8 +93,8 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	 * @return void
 	 */
 	public function load_snippet() {
-		if ( isset( $_GET['snippet_id'] ) ) {
-			$snippet_post = get_post( absint( $_GET['snippet_id'] ) );
+		if ( isset( $_GET['snippet_id'] ) ) {  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$snippet_post = get_post( absint( $_GET['snippet_id'] ) );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			if ( ! is_null( $snippet_post ) && $this->get_post_type() === $snippet_post->post_type ) {
 				$this->snippet_id = $snippet_post->ID;
 				$this->snippet    = wpcode_get_snippet( $snippet_post );
@@ -455,7 +455,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 							<?php foreach ( $library_plugins as $slug => $plugin ) { ?>
 								<div class="wpcode-plugin-suggestion-plugin">
 									<div class="wpcode-plugin-suggestion-plugin-icon">
-										<img width="72" src="<?php echo esc_url( WPCODE_PLUGIN_URL . 'admin/images/' . $plugin['icon'] ); ?>" alt="<?php echo esc_attr( $plugin['name'] ); ?>"/>
+										<img width="72" src="<?php echo esc_url( WPCODE_PLUGIN_URL . 'admin/images/' . $plugin['icon'] ); // phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage?>" alt="<?php echo esc_attr( $plugin['name'] ); ?>"/>
 									</div>
 									<div class="wpcode-plugin-suggesion-plugin-text">
 										<h3><?php echo esc_html( $plugin['name'] ); ?></h3>
@@ -614,12 +614,14 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 				$this->metabox_row( __( 'Shortcode', 'insert-headers-and-footers' ), $shortcode_field, 'wpcode_shortcode' );
 				$this->get_input_row_custom_shortcode();
 				$this->get_input_row_shortcode_attributes();
+				$this->get_shortcode_locations();
 				?>
 			</div>
 		</div>
 		<?php $this->get_input_auto_insert_options(); ?>
 		<div class="wpcode-metabox-form">
 			<?php $this->get_input_row_as_file(); ?>
+			<?php $this->get_input_row_compress_output(); ?>
 			<?php $this->get_input_row_schedule(); ?>
 		</div>
 		<?php
@@ -870,7 +872,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 									$style_class .= ' wpcode-list-item-selected';
 								}
 								?>
-								<li class="<?php echo esc_attr( $style_class ); ?>" data-index="<?php echo absint( $index ); ?>" data-id="<?php echo esc_attr( $location_slug ); ?>" data-categories='<?php echo wp_json_encode( array( $category_key ) ); ?>' data-code-type="<?php echo esc_attr( $type->code_type ); ?>" style="<?php echo esc_attr( $style ); ?>" <?php echo $tabindex; ?>>
+								<li class="<?php echo esc_attr( $style_class ); ?>" data-index="<?php echo absint( $index ); ?>" data-id="<?php echo esc_attr( $location_slug ); ?>" data-categories='<?php echo wp_json_encode( array( $category_key ) ); ?>' data-code-type="<?php echo esc_attr( $type->code_type ); ?>" style="<?php echo esc_attr( $style ); ?>" <?php echo $tabindex; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 									<label <?php echo $extra_data; // phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
 										<span class="wpcode-list-item-title" title="<?php echo esc_attr( $label ); ?>" data-selected-label="<?php echo esc_attr( $selected_label ); ?>">
 											<span class="wpcode-keywords">
@@ -1014,12 +1016,30 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	 * @return string
 	 */
 	public function get_input_textarea( $id, $value = '', $description = '' ) {
-		$input = '<textarea class="wpcode-input-textarea" id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" rows="3">' . esc_html( $value ) . '</textarea>';
+		ob_start();
+		echo '<div class="wpcode-input-textarea">';
+		wp_editor(
+			wp_kses_post( $value ),
+			$id,
+			array(
+				'media_buttons' => false,
+				'textarea_rows' => 3,
+				'teeny'         => true,
+				'quicktags'     => false,
+				'tinymce'       => array(
+					'toolbar1' => 'bold,italic,underline,bullist,numlist,link',
+					'toolbar2' => '',
+					'toolbar3' => '',
+				),
+			)
+		);
+		echo '</div>';
+		
 		if ( ! empty( $description ) ) {
-			$input .= '<p>' . $description . '</p>';
+			echo '<p>' . esc_html( $description ) . '</p>';
 		}
-
-		return $input;
+		
+		return ob_get_clean();
 	}
 
 	/**
@@ -1258,7 +1278,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			return;
 		}
 		$code_type    = isset( $_POST['wpcode_snippet_type'] ) ? sanitize_text_field( wp_unslash( $_POST['wpcode_snippet_type'] ) ) : 'html';
-		$snippet_code = isset( $_POST['wpcode_snippet_code'] ) ? $_POST['wpcode_snippet_code'] : '';
+		$snippet_code = isset( $_POST['wpcode_snippet_code'] ) ? $_POST['wpcode_snippet_code'] : '';  // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
 		if ( WPCode_Snippet_Execute::is_code_not_allowed( $snippet_code ) ) {
 			$title = esc_html__( 'Restricted Code Detected', 'insert-headers-and-footers' );
@@ -1266,7 +1286,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 				'<h2>' . $title . '</h2>' .
 				sprintf(
 				// Translators: %1$s is the opening link tag, %2$s is the closing link tag.
-					esc_html__( 'For your protection, we blocked the addition of certain types of code that could compromise your website\'s security. If you believe this is in error or need assistance, please %1$scontact our support team%2$s.', 'insert-headers-and-footer' ),
+					esc_html__( 'For your protection, we blocked the addition of certain types of code that could compromise your website\'s security. If you believe this is in error or need assistance, please %1$scontact our support team%2$s.', 'insert-headers-and-footers' ),
 					'<a href="' . wpcode_utm_url( 'https://wpcode.com/contact', 'error', 'restricted-code' ) . '" target="_blank" rel="noopener noreferrer">',
 					'</a>'
 				),
@@ -1331,7 +1351,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 				'use_rules'            => isset( $_POST['wpcode_conditional_logic_enable'] ),
 				'rules'                => $rules,
 				'priority'             => isset( $_POST['wpcode_priority'] ) ? intval( $_POST['wpcode_priority'] ) : 10,
-				'note'                 => isset( $_POST['wpcode_note'] ) ? sanitize_textarea_field( wp_unslash( $_POST['wpcode_note'] ) ) : '',
+				'note'                 => isset( $_POST['wpcode_note'] ) ? wp_kses_post( wp_unslash( $_POST['wpcode_note'] ) ) : '',
 				'location_extra'       => isset( $_POST['wpcode_auto_insert_location_extra'] ) ? sanitize_text_field( wp_unslash( $_POST['wpcode_auto_insert_location_extra'] ) ) : '',
 				'shortcode_attributes' => $attributes,
 			)
@@ -1516,13 +1536,24 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 				$type_options = $options[ $row['type'] ];
 				$value_option = $type_options['options'][ $row['option'] ];
 
-				$rows[] = $this->get_conditions_group_row_markup( $row['option'], $row['relation'], $this->get_input_markup_by_type( $value_option, $row['value'] ) );
+				// Construct the meta array.
+				$meta = array(
+					'post' => isset( $row['meta_key'] ) ? $row['meta_key'] : '',
+					'user' => isset( $row['user_meta_key'] ) ? $row['user_meta_key'] : '',
+				);
+
+				$rows[] = $this->get_conditions_group_row_markup(
+					$row['option'],
+					$row['relation'],
+					$this->get_input_markup_by_type( $value_option, $row['value'] ),
+					$meta
+				);
 			}
 
 			$form_groups[] = $this->get_conditions_group_markup( implode( '', $rows ) );
 		}
 
-		return implode( $form_groups );
+		return implode( '', $form_groups );
 	}
 
 	/**
@@ -1609,7 +1640,7 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	 *
 	 * @return string
 	 */
-	private function get_conditions_group_row_markup( $type = '', $relation = '', $value = '' ) {
+	private function get_conditions_group_row_markup( $type = '', $relation = '', $value = '', $meta = array() ) {
 		$options = wpcode()->conditional_logic->get_all_admin_options();
 
 		$markup = '<div class="wpcode-cl-rules-row">';
@@ -1641,10 +1672,27 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		}
 		$markup .= '</select>';
 		$markup .= '</span>'; // wpcode-cl-rule-type-container.
+
+		// Display the appropriate input based on the type.
+		if ( 'user_meta' === $type || 'post_meta' === $type ) {
+			$meta_key = '';
+			if ( 'post_meta' === $type && isset( $meta['post'] ) ) {
+				$meta_key   = $meta['post'];
+				$identifier = 'wpcode-cl-rule-meta-key';
+			} elseif ( 'user_meta' === $type && isset( $meta['user'] ) ) {
+				$meta_key   = $meta['user'];
+				$identifier = 'wpcode-cl-rule-user-meta-key';
+			}
+
+			$markup .= '<div class="' . $identifier . '-container">';
+			$markup .= '<input type="text" class="' . $identifier . ' wpcode-input-text" name="' . $identifier . '" placeholder="Enter Meta Key" value="' . esc_attr( $meta_key ) . '">';
+			$markup .= '</div>';
+		}
+
 		$markup .= $this->get_conditions_relation_select( $relation );
-		$markup .= '<div class="wpcode-cl-rule-value">' . $value . '</div>';// This should be automatically populated based on the selected type.
+		$markup .= '<div class="wpcode-cl-rule-value">' . $value . '</div>';
 		$markup .= '</div>'; // rules-row-options.
-		$markup .= '<button class="wpcode-button-just-icon wpcode-cl-remove-row" type="button" title="' . esc_attr__( 'Remove Row', 'insert-headers-and-footers' ) . '">' . get_wpcode_icon( 'remove' ) . '</button>'; // rules-row-options.
+		$markup .= '<button class="wpcode-button-just-icon wpcode-cl-remove-row" type="button" title="' . esc_attr__( 'Remove Row', 'insert-headers-and-footers' ) . '">' . get_wpcode_icon( 'remove' ) . '</button>';
 		$markup .= '</div>'; // rules-row.
 
 		return $markup;
@@ -1722,6 +1770,9 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 		$data['laf_title']              = __( 'Load as file is a Pro Feature', 'insert-headers-and-footers' );
 		$data['laf_text']               = __( 'Upgrade to PRO today and unlock loading your CSS and JS snippets as files for better performance and improved compatibility with caching plugins.', 'insert-headers-and-footers' );
 		$data['laf_url']                = wpcode_utm_url( 'https://wpcode.com/lite/', 'snippet-editor', 'laf', 'modal' );
+		$data['co_title']               = __( 'Compress Output is a Pro Feature', 'insert-headers-and-footers' );
+		$data['co_text']                = __( 'Upgrade to PRO today and unlock the ability to compress your code by removing comments and unnecessary spaces, ensuring enhanced performance.', 'insert-headers-and-footers' );
+		$data['co_url']                 = wpcode_utm_url( 'https://wpcode.com/lite/', 'snippet-editor', 'compress-output', 'modal' );
 		$data['php_cl_location_notice'] = sprintf(
 		// Translators: %1$s Opening anchor tag. %2$s Closing anchor tag.
 			__( 'For better results using conditional logic with PHP snippets we automatically switched the auto-insert location to "Frontend Conditional Logic" that runs later. If you want to run the snippet earlier please switch back to "Run Everywhere" but note not all conditional logic options will be available. %1$sRead more%2$s', 'insert-headers-and-footers' ),
@@ -1966,6 +2017,15 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	}
 
 	/**
+	 * Get the description of the compress output option.
+	 *
+	 * @return string
+	 */
+	public function get_input_row_compress_output_description() {
+		return esc_html__( 'Compress code output by removing spaces and comments.', 'insert-headers-and-footers' );
+	}
+
+	/**
 	 * Get the markup for displaying an option to load the snippet as a file if the code type is CSS or JS.
 	 *
 	 * @return void
@@ -1983,6 +2043,28 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 			$this->get_input_row_as_file_description(),
 			true,
 			'wpcode_snippet_as_file_option'
+		);
+	}
+
+	/**
+	 * Get the markup for displaying an option to compress the output if the code type is CSS, HTML, or JS.
+	 *
+	 * @return void
+	 */
+	public function get_input_row_compress_output() {
+
+		$this->metabox_row(
+			esc_html__( 'Compress Output', 'insert-headers-and-footers' ),
+			$this->get_checkbox_toggle(
+				false,
+				'wpcode_compress_output'
+			),
+			'wpcode_compress_output',
+			'#wpcode_snippet_type',
+			'js,css,html',
+			$this->get_input_row_compress_output_description(),
+			true,
+			'wpcode_compress_output_option'
 		);
 	}
 
@@ -2083,6 +2165,38 @@ class WPCode_Admin_Page_Snippet_Manager extends WPCode_Admin_Page {
 	 * @return void
 	 */
 	public function add_extra_snippet_data( &$snippet ) {
+	}
+
+	/**
+	 * Markup for shortcode locations
+	 * 
+	 * @return void
+	 */
+	public function get_shortcode_locations() {
+		$button = sprintf(
+			'<button class="wpcode-button wpcode-button-secondary" id="wpcode-find-locations" type="button">
+				<span>%s</span>
+			</button>',
+			__('Find Where This Shortcode Is Used', 'insert-headers-and-footers')
+		);
+	
+		$help = $this->help_icon(
+			__( 'Click to search for any posts or pages where this shortcode is being used.', 'insert-headers-and-footers' ),
+			false
+		);
+	
+		$input = '<div id="wpcode-shortcode-locations-list" class="wpcode-shortcode-locations-list">';
+		$input .= '<div class="wpcode-button-row">' . $button . $help . '</div>';
+		$input .= '<div id="wpcode-locations-list"></div>';
+		$input .= '</div>';
+	
+		$this->metabox_row(
+			__( 'Locations Used', 'insert-headers-and-footers' ),
+			$input,
+			'wpcode-shortcode-locations',
+			'',
+			''
+		);
 	}
 
 	/**

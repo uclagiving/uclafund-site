@@ -25,7 +25,7 @@
 				<div class="sow-entry-author-link">
 					<span class="sow-meta-text"><?php esc_html_e( 'Written by', 'so-widgets-bundle' ); ?></span>
 					<a href="<?php echo esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ); ?>">
-						<?php echo esc_html( get_the_author() ) ?>
+						<?php echo esc_html( get_the_author() ); ?>
 					</a>
 				</div>
 			<?php } ?>
@@ -75,9 +75,9 @@
 					$time_string = sprintf(
 						$template_settings['time_string'],
 						esc_attr( get_the_date( DATE_W3C ) ),
-						esc_html( get_the_date( $template_settings['date_format'] ) ),
+						esc_html( get_the_date( $template_settings['date_output_format'] ) ),
 						esc_attr( get_the_modified_date( DATE_W3C ) ),
-						esc_html( get_the_modified_date( $template_settings['date_format'] ) )
+						esc_html( get_the_modified_date( $template_settings['date_output_format'] ) )
 					);
 					?>
 					<div class="sow-entry-meta">

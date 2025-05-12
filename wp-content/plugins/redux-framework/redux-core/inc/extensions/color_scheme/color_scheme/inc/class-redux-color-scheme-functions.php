@@ -26,16 +26,16 @@ if ( ! class_exists( 'Redux_Color_Scheme_Functions' ) ) {
 		/**
 		 * Field ID
 		 *
-		 * @var string
+		 * @var string|null
 		 */
-		public static string $field_id;
+		public static ?string $field_id;
 
 		/**
 		 * Field class.
 		 *
-		 * @var string
+		 * @var string|null
 		 */
-		public static string $field_class;
+		public static ?string $field_class;
 
 		/**
 		 * Field array.
@@ -47,23 +47,23 @@ if ( ! class_exists( 'Redux_Color_Scheme_Functions' ) ) {
 		/**
 		 * WP Upload directory.
 		 *
-		 * @var string
+		 * @var string|null
 		 */
-		public static string $upload_dir;
+		public static ?string $upload_dir = '';
 
 		/**
 		 * WP Upload URI
 		 *
-		 * @var string
+		 * @var string|null
 		 */
-		public static string $upload_url;
+		public static ?string $upload_url = '';
 
 		/**
 		 * Select fields.
 		 *
-		 * @var array
+		 * @var array|null
 		 */
-		public static array $select;
+		public static ?array $select;
 
 		/**
 		 * Class init.
@@ -208,7 +208,7 @@ if ( ! class_exists( 'Redux_Color_Scheme_Functions' ) ) {
 		 *
 		 * @return mixed
 		 */
-		public static function get_field( ReduxFramework $redux = null ) {
+		public static function get_field( ?ReduxFramework $redux = null ) {
 			if ( ! is_null( $redux ) ) {
 				self::$parent = $redux;
 			}

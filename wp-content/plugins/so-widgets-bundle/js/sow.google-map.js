@@ -12,7 +12,32 @@ sowb.SiteOriginGoogleMap = function($) {
 			'San Francisco Bay Area, CA, United States',
 			'New York, NY, United States',
 		],
-		showMap: function(element, location, options) {
+
+		hasMapStyles: false,
+
+		/**
+		 * Create an image element for the marker icon.
+		 *
+		 * This function creates an image element for the marker icon.
+		 * Google Maps requires marker icons to be valid elements
+		 * rather than just URLs. The image element is created with
+		 * the provided icon URL and optimized for lazy loading.
+		 *
+		 * @param {string|bool|undefined} icon - The URL of the marker icon.
+		 *
+		 * @returns {HTMLImageElement|null} The image element for the marker icon, or null if the icon is undefined.
+		 */
+		drawMarkerEl: ( icon ) => {
+			if ( icon === undefined || icon === false ) {
+				return null;
+			}
+
+			const imgElement = document.createElement( 'img' );
+			imgElement.src = icon;
+			imgElement.loading = 'lazy';
+			return imgElement;
+		},
+		showMap: function( element, location, options ) {
 
 			var zoom = Number(options.zoom);
 
@@ -42,29 +67,38 @@ sowb.SiteOriginGoogleMap = function($) {
 				}
 			};
 
+			this.hasMapStyles = options.mapStyles && Object.keys( options.mapStyles ).length > 0;
+			if ( ! this.hasMapStyles ) {
+				mapOptions.mapId = options.id;
+			}
+
 			var map = new window.google.maps.Map( element, mapOptions );
 
 			var userMapOptions = {
 				name: options.mapName
 			};
 
-			var userMapStyles = options.mapStyles;
+			if ( this.hasMapStyles ) {
+				var userMapType = new window.google.maps.StyledMapType(
+					options.mapStyles,
+					userMapOptions
+				);
 
-			if ( userMapStyles ) {
-				var userMapType = new window.google.maps.StyledMapType( userMapStyles, userMapOptions );
+				map.mapTypes.set(
+					userMapTypeId,
+					userMapType
+				);
 
-				map.mapTypes.set(userMapTypeId, userMapType);
-				map.setMapTypeId(userMapTypeId);
+				map.setMapTypeId( userMapTypeId );
 			}
 
-			if (options.markerAtCenter) {
-				this.centerMarker = new window.google.maps.Marker( {
-					position: location,
-					map: map,
-					draggable: options.markersDraggable,
-					icon: options.markerIcon,
-					title: ''
-				});
+			if ( options.markerAtCenter ) {
+				this.centerMarker = this.addMarker(
+					location,
+					map,
+					options.markerIcon,
+					options.markersDraggable
+				);
 
 				map.centerMarker = this.centerMarker;
 			}
@@ -159,6 +193,44 @@ sowb.SiteOriginGoogleMap = function($) {
 			}
 		},
 
+		/**
+		 * Add a marker to the map.
+		 *
+		 * Creates either an AdvancedMarkerElement, or legacy
+		 * Marker based on map styles.
+		 *
+		 * Advanced markers support Cloud Styles while legacy
+		 * markers maintain backwards compatibility with JSON.
+		 *
+		 * @param {google.maps.LatLng} location - The position for the marker.
+		 * @param {google.maps.Map} map - The map instance to add marker to.
+		 * @param {Object} icon - Custom icon configuration for the marker.
+		 * @param {boolean} draggable - Whether the marker should be draggable.
+		 *
+		 * @return {google.maps.marker.AdvancedMarkerElement|google.maps.Marker} The created marker
+		 */
+		addMarker: function( location, map, icon, draggable ) {
+			const markerOptions = {
+				position: location,
+				map: map,
+				gmpDraggable: draggable,
+				draggable: draggable,
+				title: ''
+			};
+
+			// Are we adding a legacy marker?
+			if ( this.hasMapStyles ) {
+				if ( typeof icon === 'string' ) {
+					markerOptions.icon = icon;
+				}
+
+				return new window.google.maps.Marker( markerOptions );
+			}
+
+			markerOptions.content = this.drawMarkerEl( icon );
+			return new window.google.maps.marker.AdvancedMarkerElement( markerOptions )
+		},
+
 		showMarkers: function(markerPositions, map, options) {
 			if ( markerPositions && markerPositions.length ) {
 				this.infoWindows = [];
@@ -178,18 +250,14 @@ sowb.SiteOriginGoogleMap = function($) {
 					var markerInfo = mrkr.hasOwnProperty( 'info' ) ? mrkr.info : null;
 					var infoMaxWidth = mrkr.hasOwnProperty( 'infoMaxWidth' ) ? mrkr.infoMaxWidth : null;
 					return this.getLocation( mrkr.place ).done( function ( location ) {
-						var mrkerIcon = options.markerIcon;
-						if ( customIcon ) {
-							mrkerIcon = customIcon;
-						}
+						const markerIcon = customIcon ? customIcon : options.markerIcon;
 
-						var marker = new window.google.maps.Marker( {
-							position: location,
-							map: map,
-							draggable: options.markersDraggable,
-							icon: mrkerIcon,
-							title: ''
-						} );
+						const marker = this.addMarker(
+							location,
+							map,
+							markerIcon,
+							options.markersDraggable
+						);
 
 						if ( markerInfo ) {
 							var infoWindowOptions = { content: markerInfo };
@@ -437,7 +505,41 @@ jQuery( window.sowb ).on( 'sow-google-map-loaded', function() {
 
 jQuery(function ($) {
 	sowb.googleMapsData = [];
-	sowb.googleMapsData.libraries = [];
+	sowb.googleMapsData.libraries = [
+		'marker',
+	];
+
+	/**
+	 * Wait for the block editor to be fully loaded and initialize Google Maps.
+	 *
+	 * This function checks if the block editor and Google Maps are
+	 * fully loaded. If they aren't, it checks again after a delay. Once
+	 * the block editor is ready and blocks are loaded, it initializes
+	 * Google Maps and unsubscribes from further updates.
+	 */
+	const waitForBlockEditor = () => {
+		if (
+			typeof window.wp !== 'object' ||
+			typeof window.wp.data !== 'object' ||
+			typeof window.google.maps === 'undefined'
+		) {
+			setTimeout( waitForBlockEditor, 250 );
+			return;
+		}
+
+		const checkForBlocks = wp.data.subscribe(() => {
+			const blocks = wp.data.select( 'core/block-editor' ).getBlocks();
+			if ( blocks.length === 0 ) {
+				return;
+			}
+
+			soGoogleMapInitialize();
+			checkForBlocks();
+
+			sowb.loadGoogleMapsAPI( true );
+		} );
+	}
+
 	sowb.setupGoogleMaps = function( e, forceLoad = false ) {
 		var $mapCanvas = $( '.sow-google-map-canvas' );
 		if ( ! $mapCanvas.length ) {
@@ -476,7 +578,17 @@ jQuery(function ($) {
 		) {
 			// If this is an admin preview, and the API has already been setup,
 			// skip any further API checks to confirm it's working and set it up.
-			if ( $( 'body.wp-admin' ).length && $( '#sow-google-maps-js' ).length ) {
+			if ( $( 'body.wp-admin' ).length ) {
+				if ( ! $( '#sow-google-maps-js' ).length ) {
+					sowb.loadGoogleMapsAPI( forceLoad );
+				}
+
+				// Is this the Block Editor?
+				if ( $( '.editor-styles-wrapper' ).length ) {
+					waitForBlockEditor();
+					return;
+				}
+
 				setTimeout( function() {
 					soGoogleMapInitialize();
 				}, 250 );
@@ -531,8 +643,7 @@ jQuery(function ($) {
 		}
 
 		// Try to load even if API key is missing to allow Google Maps API to provide it's own warnings/errors about missing API key.
-		// var apiUrl = 'https://maps.googleapis.com/maps/api/js?key=' + sowb.googleMapsData.apiKey;
-		var apiUrl = 'https://maps.googleapis.com/maps/api/js?key=' + sowb.googleMapsData.apiKey + '&callback=soGoogleMapInitialize';
+		let apiUrl = 'https://maps.googleapis.com/maps/api/js?key=' + sowb.googleMapsData.apiKey + '&callback=soGoogleMapInitialize&loading=async';
 
 		if ( sowb.googleMapsData.libraries && sowb.googleMapsData.libraries.length ) {
 			apiUrl += '&libraries=' + sowb.googleMapsData.libraries.join( ',' );
