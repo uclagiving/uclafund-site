@@ -1,1 +1,0 @@
-<p>Add in the settings from the tutorial here.  Clicking on <strong>Next</strong> will verify your settings.</p>
